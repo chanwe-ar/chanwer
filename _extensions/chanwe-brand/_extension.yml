@@ -10,6 +10,9 @@ contributes:
     html:
       include-after-body:
         - assets/title-banner-layout.html
+    typst:
+      template-partials:
+        - typst/typst-template.typ
   metadata:
     project:
       brand: brand.yml

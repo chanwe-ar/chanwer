@@ -73,16 +73,20 @@ color:
 
 typography:
   fonts:
-    - family: DM Sans
-      source: google
+    - family: Google Sans
+      source: file
+      files:
+        - path: assets/GoogleSans-VariableFont_GRAD,opsz,wght.ttf
+        - path: assets/GoogleSans-Italic-VariableFont_GRAD,opsz,wght.ttf
+          style: italic
 
   base:
-    family: DM Sans
+    family: Google Sans
     size: 13.5px
     line-height: 1.62
 
   headings:
-    family: DM Sans
+    family: Google Sans
     weight: 900
     line-height: 1.15
     color: primary
@@ -104,8 +108,8 @@ defaults:
       link-decoration: none
       link-hover-decoration: underline
       nav-link-font-weight: 600
-      headings-font-weight: 900
-      headings-font-family: "DM Sans"
+      headings-font-weight: 700
+      headings-font-family: "Google Sans"
       h1-font-size: 2.5rem
       h2-font-size: 2rem
       h3-font-size: 1.6rem
@@ -211,7 +215,7 @@ defaults:
         margin-right: auto;
         margin-top: clamp(1rem, 1.7vw, 2rem);
         margin-bottom: clamp(1rem, 1.7vw, 2rem);
-        border: 1px solid #FFFFFF;
+        border: none;
         border-radius: 0;
         padding: clamp(2.8rem, 4.4vw, 4.4rem) clamp(4.2rem, 10vw, 11rem);
       }
@@ -237,11 +241,12 @@ defaults:
 
       .quarto-title-banner .quarto-title > .quarto-categories .quarto-category,
       .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category {
-        background: #E5E5E5;
+        background: #E5E5E5 !important;
         color: #101010 !important;
         border: 0 !important;
         outline: none !important;
         box-shadow: none !important;
+        opacity: 1 !important;
         border-radius: 0.4rem;
         font-size: 0.72rem;
         line-height: 1.2;
@@ -254,13 +259,13 @@ defaults:
 
       .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(1),
       .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(1) {
-        background: #E94B2B;
+        background: #e94b2b !important;
         color: #FFFFFF !important;
       }
 
       .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(2),
       .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(2) {
-        background: #E5E5E5;
+        background: #E5E5E5 !important;
         color: #101010 !important;
       }
 
@@ -269,7 +274,8 @@ defaults:
         border: 0 !important;
         outline: none !important;
         box-shadow: none !important;
-        filter: brightness(0.98);
+        filter: none !important;
+        opacity: 1 !important;
       }
 
       .quarto-title-banner .quarto-title .chanwe-keyword-pills {
@@ -283,9 +289,10 @@ defaults:
       .quarto-title-banner .quarto-title .chanwe-keyword-pills .quarto-category {
         background: transparent !important;
         color: #FFFFFF !important;
-        border: 1px solid rgba(255, 255, 255, 0.78) !important;
+        border: 1px solid #FFFFFF !important;
         outline: none !important;
         box-shadow: none !important;
+        opacity: 1 !important;
         border-radius: 0.4rem;
         font-size: 0.68rem;
         line-height: 1.2;
@@ -386,7 +393,7 @@ defaults:
       h1, h2, h3, h4, h5, h6,
       .h1, .h2, .h3, .h4, .h5, .h6 {
         font-family: "DM Sans", sans-serif;
-        font-weight: 900 !important;
+        font-weight: 700 !important;
       }
 
       /* Inline code */
@@ -641,7 +648,12 @@ defaults:
       }
 
       table tbody tr:nth-child(even) {
-        background: rgba(16, 16, 16, 0.03);
+        background: transparent !important;
+      }
+
+      .table-striped > tbody > tr:nth-of-type(odd) > *,
+      .table-striped > tbody > tr:nth-of-type(even) > * {
+        background-color: #FFFFFF !important;
       }
 
 
@@ -767,12 +779,11 @@ defaults:
         include-after-body:
           - _extensions/chanwe-brand/assets/title-banner-layout.html
       typst:
-        logo:
-          path: assets/Logo_Negro.png
-          alt: ChanWe logo
-          location: top + right
-          inset: 0.6cm
-          width: 3.2cm
+        mainfont: "Google Sans"
+        font-paths:
+          - _extensions/chanwe-brand/assets
+        template-partials:
+          - _extensions/chanwe-brand/typst/typst-template.typ
       pptx:
         reference-doc: _extensions/chanwe-brand/assets/chanwe-reference.pptx
         slide-level: 2
