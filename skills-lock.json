@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "cli": {
+      "source": "posit-dev/skills",
+      "sourceType": "github",
+      "computedHash": "c3636e77c4297f721b6dcb50dc954ad82e8eb1eb9f33730887f8da0b5da5da0d"
+    },
+    "r-package-development": {
+      "source": "posit-dev/skills",
+      "sourceType": "github",
+      "computedHash": "08d76aad705bc5e673f9bd4e80702ee49baee6208bb2eefc7f258adafa024f95"
+    },
+    "testing-r-packages": {
+      "source": "posit-dev/skills",
+      "sourceType": "github",
+      "computedHash": "cf7749e36141e5a02b28031c9bbc56810de3b7e1e8a0b40313f33d841db7e2d3"
+    }
+  }
+}

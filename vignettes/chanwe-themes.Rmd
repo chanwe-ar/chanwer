@@ -1,0 +1,109 @@
+---
+title: "ChanWe Themes in Quarto Workflows"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ChanWe Themes in Quarto Workflows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4.2
+)
+```
+
+```{r}
+library(chanweThemes)
+```
+
+## Palette and Tokens
+
+```{r}
+chanwe_palette()
+chanwe_brand_tokens()$semantic
+```
+
+```{r, fig.height = 5.5}
+chanwe_preview_palette("chart")
+```
+
+## ggplot2
+
+```{r}
+library(ggplot2)
+
+ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+  geom_point(size = 3) +
+  geom_smooth(se = FALSE, linewidth = 0.8) +
+  scale_color_chanwe_d() +
+  labs(
+    title = "Fuel economy by weight",
+    subtitle = "ChanWe discrete color scale",
+    caption = "Source: mtcars"
+  ) +
+  theme_chanwe()
+```
+
+```{r}
+ggplot(mtcars, aes(wt, mpg, color = hp)) +
+  geom_point(size = 3) +
+  scale_color_chanwe_c() +
+  theme_chanwe()
+```
+
+## gt
+
+```{r}
+if (requireNamespace("gt", quietly = TRUE)) {
+  gt::gt(head(mtcars)) |>
+    gt::tab_header(
+      title = "Vehicle Snapshot",
+      subtitle = "Styled with gt_theme_chanwe()"
+    ) |>
+    gt_theme_chanwe()
+}
+```
+
+## reactable
+
+```{r}
+if (requireNamespace("reactable", quietly = TRUE)) {
+  reactable::reactable(
+    head(mtcars),
+    theme = reactable_theme_chanwe(),
+    defaultPageSize = 6
+  )
+}
+```
+
+## highcharter
+
+```{r}
+if (requireNamespace("highcharter", quietly = TRUE)) {
+  highcharter::hchart(mtcars, "scatter", highcharter::hcaes(wt, mpg, group = cyl)) |>
+    highcharter::hc_title(text = "ChanWe highcharter theme") |>
+    highcharter::hc_add_theme(hc_theme_chanwe())
+}
+```
+
+## Quarto reporting CSS
+
+```{r}
+chanwe_reporting_css()
+```
+
+In Quarto, set:
+
+```yaml
+format:
+  html:
+    css:
+      - !expr chanweThemes::chanwe_reporting_css()
+```
+
+This stylesheet applies ChanWe styling to code blocks, callouts, captions,
+and section number accents.

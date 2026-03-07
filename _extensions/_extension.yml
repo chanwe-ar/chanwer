@@ -1,0 +1,10 @@
+title: chanwe-brand
+author: Alejandro Abraham
+version: 0.1.0
+quarto-required: '>=1.8.0'
+source: /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe-brand/_extensions/chanwe-brand
+source-type: local
+contributes:
+  metadata:
+    project:
+      brand: brand.yml

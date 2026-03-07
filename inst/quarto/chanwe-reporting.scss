@@ -1,0 +1,186 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;900&display=swap");
+
+:root {
+  --chanwe-primary: #E94B2B;
+  --chanwe-ink: #101010;
+  --chanwe-body: #5B5B5B;
+  --chanwe-paper: #F7F7F7;
+  --chanwe-white: #FFFFFF;
+  --chanwe-beige: #F8F8F8;
+  --chanwe-beige-soft: #EEEEEE;
+  --chanwe-radius: 0.22rem;
+  --chanwe-radius-sm: 0.16rem;
+
+  --chanwe-info: #11F7E6;
+  --chanwe-success: #1EB508;
+  --chanwe-warning: #F9E710;
+  --chanwe-important: #EB03F2;
+  --chanwe-danger: #F40C0C;
+}
+
+body,
+main,
+.quarto-container,
+.reveal,
+.slide {
+  font-family: "DM Sans", system-ui, sans-serif;
+  color: var(--chanwe-body);
+}
+
+p,
+li,
+dd,
+dt,
+blockquote {
+  color: var(--chanwe-body);
+  line-height: 1.62;
+}
+
+a {
+  color: var(--chanwe-primary);
+  font-weight: 600;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "DM Sans", system-ui, sans-serif;
+  color: var(--chanwe-ink);
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+/* Code block styling */
+pre,
+pre.sourceCode,
+div.sourceCode,
+.cell-output pre,
+code {
+  border-radius: var(--chanwe-radius-sm);
+  box-shadow: none !important;
+}
+
+pre,
+pre.sourceCode,
+div.sourceCode,
+.cell-output pre {
+  background: var(--chanwe-paper) !important;
+  border: 1px solid var(--chanwe-beige-soft);
+  border-left: 4px solid var(--chanwe-primary);
+  padding: 0.9rem 1rem;
+}
+
+:not(pre) > code {
+  background: var(--chanwe-beige);
+  border: 1px solid var(--chanwe-beige-soft);
+  padding: 0.08rem 0.35rem;
+}
+
+/* Figure and table chrome */
+.figure,
+.quarto-figure,
+table,
+.gt_table,
+.reactable {
+  box-shadow: none !important;
+  border-radius: var(--chanwe-radius);
+}
+
+figcaption,
+.table-caption,
+.caption,
+.gt_caption {
+  color: #6D6D6D !important;
+  font-size: 0.9em;
+}
+
+/* Callouts */
+.callout {
+  background: var(--chanwe-white) !important;
+  color: var(--chanwe-body);
+  border-radius: var(--chanwe-radius);
+  border-width: 1px;
+  box-shadow: none !important;
+}
+
+.callout .callout-header {
+  font-weight: 700;
+  border-bottom-width: 1px;
+}
+
+.callout.callout-note,
+.callout.callout-info {
+  border-color: var(--chanwe-info);
+}
+
+.callout.callout-note .callout-header,
+.callout.callout-info .callout-header {
+  background: color-mix(in srgb, var(--chanwe-info) 15%, white);
+  border-bottom-color: var(--chanwe-info);
+}
+
+.callout.callout-tip,
+.callout.callout-success {
+  border-color: var(--chanwe-success);
+}
+
+.callout.callout-tip .callout-header,
+.callout.callout-success .callout-header {
+  background: color-mix(in srgb, var(--chanwe-success) 14%, white);
+  border-bottom-color: var(--chanwe-success);
+}
+
+.callout.callout-warning {
+  border-color: var(--chanwe-warning);
+}
+
+.callout.callout-warning .callout-header {
+  background: color-mix(in srgb, var(--chanwe-warning) 22%, white);
+  border-bottom-color: var(--chanwe-warning);
+}
+
+.callout.callout-important {
+  border-color: var(--chanwe-important);
+}
+
+.callout.callout-important .callout-header {
+  background: color-mix(in srgb, var(--chanwe-important) 14%, white);
+  border-bottom-color: var(--chanwe-important);
+}
+
+.callout.callout-caution,
+.callout.callout-alert,
+.callout.callout-danger {
+  border-color: var(--chanwe-danger);
+}
+
+.callout.callout-caution .callout-header,
+.callout.callout-alert .callout-header,
+.callout.callout-danger .callout-header {
+  background: color-mix(in srgb, var(--chanwe-danger) 14%, white);
+  border-bottom-color: var(--chanwe-danger);
+}
+
+/* Section numbering accents */
+.header-section-number,
+#TOC .toc-section-number,
+.sidebar nav[role="doc-toc"] .toc-section-number {
+  color: var(--chanwe-primary);
+  font-weight: 700;
+}
+
+.header-section-number::after,
+#TOC .toc-section-number::after,
+.sidebar nav[role="doc-toc"] .toc-section-number::after {
+  content: "";
+  display: inline-block;
+  width: 0.56em;
+  height: 0.56em;
+  margin-left: 0.36em;
+  vertical-align: 0.01em;
+  border-radius: 0.05em;
+  background: url("../assets/Estrategia_Color1.png") center / contain no-repeat;
+}

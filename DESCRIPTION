@@ -1,0 +1,33 @@
+Package: chanweThemes
+Title: ChanWe Visual Themes for Quarto Workflows
+Version: 0.1.0
+Authors@R: 
+    person(given = "ChanWe",
+           family = "Team",
+           role = c("aut", "cre"),
+           email = "team@chanwe.example")
+Description: Brand-consistent themes, color palettes, and utilities for
+    ChanWe reporting workflows across ggplot2, gt, reactable, and
+    highcharter, with Quarto-ready styling tokens for HTML, Typst PDF,
+    and PPTX outputs.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+URL: https://github.com/chanwe/chanweThemes
+BugReports: https://github.com/chanwe/chanweThemes/issues
+Depends: 
+    R (>= 4.2.0)
+Imports:
+    ggplot2,
+    grDevices
+Suggests:
+    ggtext,
+    gt,
+    highcharter,
+    knitr,
+    reactable,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3

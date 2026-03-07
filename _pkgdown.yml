@@ -1,0 +1,24 @@
+url: https://chanwe.github.io/chanweThemes
+
+template:
+  bootstrap: 5
+
+reference:
+  - title: Colors and Tokens
+    contents:
+      - chanwe_palette
+      - chanwe_brand_tokens
+      - chanwe_preview_palette
+      - chanwe_reporting_css
+  - title: ggplot2
+    contents:
+      - theme_chanwe
+      - scale_color_chanwe_d
+      - scale_fill_chanwe_d
+      - scale_color_chanwe_c
+      - scale_fill_chanwe_c
+  - title: Tables and Charts
+    contents:
+      - gt_theme_chanwe
+      - reactable_theme_chanwe
+      - hc_theme_chanwe
