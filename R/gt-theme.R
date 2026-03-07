@@ -39,7 +39,7 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
   gt::opt_table_font(
     data = data,
     font = list(gt::google_font("DM Sans"), gt::default_fonts()),
-    size = gt::px(14),
+    size = gt::px(11),
     color = colors[["p13-gray-06"]],
     weight = 500,
     style = "normal"
@@ -113,7 +113,7 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
         gt::cell_text(
           color = colors[["p13-gray-06"]],
           weight = "500",
-          size = gt::px(14)
+          size = gt::px(11)
         ),
         gt::cell_fill(color = colors[["brand-pure-white"]])
       ),
