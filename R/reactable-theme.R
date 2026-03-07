@@ -55,7 +55,8 @@ reactable_theme_chanwe <- function() {
       background = colors[["brand-beige"]],
       color = colors[["brand-black"]],
       fontWeight = 800,
-      borderBottom = sprintf("1px solid %s", colors[["brand-beige-soft"]])
+      borderTop = sprintf("1px solid %s", colors[["brand-orange"]]),
+      borderBottom = sprintf("1px solid %s", colors[["brand-black"]])
     ),
     cellStyle = list(
       borderBottom = sprintf("1px solid %s", colors[["brand-beige-soft"]])
