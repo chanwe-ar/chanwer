@@ -38,6 +38,15 @@ reactable_theme_chanwe <- function() {
     pageButtonActiveStyle = list(
       backgroundColor = colors[["brand-orange"]],
       color = colors[["brand-pure-white"]],
+      fontWeight = "700",
+      border = sprintf("1px solid %s", colors[["brand-orange"]]),
+      borderRadius = "4px"
+    ),
+    pageButtonCurrentStyle = list(
+      backgroundColor = colors[["brand-orange"]],
+      color = colors[["brand-pure-white"]],
+      fontWeight = "700",
+      border = sprintf("1px solid %s", colors[["brand-orange"]]),
       borderRadius = "4px"
     ),
     style = list(
@@ -52,21 +61,20 @@ reactable_theme_chanwe <- function() {
       borderSpacing = 0
     ),
     headerStyle = list(
-      background = colors[["brand-beige"]],
+      background = colors[["brand-pure-white"]],
       color = colors[["brand-black"]],
       fontWeight = 800,
+      paddingTop = "10px",
+      paddingBottom = "10px",
       borderTop = sprintf("1px solid %s", colors[["brand-orange"]]),
-      borderBottom = sprintf("1px solid %s", colors[["brand-black"]])
+      borderBottom = sprintf("2px solid %s", colors[["brand-black"]])
     ),
     cellStyle = list(
-      borderBottom = sprintf("1px solid %s", colors[["brand-beige-soft"]])
+      borderBottom = sprintf("0.6px solid %s", colors[["brand-beige-soft"]])
     ),
     rowStyle = list(
       "&:hover[aria-selected='false']" = list(
-        backgroundColor = grDevices::adjustcolor(
-          colors[["brand-orange"]],
-          alpha.f = 0.05
-        )
+        backgroundColor = colors[["p13-orange-10"]]
       )
     )
   )

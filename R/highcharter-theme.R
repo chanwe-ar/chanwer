@@ -99,23 +99,33 @@ hc_theme_chanwe <- function(add_logo = TRUE,
       borderColor = colors[["brand-beige-soft"]],
       borderWidth = 1,
       borderRadius = 4,
-      spacingTop = 28,
-      spacingRight = 26,
-      spacingBottom = 24,
-      spacingLeft = 26,
+      spacingTop = 62,
+      spacingRight = 30,
+      spacingBottom = 28,
+      spacingLeft = 30,
       events = list(load = logo_event, redraw = logo_event),
       shadow = FALSE
     ),
     title = list(
+      margin = 24,
       style = list(
         color = colors[["brand-black"]],
         fontWeight = "900"
       )
     ),
     subtitle = list(
+      y = 32,
       style = list(
         color = colors[["p13-gray-06"]],
         fontWeight = "500"
+      )
+    ),
+    caption = list(
+      align = "right",
+      style = list(
+        color = colors[["p13-gray-08"]],
+        fontWeight = "500",
+        fontSize = "11px"
       )
     ),
     xAxis = list(
@@ -125,6 +135,9 @@ hc_theme_chanwe <- function(add_logo = TRUE,
       tickColor = colors[["brand-beige-soft"]],
       labels = list(style = list(color = colors[["p13-gray-06"]])),
       title = list(
+        align = "high",
+        x = 0,
+        y = 6,
         style = list(
           color = colors[["p13-gray-05"]],
           fontWeight = "700"
@@ -138,6 +151,10 @@ hc_theme_chanwe <- function(add_logo = TRUE,
       tickColor = colors[["brand-beige-soft"]],
       labels = list(style = list(color = colors[["p13-gray-06"]])),
       title = list(
+        align = "high",
+        rotation = 270,
+        x = -6,
+        y = 10,
         style = list(
           color = colors[["p13-gray-05"]],
           fontWeight = "700"

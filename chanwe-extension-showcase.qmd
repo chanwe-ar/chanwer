@@ -123,7 +123,7 @@ ggplot(mt, aes(wt, mpg, color = cyl)) +
     scale_color_chanwe_d() +
     theme_chanwe() +
     labs(
-        title = "Quick Look",
+        title = chanwe_title("Quick Look"),
         subtitle = chanwe_subtitle("Performance profile by cylinder")
     )
 ```
@@ -147,7 +147,10 @@ ggplot(mt, aes(hp, mpg, color = am)) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.8) +
     scale_color_chanwe_d() +
     theme_chanwe() +
-    labs(title = "Model View", subtitle = chanwe_subtitle("Regression trend"))
+    labs(
+        title = chanwe_title("Model View"),
+        subtitle = chanwe_subtitle("Regression trend")
+    )
 
 gt(head(mt, 10)) |>
     tab_header(title = "Operational Snapshot") |>
@@ -272,7 +275,7 @@ ggplot(mt, aes(wt, mpg, color = cyl)) +
     scale_color_chanwe_d() +
     theme_chanwe() +
     labs(
-        title = "MPG vs Weight",
+        title = chanwe_title("MPG vs Weight"),
         subtitle = "Colored by cylinders",
         caption = "Source: mtcars"
     )
@@ -288,7 +291,7 @@ ggplot(mt, aes(hp, mpg, color = am)) +
     scale_color_chanwe_d() +
     theme_chanwe() +
     labs(
-        title = "Horsepower vs MPG",
+        title = chanwe_title("Horsepower vs MPG"),
         subtitle = "Linear trend by transmission",
         caption = "Source: mtcars"
     )
@@ -303,7 +306,7 @@ ggplot(mt, aes(cyl, mpg, fill = cyl)) +
     scale_fill_chanwe_d() +
     theme_chanwe() +
     labs(
-        title = "MPG Distribution",
+        title = chanwe_title("MPG Distribution"),
         subtitle = "By cylinder group",
         caption = "Source: mtcars"
     )
@@ -319,7 +322,7 @@ ggplot(mt, aes(cyl, qsec, fill = cyl)) +
     scale_fill_chanwe_d() +
     theme_chanwe() +
     labs(
-        title = "Quarter Mile Time",
+        title = chanwe_title("Quarter Mile Time"),
         subtitle = "Violin with observations",
         caption = "Source: mtcars"
     )
@@ -334,7 +337,7 @@ ggplot(mt_summary, aes(cyl, mpg, fill = cyl)) +
     scale_fill_chanwe_d() +
     theme_chanwe() +
     labs(
-        title = "Average MPG",
+        title = chanwe_title("Average MPG"),
         subtitle = "Grouped by cylinders",
         caption = "Source: mtcars"
     )
@@ -348,7 +351,7 @@ ggplot(econ, aes(date, unemploy / 1000)) +
     geom_line(color = chanwe_palette("chart")[1], linewidth = 0.9) +
     theme_chanwe() +
     labs(
-        title = "US Unemployment",
+        title = chanwe_title("US Unemployment"),
         subtitle = "Economics dataset",
         y = "Thousands",
         caption = "Source: ggplot2::economics"
@@ -364,7 +367,7 @@ ggplot(mt, aes(mpg, fill = cyl)) +
     scale_fill_chanwe_d() +
     theme_chanwe() +
     labs(
-        title = "Density of MPG",
+        title = chanwe_title("Density of MPG"),
         subtitle = "By cylinders",
         caption = "Source: mtcars"
     )
@@ -380,7 +383,7 @@ ggplot(mt, aes(disp, mpg, color = hp_band6)) +
     scale_color_chanwe_d() +
     theme_chanwe() +
     labs(
-        title = "Displacement vs MPG",
+        title = chanwe_title("Displacement vs MPG"),
         subtitle = "Six-category palette (HP bands)",
         caption = "Source: mtcars"
     )
@@ -395,7 +398,7 @@ ggplot(mt, aes(wt, mpg, color = hp)) +
     scale_color_chanwe_c() +
     theme_chanwe() +
     labs(
-        title = "Continuous ChanWe Gradient",
+        title = chanwe_title("Continuous ChanWe Gradient"),
         subtitle = "HP encoded as color",
         caption = "Source: mtcars"
     )
@@ -419,7 +422,7 @@ ggplot(econ_heat, aes(month, year, fill = unemploy)) +
     scale_x_continuous(breaks = 1:12, labels = month.abb) +
     theme_chanwe() +
     labs(
-        title = "Continuous Fill Gradient",
+        title = chanwe_title("Continuous Fill Gradient"),
         subtitle = "Unemployment intensity heatmap",
         caption = "Source: ggplot2::economics",
         x = "Month",

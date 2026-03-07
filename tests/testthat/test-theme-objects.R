@@ -1,21 +1,11 @@
 test_that("theme_chanwe returns a complete ggplot theme", {
-  th <- theme_chanwe(add_logo = FALSE)
+  th <- theme_chanwe()
   th_custom <- theme_chanwe(
     base_text_size = 11,
-    legend_position = "bottom",
-    add_logo = FALSE
+    legend_position = "bottom"
   )
-  th_logo <- theme_chanwe()
 
   expect_s3_class(th, "theme")
-  if (requireNamespace("ggtext", quietly = TRUE)) {
-    expect_true(is.list(th_logo))
-    expect_s3_class(th_logo[[1]], "theme")
-    expect_true(is.character(th_logo[[2]]$tag))
-    expect_true(grepl("img", th_logo[[2]]$tag))
-  } else {
-    expect_s3_class(th_logo, "theme")
-  }
   expect_identical(th$plot.title$face, "bold")
   expect_identical(th$plot.title$hjust, 0)
   expect_identical(th$plot.subtitle$hjust, 0)
@@ -83,14 +73,22 @@ test_that("highcharter helper returns hc theme", {
   expect_identical(theme$chart$style$fontFamily, "DM Sans")
   expect_identical(theme$chart$borderRadius, 4)
   expect_identical(theme$chart$backgroundColor, "#F7F7F7")
-  expect_identical(theme$chart$spacingTop, 28)
-  expect_identical(theme$chart$spacingRight, 26)
+  expect_identical(theme$chart$spacingTop, 62)
+  expect_identical(theme$chart$spacingRight, 30)
+  expect_identical(theme$title$margin, 24)
+  expect_identical(theme$subtitle$y, 32)
   expect_false(is.null(theme$chart$events$load))
   expect_true(is.null(theme_no_logo$chart$events$load))
   expect_identical(theme$xAxis$gridLineWidth, 1)
+  expect_identical(theme$xAxis$title$align, "high")
+  expect_identical(theme$xAxis$title$x, 0)
   expect_identical(theme$xAxis$title$style$fontWeight, "700")
+  expect_identical(theme$yAxis$title$align, "high")
+  expect_identical(theme$yAxis$title$rotation, 270)
   expect_identical(theme$yAxis$title$style$fontWeight, "700")
   expect_identical(theme$xAxis$labels$style$color, "#6D6D6D")
   expect_identical(theme$yAxis$labels$style$color, "#6D6D6D")
+  expect_identical(theme$caption$align, "right")
+  expect_identical(theme$caption$style$color, "#A5A5A5")
   expect_identical(theme$plotOptions$series$dataLabels$style$color, "#6D6D6D")
 })

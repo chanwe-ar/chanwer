@@ -2,9 +2,9 @@
 % Please edit documentation in R/ggplot2-theme.R
 \name{chanwe_subtitle}
 \alias{chanwe_subtitle}
-\title{ChanWe Subtitle Helper with Orange Accent Rule}
+\title{ChanWe Subtitle Helper with Subtle Separator Rule}
 \usage{
-chanwe_subtitle(text, rule = "███")
+chanwe_subtitle(text, rule = "────")
 }
 \arguments{
 \item{text}{Subtitle text.}
@@ -15,7 +15,7 @@ chanwe_subtitle(text, rule = "███")
 A markdown string for use inside \code{labs(subtitle = ...)}.
 }
 \description{
-Creates a subtitle string with a short, thick orange accent line on the
+Creates a subtitle string with a short, subtle light-gray separator line on the
 next line. The accent is rendered when used with \code{theme_chanwe()} and
 the \code{ggtext} package is installed.
 }

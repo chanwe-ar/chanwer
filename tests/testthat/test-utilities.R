@@ -15,6 +15,22 @@ test_that("chanwe_subtitle builds markdown accent string", {
   txt <- chanwe_subtitle("Performance update")
 
   expect_match(txt, "Performance update")
-  expect_match(txt, "<span")
-  expect_match(txt, "#E94B2B")
+  if (requireNamespace("ggtext", quietly = TRUE)) {
+    expect_match(txt, "<span")
+    expect_match(txt, "#F7F7F7")
+  } else {
+    expect_false(grepl("<span|<br>", txt))
+    expect_identical(txt, "Performance update")
+  }
+})
+
+test_that("chanwe_title builds image-prefixed title string", {
+  txt <- chanwe_title("Performance overview")
+
+  if (requireNamespace("ggtext", quietly = TRUE)) {
+    expect_match(txt, "<img")
+    expect_match(txt, "Performance overview")
+  } else {
+    expect_identical(txt, "Performance overview")
+  }
 })

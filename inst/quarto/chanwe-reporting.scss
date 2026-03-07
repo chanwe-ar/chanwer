@@ -89,6 +89,25 @@ table,
   border-radius: var(--chanwe-radius);
 }
 
+/* Reactable pagination state */
+.reactable .rt-page-button-current {
+  background-color: var(--chanwe-primary) !important;
+  color: var(--chanwe-white) !important;
+  font-weight: 700 !important;
+  border: 1px solid var(--chanwe-primary) !important;
+}
+
+.reactable .rt-th,
+.reactable .rt-th-group,
+.reactable .rt-th-group-none {
+  background-color: #FFFFFF !important;
+}
+
+.reactable .rt-th-inner {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
 figcaption,
 .table-caption,
 .caption,
