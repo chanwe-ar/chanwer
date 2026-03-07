@@ -8,7 +8,7 @@ chanwe_require_package <- function(pkg) {
 }
 
 chanwe_logo_path <- function(filename = "Logo_Color1.png") {
-  installed <- system.file("assets", filename, package = "chanwer")
+  installed <- system.file(file.path("assets", filename), package = "chanwer")
   if (nzchar(installed) && file.exists(installed)) {
     return(installed)
   }

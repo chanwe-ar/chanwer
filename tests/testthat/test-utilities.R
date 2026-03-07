@@ -25,14 +25,32 @@ test_that("chanwe_subtitle builds markdown accent string", {
 })
 
 test_that("chanwe_title builds image-prefixed title string", {
-  txt <- chanwe_title("Performance overview")
+  skip_if_not_installed("ggtext")
 
-  if (requireNamespace("ggtext", quietly = TRUE)) {
-    expect_match(txt, "<img")
-    expect_match(txt, "Performance overview")
-    expect_match(txt, "src='")
-    expect_match(txt, "data:image/png;base64", fixed = TRUE)
+  txt <- chanwe_title("Performance overview")
+  bundled <- system.file("assets", "Estrategia_Color1.png", package = "chanwer")
+
+  expect_match(txt, "<img")
+  expect_match(txt, "Performance overview")
+  expect_match(txt, "src='")
+  src <- sub("^.*<img src='([^']+)'.*$", "\\1", txt)
+  expect_true(nzchar(src))
+  expect_identical(normalizePath(src, winslash = "/", mustWork = TRUE), normalizePath(bundled, winslash = "/", mustWork = TRUE))
+  if (startsWith(src, "data:")) {
+    expect_match(src, "data:image/", fixed = TRUE)
   } else {
-    expect_identical(txt, "Performance overview")
+    expect_true(file.exists(src))
+    expect_match(src, "\\.png$")
   }
+})
+
+test_that("chanwe_title errors when marker_path is missing", {
+  skip_if_not_installed("ggtext")
+  missing_marker <- "DOES_NOT_EXIST_chanwer_marker.png"
+  unlink(missing_marker, force = TRUE)
+
+  expect_snapshot(
+    error = TRUE,
+    chanwe_title("Performance overview", marker_path = missing_marker)
+  )
 })

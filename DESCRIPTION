@@ -19,10 +19,10 @@ BugReports: https://github.com/chanwe/chanweThemes/issues
 Depends: 
     R (>= 4.2.0)
 Imports:
+    ggtext,
     ggplot2,
     grDevices
 Suggests:
-    ggtext,
     gt,
     highcharter,
     knitr,

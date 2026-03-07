@@ -15,17 +15,17 @@ mt <- mt |>
 cars_tbl <- mt
 
 # 1) ggplot2
-# plot_gg <- ggplot(cars_tbl, aes(wt, mpg, color = factor(cyl))) +
-#   geom_point(size = 3, alpha = 0.9) +
-#   scale_color_chanwe_d() +
-#   labs(
-#     title = chanwe_title("GGPlot Example"),
-#     subtitle = chanwe_subtitle("ChanWe style", rule = "----"),
-#     caption = "Source: mtcars"
-#   ) +
-#   theme_chanwe()
+plot_gg <- ggplot(cars_tbl, aes(wt, mpg, color = factor(cyl))) +
+  geom_point(size = 3, alpha = 0.9) +
+  scale_color_chanwe_d() +
+  labs(
+    title = chanwe_title("GGPlot Example"),
+    subtitle = chanwe_subtitle("ChanWe style", rule = "----"),
+    caption = "Source: mtcars"
+  ) +
+  theme_chanwe()
 
-# print(plot_gg)
+print(plot_gg)
 
 # 2) highcharter
 plot_hc <- highcharter::hchart(

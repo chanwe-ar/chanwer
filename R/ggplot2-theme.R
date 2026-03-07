@@ -28,16 +28,16 @@ chanwe_discrete_pal <- function() {
 #'     theme_chanwe(base_text_size = 12, legend_position = "bottom")
 #' }
 theme_chanwe <- function(
-  base_text_size = 12.5,
+  base_text_size = 9.5,
   base_family = "DM Sans",
-  base_lineheight = 1.62,
+  base_lineheight = 1.60,
   legend_position = "bottom"
 ) {
   colors <- chanwe_get_colors()
   title_element <- ggplot2::element_text(
     color = colors[["brand-black"]],
     face = "bold",
-    size = base_text_size * 1.35,
+    size = base_text_size * 1.25,
     hjust = 0,
     lineheight = 1.15,
     margin = ggplot2::margin(b = 2)
@@ -194,24 +194,38 @@ chanwe_title <- function(
   marker_width_px = NULL,
   marker_scale = 0.02
 ) {
-  warned_opt <- "chanwer.warned_missing_ggtext_title"
-  if (!requireNamespace("ggtext", quietly = TRUE)) {
-    if (!isTRUE(getOption(warned_opt))) {
-      warning(
-        "chanwe_title(): install package 'ggtext' to render the title marker image.",
-        call. = FALSE
-      )
-      options(structure(list(TRUE), names = warned_opt))
-    }
-    return(text)
-  }
+  chanwe_require_package("ggtext")
 
   if (is.null(marker_path)) {
-    marker_path <- chanwe_logo_path("Estrategia_Color1.png")
+    marker_path <- system.file(
+      "assets/Estrategia_Color1.png",
+      package = "chanwer"
+    )
+    if (!nzchar(marker_path) || !file.exists(marker_path)) {
+      stop(
+        "chanwe_title(): bundled marker asset 'assets/Estrategia_Color1.png' was not found in installed package 'chanwer'. Reinstall the package.",
+        call. = FALSE
+      )
+    }
   }
-  marker_src <- chanwe_logo_src(marker_path, embed = TRUE)
+  if (!file.exists(marker_path)) {
+    stop(
+      sprintf(
+        "chanwe_title(): marker_path does not exist: %s",
+        marker_path
+      ),
+      call. = FALSE
+    )
+  }
+  marker_src <- chanwe_logo_src(marker_path, embed = FALSE)
   if (!nzchar(marker_src)) {
-    return(text)
+    stop(
+      sprintf(
+        "chanwe_title(): unable to resolve marker source from path: %s",
+        marker_path
+      ),
+      call. = FALSE
+    )
   }
   if (is.null(marker_width_px)) {
     dims <- chanwe_png_dims(marker_path)
