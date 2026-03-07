@@ -28,7 +28,7 @@ chanwe_discrete_pal <- function() {
 #'     theme_chanwe(base_text_size = 12, legend_position = "bottom")
 #' }
 theme_chanwe <- function(
-  base_text_size = 9.5,
+  base_text_size = 8.5,
   base_family = "DM Sans",
   base_lineheight = 1.60,
   legend_position = "bottom"
