@@ -197,18 +197,23 @@ chanwe_title <- function(
   chanwe_require_package("ggtext")
 
   if (is.null(marker_path)) {
-    marker_path <- system.file(
-      "assets/Estrategia_Color1.png",
-      package = "chanwer"
+    marker_path <- tryCatch(
+      system.file(
+        "assets",
+        "Estrategia_Color1.png",
+        package = "chanwer",
+        mustWork = TRUE
+      ),
+      error = function(...) {
+        stop(
+          "chanwe_title(): bundled marker asset 'assets/Estrategia_Color1.png' was not found in installed package 'chanwer'. Reinstall the package.",
+          call. = FALSE
+        )
+      }
     )
-    if (!nzchar(marker_path) || !file.exists(marker_path)) {
-      stop(
-        "chanwe_title(): bundled marker asset 'assets/Estrategia_Color1.png' was not found in installed package 'chanwer'. Reinstall the package.",
-        call. = FALSE
-      )
-    }
   }
-  if (!file.exists(marker_path)) {
+  marker_path <- normalizePath(marker_path, winslash = "/", mustWork = FALSE)
+  if (!nzchar(marker_path) || !file.exists(marker_path)) {
     stop(
       sprintf(
         "chanwe_title(): marker_path does not exist: %s",
