@@ -47,8 +47,8 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
     gt::tab_options(
       table.background.color = colors[["brand-pure-white"]],
       table.font.color = colors[["p13-gray-06"]],
-      table.border.top.color = colors[["p13-gray-08"]],
-      table.border.top.width = gt::px(0.8),
+      table.border.top.color = colors[["brand-beige-soft"]],
+      table.border.top.width = gt::px(0.6),
       table.border.bottom.color = colors[["brand-beige-soft"]],
       table.border.bottom.width = gt::px(1),
       heading.background.color = colors[["brand-pure-white"]],
@@ -63,8 +63,8 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
       column_labels.font.weight = "800",
       column_labels.font.size = gt::px(14.5),
       column_labels.padding = density$column_labels_padding,
-      column_labels.border.top.color = colors[["p13-gray-08"]],
-      column_labels.border.top.width = gt::px(0.8),
+      column_labels.border.top.color = colors[["brand-beige-soft"]],
+      column_labels.border.top.width = gt::px(0.6),
       column_labels.border.bottom.color = colors[["brand-black"]],
       column_labels.border.bottom.width = gt::px(2),
       table_body.hlines.color = colors[["brand-beige-soft"]],
@@ -97,7 +97,7 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["brand-orange"]],
+        color = colors[["brand-black"]],
         weight = "800",
         size = gt::px(14.5)
       ),
@@ -116,6 +116,13 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
     ) |>
     gt::tab_style(
       style = gt::cell_text(
+        color = colors[["p13-gray-03"]],
+        weight = "700"
+      ),
+      locations = gt::cells_stub(rows = gt::everything())
+    ) |>
+    gt::tab_style(
+      style = gt::cell_text(
         color = colors[["p13-gray-07"]],
         size = gt::px(11)
       ),
@@ -131,10 +138,11 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
     gt::opt_css(
       css = sprintf(
         ".gt_table { border-radius: 4px; box-shadow: none; }
-         .gt_heading { border-left: 4px solid %s; padding-left: 10px; }
+         .gt_heading { border-top: 0.6px solid %s; border-left: 4px solid %s; padding-left: 10px; }
          .gt_caption { color: %s; font-size: 12px; }
          .gt_row { line-height: 1.6; color: %s; font-weight: 500; background: transparent !important; }
          .gt_row td { background: transparent !important; border-bottom: 0.6px solid %s; }",
+        colors[["brand-beige-soft"]],
         colors[["brand-orange"]],
         colors[["p13-gray-07"]],
         colors[["p13-gray-06"]],
