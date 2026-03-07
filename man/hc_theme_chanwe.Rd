@@ -4,15 +4,17 @@
 \alias{hc_theme_chanwe}
 \title{ChanWe Theme for highcharter}
 \usage{
-hc_theme_chanwe(add_logo = TRUE, logo_width_px = 56, logo_height_px = 22)
+hc_theme_chanwe(add_logo = TRUE, logo_width_px = NULL, logo_height_px = NULL)
 }
 \arguments{
 \item{add_logo}{Logical. If \code{TRUE}, adds the gray ChanWe logo at the
 top-right of the chart area.}
 
-\item{logo_width_px}{Width of the logo in pixels.}
+\item{logo_width_px}{Optional logo width in pixels. Use \code{NULL} (default)
+to keep the image's native width.}
 
-\item{logo_height_px}{Height of the logo in pixels.}
+\item{logo_height_px}{Optional logo height in pixels. Use \code{NULL} (default)
+to keep the image's native height.}
 }
 \value{
 A highcharter theme object suitable for

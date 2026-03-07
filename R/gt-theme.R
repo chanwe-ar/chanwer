@@ -39,7 +39,7 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
   gt::opt_table_font(
     data = data,
     font = list(gt::google_font("DM Sans"), gt::default_fonts()),
-    size = gt::px(14.5),
+    size = gt::px(14),
     color = colors[["p13-gray-06"]],
     weight = 500,
     style = "normal"
@@ -47,8 +47,8 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
     gt::tab_options(
       table.background.color = colors[["brand-pure-white"]],
       table.font.color = colors[["p13-gray-06"]],
-      table.border.top.color = colors[["brand-beige-soft"]],
-      table.border.top.width = gt::px(1),
+      table.border.top.color = colors[["p13-gray-08"]],
+      table.border.top.width = gt::px(0.8),
       table.border.bottom.color = colors[["brand-beige-soft"]],
       table.border.bottom.width = gt::px(1),
       heading.background.color = colors[["brand-pure-white"]],
@@ -61,10 +61,12 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
       heading.border.bottom.width = gt::px(2),
       column_labels.background.color = colors[["brand-pure-white"]],
       column_labels.font.weight = "800",
-      column_labels.font.size = gt::px(13),
+      column_labels.font.size = gt::px(14.5),
       column_labels.padding = density$column_labels_padding,
-      column_labels.border.top.color = colors[["brand-beige-soft"]],
-      column_labels.border.bottom.color = colors[["brand-beige-soft"]],
+      column_labels.border.top.color = colors[["p13-gray-08"]],
+      column_labels.border.top.width = gt::px(0.8),
+      column_labels.border.bottom.color = colors[["brand-black"]],
+      column_labels.border.bottom.width = gt::px(2),
       table_body.hlines.color = colors[["brand-beige-soft"]],
       table_body.hlines.width = gt::px(0.6),
       table_body.vlines.color = colors[["brand-beige-soft"]],
@@ -97,7 +99,7 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
       style = gt::cell_text(
         color = colors[["brand-orange"]],
         weight = "800",
-        size = gt::px(13)
+        size = gt::px(14.5)
       ),
       locations = gt::cells_column_labels()
     ) |>
@@ -106,7 +108,7 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
         gt::cell_text(
           color = colors[["p13-gray-06"]],
           weight = "500",
-          size = gt::px(14.5)
+          size = gt::px(14)
         ),
         gt::cell_fill(color = "transparent")
       ),

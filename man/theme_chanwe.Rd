@@ -10,7 +10,6 @@ theme_chanwe(
   base_lineheight = 1.62,
   legend_position = "bottom",
   add_logo = TRUE,
-  logo_text = "ChanWe",
   logo_path = NULL,
   logo_width_px = 52
 )
@@ -27,16 +26,15 @@ theme_chanwe(
 \item{add_logo}{Logical. If \code{TRUE}, adds a small orange ChanWe mark in the
 top-right of the plot area.}
 
-\item{logo_text}{Text used if image-logo rendering is unavailable.}
-
 \item{logo_path}{Optional path to a logo image file. By default, the ChanWe
-\code{Logo_Color.png} bundled in package assets is used.}
+\code{Logo_Color1.png} bundled in package assets is used.}
 
 \item{logo_width_px}{Width of the logo in pixels.}
 }
 \value{
 A ggplot2 theme object when \code{add_logo = FALSE}; otherwise a list of
-ggplot components (theme + logo tag components).
+ggplot components (theme + logo tag components) when image rendering is
+available.
 }
 \description{
 A clean editorial ggplot2 theme with ChanWe typography, neutral paper,

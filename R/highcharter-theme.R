@@ -4,8 +4,10 @@
 #'
 #' @param add_logo Logical. If `TRUE`, adds the gray ChanWe logo at the
 #'   top-right of the chart area.
-#' @param logo_width_px Width of the logo in pixels.
-#' @param logo_height_px Height of the logo in pixels.
+#' @param logo_width_px Optional logo width in pixels. Use `NULL` (default)
+#'   to keep the image's native width.
+#' @param logo_height_px Optional logo height in pixels. Use `NULL` (default)
+#'   to keep the image's native height.
 #'
 #' @return A highcharter theme object suitable for
 #'   [highcharter::hc_add_theme()].
@@ -21,28 +23,67 @@
 #'     highcharter::hc_add_theme(hc_theme_chanwe())
 #' }
 hc_theme_chanwe <- function(add_logo = TRUE,
-                            logo_width_px = 56,
-                            logo_height_px = 22) {
+                            logo_width_px = NULL,
+                            logo_height_px = NULL) {
   chanwe_require_package("highcharter")
 
   colors <- chanwe_get_colors()
   logo_event <- NULL
 
   if (isTRUE(add_logo)) {
-    logo_path <- chanwe_logo_path("Logo_Negro.png")
+    logo_path <- chanwe_logo_path("Logo_Beige1.png")
     logo_src <- chanwe_logo_src(logo_path)
 
     if (nzchar(logo_src)) {
+      logo_width_js <- if (is.null(logo_width_px)) {
+        "null"
+      } else {
+        as.character(as.integer(logo_width_px))
+      }
+      logo_height_js <- if (is.null(logo_height_px)) {
+        "null"
+      } else {
+        as.character(as.integer(logo_height_px))
+      }
+
       logo_event <- highcharter::JS(sprintf(
         "function(){
-           if(!this.chanweLogo){
-             this.chanweLogo = this.renderer.image('%s', this.chartWidth - %d, 10, %d, %d).add();
+           var chart = this;
+           var pad = 12;
+           var top = 10;
+           var targetW = %s;
+           var targetH = %s;
+           var src = '%s';
+           var placeLogo = function(iw, ih) {
+             var w = (targetW !== null ? targetW : iw);
+             var h = (targetH !== null ? targetH : ih);
+             if (!(w > 0 && h > 0)) return;
+             if (!chart.chanweLogo) {
+               chart.chanweLogo = chart.renderer.image(src, 0, 0, w, h).add();
+             } else {
+               chart.chanweLogo.attr({ width: w, height: h });
+             }
+             chart.chanweLogo.attr({ x: chart.chartWidth - w - pad, y: top });
+           };
+           var probe = new window.Image();
+           var drawWithProbe = function() {
+             var iw = probe.width || 0;
+             var ih = probe.height || 0;
+             if (chart.chanweLogo) {
+               iw = iw || chart.chanweLogo.attr('width') || 0;
+               ih = ih || chart.chanweLogo.attr('height') || 0;
+             }
+             placeLogo(iw, ih);
+           };
+           probe.onload = drawWithProbe;
+           probe.src = src;
+           if (probe.complete) {
+             drawWithProbe();
            }
          }",
-        logo_src,
-        as.integer(logo_width_px + 12),
-        as.integer(logo_width_px),
-        as.integer(logo_height_px)
+        logo_width_js,
+        logo_height_js,
+        logo_src
       ))
     }
   }
@@ -62,7 +103,7 @@ hc_theme_chanwe <- function(add_logo = TRUE,
       spacingRight = 26,
       spacingBottom = 24,
       spacingLeft = 26,
-      events = list(load = logo_event),
+      events = list(load = logo_event, redraw = logo_event),
       shadow = FALSE
     ),
     title = list(

@@ -7,7 +7,7 @@ chanwe_discrete_pal <- function() {
   }
 }
 
-chanwe_logo_path <- function(filename = "Logo_Color.png") {
+chanwe_logo_path <- function(filename = "Logo_Color1.png") {
   installed <- system.file("assets", filename, package = "chanwer")
   if (nzchar(installed) && file.exists(installed)) {
     return(installed)
@@ -51,13 +51,13 @@ chanwe_logo_src <- function(path) {
 #' @param legend_position Legend position passed to `theme(legend.position = )`.
 #' @param add_logo Logical. If `TRUE`, adds a small orange ChanWe mark in the
 #'   top-right of the plot area.
-#' @param logo_text Text used if image-logo rendering is unavailable.
 #' @param logo_path Optional path to a logo image file. By default, the ChanWe
-#'   `Logo_Color.png` bundled in package assets is used.
+#'   `Logo_Color1.png` bundled in package assets is used.
 #' @param logo_width_px Width of the logo in pixels.
 #'
 #' @return A ggplot2 theme object when `add_logo = FALSE`; otherwise a list of
-#'   ggplot components (theme + logo tag components).
+#'   ggplot components (theme + logo tag components) when image rendering is
+#'   available.
 #' @export
 #'
 #' @examples
@@ -72,7 +72,6 @@ theme_chanwe <- function(base_text_size = 12.5,
                          base_lineheight = 1.62,
                          legend_position = "bottom",
                          add_logo = TRUE,
-                         logo_text = "ChanWe",
                          logo_path = NULL,
                          logo_width_px = 52) {
   colors <- chanwe_get_colors()
@@ -199,41 +198,26 @@ theme_chanwe <- function(base_text_size = 12.5,
     return(theme_obj)
   }
 
-  if (requireNamespace("ggtext", quietly = TRUE)) {
-    if (is.null(logo_path)) {
-      logo_path <- chanwe_logo_path()
-    }
-    logo_src <- chanwe_logo_src(logo_path)
-
-    if (nzchar(logo_src)) {
-      tag_label <- paste0(
-        "<img src='", logo_src, "' style='width:", as.integer(logo_width_px),
-        "px;height:auto;'/>"
-      )
-    } else {
-      tag_label <- paste0(
-        "<span style='color:", colors[["brand-orange"]],
-        ";font-weight:900;'>", logo_text, "</span>"
-      )
-    }
-
-    tag_element <- ggtext::element_markdown(
-      family = base_family,
-      size = base_text_size * 0.78,
-      hjust = 1,
-      vjust = 1
-    )
-  } else {
-    tag_label <- logo_text
-    tag_element <- ggplot2::element_text(
-      family = base_family,
-      face = "bold",
-      color = colors[["brand-orange"]],
-      size = base_text_size * 0.78,
-      hjust = 1,
-      vjust = 1
-    )
+  if (is.null(logo_path)) {
+    logo_path <- chanwe_logo_path()
   }
+  logo_src <- chanwe_logo_src(logo_path)
+
+  if (!requireNamespace("ggtext", quietly = TRUE) || !nzchar(logo_src)) {
+    return(theme_obj)
+  }
+
+  tag_label <- paste0(
+    "<img src='", logo_src, "' style='width:", as.integer(logo_width_px),
+    "px;height:auto;'/>"
+  )
+
+  tag_element <- ggtext::element_markdown(
+    family = base_family,
+    size = base_text_size * 0.78,
+    hjust = 1,
+    vjust = 1
+  )
 
   list(
     theme_obj,

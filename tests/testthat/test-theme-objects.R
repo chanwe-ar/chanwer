@@ -8,10 +8,14 @@ test_that("theme_chanwe returns a complete ggplot theme", {
   th_logo <- theme_chanwe()
 
   expect_s3_class(th, "theme")
-  expect_true(is.list(th_logo))
-  expect_s3_class(th_logo[[1]], "theme")
-  expect_true(is.character(th_logo[[2]]$tag))
-  expect_true(grepl("img|ChanWe", th_logo[[2]]$tag))
+  if (requireNamespace("ggtext", quietly = TRUE)) {
+    expect_true(is.list(th_logo))
+    expect_s3_class(th_logo[[1]], "theme")
+    expect_true(is.character(th_logo[[2]]$tag))
+    expect_true(grepl("img", th_logo[[2]]$tag))
+  } else {
+    expect_s3_class(th_logo, "theme")
+  }
   expect_identical(th$plot.title$face, "bold")
   expect_identical(th$plot.title$hjust, 0)
   expect_identical(th$plot.subtitle$hjust, 0)
