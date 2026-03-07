@@ -17,8 +17,8 @@ test_that("theme_chanwe returns a complete ggplot theme", {
   expect_identical(th_custom$legend.position, "bottom")
   expect_equal(th_custom$axis.title$size, 8.58)
   expect_equal(th_custom$axis.text$size, 7.04)
-  expect_equal(th$plot.margin[[1]], 22)
-  expect_equal(th$plot.margin[[2]], 22)
+  expect_equal(as.numeric(th$plot.margin)[1], 22)
+  expect_equal(as.numeric(th$plot.margin)[2], 22)
 })
 
 test_that("chanwe ggplot scales are constructed", {

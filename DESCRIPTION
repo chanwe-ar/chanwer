@@ -1,8 +1,8 @@
-Package: chanweThemes
+Package: chanwer
 Title: ChanWe Visual Themes for Quarto Workflows
 Version: 0.1.0
 Authors@R: 
-    person(given = "ChanWe",
+    person(given = "Chanwe",
            family = "Team",
            role = c("aut", "cre"),
            email = "team@chanwe.example")

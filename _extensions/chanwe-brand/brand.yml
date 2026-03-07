@@ -140,9 +140,9 @@ defaults:
         color: #FFFFFF !important;
         position: relative;
         overflow: hidden;
-        min-height: 250px;
-        padding-top: 2.7rem;
-        padding-bottom: 2.6rem;
+        min-height: 0;
+        padding-top: 3.3rem;
+        padding-bottom: 3.3rem;
       }
 
       .quarto-title-banner::after {
@@ -167,7 +167,7 @@ defaults:
       }
 
       .quarto-title-banner .quarto-title,
-      .quarto-title-banner .quarto-title-meta,
+      .quarto-title-block .quarto-title-meta,
       .quarto-title-banner .subtitle,
       .quarto-title-banner .title {
         text-align: center !important;
@@ -176,14 +176,124 @@ defaults:
         color: #FFFFFF !important;
       }
 
+      .quarto-title-block .quarto-title-meta {
+        background: #101010;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: clamp(0.8rem, 2vw, 1.8rem);
+        width: 100%;
+        margin: 0;
+        padding: 0.6rem 0 0;
+        border: 0;
+      }
+
+      .quarto-title-block .quarto-title-meta-heading {
+        display: none;
+      }
+
+      #title-block-header .keywords {
+        display: none !important;
+      }
+
+      .quarto-title-block .quarto-title-meta-contents {
+        padding-bottom: 0;
+        font-size: 0.69rem;
+        font-weight: 400;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        opacity: 0.9;
+      }
+
       .quarto-title-banner .quarto-title {
-        max-width: min(860px, 64vw);
+        max-width: min(1760px, 95vw);
         margin-left: auto;
         margin-right: auto;
+        margin-top: clamp(1rem, 1.7vw, 2rem);
+        margin-bottom: clamp(1rem, 1.7vw, 2rem);
+        border: 1px solid #FFFFFF;
+        border-radius: 0;
+        padding: clamp(2.8rem, 4.4vw, 4.4rem) clamp(4.2rem, 10vw, 11rem);
+      }
+
+      .quarto-title-banner .quarto-title .chanwe-banner-bottom {
+        margin-top: 0.9rem;
+        margin-bottom: 0.8rem;
+      }
+
+      .quarto-title-banner .quarto-title .chanwe-keywords {
+        margin-top: 0.85rem;
+        padding-top: 1rem;
       }
 
       .quarto-title-banner .quarto-categories {
+        display: flex;
+        flex-wrap: wrap;
         justify-content: center !important;
+        gap: 0.45rem;
+        margin-top: 0.95rem;
+        margin-bottom: 0.55rem;
+      }
+
+      .quarto-title-banner .quarto-title > .quarto-categories .quarto-category,
+      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category {
+        background: #E5E5E5;
+        color: #101010 !important;
+        border: 0 !important;
+        outline: none !important;
+        box-shadow: none !important;
+        border-radius: 0.4rem;
+        font-size: 0.72rem;
+        line-height: 1.2;
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 0.24rem 0.65rem;
+        text-decoration: none !important;
+      }
+
+      .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(1),
+      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(1) {
+        background: #E94B2B;
+        color: #FFFFFF !important;
+      }
+
+      .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(2),
+      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(2) {
+        background: #E5E5E5;
+        color: #101010 !important;
+      }
+
+      .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:hover,
+      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:hover {
+        border: 0 !important;
+        outline: none !important;
+        box-shadow: none !important;
+        filter: brightness(0.98);
+      }
+
+      .quarto-title-banner .quarto-title .chanwe-keyword-pills {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center !important;
+        gap: 0.45rem;
+        margin: 0;
+      }
+
+      .quarto-title-banner .quarto-title .chanwe-keyword-pills .quarto-category {
+        background: transparent !important;
+        color: #FFFFFF !important;
+        border: 1px solid rgba(255, 255, 255, 0.78) !important;
+        outline: none !important;
+        box-shadow: none !important;
+        border-radius: 0.4rem;
+        font-size: 0.68rem;
+        line-height: 1.2;
+        font-weight: 400;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 0.2rem 0.62rem;
+        text-decoration: none !important;
       }
 
       .quarto-title-banner .quarto-title .title::before {
@@ -197,21 +307,24 @@ defaults:
 
       .quarto-title-banner .subtitle {
         font-size: 0.94rem;
-        font-weight: 300 !important;
+        font-weight: 200 !important;
         opacity: 0.88;
       }
 
       @media (max-width: 980px) {
         .quarto-title-banner {
           min-height: 0;
-          padding-top: 1.9rem;
-          padding-bottom: 1.9rem;
+          padding-top: 2.35rem;
+          padding-bottom: 2.35rem;
         }
         .quarto-title-banner::after {
           display: none;
         }
         .quarto-title-banner .quarto-title {
           max-width: 100%;
+          margin-top: 0.65rem;
+          margin-bottom: 0.65rem;
+          padding: 2rem 1.75rem;
         }
         .quarto-title-banner .quarto-title .title::before {
           width: min(220px, 72vw);
@@ -220,6 +333,47 @@ defaults:
         }
         .quarto-title-banner .subtitle {
           font-size: 0.88rem;
+        }
+        .quarto-title-banner .quarto-categories {
+          margin-top: 0.75rem;
+          margin-bottom: 0.4rem;
+        }
+        .quarto-title-banner .quarto-title > .quarto-categories .quarto-category,
+        .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category {
+          font-size: 0.68rem;
+          padding: 0.2rem 0.56rem;
+        }
+        .quarto-title-block .quarto-title-meta {
+          flex-direction: column;
+          gap: 0.45rem;
+          margin: 0;
+          padding: 0.5rem 0 0;
+        }
+        .quarto-title-block .quarto-title-meta-contents {
+          padding-bottom: 0;
+        }
+        .quarto-title-banner .quarto-title .chanwe-keywords {
+          margin-top: 0.7rem;
+          padding-top: 0.85rem;
+        }
+        .quarto-title-banner .quarto-title .chanwe-banner-bottom {
+          margin-top: 0.7rem;
+          margin-bottom: 0.5rem;
+        }
+        .quarto-title-banner .quarto-title .chanwe-keyword-pills .quarto-category {
+          font-size: 0.62rem;
+          padding: 0.15rem 0.5rem;
+        }
+        main.content section#references,
+        main.content #refs,
+        main.content .references.csl-bib-body {
+          padding-left: 0.9rem;
+          padding-right: 0.9rem;
+        }
+        main.content section.footnotes,
+        main.content #footnotes,
+        main.content [role="doc-endnotes"] {
+          padding-left: 1.1rem;
         }
       }
 
@@ -380,6 +534,19 @@ defaults:
         margin-bottom: 0.7rem;
       }
 
+      main.content section#references,
+      main.content #refs,
+      main.content .references.csl-bib-body {
+        padding-left: clamp(1.25rem, 3.2vw, 3.4rem);
+        padding-right: clamp(1.25rem, 3.2vw, 3.4rem);
+      }
+
+      main.content section.footnotes,
+      main.content #footnotes,
+      main.content [role="doc-endnotes"] {
+        padding-left: clamp(1.5rem, 4vw, 4.2rem);
+      }
+
       main.content h1::after {
         content: "";
         display: block;
@@ -419,8 +586,8 @@ defaults:
       nav[role="doc-toc"] {
         border: 1px solid rgba(16, 16, 16, 0.1);
         border-radius: 0.28rem;
-        background: rgba(255, 255, 255, 0.58);
-        backdrop-filter: blur(3px);
+        background: #FFFFFF;
+        backdrop-filter: none;
         padding: 0.7rem 0.75rem;
       }
 
@@ -429,6 +596,8 @@ defaults:
         margin: 0.1rem 0;
         border-radius: 0.16rem;
         padding: 0.18rem 0.4rem;
+        font-size: 0.88rem;
+        line-height: 1.25;
       }
 
       nav[role="doc-toc"] .header-section-number {
@@ -543,7 +712,7 @@ defaults:
             [body-content-start] minmax(680px, calc(1100px - 4rem))
             [body-content-end] 2rem
             [body-end] 30px
-            [body-end-outset] minmax(90px, 170px)
+            [body-end-outset] minmax(120px, 240px)
             [page-end-inset] 30px
             [page-end] 4fr
             [screen-end-inset] 1.5em
@@ -593,6 +762,10 @@ defaults:
         title-block-banner: true
         toc: true
         respect-user-color-scheme: false
+        self-contained: true
+        embed-resources: true
+        include-after-body:
+          - _extensions/chanwe-brand/assets/title-banner-layout.html
       typst:
         logo:
           path: assets/Logo_Negro.png

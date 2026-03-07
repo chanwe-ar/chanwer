@@ -1,0 +1,9 @@
+project:
+  type: default
+  brand: _extensions/chanwe-brand/brand.yml
+filters:
+  - _extensions/chanwe-brand/filters/title-metadata-pills.lua
+format:
+  html:
+    include-after-body:
+      - _extensions/chanwe-brand/assets/title-banner-layout.html

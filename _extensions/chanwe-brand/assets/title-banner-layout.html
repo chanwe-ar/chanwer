@@ -1,0 +1,74 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var header = document.getElementById("title-block-header");
+  if (!header) return;
+
+  var titlePanel = header.querySelector(".quarto-title-banner .quarto-title");
+  if (!titlePanel) return;
+
+  var titleMeta = header.querySelector(".quarto-title-meta");
+  if (!titleMeta) return;
+
+  var nativeKeywordBlocks = header.querySelectorAll(".keywords");
+  nativeKeywordBlocks.forEach(function (block) {
+    var container = block.parentElement;
+    if (container && container.parentElement === header) {
+      container.remove();
+      return;
+    }
+    block.remove();
+  });
+
+  var topCategories = titlePanel.querySelector(".quarto-categories");
+  if (topCategories) {
+    topCategories.classList.add("chanwe-top-pills");
+  }
+
+  var bottom = titlePanel.querySelector(".chanwe-banner-bottom");
+  if (!bottom) {
+    bottom = document.createElement("div");
+    bottom.className = "chanwe-banner-bottom";
+    titlePanel.appendChild(bottom);
+  }
+
+  if (titleMeta.parentElement !== bottom) {
+    bottom.appendChild(titleMeta);
+  }
+
+  var keywordsHost = bottom.querySelector(".chanwe-keywords");
+  if (!keywordsHost) {
+    keywordsHost = document.createElement("div");
+    keywordsHost.className = "chanwe-keywords";
+    bottom.appendChild(keywordsHost);
+  }
+
+  var keywordsMeta = document.querySelector('meta[name="keywords"]');
+  var keywords = [];
+  if (keywordsMeta && keywordsMeta.content) {
+    keywords = keywordsMeta.content
+      .split(",")
+      .map(function (k) { return k.trim(); })
+      .filter(function (k) { return k.length > 0; });
+  }
+
+  if (keywords.length === 0) {
+    keywordsHost.style.display = "none";
+    return;
+  }
+
+  keywordsHost.style.display = "";
+  keywordsHost.innerHTML = "";
+
+  var categories = document.createElement("div");
+  categories.className = "quarto-categories chanwe-keyword-pills";
+
+  keywords.forEach(function (keyword) {
+    var pill = document.createElement("div");
+    pill.className = "quarto-category";
+    pill.textContent = keyword;
+    categories.appendChild(pill);
+  });
+
+  keywordsHost.appendChild(categories);
+});
+</script>
