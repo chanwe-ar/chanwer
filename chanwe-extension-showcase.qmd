@@ -31,7 +31,7 @@ if (!requireNamespace("chanwer", quietly = TRUE)) {
     devtools::load_all(".")
 }
 
-library(chanwer)
+devtools::load_all()
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -45,7 +45,8 @@ mt <- mt |>
     mutate(
         cyl = factor(cyl),
         gear = factor(gear),
-        am = factor(am, labels = c("Automatic", "Manual"))
+        am = factor(am, labels = c("Automatic", "Manual")),
+        hp_band6 = factor(dplyr::ntile(hp, 6), labels = paste0("Band ", 1:6))
     )
 
 mpg2 <- ggplot2::mpg
@@ -238,7 +239,8 @@ mt <- mt |>
     mutate(
         cyl = factor(cyl),
         gear = factor(gear),
-        am = factor(am, labels = c("Automatic", "Manual"))
+        am = factor(am, labels = c("Automatic", "Manual")),
+        hp_band6 = factor(dplyr::ntile(hp, 6), labels = paste0("Band ", 1:6))
     )
 
 mpg2 <- ggplot2::mpg
@@ -269,7 +271,11 @@ ggplot(mt, aes(wt, mpg, color = cyl)) +
     geom_point(size = 3, alpha = 0.9) +
     scale_color_chanwe_d() +
     theme_chanwe() +
-    labs(title = "MPG vs Weight", subtitle = "Colored by cylinders")
+    labs(
+        title = "MPG vs Weight",
+        subtitle = "Colored by cylinders",
+        caption = "Source: mtcars"
+    )
 ```
 
 ### Example 2: Scatter with trend line
@@ -281,7 +287,11 @@ ggplot(mt, aes(hp, mpg, color = am)) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.9) +
     scale_color_chanwe_d() +
     theme_chanwe() +
-    labs(title = "Horsepower vs MPG", subtitle = "Linear trend by transmission")
+    labs(
+        title = "Horsepower vs MPG",
+        subtitle = "Linear trend by transmission",
+        caption = "Source: mtcars"
+    )
 ```
 
 ### Example 3: Boxplot
@@ -292,7 +302,11 @@ ggplot(mt, aes(cyl, mpg, fill = cyl)) +
     geom_boxplot(width = 0.65) +
     scale_fill_chanwe_d() +
     theme_chanwe() +
-    labs(title = "MPG Distribution", subtitle = "By cylinder group")
+    labs(
+        title = "MPG Distribution",
+        subtitle = "By cylinder group",
+        caption = "Source: mtcars"
+    )
 ```
 
 ### Example 4: Violin + jitter
@@ -304,7 +318,11 @@ ggplot(mt, aes(cyl, qsec, fill = cyl)) +
     geom_jitter(width = 0.1, size = 2, color = "#101010") +
     scale_fill_chanwe_d() +
     theme_chanwe() +
-    labs(title = "Quarter Mile Time", subtitle = "Violin with observations")
+    labs(
+        title = "Quarter Mile Time",
+        subtitle = "Violin with observations",
+        caption = "Source: mtcars"
+    )
 ```
 
 ### Example 5: Bar chart summary
@@ -315,7 +333,11 @@ ggplot(mt_summary, aes(cyl, mpg, fill = cyl)) +
     geom_col(width = 0.62) +
     scale_fill_chanwe_d() +
     theme_chanwe() +
-    labs(title = "Average MPG", subtitle = "Grouped by cylinders")
+    labs(
+        title = "Average MPG",
+        subtitle = "Grouped by cylinders",
+        caption = "Source: mtcars"
+    )
 ```
 
 ### Example 6: Line chart over economics time
@@ -328,7 +350,8 @@ ggplot(econ, aes(date, unemploy / 1000)) +
     labs(
         title = "US Unemployment",
         subtitle = "Economics dataset",
-        y = "Thousands"
+        y = "Thousands",
+        caption = "Source: ggplot2::economics"
     )
 ```
 
@@ -340,19 +363,27 @@ ggplot(mt, aes(mpg, fill = cyl)) +
     geom_density(alpha = 0.35) +
     scale_fill_chanwe_d() +
     theme_chanwe() +
-    labs(title = "Density of MPG", subtitle = "By cylinders")
+    labs(
+        title = "Density of MPG",
+        subtitle = "By cylinders",
+        caption = "Source: mtcars"
+    )
 ```
 
 ### Example 8: Faceted scatter
 
 ```{r}
 #| label: showcase-chunk-14
-ggplot(mt, aes(disp, mpg, color = gear)) +
+ggplot(mt, aes(disp, mpg, color = hp_band6)) +
     geom_point(size = 2.5) +
     facet_wrap(~am) +
     scale_color_chanwe_d() +
     theme_chanwe() +
-    labs(title = "Displacement vs MPG", subtitle = "Faceted by transmission")
+    labs(
+        title = "Displacement vs MPG",
+        subtitle = "Six-category palette (HP bands)",
+        caption = "Source: mtcars"
+    )
 ```
 
 ### Example 9: Continuous color scale
@@ -363,22 +394,37 @@ ggplot(mt, aes(wt, mpg, color = hp)) +
     geom_point(size = 3) +
     scale_color_chanwe_c() +
     theme_chanwe() +
-    labs(title = "Continuous ChanWe Gradient", subtitle = "HP encoded as color")
+    labs(
+        title = "Continuous ChanWe Gradient",
+        subtitle = "HP encoded as color",
+        caption = "Source: mtcars"
+    )
 ```
 
 ### Example 10: Area chart
 
 ```{r}
 #| label: showcase-chunk-16
-series <- econ |>
-    select(date, psavert, uempmed) |>
-    pivot_longer(-date, names_to = "metric", values_to = "value")
+econ_heat <- econ |>
+    mutate(
+        year = as.integer(format(date, "%Y")),
+        month = as.integer(format(date, "%m"))
+    ) |>
+    group_by(year, month) |>
+    summarise(unemploy = mean(unemploy), .groups = "drop")
 
-ggplot(series, aes(date, value, fill = metric)) +
-    geom_area(position = "stack", alpha = 0.8) +
-    scale_fill_chanwe_d() +
+ggplot(econ_heat, aes(month, year, fill = unemploy)) +
+    geom_tile() +
+    scale_fill_chanwe_c() +
+    scale_x_continuous(breaks = 1:12, labels = month.abb) +
     theme_chanwe() +
-    labs(title = "Stacked Area", subtitle = "Economic indicators")
+    labs(
+        title = "Continuous Fill Gradient",
+        subtitle = "Unemployment intensity heatmap",
+        caption = "Source: ggplot2::economics",
+        x = "Month",
+        y = "Year"
+    )
 ```
 
 ## highcharter Examples (11-20)

@@ -4,10 +4,13 @@
 \alias{gt_theme_chanwe}
 \title{ChanWe Theme for gt Tables}
 \usage{
-gt_theme_chanwe(data)
+gt_theme_chanwe(data, variant = c("spacious", "compact"))
 }
 \arguments{
 \item{data}{A gt table object.}
+
+\item{variant}{One of \code{"spacious"} or \code{"compact"} to control table density.
+Both variants keep a taller table header.}
 }
 \value{
 A themed gt table object.
@@ -20,6 +23,6 @@ understated borders, editorial typography, and orange accents.
 if (requireNamespace("gt", quietly = TRUE)) {
   tbl <- gt::gt(head(mtcars)) |>
     gt::tab_header(title = "Motor Trend Cars") |>
-    gt_theme_chanwe()
+    gt_theme_chanwe(variant = "spacious")
 }
 }

@@ -1,6 +1,6 @@
 # Reproduce ChanWe-branded outputs
 
-library(chanweThemes)
+library(chanwer)
 library(ggplot2)
 
 # 1) ggplot2

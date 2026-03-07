@@ -1,0 +1,152 @@
+---
+title: "ChanWe Typst Static Showcase"
+subtitle: "Branded non-interactive report template"
+author: "Alejandro Abraham"
+date: today
+topic: "Brand System"
+subject: "Typst Static Report"
+keywords: [Quarto, Chanwe, Typst, Static, ggplot2]
+bibliography: references.bib
+link-citations: true
+brand: _extensions/chanwe-brand/brand.yml
+format:
+  typst:
+    toc: true
+    number-sections: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+if (!requireNamespace("chanwer", quietly = TRUE)) {
+  devtools::load_all(".")
+}
+
+library(chanwer)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+
+mt <- tibble::as_tibble(mtcars, rownames = "model") |>
+  mutate(
+    cyl = factor(cyl),
+    gear = factor(gear),
+    am = factor(am, labels = c("Automatic", "Manual"))
+  )
+
+summary_tbl <- mt |>
+  group_by(cyl) |>
+  summarise(
+    mpg = mean(mpg),
+    hp = mean(hp),
+    wt = mean(wt),
+    .groups = "drop"
+  )
+```
+
+This example is optimized for **Typst/PDF output** with no interactive widgets,
+so it is stable for sharing and print workflows. It preserves the ChanWe
+brand semantics and typography while using static components only
+[@allaire2022quarto; @wickham2016ggplot2].
+
+## Executive Notes
+
+::: {.callout-note title="Scope"}
+Use this template for board reports, model documentation, and policy notes
+where deterministic rendering matters.
+:::
+
+::: {.callout-warning title="Compatibility"}
+Interactive HTML widgets are intentionally excluded in this Typst template.
+:::
+
+## Static Visuals
+
+```{r}
+#| label: fig-mpg-vs-weight
+#| fig-cap: "Fuel economy versus weight by transmission type."
+#| fig-width: 7
+#| fig-height: 4.4
+
+ggplot(mt, aes(wt, mpg, color = am)) +
+  geom_point(size = 2.6, alpha = 0.9) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.8) +
+  scale_color_chanwe_d() +
+  theme_chanwe() +
+  labs(
+    title = "Fuel economy profile",
+    subtitle = chanwe_subtitle("Static model diagnostic view"),
+    x = "Weight",
+    y = "MPG",
+    color = "Transmission"
+  )
+```
+
+```{r}
+#| label: fig-cylinder-count
+#| fig-cap: "Vehicle count by cylinder class."
+#| fig-width: 7
+#| fig-height: 4.1
+
+ggplot(mt, aes(cyl, fill = cyl)) +
+  geom_bar(width = 0.65) +
+  scale_fill_chanwe_d() +
+  theme_chanwe() +
+  labs(
+    title = "Fleet composition",
+    subtitle = chanwe_subtitle("Distribution by cylinders"),
+    x = "Cylinders",
+    y = "Count",
+    fill = "Cylinders"
+  )
+```
+
+Figure @fig-mpg-vs-weight and Figure @fig-cylinder-count provide two static
+views of the same dataset, suitable for PDF distribution.
+
+## Static Tables
+
+```{r}
+#| label: tbl-summary
+#| tbl-cap: "Average performance metrics by cylinder group."
+
+kable(summary_tbl, digits = 2, align = c("l", "r", "r", "r"))
+```
+
+The semantic token mapping can be presented as a regular static table:
+
+```{r}
+#| label: tbl-tokens
+#| tbl-cap: "Core semantic color tokens used by the ChanWe brand."
+
+token_tbl <- tibble::tribble(
+  ~token, ~value, ~usage,
+  "foreground", "#5B5B5B", "Body text",
+  "background", "#F7F7F7", "Page surface",
+  "primary", "#E94B2B", "Accent/highlight",
+  "info", "#11F7E6", "Informational notes",
+  "success", "#1EB508", "Positive state",
+  "danger", "#F40C0C", "Risk emphasis"
+)
+
+kable(token_tbl, align = c("l", "l", "l"))
+```
+
+## Equation And Footnote
+
+A simple weighted quality score:
+
+$$
+Q = 0.6 \times R + 0.4 \times B
+$$ {#eq-quality}
+
+Equation @eq-quality is included as a static mathematical block.^[Use footnotes
+for implementation details that should not interrupt the main narrative.]
+
+## References
+
+Citations are rendered in a static bibliography for print-safe output.
