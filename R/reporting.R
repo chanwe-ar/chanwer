@@ -11,5 +11,5 @@
 #' @examples
 #' chanwe_reporting_css()
 chanwe_reporting_css <- function() {
-  system.file("quarto", "chanwe-reporting.scss", package = "chanweThemes")
+  system.file("quarto", "chanwe-reporting.scss", package = "chanwer")
 }

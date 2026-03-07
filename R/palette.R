@@ -182,7 +182,7 @@ chanwe_brand_tokens <- function() {
       section_marker_asset = system.file(
         "assets",
         "Estrategia_Color1.png",
-        package = "chanweThemes"
+        package = "chanwer"
       )
     )
   )

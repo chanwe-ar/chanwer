@@ -1,4 +1,4 @@
 library(testthat)
-library(chanweThemes)
+library(chanwer)
 
-test_check("chanweThemes")
+test_check("chanwer")

@@ -89,6 +89,23 @@ table,
   border-radius: var(--chanwe-radius);
 }
 
+/* Force gt row surfaces to white (including zebra/striped states) */
+.gt_table tbody tr > th,
+.gt_table tbody tr > td,
+.gt_table .gt_row,
+.gt_table .gt_row th,
+.gt_table .gt_row td,
+.gt_table .gt_striped,
+.gt_table .gt_striped th,
+.gt_table .gt_striped td,
+.gt_table tbody tr:nth-child(odd) > th,
+.gt_table tbody tr:nth-child(odd) > td,
+.gt_table tbody tr:nth-child(even) > th,
+.gt_table tbody tr:nth-child(even) > td {
+  background-color: #FFFFFF !important;
+  background: #FFFFFF !important;
+}
+
 /* Reactable pagination state */
 .reactable .rt-page-button-current {
   background-color: var(--chanwe-primary) !important;

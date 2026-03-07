@@ -16,10 +16,18 @@ p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
 
 print(p)
 
+mt <- tibble::as_tibble(mtcars, rownames = "model")
+mt <- mt |>
+  dplyr::mutate(
+    cyl = factor(cyl),
+    gear = factor(gear),
+    am = factor(am, labels = c("Automatic", "Manual"))
+  )
+
 # 2) gt
 if (requireNamespace("gt", quietly = TRUE)) {
-  gt_tbl <- gt::gt(head(mtcars)) |>
-    gt::tab_header(title = "Vehicle table") |>
+  gt_tbl <- gt::gt(head(mt, 10)) |>
+    gt::tab_header(title = "Operational Snapshot") |>
     gt_theme_chanwe()
 
   print(gt_tbl)
@@ -28,7 +36,7 @@ if (requireNamespace("gt", quietly = TRUE)) {
 # 3) reactable
 if (requireNamespace("reactable", quietly = TRUE)) {
   react_tbl <- reactable::reactable(
-    head(mtcars),
+    head(mt),
     theme = reactable_theme_chanwe(),
     defaultPageSize = 6
   )

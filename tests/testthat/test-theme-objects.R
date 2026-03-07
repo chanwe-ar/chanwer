@@ -38,20 +38,49 @@ test_that("chanwe ggplot scales are constructed", {
 
 test_that("gt theme function returns gt_tbl", {
   skip_if_not_installed("gt")
+  skip_if_not_installed("dplyr")
 
-  tbl_default <- gt::gt(head(mtcars)) |>
+  mt <- tibble::as_tibble(mtcars, rownames = "model") |>
+    dplyr::mutate(
+      cyl = factor(cyl),
+      gear = factor(gear),
+      am = factor(am, labels = c("Automatic", "Manual"))
+    )
+
+  tbl_default <- gt::gt(head(mt), rowname_col = "model") |>
     gt_theme_chanwe()
-  tbl_compact <- gt::gt(head(mtcars)) |>
+  tbl_compact <- gt::gt(head(mt), rowname_col = "model") |>
     gt_theme_chanwe(variant = "compact")
-  tbl_spacious <- gt::gt(head(mtcars)) |>
+  tbl_spacious <- gt::gt(head(mt), rowname_col = "model") |>
     gt_theme_chanwe_spacious()
-  tbl_compact_wrap <- gt::gt(head(mtcars)) |>
+  tbl_compact_wrap <- gt::gt(head(mt), rowname_col = "model") |>
     gt_theme_chanwe_compact()
+  tbl_striped <- gt::gt(head(mt), rowname_col = "model") |>
+    gt::opt_row_striping() |>
+    gt_theme_chanwe()
+  tbl_stub <- gt::gt(head(mt), rowname_col = "model") |>
+    gt_theme_chanwe()
+  html_default <- gt::as_raw_html(tbl_default)
+  html_striped <- gt::as_raw_html(tbl_striped)
+  html_stub <- gt::as_raw_html(tbl_stub)
 
   expect_s3_class(tbl_default, "gt_tbl")
   expect_s3_class(tbl_compact, "gt_tbl")
   expect_s3_class(tbl_spacious, "gt_tbl")
   expect_s3_class(tbl_compact_wrap, "gt_tbl")
+  expect_no_match(html_default, "background: transparent", fixed = TRUE)
+  expect_match(html_default, "background-color: #FFFFFF", fixed = TRUE)
+  expect_match(
+    html_striped,
+    "class=\"gt_row[^\"]*gt_striped[^\"]*\"[^>]*bgcolor=\"#FFFFFF\"",
+    perl = TRUE
+  )
+  expect_no_match(html_striped, "#F2F2F2", fixed = TRUE)
+  expect_match(
+    html_stub,
+    "<th[^>]*class=\"[^\"]*gt_row[^\"]*\"[^>]*bgcolor=\"#FFFFFF\"",
+    perl = TRUE
+  )
 })
 
 test_that("reactable theme function returns reactable theme object", {

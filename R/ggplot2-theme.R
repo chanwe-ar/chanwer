@@ -209,7 +209,7 @@ chanwe_title <- function(
   if (is.null(marker_path)) {
     marker_path <- chanwe_logo_path("Estrategia_Color1.png")
   }
-  marker_src <- chanwe_logo_src(marker_path, embed = FALSE)
+  marker_src <- chanwe_logo_src(marker_path, embed = TRUE)
   if (!nzchar(marker_src)) {
     return(text)
   }

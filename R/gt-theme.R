@@ -71,6 +71,7 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
       table_body.hlines.width = gt::px(0.6),
       table_body.vlines.color = colors[["brand-beige-soft"]],
       table_body.vlines.width = gt::px(0.6),
+      row.striping.background_color = colors[["brand-pure-white"]],
       data_row.padding = density$data_row_padding,
       source_notes.font.size = gt::px(11),
       source_notes.background.color = colors[["brand-pure-white"]],
@@ -110,7 +111,7 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
           weight = "500",
           size = gt::px(14)
         ),
-        gt::cell_fill(color = "transparent")
+        gt::cell_fill(color = colors[["brand-pure-white"]])
       ),
       locations = gt::cells_body()
     ) |>
@@ -140,13 +141,22 @@ gt_theme_chanwe <- function(data, variant = c("spacious", "compact")) {
         ".gt_table { border-radius: 4px; box-shadow: none; }
          .gt_heading { border-top: 0.6px solid %s; border-left: 4px solid %s; padding-left: 10px; }
          .gt_caption { color: %s; font-size: 12px; }
-         .gt_row { line-height: 1.6; color: %s; font-weight: 500; background: transparent !important; }
-         .gt_row td { background: transparent !important; border-bottom: 0.6px solid %s; }",
+         .gt_row { line-height: 1.6; color: %s; font-weight: 500; background: %s !important; }
+         .gt_row th, .gt_row td { background: %s !important; border-bottom: 0.6px solid %s; }
+         .gt_striped, .gt_striped th, .gt_striped td { background: %s !important; }
+         .gt_table tbody tr:nth-child(odd) > th,
+         .gt_table tbody tr:nth-child(odd) > td,
+         .gt_table tbody tr:nth-child(even) > th,
+         .gt_table tbody tr:nth-child(even) > td { background: %s !important; }",
         colors[["brand-beige-soft"]],
         colors[["brand-orange"]],
         colors[["p13-gray-07"]],
         colors[["p13-gray-06"]],
-        colors[["brand-beige-soft"]]
+        colors[["brand-pure-white"]],
+        colors[["brand-pure-white"]],
+        colors[["brand-beige-soft"]],
+        colors[["brand-pure-white"]],
+        colors[["brand-pure-white"]]
       )
     )
 }

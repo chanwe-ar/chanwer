@@ -30,6 +30,8 @@ test_that("chanwe_title builds image-prefixed title string", {
   if (requireNamespace("ggtext", quietly = TRUE)) {
     expect_match(txt, "<img")
     expect_match(txt, "Performance overview")
+    expect_match(txt, "src='")
+    expect_match(txt, "data:image/png;base64", fixed = TRUE)
   } else {
     expect_identical(txt, "Performance overview")
   }
