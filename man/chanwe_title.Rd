@@ -27,8 +27,8 @@ A title string for use inside \code{labs(title = ...)}.
 }
 \description{
 Creates a title string with a small \code{Estrategia_Color1.png} image placed
-before the title text. The marker renders when used with \code{theme_chanwe()}
-and \code{ggtext} is installed.
+before the title text. Use this inside \code{ggplot2::labs(title = ...)} together
+with \code{\link[=theme_chanwe]{theme_chanwe()}}. The marker renders when \code{ggtext} is installed.
 }
 \examples{
 chanwe_title("Performance Overview")

@@ -24,12 +24,17 @@ A themed gt table object.
 }
 \description{
 Applies ChanWe branding to \code{\link[gt:gt]{gt::gt()}} tables with neutral surfaces,
-understated borders, editorial typography, and orange accents.
+understated borders, editorial typography, and orange accents. This is the
+main entry point for \code{gt} tables when you need to control density and
+background explicitly.
 }
 \examples{
 if (requireNamespace("gt", quietly = TRUE)) {
   tbl <- gt::gt(head(mtcars)) |>
-    gt::tab_header(title = "Motor Trend Cars") |>
-    gt_theme_chanwe(variant = "spacious")
+    gt::tab_header(
+      title = "Motor Trend Cars",
+      subtitle = "Spacious beige table"
+    ) |>
+    gt_theme_chanwe(variant = "spacious", background = "beige")
 }
 }

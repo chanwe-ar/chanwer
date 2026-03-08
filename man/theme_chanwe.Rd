@@ -30,12 +30,22 @@ A ggplot2 theme object.
 \description{
 A clean editorial ggplot2 theme with ChanWe typography, neutral paper,
 orange accents, minimal chrome, and compact rectangular geometry.
+Use \code{\link[=chanwe_title]{chanwe_title()}} and \code{\link[=chanwe_subtitle]{chanwe_subtitle()}} with this theme for the
+standard ChanWe title treatment.
 }
 \examples{
 if (requireNamespace("ggplot2", quietly = TRUE)) {
   p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
     ggplot2::geom_point(size = 3) +
-    ggplot2::labs(subtitle = chanwe_subtitle("Example subtitle")) +
-    theme_chanwe(base_text_size = 12, legend_position = "bottom")
+    scale_color_chanwe_d() +
+    ggplot2::labs(
+      title = chanwe_title("Performance overview"),
+      subtitle = chanwe_subtitle("Example subtitle")
+    ) +
+    theme_chanwe(
+      base_text_size = 12,
+      legend_position = "bottom",
+      background = "beige"
+    )
 }
 }

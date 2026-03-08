@@ -13,6 +13,8 @@ reference:
   - title: ggplot2
     contents:
       - theme_chanwe
+      - chanwe_title
+      - chanwe_subtitle
       - scale_color_chanwe_d
       - scale_fill_chanwe_d
       - scale_color_chanwe_c
@@ -20,5 +22,7 @@ reference:
   - title: Tables and Charts
     contents:
       - gt_theme_chanwe
+      - gt_theme_chanwe_spacious
+      - gt_theme_chanwe_compact
       - reactable_theme_chanwe
       - hc_theme_chanwe

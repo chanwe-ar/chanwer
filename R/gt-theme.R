@@ -1,7 +1,9 @@
 #' ChanWe Theme for gt Tables
 #'
 #' Applies ChanWe branding to [gt::gt()] tables with neutral surfaces,
-#' understated borders, editorial typography, and orange accents.
+#' understated borders, editorial typography, and orange accents. This is the
+#' main entry point for `gt` tables when you need to control density and
+#' background explicitly.
 #'
 #' @param data A gt table object.
 #' @param variant One of `"spacious"` or `"compact"` to control table density.
@@ -15,8 +17,11 @@
 #' @examples
 #' if (requireNamespace("gt", quietly = TRUE)) {
 #'   tbl <- gt::gt(head(mtcars)) |>
-#'     gt::tab_header(title = "Motor Trend Cars") |>
-#'     gt_theme_chanwe(variant = "spacious")
+#'     gt::tab_header(
+#'       title = "Motor Trend Cars",
+#'       subtitle = "Spacious beige table"
+#'     ) |>
+#'     gt_theme_chanwe(variant = "spacious", background = "beige")
 #' }
 gt_theme_chanwe <- function(
   data,

@@ -11,6 +11,8 @@ chanwe_discrete_pal <- function() {
 #'
 #' A clean editorial ggplot2 theme with ChanWe typography, neutral paper,
 #' orange accents, minimal chrome, and compact rectangular geometry.
+#' Use [chanwe_title()] and [chanwe_subtitle()] with this theme for the
+#' standard ChanWe title treatment.
 #'
 #' @param base_text_size Base text size in points.
 #' @param base_family Base font family.
@@ -26,8 +28,16 @@ chanwe_discrete_pal <- function() {
 #' if (requireNamespace("ggplot2", quietly = TRUE)) {
 #'   p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
 #'     ggplot2::geom_point(size = 3) +
-#'     ggplot2::labs(subtitle = chanwe_subtitle("Example subtitle")) +
-#'     theme_chanwe(base_text_size = 12, legend_position = "bottom")
+#'     scale_color_chanwe_d() +
+#'     ggplot2::labs(
+#'       title = chanwe_title("Performance overview"),
+#'       subtitle = chanwe_subtitle("Example subtitle")
+#'     ) +
+#'     theme_chanwe(
+#'       base_text_size = 12,
+#'       legend_position = "bottom",
+#'       background = "beige"
+#'     )
 #' }
 theme_chanwe <- function(
   base_text_size = 11.5,
@@ -199,8 +209,8 @@ theme_chanwe <- function(
 #' ChanWe Title Helper with Estrategia Marker
 #'
 #' Creates a title string with a small `Estrategia_Color1.png` image placed
-#' before the title text. The marker renders when used with `theme_chanwe()`
-#' and `ggtext` is installed.
+#' before the title text. Use this inside `ggplot2::labs(title = ...)` together
+#' with [theme_chanwe()]. The marker renders when `ggtext` is installed.
 #'
 #' @param text Title text.
 #' @param marker_path Optional path to the marker image file.
