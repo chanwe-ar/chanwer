@@ -51,7 +51,7 @@ gt_theme_chanwe <- function(
 
   gt::opt_table_font(
     data = data,
-    font = list(gt::google_font("DM Sans"), gt::default_fonts()),
+    font = "DM Sans 9pt",
     size = gt::px(11),
     color = colors[["p13-gray-06"]],
     weight = 500,

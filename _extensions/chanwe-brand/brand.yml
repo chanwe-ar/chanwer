@@ -782,6 +782,7 @@ defaults:
         mainfont: "DM Sans 9pt"
         font-paths:
           - _extensions/chanwe-brand/assets
+          - _extensions/chanwe-brand/assets/fonts/dm-sans
         template-partials:
           - _extensions/chanwe-brand/typst/typst-template.typ
       pptx:

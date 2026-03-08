@@ -77,15 +77,6 @@ theme_chanwe <- function(
     )
   }
 
-  legend_justification <- if (
-    is.character(legend_position) &&
-      legend_position %in% c("top", "bottom")
-  ) {
-    "left"
-  } else {
-    "center"
-  }
-
   theme_obj <- ggplot2::`%+replace%`(
     ggplot2::theme_minimal(
       base_size = base_text_size,
@@ -157,31 +148,30 @@ theme_chanwe <- function(
         face = "bold"
       ),
       legend.position = legend_position,
-      legend.justification = legend_justification,
+      legend.justification = "center",
+      legend.box.just = "center",
       legend.title = ggplot2::element_text(
         color = colors[["brand-black"]],
         face = "bold",
-        size = base_text_size * 0.78
+        size = base_text_size * 0.70
       ),
       legend.text = ggplot2::element_text(
         color = colors[["p13-gray-05"]],
-        size = base_text_size * 0.72
+        size = base_text_size * 0.64
       ),
       legend.background = ggplot2::element_rect(
         fill = surface_fill,
-        color = border_color,
-        linewidth = 0.6
+        color = NA
       ),
       legend.key = ggplot2::element_rect(
         fill = surface_fill,
-        color = border_color,
-        linewidth = 0.6
+        color = NA
       ),
       legend.box.background = ggplot2::element_rect(
-        fill = surface_fill,
-        color = border_color,
-        linewidth = 0.6
+        fill = NA,
+        color = NA
       ),
+      legend.key.size = grid::unit(0.65, "lines"),
       panel.spacing = grid::unit(1.0, "lines"),
       plot.subtitle = subtitle_element,
       plot.title.position = "plot",
