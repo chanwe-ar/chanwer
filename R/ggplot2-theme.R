@@ -117,6 +117,8 @@ theme_chanwe <- function(
         margin = ggplot2::margin(t = 10)
       ),
       axis.title.y = ggplot2::element_text(
+        angle = 90,
+        vjust = 1,
         hjust = 1,
         margin = ggplot2::margin(r = 10)
       ),
