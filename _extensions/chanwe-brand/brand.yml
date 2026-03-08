@@ -779,7 +779,7 @@ defaults:
         include-after-body:
           - _extensions/chanwe-brand/assets/title-banner-layout.html
       typst:
-        mainfont: "Google Sans"
+        mainfont: "DM Sans 9pt"
         font-paths:
           - _extensions/chanwe-brand/assets
         template-partials:

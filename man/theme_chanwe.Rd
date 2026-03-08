@@ -5,10 +5,11 @@
 \title{ChanWe ggplot2 Theme}
 \usage{
 theme_chanwe(
-  base_text_size = 12.5,
+  base_text_size = 11.5,
   base_family = "DM Sans",
-  base_lineheight = 1.62,
-  legend_position = "bottom"
+  base_lineheight = 1.6,
+  legend_position = "bottom",
+  background = c("beige", "white")
 )
 }
 \arguments{
@@ -19,6 +20,9 @@ theme_chanwe(
 \item{base_lineheight}{Base text line-height multiplier.}
 
 \item{legend_position}{Legend position passed to \code{theme(legend.position = )}.}
+
+\item{background}{Background surface variant: \code{"beige"} (\verb{#F7F7F7}) or
+\code{"white"} (\verb{#FFFFFF}). Both use a light-gray border (\verb{#F7F7F7}).}
 }
 \value{
 A ggplot2 theme object.

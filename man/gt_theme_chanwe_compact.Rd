@@ -4,10 +4,12 @@
 \alias{gt_theme_chanwe_compact}
 \title{ChanWe Compact Theme for gt Tables}
 \usage{
-gt_theme_chanwe_compact(data)
+gt_theme_chanwe_compact(data, background = c("beige", "white"))
 }
 \arguments{
 \item{data}{A gt table object.}
+
+\item{background}{Background surface variant passed to \code{\link[=gt_theme_chanwe]{gt_theme_chanwe()}}.}
 }
 \value{
 A themed gt table object.

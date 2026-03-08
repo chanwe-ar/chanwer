@@ -4,13 +4,20 @@
 \alias{gt_theme_chanwe}
 \title{ChanWe Theme for gt Tables}
 \usage{
-gt_theme_chanwe(data, variant = c("spacious", "compact"))
+gt_theme_chanwe(
+  data,
+  variant = c("spacious", "compact"),
+  background = c("beige", "white")
+)
 }
 \arguments{
 \item{data}{A gt table object.}
 
 \item{variant}{One of \code{"spacious"} or \code{"compact"} to control table density.
 Both variants keep a taller table header.}
+
+\item{background}{Background surface variant: \code{"beige"} (\verb{#F7F7F7}) or
+\code{"white"} (\verb{#FFFFFF}). Both use a light-gray border (\verb{#F7F7F7}).}
 }
 \value{
 A themed gt table object.

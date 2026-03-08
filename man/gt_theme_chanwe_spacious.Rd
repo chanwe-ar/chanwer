@@ -4,10 +4,12 @@
 \alias{gt_theme_chanwe_spacious}
 \title{ChanWe Spacious Theme for gt Tables}
 \usage{
-gt_theme_chanwe_spacious(data)
+gt_theme_chanwe_spacious(data, background = c("beige", "white"))
 }
 \arguments{
 \item{data}{A gt table object.}
+
+\item{background}{Background surface variant passed to \code{\link[=gt_theme_chanwe]{gt_theme_chanwe()}}.}
 }
 \value{
 A themed gt table object.

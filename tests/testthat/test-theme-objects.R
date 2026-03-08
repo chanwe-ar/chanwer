@@ -1,5 +1,6 @@
 test_that("theme_chanwe returns a complete ggplot theme", {
   th <- theme_chanwe()
+  th_white <- theme_chanwe(background = "white")
   th_custom <- theme_chanwe(
     base_text_size = 11,
     legend_position = "bottom"
@@ -12,8 +13,17 @@ test_that("theme_chanwe returns a complete ggplot theme", {
   expect_identical(th$plot.caption$hjust, 1)
   expect_identical(th$plot.caption$colour, "#6D6D6D")
   expect_identical(th$plot.background$fill, "#F7F7F7")
+  expect_identical(th$plot.background$colour, "#F7F7F7")
   expect_identical(th$panel.background$fill, "#F7F7F7")
+  expect_identical(th$panel.background$colour, "#F7F7F7")
   expect_identical(th$legend.background$fill, "#F7F7F7")
+  expect_identical(th$legend.background$colour, "#F7F7F7")
+  expect_identical(th_white$plot.background$fill, "#FFFFFF")
+  expect_identical(th_white$plot.background$colour, "#F7F7F7")
+  expect_identical(th_white$panel.background$fill, "#FFFFFF")
+  expect_identical(th_white$panel.background$colour, "#F7F7F7")
+  expect_identical(th_white$legend.background$fill, "#FFFFFF")
+  expect_identical(th_white$legend.background$colour, "#F7F7F7")
   expect_identical(th$legend.position, "bottom")
   expect_equal(th$legend.title$size, 8.97)
   expect_equal(th$legend.text$size, 8.28)
@@ -49,36 +59,45 @@ test_that("gt theme function returns gt_tbl", {
 
   tbl_default <- gt::gt(head(mt), rowname_col = "model") |>
     gt_theme_chanwe()
+  tbl_white <- gt::gt(head(mt), rowname_col = "model") |>
+    gt_theme_chanwe(background = "white")
   tbl_compact <- gt::gt(head(mt), rowname_col = "model") |>
     gt_theme_chanwe(variant = "compact")
   tbl_spacious <- gt::gt(head(mt), rowname_col = "model") |>
     gt_theme_chanwe_spacious()
   tbl_compact_wrap <- gt::gt(head(mt), rowname_col = "model") |>
-    gt_theme_chanwe_compact()
+    gt_theme_chanwe_compact(background = "white")
   tbl_striped <- gt::gt(head(mt), rowname_col = "model") |>
     gt::opt_row_striping() |>
     gt_theme_chanwe()
   tbl_stub <- gt::gt(head(mt), rowname_col = "model") |>
     gt_theme_chanwe()
   html_default <- gt::as_raw_html(tbl_default)
+  html_white <- gt::as_raw_html(tbl_white)
   html_striped <- gt::as_raw_html(tbl_striped)
   html_stub <- gt::as_raw_html(tbl_stub)
 
   expect_s3_class(tbl_default, "gt_tbl")
+  expect_s3_class(tbl_white, "gt_tbl")
   expect_s3_class(tbl_compact, "gt_tbl")
   expect_s3_class(tbl_spacious, "gt_tbl")
   expect_s3_class(tbl_compact_wrap, "gt_tbl")
   expect_no_match(html_default, "background: transparent", fixed = TRUE)
-  expect_match(html_default, "background-color: #FFFFFF", fixed = TRUE)
+  expect_match(html_default, "background-color: #F7F7F7", fixed = TRUE)
+  expect_match(html_default, "border-top-color: #F7F7F7", fixed = TRUE)
+  expect_match(html_default, "border-bottom-color: #F7F7F7", fixed = TRUE)
+  expect_match(html_white, "background-color: #FFFFFF", fixed = TRUE)
+  expect_match(html_white, "border-top-color: #F7F7F7", fixed = TRUE)
+  expect_match(html_white, "border-bottom-color: #F7F7F7", fixed = TRUE)
   expect_match(
     html_striped,
-    "class=\"gt_row[^\"]*gt_striped[^\"]*\"[^>]*bgcolor=\"#FFFFFF\"",
+    "class=\"gt_row[^\"]*gt_striped[^\"]*\"[^>]*bgcolor=\"#F7F7F7\"",
     perl = TRUE
   )
   expect_no_match(html_striped, "#F2F2F2", fixed = TRUE)
   expect_match(
     html_stub,
-    "<th[^>]*class=\"[^\"]*gt_row[^\"]*\"[^>]*bgcolor=\"#FFFFFF\"",
+    "<th[^>]*class=\"[^\"]*gt_row[^\"]*\"[^>]*bgcolor=\"#F7F7F7\"",
     perl = TRUE
   )
 })

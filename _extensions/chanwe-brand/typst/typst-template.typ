@@ -8,13 +8,15 @@
   cols: 1,
   lang: "en",
   region: "US",
-  font: "libertinus serif",
+  font: "DM Sans 9pt",
   fontsize: 11pt,
   body-fontsize: 9pt,
   title-size: 1.35em,
   subtitle-size: 1.05em,
-  heading-family: "libertinus serif",
-  heading-weight: "bold",
+  heading-family: "DM Sans 12pt",
+  heading-weight: "black",
+  heading-weight-level1: 900,
+  heading-weight-rest: none,
   heading-style: "normal",
   heading-color: black,
   heading-line-height: 0.85em,
@@ -27,19 +29,26 @@
   doc,
 ) = {
   let chanwe-logo = "_extensions/chanwe-brand/assets/Logo_Negro1.png"
-  let chanwe-logo-beige = "_extensions/chanwe-brand/assets/Logo_Beige1.png"
+  let chanwe-logo-beige = "_extensions/chanwe-brand/assets/Logo_Blanco.png"
   let chanwe-logo-color = "_extensions/chanwe-brand/assets/Logo_Color1.png"
   let chanwe-icons-color = "_extensions/chanwe-brand/assets/Iconos_Color.png"
-  let chanwe-icons-beige = "_extensions/chanwe-brand/assets/Iconos_Beige.png"
+  let chanwe-icons-beige = "_extensions/chanwe-brand/assets/Iconos_Blanco.png"
   let chanwe-estrategia-color = "_extensions/chanwe-brand/assets/Estrategia_Color1.png"
+  let chanwe-estrategia-beige = "_extensions/chanwe-brand/assets/Estrategia_Beige1.png"
   let chanwe-decoration = "_extensions/chanwe-brand/assets/decoration.svg"
   let light-gray = rgb("#EEEEEE")
   let muted-gray = rgb("#6B6B6B")
   let body-color = rgb("#484848")
   let brand-orange = rgb("#E94B2B")
   let page-white = rgb("#FFFFFF")
+  let cover-bg = rgb("#F7F7F7")
   let content-page-margin = (x: 1in, y: 1in)
-  let output-radius = 14pt
+  let output-radius = 30pt
+  let plot-radius = 12pt
+  let cover-left-inset = 0.9in
+  let cover-content-width = 76%
+  let level1-heading-weight = if heading-weight-level1 == none { heading-weight } else { heading-weight-level1 }
+  let rest-heading-weight = if heading-weight-rest == none { heading-weight } else { heading-weight-rest }
 
   let page-header = context block(inset: (bottom: 0.1in))[
     #grid(
@@ -55,7 +64,7 @@
     #rect(width: 100%, height: 0.5pt, fill: rgb("#D9D9D9"), stroke: none)
     #v(0.09in)
     #align(center)[
-      #text(size: 0.95em, weight: "semibold", fill: brand-orange)[
+      #text(size: 0.95em, weight: "black", fill: brand-orange)[
         #counter(page).display(pagenumbering)
       ]
     ]
@@ -74,21 +83,51 @@
     numbering: if sectionnumbering == none {
       none
     } else {
-      (..nums) => text(weight: "bold", fill: brand-orange)[
+      (..nums) => text(weight: "black", fill: brand-orange)[
         #numbering(sectionnumbering, ..nums)
       ]
     }
   )
-  show heading: set text(
+  show heading.where(level: 1): set text(
+    font: "DM Sans 9pt",
+    weight: level1-heading-weight,
+    style: "normal",
+    fill: black
+  )
+  show heading.where(level: 2): set text(
+    font: "DM Sans 9pt",
+    weight: rest-heading-weight,
+    style: "normal",
+    fill: black
+  )
+  show heading.where(level: 3): set text(
+    font: "DM Sans 9pt",
+    weight: rest-heading-weight,
+    style: "normal",
+    fill: black
+  )
+  show heading.where(level: 4): set text(
     font: heading-family,
-    weight: "bold",
+    weight: rest-heading-weight,
+    style: heading-style,
+    fill: black
+  )
+  show heading.where(level: 5): set text(
+    font: heading-family,
+    weight: rest-heading-weight,
+    style: heading-style,
+    fill: black
+  )
+  show heading.where(level: 6): set text(
+    font: heading-family,
+    weight: rest-heading-weight,
     style: heading-style,
     fill: black
   )
   show heading.where(level: 1): it => {
     [
       #pagebreak(weak: true)
-      #block(above: 1.2em, below: 0.9em)[
+      #block(above: 1.8em, below: 1.2em)[
         #it
         #v(0.08em)
         #rect(width: 100%, height: 0.45pt, fill: rgb("#D9D9D9"), stroke: none)
@@ -104,24 +143,26 @@
   // Round outer corners of rendered plot and table figures.
   show figure.where(kind: image): it => block(
     fill: page-white,
-    radius: output-radius,
+    radius: plot-radius,
+    stroke: rgb("#F7F7F7"),
     clip: true
   )[
     #it
   ]
   show figure.where(kind: table): it => block(
     fill: page-white,
-    radius: output-radius,
+    radius: plot-radius,
+    stroke: rgb("#F7F7F7"),
     clip: true
   )[
     #it
   ]
 
   // Cover page
-  set page(margin: 0pt, numbering: none, columns: 1, background: none, fill: page-white)
+  set page(margin: 0pt, numbering: none, columns: 1, background: none, fill: cover-bg)
   place(top + left)[
-    #block(inset: (left: 0.9in, top: 0.55in))[
-      #image(chanwe-icons-color, width: 1.6cm)
+    #block(inset: (left: cover-left-inset, top: 0.55in))[
+      #image(chanwe-icons-color, width: 2cm)
     ]
   ]
   place(top + right)[
@@ -130,39 +171,46 @@
     ]
   ]
   place(top + left)[
-    #block(inset: (left: 0.9in, top: 1.34in))[
-      #text(weight: "bold", fill: brand-orange)[Mendoza - Argentina]
+    #block(inset: (left: 0.28in, top: 2.20in))[
+      #rotate(-90deg, reflow: false)[
+        #text(weight: 300, fill: brand-orange)[ESTRATEGIA ACTIVA]
+      ]
     ]
   ]
   place(bottom + center)[
     #block(inset: (bottom: 0in))[
-      #image(chanwe-logo-color, width: 100%)
+      #rect(width: 100%, height: 3%, fill: black, stroke: none)
     ]
   ]
-  align(left + horizon)[#block(width: 76%, inset: (x: 0.9in, y: 0.6em), below: 0.4em)[
+  place(bottom + center)[
+    #block(inset: (bottom: 1.08in))[
+      #image(chanwe-logo-color, width: 88%)
+    ]
+  ]
+  align(left + horizon)[#block(width: cover-content-width, inset: (x: cover-left-inset, y: 0.6em), below: 0.4em)[
     #set par(justify: false)
     #if title != none {
-      set par(leading: 0.62em)
+      set par(leading: 0.45em)
       set text(
         font: heading-family,
         style: heading-style,
         fill: black
       )
-      text(weight: 900, size: 36pt)[#title]
+      text(font: "DM Sans 9pt", style: "normal", weight: 900, size: 36pt, fill: black)[#title]
     }
     #if subtitle != none {
-      v(0.45em)
-      set par(leading: 0.82em)
-      text(weight: "bold", size: 16pt, fill: muted-gray)[#subtitle]
+      v(0.2em)
+      set par(leading: 0.20em)
+      text(weight: 500, size: 16pt, fill: muted-gray)[#subtitle]
     }
     #if subtitle != none and authors != none {
-      v(0.55em)
-      rect(width: 100%, height: 0.5pt, fill: rgb("#D9D9D9"), stroke: none)
+      v(7.55em)
+      rect(width: 65%, height: 0.5pt, fill: rgb("#D9D9D9"), stroke: none)
       v(0.55em)
     }
     #if authors != none {
-      set par(leading: 1em)
-      v(1.1em)
+      set par(leading: 0em)
+      v(0em)
       let count = authors.len()
       let ncols = calc.min(count, 3)
       grid(
@@ -170,23 +218,25 @@
         row-gutter: 0.7em,
         ..authors.map(author =>
           align(left)[
-            #text(fill: brand-orange)[#author.name] \
-            #author.affiliation \
-            #author.email
+            #text(fill: muted-gray)[#author.name]
+            #if author.affiliation != none [\ #author.affiliation]
+            #if author.email != none [\ #author.email]
           ]
         )
       )
     }
     #if date != none {
-      v(0.25em)
+      v(0.02em)
       text(size: 0.88em, fill: muted-gray)[#date]
+      v(0.26em)
+      text(size: 0.88em, fill: muted-gray)[Mendoza - Argentina]
     }
   ]]
 
   pagebreak()
 
   // Second page: beige icon on top and beige logo at the bottom.
-  set page(margin: content-page-margin, numbering: none, columns: 1, background: none, fill: page-white)
+  set page(margin: content-page-margin, numbering: none, columns: 1, background: none, fill: cover-bg)
   place(top + center)[
     #block(inset: (top: 1.1in))[
       #image(chanwe-icons-beige, width: 8cm)
@@ -207,7 +257,7 @@
     numbering: none,
     columns: 1,
     background: none,
-    fill: page-white,
+    fill: cover-bg,
     header: page-header,
     footer: page-footer
   )
@@ -233,12 +283,13 @@
         #link(
           it.element.location(),
           [
-            #set text(fill: black, weight: "regular")
+            #set text(fill: black, weight: "bold")
             #grid(
               columns: (1fr, auto),
+              align: (left + top, right + bottom),
               column-gutter: 0.6em,
               it.indented(styled-prefix, it.body()),
-              align(right)[#it.page()]
+              align(right + bottom)[#it.page()]
             )
           ]
         )
@@ -263,6 +314,9 @@
 
   pagebreak()
 
+  // Reset body pages to white after TOC pages.
+  set page(fill: page-white)
+
   if cols != 1 {
     set page(margin: content-page-margin, columns: cols)
   }
@@ -275,10 +329,10 @@
 
   // Back cover
   pagebreak()
-  set page(margin: 0pt, numbering: none, columns: 1, background: none, fill: page-white, header: none, footer: none)
+  set page(margin: 0pt, numbering: none, columns: 1, background: none, fill: black, header: none, footer: none)
   place(top + center)[
     #block(inset: (top: 1.1in))[
-      #image(chanwe-icons-color, width: 8cm)
+      #image(chanwe-icons-color, width: 3cm)
     ]
   ]
   place(center + horizon)[
@@ -286,22 +340,22 @@
       #align(center)[
         #stack(
           dir: ttb,
-          spacing: 0.95em,
-          text(size: 1.05em, weight: "bold", fill: brand-orange)[Mendoza - Argentina],
-          v(1.2em),
-          text(size: 0.95em, fill: muted-gray)[chanwe.ar],
-          text(size: 0.95em, fill: muted-gray)[2026],
-          v(1.4em),
-          text(size: 0.78em, fill: muted-gray)[Informacion confidencial prohibida su distribucion sin autorizacion],
-          v(4.2em),
-          rect(width: 62%, height: 0.5pt, fill: rgb("#C9C9C9"), stroke: none)
+          spacing: 1.35em,
+          text(size: 1.00em, weight: "thin", fill: cover-bg)[Mendoza - Argentina],
+          v(3em),
+          text(size: 1.22em, weight: "bold", fill: cover-bg)[chanwe.ar],
+          text(size: 0.95em, weight: "thin", fill: cover-bg)[2026],
+          v(3em),
+          text(size: 0.78em, weight: "thin", fill: cover-bg)[Informacion confidencial prohibida su distribucion sin autorizacion],
+          v(8em),
+          image(chanwe-estrategia-color, width: 2cm)
         )
       ]
     ]
   ]
   place(bottom + center)[
     #block(inset: (bottom: 0.45in))[
-      #image(chanwe-logo, width: 94%)
+      #image(chanwe-logo-beige, width: 94%)
     ]
   ]
 }

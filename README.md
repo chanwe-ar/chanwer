@@ -1,13 +1,13 @@
-# chanweThemes
+# chanwer
 
-`chanweThemes` provides ChanWe brand themes for plotting, tables, and
+`chanwer` provides ChanWe brand themes for plotting, tables, and
 reporting components used in Quarto workflows.
 
 ## Installation
 
 ```r
 # install.packages("pak")
-pak::pak("chanwe/chanweThemes")
+pak::pak("chanwe/chanwer")
 ```
 
 For local development:
@@ -29,7 +29,7 @@ devtools::install(".")
 ## Quick Start
 
 ```r
-library(chanweThemes)
+library(chanwer)
 
 chanwe_palette("chart")
 
@@ -50,7 +50,7 @@ title: "ChanWe Report"
 format:
   html:
     css:
-      - !expr chanweThemes::chanwe_reporting_css()
+      - !expr chanwer::chanwe_reporting_css()
   typst: default
   pptx: default
 execute:
@@ -59,7 +59,7 @@ execute:
 ```
 
 ```{r}
-library(chanweThemes)
+library(chanwer)
 library(ggplot2)
 
 ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +

@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-library(chanweThemes)
+library(chanwer)
 ```
 
 ## Palette and Tokens
@@ -109,7 +109,7 @@ In Quarto, set:
 format:
   html:
     css:
-      - !expr chanweThemes::chanwe_reporting_css()
+      - !expr chanwer::chanwe_reporting_css()
 ```
 
 This stylesheet applies ChanWe styling to code blocks, callouts, captions,

@@ -16,6 +16,8 @@ chanwe_discrete_pal <- function() {
 #' @param base_family Base font family.
 #' @param base_lineheight Base text line-height multiplier.
 #' @param legend_position Legend position passed to `theme(legend.position = )`.
+#' @param background Background surface variant: `"beige"` (`#F7F7F7`) or
+#'   `"white"` (`#FFFFFF`). Both use a light-gray border (`#F7F7F7`).
 #'
 #' @return A ggplot2 theme object.
 #' @export
@@ -31,9 +33,17 @@ theme_chanwe <- function(
   base_text_size = 11.5,
   base_family = "DM Sans",
   base_lineheight = 1.60,
-  legend_position = "bottom"
+  legend_position = "bottom",
+  background = c("beige", "white")
 ) {
   colors <- chanwe_get_colors()
+  background <- match.arg(background)
+  surface_fill <- switch(
+    background,
+    beige = colors[["brand-white"]],
+    white = colors[["brand-pure-white"]]
+  )
+  border_color <- colors[["brand-white"]]
   title_element <- ggplot2::element_text(
     color = colors[["brand-black"]],
     face = "bold",
@@ -121,16 +131,23 @@ theme_chanwe <- function(
       ),
       panel.grid.minor = ggplot2::element_blank(),
       plot.background = ggplot2::element_rect(
-        fill = colors[["brand-white"]],
-        color = NA
+        fill = surface_fill,
+        color = border_color,
+        linewidth = 0.6
       ),
       panel.background = ggplot2::element_rect(
-        fill = colors[["brand-white"]],
-        color = NA
+        fill = surface_fill,
+        color = border_color,
+        linewidth = 0.6
+      ),
+      panel.border = ggplot2::element_rect(
+        fill = NA,
+        color = border_color,
+        linewidth = 0.6
       ),
       strip.background = ggplot2::element_rect(
-        fill = colors[["brand-beige"]],
-        color = colors[["brand-beige-soft"]],
+        fill = surface_fill,
+        color = border_color,
         linewidth = 0.5
       ),
       strip.text = ggplot2::element_text(
@@ -149,16 +166,19 @@ theme_chanwe <- function(
         size = base_text_size * 0.72
       ),
       legend.background = ggplot2::element_rect(
-        fill = colors[["brand-white"]],
-        color = NA
+        fill = surface_fill,
+        color = border_color,
+        linewidth = 0.6
       ),
       legend.key = ggplot2::element_rect(
-        fill = colors[["brand-white"]],
-        color = NA
+        fill = surface_fill,
+        color = border_color,
+        linewidth = 0.6
       ),
       legend.box.background = ggplot2::element_rect(
-        fill = colors[["brand-white"]],
-        color = NA
+        fill = surface_fill,
+        color = border_color,
+        linewidth = 0.6
       ),
       panel.spacing = grid::unit(1.0, "lines"),
       plot.subtitle = subtitle_element,

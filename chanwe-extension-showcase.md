@@ -39,7 +39,7 @@ personality.]
 
 You can jump directly to the examples in [Section @sec-examples], open the
 [Quarto docs](https://quarto.org/docs/), or inspect package usage in the
-[chanweThemes README](README.md).
+[chanwer README](README.md).
 
 ::: {.callout-note title="Document Intent"}
 This page intentionally mixes prose and analytical components to mimic a real
@@ -833,11 +833,11 @@ list(
 
 
 ``` r
-if (!requireNamespace("chanweThemes", quietly = TRUE)) {
+if (!requireNamespace("chanwer", quietly = TRUE)) {
     devtools::load_all(".")
 }
 
-library(chanweThemes)
+library(chanwer)
 library(ggplot2)
 library(dplyr)
 library(tidyr)

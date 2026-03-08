@@ -8,7 +8,7 @@ chanwe_title(
   text,
   marker_path = NULL,
   marker_width_px = NULL,
-  marker_scale = 0.01
+  marker_scale = 0.02
 )
 }
 \arguments{
