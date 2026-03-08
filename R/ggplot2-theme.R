@@ -43,7 +43,25 @@ theme_chanwe <- function(
     beige = colors[["brand-white"]],
     white = colors[["brand-pure-white"]]
   )
-  border_color <- colors[["brand-white"]]
+  outer_border_color <- switch(
+    background,
+    beige = colors[["brand-white"]],
+    white = colors[["brand-beige-soft"]]
+  )
+  inner_border_color <- switch(
+    background,
+    beige = colors[["brand-white"]],
+    white = NA_character_
+  )
+  panel_border_element <- if (identical(background, "white")) {
+    ggplot2::element_blank()
+  } else {
+    ggplot2::element_rect(
+      fill = NA,
+      color = inner_border_color,
+      linewidth = 0.6
+    )
+  }
   title_element <- ggplot2::element_text(
     color = colors[["brand-black"]],
     face = "bold",
@@ -125,22 +143,18 @@ theme_chanwe <- function(
       panel.grid.minor = ggplot2::element_blank(),
       plot.background = ggplot2::element_rect(
         fill = surface_fill,
-        color = border_color,
+        color = outer_border_color,
         linewidth = 0.6
       ),
       panel.background = ggplot2::element_rect(
         fill = surface_fill,
-        color = border_color,
+        color = inner_border_color,
         linewidth = 0.6
       ),
-      panel.border = ggplot2::element_rect(
-        fill = NA,
-        color = border_color,
-        linewidth = 0.6
-      ),
+      panel.border = panel_border_element,
       strip.background = ggplot2::element_rect(
         fill = surface_fill,
-        color = border_color,
+        color = inner_border_color,
         linewidth = 0.5
       ),
       strip.text = ggplot2::element_text(

@@ -17,7 +17,7 @@ execute:
   message: false
   dev: ragg_png
   fig-format: png
-  fig-dpi: 144
+  fig-dpi: 320
 ---
 
 ```{r}
@@ -25,7 +25,7 @@ execute:
 #| include: false
 devtools::load_all(".")
 
-knitr::opts_chunk$set(dev = "ragg_png", dpi = 144)
+knitr::opts_chunk$set(dev = "ragg_png", dpi = 320)
 
 library(ggplot2)
 library(dplyr)
