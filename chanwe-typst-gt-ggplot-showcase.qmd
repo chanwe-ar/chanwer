@@ -71,7 +71,7 @@ ggplot(mt, aes(wt, mpg, color = am)) +
     scale_color_chanwe_d() +
     theme_chanwe(background = "beige") +
     labs(
-        title = "Fuel economy vs weight",
+        title = chanwe_title("Fuel economy vs weight"),
         subtitle = chanwe_subtitle("Simple scatter"),
         x = "Weight",
         y = "MPG",

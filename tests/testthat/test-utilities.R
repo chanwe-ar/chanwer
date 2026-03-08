@@ -28,20 +28,14 @@ test_that("chanwe_title builds image-prefixed title string", {
   skip_if_not_installed("ggtext")
 
   txt <- chanwe_title("Performance overview")
-  bundled <- system.file("assets", "Estrategia_Color1.png", package = "chanwer")
 
   expect_match(txt, "<img")
   expect_match(txt, "Performance overview")
   expect_match(txt, "src='")
   src <- sub("^.*<img src='([^']+)'.*$", "\\1", txt)
   expect_true(nzchar(src))
-  expect_identical(normalizePath(src, winslash = "/", mustWork = TRUE), normalizePath(bundled, winslash = "/", mustWork = TRUE))
-  if (startsWith(src, "data:")) {
-    expect_match(src, "data:image/", fixed = TRUE)
-  } else {
-    expect_true(file.exists(src))
-    expect_match(src, "\\.png$")
-  }
+  expect_true(file.exists(src))
+  expect_match(src, "Estrategia_Color1\\.png$")
 })
 
 test_that("chanwe_title errors when marker_path is missing", {

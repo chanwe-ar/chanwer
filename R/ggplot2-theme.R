@@ -223,20 +223,13 @@ chanwe_title <- function(
   chanwe_require_package("ggtext")
 
   if (is.null(marker_path)) {
-    marker_path <- tryCatch(
-      system.file(
-        "assets",
-        "Estrategia_Color1.png",
-        package = "chanwer",
-        mustWork = TRUE
-      ),
-      error = function(...) {
-        stop(
-          "chanwe_title(): bundled marker asset 'assets/Estrategia_Color1.png' was not found in installed package 'chanwer'. Reinstall the package.",
-          call. = FALSE
-        )
-      }
-    )
+    marker_path <- chanwe_logo_path("Estrategia_Color1.png")
+    if (!nzchar(marker_path)) {
+      stop(
+        "chanwe_title(): bundled marker asset 'Estrategia_Color1.png' was not found. Ensure it is present under 'inst/assets' or the package is installed correctly.",
+        call. = FALSE
+      )
+    }
   }
   marker_path <- normalizePath(marker_path, winslash = "/", mustWork = FALSE)
   if (!nzchar(marker_path) || !file.exists(marker_path)) {
@@ -282,7 +275,7 @@ chanwe_title <- function(
     "' height='",
     format(marker_height_px, trim = TRUE, scientific = FALSE),
     "' style='vertical-align:-0.1em;'/>",
-    "&nbsp;&nbsp;",
+    "&nbsp;&nbsp;&nbsp;",
     text,
     "&nbsp;&nbsp;&nbsp;"
   )
