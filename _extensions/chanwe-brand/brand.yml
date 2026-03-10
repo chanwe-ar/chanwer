@@ -463,10 +463,10 @@ defaults:
         padding: 0 !important;
       }
       .callout .callout-body-container {
-        padding: 0.82rem 1rem 0.95rem !important;
+        padding: 1.1rem 1.3rem 1.2rem !important;
       }
       .callout > .callout-header {
-        padding: 0.52rem 0.95rem !important;
+        padding: 0.65rem 1.2rem !important;
       }
       .callout .callout-body-container p,
       .callout .callout-body-container li {
@@ -518,10 +518,13 @@ defaults:
       main.content .cell,
       main.content .quarto-figure,
       main.content .table-responsive,
-      main.content .panel-tabset,
-      main.content .callout {
         margin-top: 1.8rem;
         margin-bottom: 1.8rem;
+      }
+
+      main.content .callout {
+        margin-top: 2.4rem;
+        margin-bottom: 2.4rem;
       }
 
       main.content p {
