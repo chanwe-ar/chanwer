@@ -629,6 +629,16 @@ defaults:
         line-height: 1.25;
       }
 
+      nav[role="doc-toc"] ul {
+        padding-left: 0;
+        margin-left: 0;
+        list-style: none;
+      }
+
+      nav[role="doc-toc"] ul ul {
+        display: none;
+      }
+
       nav[role="doc-toc"] .header-section-number {
         color: #E94B2B !important;
         font-weight: 700;
@@ -798,14 +808,14 @@ defaults:
         respect-user-color-scheme: false
         self-contained: true
         embed-resources: true
-        include-after-body:
-          - _extensions/chanwe-brand/assets/title-banner-layout.html
       typst:
         mainfont: "DM Sans 9pt"
+        toc-title: "AGENDA"
         font-paths:
-          - _extensions/chanwe-brand/assets
+          - /_extensions/chanwe-brand/assets
         template-partials:
-          - _extensions/chanwe-brand/typst/typst-template.typ
+          - /_extensions/chanwe-brand/typst/typst-show.typ
+          - /_extensions/chanwe-brand/typst/typst-template.typ
       pptx:
-        reference-doc: _extensions/chanwe-brand/assets/chanwe-reference.pptx
+        reference-doc: /_extensions/chanwe-brand/assets/chanwe-reference.pptx
         slide-level: 2

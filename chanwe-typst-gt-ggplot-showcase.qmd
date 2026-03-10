@@ -75,7 +75,8 @@ ggplot(mt, aes(wt, mpg, color = am)) +
         subtitle = chanwe_subtitle("Simple scatter"),
         x = "Weight",
         y = "MPG",
-        color = "Transmission"
+        color = "Transmission",
+        caption = 'Fuente: Hadley Wickham'
     )
 ```
 

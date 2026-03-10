@@ -82,9 +82,9 @@ theme_chanwe <- function(
   )
   subtitle_element <- ggplot2::element_text(
     color = colors[["p13-gray-05"]],
-    size = base_text_size * 0.82,
+    size = base_text_size * 0.70,
     hjust = 0,
-    margin = ggplot2::margin(b = 18, l = 30)
+    margin = ggplot2::margin(t = 8, b = 18, l = 30)
   )
 
   if (requireNamespace("ggtext", quietly = TRUE)) {
@@ -98,9 +98,9 @@ theme_chanwe <- function(
     )
     subtitle_element <- ggtext::element_markdown(
       color = colors[["p13-gray-05"]],
-      size = base_text_size * 0.82,
+      size = base_text_size * 0.70,
       hjust = 0,
-      margin = ggplot2::margin(b = 18, l = 13),
+      margin = ggplot2::margin(t = 2, b = 18, l = 13),
       lineheight = 1.2
     )
   }
@@ -118,7 +118,7 @@ theme_chanwe <- function(
       plot.title = title_element,
       plot.caption = ggplot2::element_text(
         color = colors[["p13-gray-06"]],
-        size = base_text_size * 0.88,
+        size = base_text_size * 0.64,
         hjust = 1,
         margin = ggplot2::margin(t = 10)
       ),
