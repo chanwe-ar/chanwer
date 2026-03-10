@@ -84,7 +84,7 @@ theme_chanwe <- function(
     color = colors[["p13-gray-05"]],
     size = base_text_size * 0.82,
     hjust = 0,
-    margin = ggplot2::margin(b = 18, l = 6)
+    margin = ggplot2::margin(b = 18, l = 30)
   )
 
   if (requireNamespace("ggtext", quietly = TRUE)) {
@@ -100,7 +100,7 @@ theme_chanwe <- function(
       color = colors[["p13-gray-05"]],
       size = base_text_size * 0.82,
       hjust = 0,
-      margin = ggplot2::margin(b = 18, l = 9),
+      margin = ggplot2::margin(b = 18, l = 13),
       lineheight = 1.2
     )
   }
@@ -285,9 +285,8 @@ chanwe_title <- function(
     "' height='",
     format(marker_height_px, trim = TRUE, scientific = FALSE),
     "' style='vertical-align:-0.1em;'/>",
-    "&nbsp;&nbsp;&nbsp;",
-    text,
-    "&nbsp;&nbsp;&nbsp;"
+    strrep("\u2003", 6),
+    text
   )
 }
 

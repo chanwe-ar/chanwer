@@ -90,7 +90,7 @@ ggplot(mt, aes(cyl, fill = cyl)) +
     scale_fill_chanwe_d() +
     theme_chanwe(background = "white") +
     labs(
-        title = "Vehicle count by cylinder",
+        title = chanwe_title("Vehicle count by cylinder"),
         subtitle = chanwe_subtitle("Simple bar"),
         x = "Cylinders",
         y = "Count",
@@ -113,7 +113,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     scale_color_chanwe_d() +
     theme_chanwe(background = "beige") +
     labs(
-        title = "Performance profile by transmission",
+        title = chanwe_title("Performance profile by transmission"),
         subtitle = chanwe_subtitle("Complex faceted view"),
         x = "Weight",
         y = "MPG",
@@ -133,7 +133,7 @@ ggplot(mt, aes(cyl, mpg, fill = am)) +
     scale_fill_chanwe_d() +
     theme_chanwe(background = "white") +
     labs(
-        title = "Distribution view",
+        title = chanwe_title("Distribution view"),
         subtitle = chanwe_subtitle("Complex grouped layout"),
         x = "Cylinders",
         y = "MPG",
@@ -154,7 +154,7 @@ ggplot(mt, aes(hp, mpg, color = cyl)) +
     scale_color_chanwe_d() +
     theme_chanwe(background = "beige") +
     labs(
-        title = "Variant check",
+        title = chanwe_title("Variant check"),
         subtitle = chanwe_subtitle("beige + border #F7F7F7"),
         x = "Horsepower",
         y = "MPG",
@@ -173,7 +173,7 @@ ggplot(mt, aes(hp, mpg, color = cyl)) +
     scale_color_chanwe_d() +
     theme_chanwe(background = "white") +
     labs(
-        title = "Variant check",
+        title = chanwe_title("Variant check"),
         subtitle = chanwe_subtitle("white + border #F7F7F7"),
         x = "Horsepower",
         y = "MPG",
