@@ -251,7 +251,7 @@ chanwe_title <- function(
       call. = FALSE
     )
   }
-  marker_src <- chanwe_logo_src(marker_path, embed = TRUE)
+  marker_src <- chanwe_logo_src(marker_path, embed = FALSE)
   if (!nzchar(marker_src)) {
     stop(
       sprintf(
