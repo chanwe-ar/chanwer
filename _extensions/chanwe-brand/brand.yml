@@ -518,6 +518,7 @@ defaults:
       main.content .cell,
       main.content .quarto-figure,
       main.content .table-responsive,
+      main.content .panel-tabset {
         margin-top: 1.8rem;
         margin-bottom: 1.8rem;
       }

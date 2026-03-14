@@ -7,6 +7,7 @@
   date: none,
   abstract: none,
   abstract-title: none,
+  keywords: (),
   cols: 1,
   lang: "en",
   region: "US",
@@ -35,9 +36,13 @@
   let chanwe-logo-color = "/_extensions/chanwe-brand/assets/Logo_Color1.png"
   let chanwe-icons-color = "/_extensions/chanwe-brand/assets/Iconos_Color.png"
   let chanwe-icons-beige = "/_extensions/chanwe-brand/assets/Iconos_Blanco.png"
+  let chanwe-icons-beige-true = "/_extensions/chanwe-brand/assets/Iconos_Beige.png"
   let chanwe-estrategia-color = "/_extensions/chanwe-brand/assets/Estrategia_Color1.png"
   let chanwe-estrategia-beige = "/_extensions/chanwe-brand/assets/Estrategia_Beige1.png"
   let chanwe-decoration = "/_extensions/chanwe-brand/assets/decoration.svg"
+  let chanwe-bg-mountains = "/_extensions/chanwe-brand/assets/bg_mountains.jpg"
+  let chanwe-bg-transparent = "/_extensions/chanwe-brand/assets/bg_transparent.png"
+  let chanwe-pattern = "/_extensions/chanwe-brand/assets/pattern.jpg"
   let light-gray = rgb("#EEEEEE")
   let muted-gray = rgb("#6B6B6B")
   let body-color = rgb("#666666")
@@ -110,7 +115,8 @@
     font: "DM Sans 9pt",
     weight: level1-heading-weight,
     style: "normal",
-    fill: black
+    fill: black,
+    tracking: -0.8pt
   )
   show heading.where(level: 2): set text(
     font: "DM Sans 9pt",
@@ -151,23 +157,42 @@
     [
       #pagebreak(weak: true)
       #layout(avail => {
-        let rect-h = 7.327cm
+        let rect-h = 8cm
         block(above: 5.4em, below: 0em, width: 100%, height: rect-h)[
-          #place(top + left, dx: -content-page-margin.x)[
-            #rect(
-              width: avail.width + 2 * content-page-margin.x,
-              height: rect-h,
-              fill: light-gray.transparentize(70%),
-              stroke: none
-            )
+          #place(top + left, dx: -0.35in)[
+            #pad(top: 10pt)[
+              #block(
+                width: avail.width + 0.65in,
+                height: rect-h,
+                stroke: none,
+                radius: 8pt,
+                clip: true,
+                fill: none,
+              )[
+                #place(top + left, image(chanwe-pattern, width: avail.width + 0.65in, height: rect-h, fit: "cover"))
+                #place(top + left, rect(
+                  width: 100%,
+                  height: rect-h,
+                  fill: gradient.conic(
+                    (luma(255).transparentize(40%), 0%),
+                    (luma(240).transparentize(70%), 35%),
+                    (luma(250).transparentize(78%), 55%),
+                    (luma(244).transparentize(74%), 75%),
+                    (luma(255).transparentize(40%), 100%),
+                    center: (0%, 50%)
+                  ),
+                  stroke: none,
+                ))
+              ]
+            ]
           ]
           #place(top + left)[
-            #v(2em)
+            #v(3em)
             #image(chanwe-estrategia-color, width: 2.25cm)
           ]
           #place(bottom + left)[
             #pad(bottom: 2.2em)[
-              #text(size: 2.454em)[#it]
+              #text(size: 2.454em, tracking: -0.8pt)[#it]
             ]
           ]
         ]
@@ -208,19 +233,40 @@
   // Cover page
   set page(margin: 0pt, numbering: none, columns: 1, background: none, fill: cover-bg)
   place(top + left)[
-    #block(width: 100%, height: 33%, fill: light-gray, stroke: none)[]
+    #pad(left: 15pt, right: 15pt, top: 15pt)[
+      #block(width: 100%, height: 33%, clip: true, stroke: none, fill: none, radius: 20pt)[
+        #layout(avail => context {
+          let img = image(chanwe-bg-mountains, width: avail.width)
+          let img-h = measure(img).height
+          place(top + center, dy: (img-h / 3))[#img]
+        })
+        #place(top + left)[
+          #rect(width: 100%, height: 100%, fill: luma(220).transparentize(40%), stroke: none)
+        ]
+        #place(bottom + left, dy: -5pt)[
+          #pad(left: 0.9in - 15pt, bottom: 10pt)[
+            #stack(dir: ltr, spacing: 10pt,
+              image(chanwe-icons-color, width: 2.5cm),
+              align(horizon)[
+                #rect(width: 15cm, height: 1pt, fill: muted-gray, stroke: none)
+              ]
+            )
+          ]
+        ]
+      ]
+    ]
   ]
   place(top + left)[
     #block(inset: (left: cover-left-inset, top: 0.55in))[
       #stack(dir: ttb, spacing: 0.8em,
-        text(weight: 700, size: 10pt, fill: brand-orange)[ESTRATEGIA ACTIVA],
-        text(weight: 700, size: 6pt, fill: brand-orange)[MENDOZA - ARGENTINA],
+        text(font: "DM Sans 9pt", weight: 900, size: 10pt, fill: brand-orange)[ESTRATEGIA ACTIVA],
+        text(font: "DM Sans 9pt", weight: 900, size: 6pt, fill: brand-orange)[MENDOZA - ARGENTINA],
       )
     ]
   ]
   place(top + right)[
     #block(inset: (right: 0.5in, top: 0.4in))[
-      #image(chanwe-estrategia-color, width: 6cm)
+      #image(chanwe-estrategia-color, width: 4.131cm)
     ]
   ]
   place(bottom + center)[
@@ -244,7 +290,7 @@
       if title != none {
         block(above: 0pt, below: 0pt)[
           #set par(leading: 0.30em)
-          #text(font: "DM Sans 9pt", style: "normal", weight: 900, size: 40pt, fill: black)[#title]
+          #text(font: "DM Sans 9pt", style: "normal", weight: 900, size: 46pt, fill: black, tracking: -1.5pt)[#title]
         ]
       }
     )
@@ -309,7 +355,7 @@
         #block(width: 20%, height: 100%, fill: light-gray.transparentize(50%))[
           #place(right + horizon, dx: 2.6em)[
             #rotate(-90deg, reflow: false)[
-              #text(size: 12em, weight: "black", fill: white)[#toc_text]
+              #text(size: 12em, weight: 900, font: "DM Sans 9pt", fill: white)[#toc_text]
             ]
           ]
         ]
@@ -351,7 +397,7 @@
                 columns: (1fr, auto),
                 align: (left + top, right + bottom),
                 column-gutter: 0.6em,
-                it.indented(styled-prefix, if is-level-1 { text(size: 1.2em, weight: "bold")[#it.body()] } else { text(weight: "regular")[#it.body()] }),
+                it.indented(styled-prefix, if is-level-1 { text(size: 1.2em, weight: 900, font: "DM Sans 9pt")[#it.body()] } else { text(weight: "regular")[#it.body()] }),
                 align(right + bottom)[#it.page()]
               )
             ]
@@ -391,6 +437,42 @@
     set page(margin: content-page-margin, columns: cols)
   }
 
+  // Abstract page — first page after TOC
+  if abstract != none or topic != none or subject != none or keywords.len() > 0 {
+    align(center + horizon)[
+      #block(width: 68%)[
+        #if abstract != none {
+          block(width: 100%, inset: (top: 2.5em, bottom: 2.5em))[
+            #text(size: 4em, weight: 900, fill: brand-orange, font: "DM Sans 9pt")[ABSTRACT]
+            #linebreak()
+            #linebreak()
+            #image(chanwe-icons-beige-true, width: 3cm)
+          ]
+          rect(width: 100%, radius: 12pt, fill: light-gray.transparentize(70%), stroke: none, inset: (x: 3em, y: 2.2em))[
+            #text(size: 0.95em, fill: body-color)[#abstract]
+          ]
+          v(1.3em)
+        }
+        #rect(width: 100%, height: 1.5pt, fill: brand-orange, stroke: none)
+        #v(1.3em)
+        #if keywords.len() > 0 {
+          for kw in keywords {
+            box(inset: (x: 7pt, y: 4pt), radius: 3pt, fill: light-gray)[
+              #text(size: 0.8em, weight: "bold")[#kw]
+            ]
+            h(5pt)
+          }
+          v(1.2em)
+        }
+        #stack(dir: ltr, spacing: cover-pill-gap,
+          if subject != none { cover-pill(subject, brand-orange, page-white) },
+          if topic != none { cover-pill(topic, muted-gray, page-white) }
+        )
+      ]
+    ]
+    pagebreak()
+  }
+
   if cols == 1 {
     doc
   } else {
@@ -427,8 +509,8 @@
           spacing: 1.35em,
           text(size: 1.00em, weight: "thin", fill: cover-bg)[Mendoza - Argentina],
           v(3em),
-          text(size: 1.22em, weight: "bold", fill: cover-bg)[chanwe.ar],
-          text(size: 0.95em, weight: "thin", fill: cover-bg)[2026],
+          text(font: "DM Sans 9pt", size: 1.22em, weight: 900, fill: cover-bg)[chanwe.ar],
+          text(font: "DM Sans 9pt", size: 0.95em, weight: 900, fill: cover-bg)[2026],
           v(3em),
           text(size: 0.78em, weight: "thin", fill: cover-bg)[Informacion confidencial prohibida su distribucion sin autorizacion],
           v(8em),

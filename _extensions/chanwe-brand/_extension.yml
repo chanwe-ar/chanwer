@@ -1,11 +1,17 @@
 title: chanwe-brand
 author: Alejandro Abraham
-version: 0.8.0
+version: 1.0.0
 quarto-required: ">=1.8.0"
 
 contributes:
   filters:
     - filters/title-metadata-pills.lua
+    - filters/chapter-cover.lua
+  formats:
+    typst:
+      template-partials:
+        - typst-pdf/typst-show.typ
+        - typst-pdf/typst-template.typ
   metadata:
     project:
       brand: brand.yml
