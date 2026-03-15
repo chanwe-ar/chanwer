@@ -12,6 +12,7 @@ ggplot2, gt, reactable, and highcharter, plus Quarto reporting styles.
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://chanwe.github.io/chanwer}
   \item \url{https://github.com/chanwe/chanwer}
   \item Report bugs at \url{https://github.com/chanwe/chanwer/issues}
 }
