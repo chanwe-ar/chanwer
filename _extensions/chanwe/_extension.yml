@@ -1,0 +1,28 @@
+title: Chanwe
+author: Chanwe Studio
+version: 1.0.0
+quarto-required: ">=1.5.0"
+contributes:
+  formats:
+    typst:
+      toc: false
+      number-sections: false
+      papersize: a4
+      margin:
+        x: 18mm
+        y: 22mm
+      mainfont: "Inter"
+      monofont: "JetBrains Mono"
+      fontsize: 10.5pt
+      highlight-style: none
+      font-paths:
+        - fonts
+      filters:
+        - chanwe-filters.lua
+      template-partials:
+        - typst-template.typ
+        - typst-show.typ
+        - chanwe-cover.typ
+        - chanwe-elements.typ
+        - chanwe-pages.typ
+        - chanwe-charts.typ

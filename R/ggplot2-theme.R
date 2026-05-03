@@ -41,7 +41,7 @@ chanwe_discrete_pal <- function() {
 #' }
 theme_chanwe <- function(
   base_text_size = 11.5,
-  base_family = "DM Sans",
+  base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
   background = c("beige", "white")
@@ -50,30 +50,17 @@ theme_chanwe <- function(
   background <- match.arg(background)
   surface_fill <- switch(
     background,
-    beige = colors[["brand-white"]],
-    white = colors[["brand-pure-white"]]
+    beige = colors[["typst-neutral-100"]],
+    white = colors[["typst-white"]]
   )
   outer_border_color <- switch(
     background,
-    beige = colors[["brand-white"]],
-    white = colors[["brand-beige-soft"]]
+    beige = colors[["typst-neutral-200"]],
+    white = colors[["typst-neutral-200"]]
   )
-  inner_border_color <- switch(
-    background,
-    beige = colors[["brand-white"]],
-    white = NA_character_
-  )
-  panel_border_element <- if (identical(background, "white")) {
-    ggplot2::element_blank()
-  } else {
-    ggplot2::element_rect(
-      fill = NA,
-      color = inner_border_color,
-      linewidth = 0.6
-    )
-  }
+  panel_border_element <- ggplot2::element_blank()
   title_element <- ggplot2::element_text(
-    color = colors[["brand-black"]],
+    color = colors[["typst-ink"]],
     face = "bold",
     size = base_text_size * 1.25,
     hjust = 0,
@@ -81,7 +68,7 @@ theme_chanwe <- function(
     margin = ggplot2::margin(b = 2)
   )
   subtitle_element <- ggplot2::element_text(
-    color = colors[["p13-gray-05"]],
+    color = colors[["typst-fg-muted"]],
     size = base_text_size * 0.70,
     hjust = 0,
     margin = ggplot2::margin(t = 8, b = 18, l = 30)
@@ -89,7 +76,7 @@ theme_chanwe <- function(
 
   if (requireNamespace("ggtext", quietly = TRUE)) {
     title_element <- ggtext::element_markdown(
-      color = colors[["brand-black"]],
+      color = colors[["typst-ink"]],
       face = "bold",
       size = base_text_size * 1.35,
       hjust = 0,
@@ -97,7 +84,7 @@ theme_chanwe <- function(
       margin = ggplot2::margin(b = 2)
     )
     subtitle_element <- ggtext::element_markdown(
-      color = colors[["p13-gray-05"]],
+      color = colors[["typst-fg-muted"]],
       size = base_text_size * 0.70,
       hjust = 0,
       margin = ggplot2::margin(t = 2, b = 18, l = 13),
@@ -112,23 +99,23 @@ theme_chanwe <- function(
     ),
     ggplot2::theme(
       text = ggplot2::element_text(
-        color = colors[["p13-gray-05"]],
+        color = colors[["typst-fg-muted"]],
         lineheight = base_lineheight
       ),
       plot.title = title_element,
       plot.caption = ggplot2::element_text(
-        color = colors[["p13-gray-06"]],
+        color = colors[["typst-fg-subtle"]],
         size = base_text_size * 0.64,
         hjust = 1,
         margin = ggplot2::margin(t = 10)
       ),
       axis.title = ggplot2::element_text(
-        color = colors[["p13-gray-04"]],
+        color = colors[["typst-fg"]],
         face = "bold",
         size = base_text_size * 0.78
       ),
       axis.text = ggplot2::element_text(
-        color = colors[["p13-gray-05"]],
+        color = colors[["typst-fg-muted"]],
         size = base_text_size * 0.64
       ),
       axis.title.x = ggplot2::element_text(
@@ -143,44 +130,42 @@ theme_chanwe <- function(
       ),
       axis.line = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_line(
-        color = colors[["brand-silver"]],
+        color = colors[["typst-neutral-300"]],
         linewidth = 0.3
       ),
       panel.grid.major = ggplot2::element_line(
-        color = colors[["brand-beige-soft"]],
+        color = colors[["typst-neutral-300"]],
         linewidth = 0.45
       ),
       panel.grid.minor = ggplot2::element_blank(),
       plot.background = ggplot2::element_rect(
         fill = surface_fill,
         color = outer_border_color,
-        linewidth = 0.6
+        linewidth = 0.4
       ),
       panel.background = ggplot2::element_rect(
         fill = surface_fill,
-        color = inner_border_color,
-        linewidth = 0.6
+        color = NA
       ),
       panel.border = panel_border_element,
       strip.background = ggplot2::element_rect(
         fill = surface_fill,
-        color = inner_border_color,
-        linewidth = 0.5
+        color = NA
       ),
       strip.text = ggplot2::element_text(
-        color = colors[["brand-black"]],
+        color = colors[["typst-ink"]],
         face = "bold"
       ),
       legend.position = legend_position,
       legend.justification = "center",
       legend.box.just = "center",
       legend.title = ggplot2::element_text(
-        color = colors[["brand-black"]],
+        color = colors[["typst-ink"]],
         face = "bold",
         size = base_text_size * 0.70
       ),
       legend.text = ggplot2::element_text(
-        color = colors[["p13-gray-05"]],
+        color = colors[["typst-fg-muted"]],
         size = base_text_size * 0.64
       ),
       legend.background = ggplot2::element_rect(
@@ -364,7 +349,7 @@ scale_color_chanwe_c <- function(
   colours = chanwe_get_colors()[c(
     "p13-orange-10",
     "p13-orange-05",
-    "brand-orange"
+    "typst-primary"
   )],
   ...
 ) {
@@ -377,7 +362,7 @@ scale_fill_chanwe_c <- function(
   colours = chanwe_get_colors()[c(
     "p13-orange-10",
     "p13-orange-05",
-    "brand-orange"
+    "typst-primary"
   )],
   ...
 ) {

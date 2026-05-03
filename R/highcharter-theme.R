@@ -91,12 +91,12 @@ hc_theme_chanwe <- function(add_logo = TRUE,
   highcharter::hc_theme(
     colors = unname(chanwe_get_chart()),
     chart = list(
-      backgroundColor = colors[["brand-white"]],
+      backgroundColor = colors[["typst-neutral-100"]],
       style = list(
-        fontFamily = "DM Sans",
-        color = colors[["p13-gray-06"]]
+        fontFamily = "Satoshi",
+        color = colors[["typst-fg-muted"]]
       ),
-      borderColor = colors[["brand-beige-soft"]],
+      borderColor = colors[["typst-neutral-200"]],
       borderWidth = 1,
       borderRadius = 4,
       spacingTop = 62,
@@ -109,73 +109,74 @@ hc_theme_chanwe <- function(add_logo = TRUE,
     title = list(
       margin = 24,
       style = list(
-        color = colors[["brand-black"]],
-        fontWeight = "900"
+        color = colors[["typst-ink"]],
+        fontFamily = "Archivo",
+        fontWeight = "700"
       )
     ),
     subtitle = list(
       y = 32,
       style = list(
-        color = colors[["p13-gray-06"]],
-        fontWeight = "500"
+        color = colors[["typst-fg-muted"]],
+        fontWeight = "400"
       )
     ),
     caption = list(
       align = "right",
       style = list(
-        color = colors[["p13-gray-08"]],
-        fontWeight = "500",
+        color = colors[["typst-fg-subtle"]],
+        fontWeight = "400",
         fontSize = "11px"
       )
     ),
     xAxis = list(
-      gridLineColor = colors[["brand-beige-soft"]],
+      gridLineColor = colors[["typst-neutral-300"]],
       gridLineWidth = 1,
-      lineColor = colors[["brand-beige-soft"]],
-      tickColor = colors[["brand-beige-soft"]],
-      labels = list(style = list(color = colors[["p13-gray-06"]])),
+      lineColor = colors[["typst-neutral-300"]],
+      tickColor = colors[["typst-neutral-300"]],
+      labels = list(style = list(color = colors[["typst-fg-muted"]])),
       title = list(
         align = "high",
         x = 0,
         y = 6,
         style = list(
-          color = colors[["p13-gray-05"]],
-          fontWeight = "700"
+          color = colors[["typst-fg"]],
+          fontWeight = "600"
         )
       )
     ),
     yAxis = list(
-      gridLineColor = colors[["brand-beige-soft"]],
+      gridLineColor = colors[["typst-neutral-300"]],
       gridLineWidth = 1,
-      lineColor = colors[["brand-beige-soft"]],
-      tickColor = colors[["brand-beige-soft"]],
-      labels = list(style = list(color = colors[["p13-gray-06"]])),
+      lineColor = colors[["typst-neutral-300"]],
+      tickColor = colors[["typst-neutral-300"]],
+      labels = list(style = list(color = colors[["typst-fg-muted"]])),
       title = list(
         align = "high",
         rotation = 270,
         x = -6,
         y = 10,
         style = list(
-          color = colors[["p13-gray-05"]],
-          fontWeight = "700"
+          color = colors[["typst-fg"]],
+          fontWeight = "600"
         )
       )
     ),
     legend = list(
       itemStyle = list(
-        color = colors[["p13-gray-05"]],
-        fontWeight = "600"
+        color = colors[["typst-fg-muted"]],
+        fontWeight = "500"
       ),
       itemHoverStyle = list(
-        color = colors[["brand-orange"]]
+        color = colors[["typst-primary"]]
       )
     ),
     tooltip = list(
-      borderColor = colors[["brand-orange"]],
-      backgroundColor = colors[["brand-white"]],
+      borderColor = colors[["typst-primary"]],
+      backgroundColor = colors[["typst-neutral-100"]],
       style = list(
-        color = colors[["p13-gray-06"]],
-        fontFamily = "DM Sans"
+        color = colors[["typst-fg-muted"]],
+        fontFamily = "Satoshi"
       ),
       shadow = FALSE
     ),
@@ -183,12 +184,12 @@ hc_theme_chanwe <- function(add_logo = TRUE,
       series = list(
         dataLabels = list(
           style = list(
-            color = colors[["p13-gray-06"]],
+            color = colors[["typst-fg-muted"]],
             textOutline = "none",
-            fontWeight = "500"
+            fontWeight = "400"
           )
         ),
-        marker = list(lineColor = colors[["brand-pure-white"]])
+        marker = list(lineColor = colors[["typst-white"]])
       )
     )
   )

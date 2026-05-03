@@ -35,10 +35,10 @@ gt_theme_chanwe <- function(
   background <- match.arg(background)
   surface_fill <- switch(
     background,
-    beige = colors[["brand-white"]],
-    white = colors[["brand-pure-white"]]
+    beige = colors[["typst-neutral-100"]],
+    white = colors[["typst-white"]]
   )
-  border_color <- colors[["brand-white"]]
+  border_color <- colors[["typst-neutral-300"]]
 
   density <- switch(
     variant,
@@ -56,15 +56,15 @@ gt_theme_chanwe <- function(
 
   gt::opt_table_font(
     data = data,
-    font = "DM Sans 9pt",
+    font = "Satoshi",
     size = gt::px(11),
-    color = colors[["p13-gray-06"]],
-    weight = 500,
+    color = colors[["typst-fg"]],
+    weight = 400,
     style = "normal"
   ) |>
     gt::tab_options(
       table.background.color = surface_fill,
-      table.font.color = colors[["p13-gray-06"]],
+      table.font.color = colors[["typst-fg"]],
       table.border.top.color = border_color,
       table.border.top.width = gt::px(0.6),
       table.border.bottom.color = border_color,
@@ -75,7 +75,7 @@ gt_theme_chanwe <- function(
       heading.subtitle.font.weight = "normal",
       heading.subtitle.font.size = gt::px(12),
       heading.padding = density$heading_padding,
-      heading.border.bottom.color = colors[["brand-orange"]],
+      heading.border.bottom.color = colors[["typst-primary"]],
       heading.border.bottom.width = gt::px(2),
       column_labels.background.color = surface_fill,
       column_labels.font.weight = "bold",
@@ -83,7 +83,7 @@ gt_theme_chanwe <- function(
       column_labels.padding = density$column_labels_padding,
       column_labels.border.top.color = border_color,
       column_labels.border.top.width = gt::px(0.6),
-      column_labels.border.bottom.color = colors[["brand-black"]],
+      column_labels.border.bottom.color = colors[["typst-neutral-900"]],
       column_labels.border.bottom.width = gt::px(2),
       table_body.hlines.color = border_color,
       table_body.hlines.width = gt::px(0.6),
@@ -103,35 +103,37 @@ gt_theme_chanwe <- function(
     gt::tab_style(
       style = list(
         gt::cell_text(
-          color = colors[["brand-orange"]],
+          color = colors[["typst-ink"]],
           weight = "bold",
+          font = gt::google_font("Archivo"),
           size = gt::px(16),
-          align = "center"
+          align = "left"
         )
       ),
       locations = gt::cells_title(groups = "title")
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["brand-orange"]],
-        weight = "bold",
+        color = colors[["typst-fg-muted"]],
+        weight = "normal",
         size = gt::px(12),
-        align = "center"
+        align = "left"
       ),
       locations = gt::cells_title(groups = "subtitle")
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["brand-black"]],
+        color = colors[["typst-ink"]],
         weight = "bold",
-        size = gt::px(14.5)
+        font = gt::google_font("Archivo"),
+        size = gt::px(11)
       ),
       locations = gt::cells_column_labels()
     ) |>
     gt::tab_style(
       style = list(
         gt::cell_text(
-          color = colors[["p13-gray-06"]],
+          color = colors[["typst-fg"]],
           weight = "normal",
           size = gt::px(11)
         ),
@@ -141,32 +143,33 @@ gt_theme_chanwe <- function(
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["p13-gray-03"]],
-        weight = "bold"
+        color = colors[["typst-fg"]],
+        weight = "bold",
+        font = gt::google_font("Archivo")
       ),
       locations = gt::cells_stub(rows = gt::everything())
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["p13-gray-07"]],
-        size = gt::px(11)
+        color = colors[["typst-fg-subtle"]],
+        size = gt::px(10)
       ),
       locations = gt::cells_source_notes()
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["p13-gray-07"]],
-        size = gt::px(11)
+        color = colors[["typst-fg-subtle"]],
+        size = gt::px(10)
       ),
       locations = gt::cells_footnotes()
     ) |>
     gt::opt_css(
       css = sprintf(
-        ".gt_table { border-radius: 4px; box-shadow: none; }
-         .gt_heading { border-top: 0.6px solid %s; border-left: 4px solid %s; padding-left: 10px; }
-         .gt_caption { color: %s; font-size: 12px; }
-         .gt_row { line-height: 1.6; color: %s; font-weight: 500; background: %s !important; }
-         .gt_row th, .gt_row td { background: %s !important; border-bottom: 0.6px solid %s; }
+        ".gt_table { border-radius: 0px; box-shadow: none; border-top: 1px solid %s; }
+         .gt_heading { border-top: none; border-left: 3px solid %s; padding-left: 12px; text-align: left !important; }
+         .gt_caption { color: %s; font-size: 10px; }
+         .gt_row { line-height: 1.5; color: %s; font-weight: 400; background: %s !important; }
+         .gt_row th, .gt_row td { background: %s !important; border-bottom: 1px solid %s; }
          .gt_striped, .gt_striped th, .gt_striped td { background: %s !important; }
          .gt_table tbody tr:nth-child(odd) > th,
          .gt_table tbody tr:nth-child(odd) > td,
@@ -179,13 +182,13 @@ gt_theme_chanwe <- function(
          .gt_group_heading,
          .gt_summary_row,
          .gt_grand_summary_row { background: %s !important; background-color: %s !important; }",
-        border_color,
-        colors[["brand-orange"]],
-        colors[["p13-gray-07"]],
-        colors[["p13-gray-06"]],
+        colors[["typst-neutral-300"]],
+        colors[["typst-primary"]],
+        colors[["typst-fg-subtle"]],
+        colors[["typst-fg"]],
         surface_fill,
         surface_fill,
-        border_color,
+        colors[["typst-neutral-200"]],
         surface_fill,
         surface_fill,
         surface_fill,

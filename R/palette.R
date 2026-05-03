@@ -40,29 +40,41 @@
   "p14-green-strong" = "#1EB508",
   "p14-green-soft" = "#C9FFC0",
   "p14-red-strong" = "#F40C0C",
-  "p14-red-soft" = "#F9A7A7"
+  "p14-red-soft" = "#F9A7A7",
+  # chanwe-typst report system tokens
+  "typst-primary"     = "#FB3D0E",
+  "typst-ink"         = "#0F0F0F",
+  "typst-fg"          = "#211F1C",
+  "typst-fg-muted"    = "#71706C",
+  "typst-fg-subtle"   = "#928D86",
+  "typst-neutral-100" = "#F5F5F5",
+  "typst-neutral-200" = "#E8E8E8",
+  "typst-neutral-300" = "#D4D4D4",
+  "typst-neutral-700" = "#525252",
+  "typst-neutral-900" = "#1F1F1F",
+  "typst-white"       = "#FFFFFF",
+  "typst-green"       = "#15803D",
+  "typst-red"         = "#CC1914",
+  "typst-warning"     = "#EB9113",
+  "typst-info"        = "#0758E5"
 )
 
 .chanwe_semantic_names <- c(
-  foreground = "p13-gray-05",
-  background = "brand-white",
-  primary = "brand-orange",
-  secondary = "brand-black",
-  success = "p14-green-strong",
-  warning = "p14-yellow-strong",
-  danger = "p14-red-strong",
-  info = "p14-cyan-strong"
+  foreground = "typst-fg",
+  background = "typst-neutral-100",
+  primary    = "typst-primary",
+  secondary  = "typst-ink",
+  success    = "typst-green",
+  warning    = "typst-warning",
+  danger     = "typst-red",
+  info       = "typst-info"
 )
 
 .chanwe_chart_names <- c(
-  "brand-orange",
-  "p14-blue-strong",
-  "p14-cyan-strong",
-  "p14-green-strong",
-  "p14-yellow-strong",
-  "p14-magenta-strong",
-  "p14-red-strong",
-  "brand-gray"
+  "typst-primary",
+  "typst-ink",
+  "typst-fg-muted",
+  "typst-neutral-300"
 )
 
 .chanwe_palette_groups <- function() {
@@ -153,7 +165,7 @@ chanwe_brand_tokens <- function() {
     semantic = semantic,
     chart_order = chanwe_get_chart(),
     typography = list(
-      family = "DM Sans",
+      family = "Satoshi",
       base_size = 13.5,
       base_line_height = 1.62,
       heading_weight = 900,
@@ -169,7 +181,7 @@ chanwe_brand_tokens <- function() {
     reporting = list(
       code_background = semantic[["background"]],
       code_left_rule = semantic[["primary"]],
-      caption_color = chanwe_get_colors()[["p13-gray-06"]],
+      caption_color = chanwe_get_colors()[["typst-fg-subtle"]],
       callouts = c(
         note = chanwe_get_colors()[["p14-cyan-strong"]],
         info = chanwe_get_colors()[["p14-cyan-strong"]],
@@ -223,32 +235,32 @@ chanwe_preview_palette <- function(palette = "all") {
   ggplot2::ggplot(df, ggplot2::aes(x = col, y = -row)) +
     ggplot2::geom_tile(
       ggplot2::aes(fill = value),
-      color = chanwe_get_colors()[["brand-pure-white"]],
+      color = chanwe_get_colors()[["typst-white"]],
       linewidth = 0.8,
       width = 0.95,
       height = 0.95
     ) +
     ggplot2::geom_text(
       ggplot2::aes(label = label),
-      family = "DM Sans",
+      family = "Satoshi",
       size = 3,
       lineheight = 1.1,
-      color = chanwe_get_colors()[["brand-black"]],
+      color = chanwe_get_colors()[["typst-ink"]],
       fontface = "bold"
     ) +
     ggplot2::scale_fill_identity() +
     ggplot2::coord_equal() +
-    ggplot2::theme_void(base_family = "DM Sans") +
+    ggplot2::theme_void(base_family = "Satoshi") +
     ggplot2::labs(title = "ChanWe Palette") +
     ggplot2::theme(
       plot.title = ggplot2::element_text(
         hjust = 0,
         size = 14,
         face = "bold",
-        color = chanwe_get_colors()[["brand-black"]]
+        color = chanwe_get_colors()[["typst-ink"]]
       ),
       plot.background = ggplot2::element_rect(
-        fill = chanwe_get_colors()[["brand-white"]],
+        fill = chanwe_get_colors()[["typst-neutral-100"]],
         color = NA
       )
     )

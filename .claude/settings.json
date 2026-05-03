@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(quarto add *)",
+      "Bash(ln -s /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/fonts)"
+    ]
+  }
+}

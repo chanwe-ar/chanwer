@@ -1,16 +1,14 @@
 ---
-title: "Chanwe Typst Showcase: ggplot2 + gt"
-subtitle: "Simple, complex, compact, and all variants"
+title: "Chanwe Showcase: ggplot2 + gt"
+subtitle: "Tables and plots styled with chanwe-typst design tokens"
 author: "Alejandro Abraham"
 date: today
-keywords: [Quarto, Chanwe, Typst, ggplot2, gt]
 bibliography: references.bib
-link-citations: true
-brand: _extensions/chanwe-brand/brand.yml
 format:
-  typst:
-    toc: true
+  chanwe-typst:
+    keep-typ: false
     number-sections: true
+    section-numbering: 1.1
 execute:
   echo: false
   warning: false
@@ -18,6 +16,13 @@ execute:
   dev: ragg_png
   fig-format: png
   fig-dpi: 320
+chanwe:
+  document: "CHW · DEV"
+  edition: "SHOWCASE / 2026"
+  cover: false
+  toc: true
+  toc-title: "Contents"
+  back-cover: false
 ---
 
 ```{r}
@@ -48,21 +53,35 @@ summary_tbl <- mt |>
     group_by(cyl, am) |>
     summarise(
         avg_mpg = mean(mpg),
-        avg_hp = mean(hp),
-        avg_wt = mean(wt),
-        n = dplyr::n(),
+        avg_hp  = mean(hp),
+        avg_wt  = mean(wt),
+        n       = dplyr::n(),
         .groups = "drop"
     )
 ```
 
-This Typst example focuses on static output quality for both `ggplot2` and
-`gt`, including simple and complex examples plus all style variants.
+This document showcases `chanwer` theme functions for `ggplot2` and `gt`,
+aligned with chanwe-typst design tokens: Satoshi body, Archivo headings,
+primary orange `#FB3D0E`, and the four-color editorial chart palette.
 
-## GGPlot: Simple
+# KPI Summary
+
+:::: {.kpi-grid cols="4"}
+::: {.kpi title="VEHICLES" main="32" secondary="mtcars dataset" direction="none"}
+:::
+::: {.kpi title="AVG MPG" main="20.1" secondary="across all cylinders" direction="none"}
+:::
+::: {.kpi title="AVG HP" main="146.7" secondary="horsepower" direction="none"}
+:::
+::: {.kpi title="TRANSMISSION" main="59" unit="%" secondary="automatic" direction="none"}
+:::
+::::
+
+# GGPlot: Simple
 
 ```{r}
 #| label: fig-simple-scatter-beige
-#| fig-cap: "Simple scatter plot (beige background)."
+#| fig-cap: "Scatter — fuel economy vs weight (neutral-100 background)."
 #| fig-width: 7
 #| fig-height: 4.2
 
@@ -71,18 +90,18 @@ ggplot(mt, aes(wt, mpg, color = am)) +
     scale_color_chanwe_d() +
     theme_chanwe(background = "beige") +
     labs(
-        title = chanwe_title("Fuel economy vs weight"),
-        subtitle = chanwe_subtitle("Simple scatter"),
-        x = "Weight",
-        y = "MPG",
-        color = "Transmission",
-        caption = 'Fuente: Hadley Wickham'
+        title    = chanwe_title("Fuel economy vs weight"),
+        subtitle = chanwe_subtitle("Simple scatter · beige background"),
+        x        = "Weight (1000 lbs)",
+        y        = "Miles per gallon",
+        color    = "Transmission",
+        caption  = "Source: Motor Trend, 1974"
     )
 ```
 
 ```{r}
 #| label: fig-simple-bar-white
-#| fig-cap: "Simple bar plot (white background)."
+#| fig-cap: "Bar chart — vehicle count by cylinder (white background)."
 #| fig-width: 7
 #| fig-height: 4.2
 
@@ -91,19 +110,19 @@ ggplot(mt, aes(cyl, fill = cyl)) +
     scale_fill_chanwe_d() +
     theme_chanwe(background = "white") +
     labs(
-        title = chanwe_title("Vehicle count by cylinder"),
-        subtitle = chanwe_subtitle("Simple bar"),
-        x = "Cylinders",
-        y = "Count",
-        fill = "Cylinders"
+        title    = chanwe_title("Vehicle count by cylinder"),
+        subtitle = chanwe_subtitle("Simple bar · white background"),
+        x        = "Cylinders",
+        y        = "Count",
+        fill     = "Cylinders"
     )
 ```
 
-## GGPlot: Complex
+# GGPlot: Complex
 
 ```{r}
 #| label: fig-complex-facet
-#| fig-cap: "Faceted scatter with regression lines (beige background)."
+#| fig-cap: "Faceted scatter with regression lines."
 #| fig-width: 7.4
 #| fig-height: 4.8
 
@@ -114,79 +133,53 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     scale_color_chanwe_d() +
     theme_chanwe(background = "beige") +
     labs(
-        title = chanwe_title("Performance profile by transmission"),
-        subtitle = chanwe_subtitle("Complex faceted view"),
-        x = "Weight",
-        y = "MPG",
-        color = "HP band"
+        title    = chanwe_title("Performance profile by transmission"),
+        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        x        = "Weight (1000 lbs)",
+        y        = "Miles per gallon",
+        color    = "HP band"
     )
 ```
 
+::: {.inset-great-figure eyebrow="DISTRIBUTION" title="Fuel efficiency by cylinder and transmission" layout="left" position="right" color="dark" source="Source: Motor Trend, 1974"}
+
+Vehicles with 4 cylinders show the widest spread and highest median efficiency.
+8-cylinder vehicles cluster at lower MPG regardless of transmission type.
+
 ```{r}
-#| label: fig-complex-box
-#| fig-cap: "Box and jitter overlay by cylinder and transmission (white background)."
-#| fig-width: 7.4
-#| fig-height: 4.8
+#| echo: false
+#| dev: ragg_png
+#| dev.args: !expr list(background = "transparent")
+#| fig-width: 5.5
+#| fig-height: 4.2
 
 ggplot(mt, aes(cyl, mpg, fill = am)) +
-    geom_boxplot(alpha = 0.7, outlier.shape = NA, width = 0.62) +
-    geom_jitter(width = 0.12, size = 1.8, alpha = 0.75, color = "#101010") +
+    geom_boxplot(alpha = 0.75, outlier.shape = NA, width = 0.62) +
+    geom_jitter(width = 0.12, size = 1.8, alpha = 0.65,
+                color = "#FFFFFF") +
     scale_fill_chanwe_d() +
     theme_chanwe(background = "white") +
-    labs(
-        title = chanwe_title("Distribution view"),
-        subtitle = chanwe_subtitle("Complex grouped layout"),
-        x = "Cylinders",
-        y = "MPG",
-        fill = "Transmission"
-    )
+    theme(
+        plot.background  = ggplot2::element_rect(fill = "transparent", color = NA),
+        panel.background = ggplot2::element_rect(fill = "transparent", color = NA),
+        legend.background = ggplot2::element_rect(fill = "transparent", color = NA),
+        legend.key = ggplot2::element_rect(fill = "transparent", color = NA),
+        text = ggplot2::element_text(color = "#FFFFFF"),
+        axis.text = ggplot2::element_text(color = "#FFFFFF"),
+        axis.title = ggplot2::element_text(color = "#FFFFFF"),
+        strip.text = ggplot2::element_text(color = "#FFFFFF"),
+        legend.title = ggplot2::element_text(color = "#FFFFFF"),
+        legend.text = ggplot2::element_text(color = "#FFFFFF")
+    ) +
+    labs(x = "Cylinders", y = "MPG", fill = "Transmission")
 ```
+:::
 
-## GGPlot: All Variants
-
-```{r}
-#| label: fig-all-beige
-#| fig-cap: "All variants check: beige background."
-#| fig-width: 7
-#| fig-height: 4.2
-
-ggplot(mt, aes(hp, mpg, color = cyl)) +
-    geom_point(size = 2.4, alpha = 0.9) +
-    scale_color_chanwe_d() +
-    theme_chanwe(background = "beige") +
-    labs(
-        title = chanwe_title("Variant check"),
-        subtitle = chanwe_subtitle("beige + border #F7F7F7"),
-        x = "Horsepower",
-        y = "MPG",
-        color = "Cylinders"
-    )
-```
-
-```{r}
-#| label: fig-all-white
-#| fig-cap: "All variants check: white background."
-#| fig-width: 7
-#| fig-height: 4.2
-
-ggplot(mt, aes(hp, mpg, color = cyl)) +
-    geom_point(size = 2.4, alpha = 0.9) +
-    scale_color_chanwe_d() +
-    theme_chanwe(background = "white") +
-    labs(
-        title = chanwe_title("Variant check"),
-        subtitle = chanwe_subtitle("white + border #F7F7F7"),
-        x = "Horsepower",
-        y = "MPG",
-        color = "Cylinders"
-    )
-```
-
-## GT Tables: Simple
+# GT Tables: Simple
 
 ```{r}
 #| label: tbl-simple
-#| tbl-cap: "Simple gt table (white background)."
+#| tbl-cap: "Fleet overview — top 8 vehicles (white background)."
 
 mt |>
     select(model, mpg, cyl, hp, wt) |>
@@ -194,48 +187,48 @@ mt |>
     gt(rowname_col = "model") |>
     gt::fmt_number(columns = c(mpg, hp, wt), decimals = 2) |>
     gt::tab_header(
-        title = "Simple fleet view",
+        title    = "Simple fleet view",
         subtitle = "White background"
     ) |>
     gt_theme_chanwe(background = "white")
 ```
 
-## GT Tables: Compact
+# GT Tables: Compact
 
 ```{r}
 #| label: tbl-compact
-#| tbl-cap: "Compact gt table (beige background)."
+#| tbl-cap: "Fleet overview — compact density (neutral-100 background)."
 
 mt |>
     select(model, mpg, cyl, gear, am) |>
     slice_head(n = 10) |>
     gt(rowname_col = "model") |>
     gt::tab_header(
-        title = "Compact fleet view",
-        subtitle = "Beige background"
+        title    = "Compact fleet view",
+        subtitle = "Neutral-100 background"
     ) |>
     gt_theme_chanwe_compact(background = "beige")
 ```
 
-## GT Tables: Complex
+# GT Tables: Complex
 
 ```{r}
 #| label: tbl-complex
-#| tbl-cap: "Complex gt table with spanners and formatting (white background)."
+#| tbl-cap: "Performance summary — grouped by transmission, with spanners."
 
 summary_tbl |>
     gt(groupname_col = "am") |>
     gt::tab_header(
-        title = "Complex performance summary",
+        title    = "Complex performance summary",
         subtitle = "Grouped by transmission"
     ) |>
     gt::tab_spanner(label = "Averages", columns = c(avg_mpg, avg_hp, avg_wt)) |>
     gt::cols_label(
-        cyl = "Cyl",
+        cyl     = "Cyl",
         avg_mpg = "MPG",
-        avg_hp = "HP",
-        avg_wt = "Weight",
-        n = "Rows"
+        avg_hp  = "HP",
+        avg_wt  = "Weight",
+        n       = "Rows"
     ) |>
     gt::fmt_number(columns = c(avg_mpg, avg_hp, avg_wt), decimals = 2) |>
     gt::fmt_number(columns = n, decimals = 0) |>
@@ -243,22 +236,22 @@ summary_tbl |>
     gt_theme_chanwe(variant = "spacious", background = "white")
 ```
 
-## GT Tables: All Variants
+# GT Tables: All Variants
 
 ```{r}
-#| label: tbl-all-spacious-beige
-#| tbl-cap: "All variants: spacious + beige."
+#| label: tbl-spacious-beige
+#| tbl-cap: "Spacious + neutral-100."
 
 summary_tbl |>
     gt(groupname_col = "am") |>
-    gt::tab_header(title = "Spacious + Beige") |>
+    gt::tab_header(title = "Spacious + Neutral-100") |>
     gt::fmt_number(columns = c(avg_mpg, avg_hp, avg_wt), decimals = 2) |>
     gt_theme_chanwe(variant = "spacious", background = "beige")
 ```
 
 ```{r}
-#| label: tbl-all-spacious-white
-#| tbl-cap: "All variants: spacious + white."
+#| label: tbl-spacious-white
+#| tbl-cap: "Spacious + white."
 
 summary_tbl |>
     gt(groupname_col = "am") |>
@@ -268,19 +261,19 @@ summary_tbl |>
 ```
 
 ```{r}
-#| label: tbl-all-compact-beige
-#| tbl-cap: "All variants: compact + beige."
+#| label: tbl-compact-beige
+#| tbl-cap: "Compact + neutral-100."
 
 summary_tbl |>
     gt(groupname_col = "am") |>
-    gt::tab_header(title = "Compact + Beige") |>
+    gt::tab_header(title = "Compact + Neutral-100") |>
     gt::fmt_number(columns = c(avg_mpg, avg_hp, avg_wt), decimals = 2) |>
     gt_theme_chanwe(variant = "compact", background = "beige")
 ```
 
 ```{r}
-#| label: tbl-all-compact-white
-#| tbl-cap: "All variants: compact + white."
+#| label: tbl-compact-white
+#| tbl-cap: "Compact + white."
 
 summary_tbl |>
     gt(groupname_col = "am") |>
@@ -288,9 +281,3 @@ summary_tbl |>
     gt::fmt_number(columns = c(avg_mpg, avg_hp, avg_wt), decimals = 2) |>
     gt_theme_chanwe(variant = "compact", background = "white")
 ```
-
-## Notes
-
-- This file is intended for Typst/PDF output.
-- It demonstrates simple and complex charts and tables plus all table variants.
-- Border intent for both backgrounds is `#F7F7F7`.

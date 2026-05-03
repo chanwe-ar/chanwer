@@ -16,44 +16,44 @@ reactable_theme_chanwe <- function() {
   colors <- chanwe_get_colors()
 
   reactable::reactableTheme(
-    color = colors[["p13-gray-05"]],
-    backgroundColor = colors[["brand-pure-white"]],
-    borderColor = colors[["brand-beige-soft"]],
-    stripedColor = colors[["brand-beige"]],
+    color = colors[["typst-fg"]],
+    backgroundColor = colors[["typst-white"]],
+    borderColor = colors[["typst-neutral-200"]],
+    stripedColor = colors[["typst-neutral-100"]],
     highlightColor = grDevices::adjustcolor(
-      colors[["brand-orange"]],
-      alpha.f = 0.08
+      colors[["typst-primary"]],
+      alpha.f = 0.06
     ),
     inputStyle = list(
-      borderColor = colors[["brand-beige-soft"]],
-      borderRadius = "4px",
+      borderColor = colors[["typst-neutral-300"]],
+      borderRadius = "2px",
       boxShadow = "none",
-      fontFamily = "DM Sans"
+      fontFamily = "Satoshi"
     ),
     pageButtonHoverStyle = list(
-      backgroundColor = colors[["p13-orange-09"]],
-      color = colors[["brand-black"]],
-      borderRadius = "4px"
+      backgroundColor = colors[["typst-neutral-100"]],
+      color = colors[["typst-ink"]],
+      borderRadius = "2px"
     ),
     pageButtonActiveStyle = list(
-      backgroundColor = colors[["brand-orange"]],
-      color = colors[["brand-pure-white"]],
-      fontWeight = "700",
-      border = sprintf("1px solid %s", colors[["brand-orange"]]),
-      borderRadius = "4px"
+      backgroundColor = colors[["typst-primary"]],
+      color = colors[["typst-white"]],
+      fontWeight = "600",
+      border = sprintf("1px solid %s", colors[["typst-primary"]]),
+      borderRadius = "2px"
     ),
     pageButtonCurrentStyle = list(
-      backgroundColor = colors[["brand-orange"]],
-      color = colors[["brand-pure-white"]],
-      fontWeight = "700",
-      border = sprintf("1px solid %s", colors[["brand-orange"]]),
-      borderRadius = "4px"
+      backgroundColor = colors[["typst-primary"]],
+      color = colors[["typst-white"]],
+      fontWeight = "600",
+      border = sprintf("1px solid %s", colors[["typst-primary"]]),
+      borderRadius = "2px"
     ),
     style = list(
-      fontFamily = "DM Sans",
-      fontSize = "13.5px",
-      lineHeight = "1.62",
-      borderRadius = "4px",
+      fontFamily = "Satoshi",
+      fontSize = "13px",
+      lineHeight = "1.5",
+      borderRadius = "0px",
       boxShadow = "none"
     ),
     tableStyle = list(
@@ -61,20 +61,21 @@ reactable_theme_chanwe <- function() {
       borderSpacing = 0
     ),
     headerStyle = list(
-      background = colors[["brand-pure-white"]],
-      color = colors[["brand-black"]],
-      fontWeight = 800,
+      background = colors[["typst-white"]],
+      color = colors[["typst-ink"]],
+      fontFamily = "Archivo",
+      fontWeight = 600,
       paddingTop = "10px",
       paddingBottom = "10px",
-      borderTop = sprintf("1px solid %s", colors[["brand-orange"]]),
-      borderBottom = sprintf("2px solid %s", colors[["brand-black"]])
+      borderTop = sprintf("1px solid %s", colors[["typst-neutral-300"]]),
+      borderBottom = sprintf("2px solid %s", colors[["typst-neutral-900"]])
     ),
     cellStyle = list(
-      borderBottom = sprintf("0.6px solid %s", colors[["brand-beige-soft"]])
+      borderBottom = sprintf("1px solid %s", colors[["typst-neutral-200"]])
     ),
     rowStyle = list(
       "&:hover[aria-selected='false']" = list(
-        backgroundColor = colors[["p13-orange-10"]]
+        backgroundColor = colors[["typst-neutral-100"]]
       )
     )
   )
