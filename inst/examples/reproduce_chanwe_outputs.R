@@ -1,7 +1,9 @@
 # Reproduce ChanWe-branded outputs
 
-library(chanwer)
+# library(chanwer)
 library(ggplot2)
+
+devtools::load_all()
 
 # 1) ggplot2
 p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
@@ -9,7 +11,7 @@ p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
   scale_color_chanwe_d() +
   labs(
     title = chanwe_title("Fuel efficiency by weight"),
-    subtitle = "ChanWe branded ggplot",
+    subtitle = "Chanwe branded ggplot",
     caption = "Data: mtcars"
   ) +
   theme_chanwe()

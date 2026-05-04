@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(quarto add *)",
-      "Bash(ln -s /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/fonts)"
+      "Bash(ln -s /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/fonts)",
+      "Bash(quarto render *)",
+      "Bash(open /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/chanwe-typst-gt-ggplot-showcase.pdf)",
+      "Bash(Rscript -e 'library\\(systemfonts\\); f <- system_fonts\\(\\); f[grep\\('\\\\''Archivo|Fraunces|Satoshi'\\\\'', f$family, ignore.case=TRUE\\), c\\('\\\\''family'\\\\'','\\\\''style'\\\\'','\\\\''weight'\\\\'','\\\\''italic'\\\\'','\\\\''path'\\\\''\\)]')"
+    ],
+    "additionalDirectories": [
+      "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"
     ]
   }
 }

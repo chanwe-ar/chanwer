@@ -27,6 +27,10 @@
 // expose tokens as a global so partials and user code can use them
 #let _t = chanwe-tokens
 
+// assets path — override with chanwe-assets: in document YAML if the
+// extension installed to a different path (e.g. _extensions/chanwe/)
+#let _chanwe-assets = "$chanwe-assets$".replace("\\_", "_")
+
 // ---------- Small primitives ---------------------------------
 #let chanwe-glyph(size: 7pt, color: _t.primary) = box(
   width: size, height: size, baseline: 1pt,
@@ -86,7 +90,7 @@
             text(fill: _t.fg-subtle, upper[ · #topic])
           }
         },
-        image("assets/Logo_Negro.png", height: 3.5mm, fit: "contain"),
+        image(_chanwe-assets + "Logo_Negro.png", height: 3.5mm, fit: "contain"),
       )),
       pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + _t.border)),
     )
@@ -104,7 +108,7 @@
         grid(
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
-          [#box(baseline: 30%, image("assets/Estrategia_Color.png", height: 2.08mm, fit: "contain")) #h(6pt) #upper[#doc-id #h(8pt) #text(fill: _t.neutral-300, edition)]],
+          [#box(baseline: 30%, image(_chanwe-assets + "Estrategia_Color.png", height: 2.08mm, fit: "contain")) #h(6pt) #upper[#doc-id #h(8pt) #text(fill: _t.neutral-300, edition)]],
           {
             box(width: 3pt, height: 3pt, fill: _t.primary, baseline: -0.5pt)
             h(8pt)
@@ -249,7 +253,7 @@ $chanwe-charts.typ()$
         columns: (auto, 1fr),
         column-gutter: 8mm,
         align: (left + bottom, left + bottom),
-        text(font: _t.font-serif, style: "italic", weight: 300,
+        text(font: _t.font-serif, style: "italic", weight: 100,
              size: 48pt, fill: _t.primary,
              counter(heading).display("1")),
         block()[
@@ -267,7 +271,7 @@ $chanwe-charts.typ()$
       columns: (auto, 1fr),
       column-gutter: 6mm,
       align: (left + bottom, left + bottom),
-      text(font: _t.font-serif, style: "italic", weight: 300,
+      text(font: _t.font-serif, style: "italic", weight: 100,
            size: 24pt, fill: _t.primary,
            counter(heading).display("1.1")),
       text(font: _t.font-display, size: 27pt, weight: 700,
@@ -281,7 +285,7 @@ $chanwe-charts.typ()$
       columns: (auto, 1fr),
       column-gutter: 4mm,
       align: (left + bottom, left + bottom),
-      text(font: _t.font-serif, style: "italic", weight: 300,
+      text(font: _t.font-serif, style: "italic", weight: 100,
            size: 18pt, fill: _t.primary,
            counter(heading).display("1.1.1")),
       text(font: _t.font-display, size: 17pt, weight: 700,
@@ -293,7 +297,7 @@ $chanwe-charts.typ()$
       columns: (auto, 1fr),
       column-gutter: 4mm,
       align: (left + bottom, left + bottom),
-      text(font: _t.font-serif, style: "italic", weight: 300,
+      text(font: _t.font-serif, style: "italic", weight: 100,
            size: 14pt, fill: _t.primary,
            counter(heading).display("1.1.1.1")),
       text(font: _t.font-display, size: 14pt, weight: 700,
@@ -301,14 +305,18 @@ $chanwe-charts.typ()$
     )
   ]
   show heading.where(level: 5): it => block(above: 8mm, below: 4mm)[
-    #box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
-    #h(6pt)
-    #text(font: _t.font-mono, size: 8pt, weight: 500,
-          tracking: 0.18em, fill: _t.fg-subtle, upper(it.body))
-    #v(0.8mm)
-    #line(length: 100%, stroke: 0.5pt + _t.neutral-300)
+    #stack(dir: ttb,
+      {
+        box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
+        h(6pt)
+        text(font: _t.font-mono, size: 8pt, weight: 500,
+             tracking: 0.18em, fill: _t.fg-subtle, upper(it.body))
+      },
+      3mm,
+      line(length: 100%, stroke: 0.5pt + _t.neutral-300),
+    )
   ]
-  show heading.where(level: 6): it => block(above: 6mm, below: 2mm)[
+  show heading.where(level: 6): it => block(above: 6mm, below: 5mm)[
     #box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
     #h(6pt)
     #text(font: _t.font-mono, size: 8pt, weight: 500,

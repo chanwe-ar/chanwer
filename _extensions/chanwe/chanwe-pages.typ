@@ -15,7 +15,7 @@
       align: (left + horizon, left + horizon, left + horizon, right + horizon),
       [],
       text(font: _t.font-mono, size: 9pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-display, size: 9pt, weight: 100, fill: _t.fg-muted, label),
+      text(font: _t.font-display, size: 9pt, weight: 100, fill: _t.fg-subtle, label),
       text(font: _t.font-mono, size: 9pt, tracking: 0.14em, weight: 100, fill: _t.fg-subtle, page),
     )
   } else {
@@ -24,8 +24,8 @@
       column-gutter: 4mm,
       align: (left + horizon, left + horizon, right + horizon),
       text(font: _t.font-mono, size: 9pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-display, size: 9pt, weight: 100, fill: _t.fg, label),
-      text(font: _t.font-mono, size: 9pt, tracking: 0.14em, weight: 100, fill: _t.fg, page),
+      text(font: _t.font-display, size: 9pt, weight: 100, fill: _t.fg-muted, label),
+      text(font: _t.font-mono, size: 9pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
     )
   }
 ]
@@ -197,7 +197,8 @@
             v(8mm)
           }
 
-          block(above: if cur-part != none and cur-num != prev-num { 0mm } else if is-first { 0mm } else { 15mm }, below: 0pt)[
+          block(above: if cur-part != none and cur-num != prev-num { 0mm } else if is-first { 0mm } else { 12mm }, below: 0pt)[
+            #v(4mm)
             #grid(
               columns: (18mm, 1fr, 34mm),
               column-gutter: 0mm,
@@ -209,9 +210,8 @@
               text(font: _t.font-mono, size: 7pt, tracking: 0.18em,
                    fill: _t.fg-subtle, upper(pages_str)),
             )
-            #v(2mm)
+            #v(4mm)
             #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
-            #v(3mm)
           ]
         }
       } else if it.level == 2 {
@@ -220,9 +220,9 @@
         context {
           let n  = _h2.get().first()
           let pg = counter(page).at(it.element.location()).first()
-          v(3.5mm)
+          v(3mm)
           chanwe-toc-row(num: _pad2(n), label: it.body(), page: _pad2(pg))
-          v(0.5mm)
+          v(0mm)
           line(length: 100%, stroke: 0.5pt + _t.border)
         }
       } else if it.level == 3 {
@@ -233,7 +233,7 @@
           let pg  = counter(page).at(it.element.location()).first()
           v(3mm)
           chanwe-toc-row(num: str(h2n) + "." + str(h3n), label: it.body(), page: _pad2(pg), sub: true)
-          v(0.2mm)
+          v(0mm)
           line(length: 100%, stroke: 0.5pt + _t.border)
         }
       }
@@ -452,11 +452,11 @@
       {
         set text(font: _t.font-mono, size: 6pt, tracking: 0.14em,
                  fill: _t.fg-muted)
-        box(baseline: 30%, image("assets/Estrategia_Color.png", height: 2.08mm, fit: "contain"))
+        box(baseline: 30%, image(_chanwe-assets + "Estrategia_Color.png", height: 2.08mm, fit: "contain"))
         h(6pt)
         upper(_left)
       },
-      image("assets/Logo_Beige.png", height: 3.5mm, fit: "contain"),
+      image(_chanwe-assets + "Logo_Beige.png", height: 3.5mm, fit: "contain"),
     )
     #v(2mm)
     #line(length: 100%, stroke: 0.5pt + _t.border)
@@ -473,7 +473,7 @@
           align: (left + bottom, left + bottom),
           // GIANT italic numeral
           text(
-            font: _t.font-serif, style: "italic", weight: 200,
+            font: _t.font-serif, style: "italic", weight: 100,
             size: 220pt, tracking: -0.04em,
             fill: _t.primary,
             number,

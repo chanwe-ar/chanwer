@@ -181,7 +181,7 @@
   set block(spacing: 0pt)
 
   // centered icon
-  place(center + horizon, image("assets/Iconos_Beige.png", width: 60mm, fit: "contain"))
+  place(center + horizon, image(_chanwe-assets + "Iconos_Beige.png", width: 60mm, fit: "contain"))
 
   // full-height spacer pushes wordmark to bottom
   block(width: 100%, height: 247mm)[]
@@ -191,7 +191,7 @@
     inset: (x: 14mm, top: 0mm, bottom: 0mm),
   )[
     #set align(center + horizon)
-    #align(center + horizon, image("assets/Logo_Beige.png", height: 45mm, fit: "contain"))
+    #align(center + horizon, image(_chanwe-assets + "Logo_Beige.png", height: 45mm, fit: "contain"))
   ]
 }
 
@@ -201,17 +201,17 @@
 #let _chanwe-blank-interstitial() = {
   set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.neutral-200, foreground: none)
   set block(spacing: 0pt)
-  place(center + horizon, image("assets/Iconos_Beige.png", width: 60mm, fit: "contain"))
+  place(center + horizon, image(_chanwe-assets + "Iconos_Beige.png", width: 60mm, fit: "contain"))
   block(width: 100%, height: 297mm)[]
 }
 
 #let chanwe-back-cover-page(
-  wordmark-light: "assets/Logo_Blanco.png",
+  wordmark-light: none,
   tagline-1: "Less template,",
   tagline-2: "more report.",
   back-cols: (),
 ) = {
-  let wl = _chanwe-clean-path(wordmark-light)
+  let wl = if wordmark-light != none { _chanwe-clean-path(wordmark-light) } else { _chanwe-assets + "Logo_Blanco.png" }
 
   // ---- blank interstitial before back cover -----------------
   _chanwe-blank-interstitial()
@@ -251,7 +251,7 @@
 
       // Row 3: icon + tagline + separator + metadata
       block[
-        #image("assets/Estrategia_Color.png", height: 10mm, fit: "contain")
+        #image(_chanwe-assets + "Estrategia_Color.png", height: 10mm, fit: "contain")
         #v(12mm)
         #set par(leading: 0.8em, justify: false)
         #text(font: _t.font-serif, style: "italic", size: 40pt,

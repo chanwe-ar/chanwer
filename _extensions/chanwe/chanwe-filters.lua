@@ -9,7 +9,7 @@ local function escape_typst_str(s)
   return s:gsub('"', '\\"')
 end
 
-function Div(el)
+local function Div(el)
 
   -- -------------------------------------------------------
   -- ::: {.chanwe-chapter-divider number="II" ...}
@@ -21,6 +21,37 @@ function Div(el)
     local blurb   = attr(el, "blurb",   "")
 
     -- Emit metadata first (top-level, so query(<chanwe-part>) finds it reliably)
+    local meta_raw = string.format(
+      '#metadata((number: "%s", title: "%s", eyebrow: "%s")) <chanwe-part>',
+      escape_typst_str(number),
+      escape_typst_str(title),
+      escape_typst_str(eyebrow)
+    )
+    local div_raw = string.format(
+      '#chanwe-chapter-divider(\n  number: "%s",\n  eyebrow: "%s",\n  title: "%s",\n  blurb: "%s",\n)',
+      escape_typst_str(number),
+      escape_typst_str(eyebrow),
+      escape_typst_str(title),
+      escape_typst_str(blurb)
+    )
+    return {
+      pandoc.RawBlock("typst", meta_raw),
+      pandoc.RawBlock("typst", div_raw),
+    }
+  end
+
+  -- -------------------------------------------------------
+  -- ::: {.chapter-cover title="..." blurb="..."}  (alias for chanwe-chapter-divider)
+  -- -------------------------------------------------------
+  if el.classes:includes("chapter-cover") then
+    local number  = attr(el, "number",  "01")
+    local eyebrow = attr(el, "eyebrow", "")
+    local title   = attr(el, "title",   "")
+    local blurb   = attr(el, "blurb",   "")
+    if blurb == "" then
+      blurb = pandoc.utils.stringify(el.content)
+    end
+
     local meta_raw = string.format(
       '#metadata((number: "%s", title: "%s", eyebrow: "%s")) <chanwe-part>',
       escape_typst_str(number),
@@ -184,6 +215,37 @@ function Div(el)
   end
 
   -- -------------------------------------------------------
+  -- :::: {.great-findings-grid color="light"}
+  --   ::: {.great-findings number="01" title="..."} ... :::
+  -- ::::
+  -- -------------------------------------------------------
+  if el.classes:includes("great-findings-grid") then
+    local color = attr(el, "color", "white")
+    local parts = {}
+
+    for _, block in ipairs(el.content) do
+      if block.t == "Div" and block.classes:includes("great-findings") then
+        local number = attr(block, "number", "01")
+        local title  = attr(block, "title",  "")
+        local inner  = pandoc.write(pandoc.Pandoc(pandoc.Blocks(block.content)), "typst")
+
+        table.insert(parts, string.format(
+          '#great-findings-item(\n  number: "%s",\n  title: "%s",\n)[\n%s\n]',
+          escape_typst_str(number),
+          escape_typst_str(title),
+          inner
+        ))
+      end
+    end
+
+    local sep = "\n#line(length: 100%, stroke: 0.5pt + _t.border)\n"
+    local call = string.format('#great-findings-grid(color: "%s")[\n', escape_typst_str(color))
+    call = call .. table.concat(parts, sep)
+    call = call .. "\n]"
+    return pandoc.RawBlock("typst", call)
+  end
+
+  -- -------------------------------------------------------
   -- ::: {.great-findings}
   -- **Bold title** → item title; following paragraphs → item body
   -- -------------------------------------------------------
@@ -247,3 +309,5 @@ function Div(el)
   end
 
 end
+
+return {{traverse = "topdown", Div = Div}}

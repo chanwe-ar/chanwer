@@ -12,7 +12,8 @@ chanwe_discrete_pal <- function() {
 #' A clean editorial ggplot2 theme with ChanWe typography, neutral paper,
 #' orange accents, minimal chrome, and compact rectangular geometry.
 #' Use [chanwe_title()] and [chanwe_subtitle()] with this theme for the
-#' standard ChanWe title treatment.
+#' standard ChanWe title treatment: Archivo Bold heading with an orange `//`
+#' marker, Fraunces 9pt ExtraLight Italic subtitle.
 #'
 #' @param base_text_size Base text size in points.
 #' @param base_family Base font family.
@@ -46,6 +47,8 @@ theme_chanwe <- function(
   legend_position = "bottom",
   background = c("beige", "white")
 ) {
+  chanwe_load_fonts()
+
   colors <- chanwe_get_colors()
   background <- match.arg(background)
   surface_fill <- switch(
@@ -59,7 +62,14 @@ theme_chanwe <- function(
     white = colors[["typst-neutral-200"]]
   )
   panel_border_element <- ggplot2::element_blank()
+
+  registered <- requireNamespace("systemfonts", quietly = TRUE) &&
+    ".chanwe-subtitle" %in% systemfonts::registry_fonts()$family
+  subtitle_family <- if (registered) ".chanwe-subtitle" else "Fraunces 9pt"
+  subtitle_face   <- if (registered) "plain" else "italic"
+
   title_element <- ggplot2::element_text(
+    family = "Archivo",
     color = colors[["typst-ink"]],
     face = "bold",
     size = base_text_size * 1.25,
@@ -68,7 +78,9 @@ theme_chanwe <- function(
     margin = ggplot2::margin(b = 2)
   )
   subtitle_element <- ggplot2::element_text(
+    family = subtitle_family,
     color = colors[["typst-fg-muted"]],
+    face = subtitle_face,
     size = base_text_size * 0.70,
     hjust = 0,
     margin = ggplot2::margin(t = 8, b = 18, l = 30)
@@ -76,6 +88,7 @@ theme_chanwe <- function(
 
   if (requireNamespace("ggtext", quietly = TRUE)) {
     title_element <- ggtext::element_markdown(
+      family = "Archivo",
       color = colors[["typst-ink"]],
       face = "bold",
       size = base_text_size * 1.35,
@@ -84,7 +97,9 @@ theme_chanwe <- function(
       margin = ggplot2::margin(b = 2)
     )
     subtitle_element <- ggtext::element_markdown(
+      family = subtitle_family,
       color = colors[["typst-fg-muted"]],
+      face = subtitle_face,
       size = base_text_size * 0.70,
       hjust = 0,
       margin = ggplot2::margin(t = 2, b = 18, l = 13),
@@ -191,86 +206,28 @@ theme_chanwe <- function(
   theme_obj
 }
 
-#' ChanWe Title Helper with Estrategia Marker
+#' ChanWe Title Helper
 #'
-#' Creates a title string with a small `Estrategia_Color1.png` image placed
-#' before the title text. Use this inside `ggplot2::labs(title = ...)` together
-#' with [theme_chanwe()]. The marker renders when `ggtext` is installed.
+#' Creates a title string prefixed with a `//` glyph in the ChanWe primary
+#' orange at weight 100. Use inside `ggplot2::labs(title = ...)` together with
+#' [theme_chanwe()]. The styled marker renders when `ggtext` is installed;
+#' falls back to plain `// text` otherwise.
 #'
 #' @param text Title text.
-#' @param marker_path Optional path to the marker image file.
-#' @param marker_width_px Optional marker width in pixels. If `NULL` (default),
-#'   width is derived from `marker_scale` and the source image width.
-#' @param marker_scale Relative width multiplier applied to the source image
-#'   width when `marker_width_px = NULL`. Use `0.01` for ~1% of image width.
 #'
 #' @return A title string for use inside `labs(title = ...)`.
 #' @export
 #'
 #' @examples
 #' chanwe_title("Performance Overview")
-chanwe_title <- function(
-  text,
-  marker_path = NULL,
-  marker_width_px = NULL,
-  marker_scale = 0.02
-) {
-  chanwe_require_package("ggtext")
-
-  if (is.null(marker_path)) {
-    marker_path <- chanwe_logo_path("Estrategia_Color1.png")
-    if (!nzchar(marker_path)) {
-      stop(
-        "chanwe_title(): bundled marker asset 'Estrategia_Color1.png' was not found. Ensure it is present under 'inst/assets' or the package is installed correctly.",
-        call. = FALSE
-      )
-    }
+chanwe_title <- function(text) {
+  if (!requireNamespace("ggtext", quietly = TRUE)) {
+    return(paste0("// ", text))
   }
-  marker_path <- normalizePath(marker_path, winslash = "/", mustWork = FALSE)
-  if (!nzchar(marker_path) || !file.exists(marker_path)) {
-    stop(
-      sprintf(
-        "chanwe_title(): marker_path does not exist: %s",
-        marker_path
-      ),
-      call. = FALSE
-    )
-  }
-  marker_src <- chanwe_logo_src(marker_path, embed = FALSE)
-  if (!nzchar(marker_src)) {
-    stop(
-      sprintf(
-        "chanwe_title(): unable to resolve marker source from path: %s",
-        marker_path
-      ),
-      call. = FALSE
-    )
-  }
-  if (is.null(marker_width_px)) {
-    dims <- chanwe_png_dims(marker_path)
-    if (!is.null(dims) && is.finite(marker_scale) && marker_scale > 0) {
-      marker_width_px <- dims$width * marker_scale
-    } else {
-      marker_width_px <- 4
-    }
-  }
-  marker_width_px <- max(3, as.numeric(marker_width_px))
-  dims <- chanwe_png_dims(marker_path)
-  marker_height_px <- if (!is.null(dims) && dims$width > 0) {
-    max(3, marker_width_px * (dims$height / dims$width))
-  } else {
-    marker_width_px
-  }
-
+  colors <- chanwe_get_colors()
   paste0(
-    "<img src='",
-    marker_src,
-    "' width='",
-    format(marker_width_px, trim = TRUE, scientific = FALSE),
-    "' height='",
-    format(marker_height_px, trim = TRUE, scientific = FALSE),
-    "' style='vertical-align:-0.1em;'/>",
-    strrep("\u2003", 6),
+    "<span style='color:", colors[["typst-primary"]], ";font-weight:100;'>//</span>",
+    "&ensp;&ensp;&ensp;",
     text
   )
 }

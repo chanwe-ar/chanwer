@@ -1,3 +1,91 @@
+#' Load ChanWe Fonts into systemfonts
+#'
+#' Registers Satoshi, Archivo, and Fraunces 9pt font families (plus the
+#' `.chanwe-subtitle` ExtraLight Italic variant) with [systemfonts::register_font()],
+#' making them available to the ragg device and ggplot2.
+#' Call once per session before creating plots with [theme_chanwe()].
+#'
+#' @param path Directory containing the TTF files. Defaults to
+#'   `_extensions/chanwe/fonts` relative to the working directory (i.e. the
+#'   fonts bundled with the chanwe-typst Quarto extension).
+#'
+#' @return Invisibly, the resolved fonts directory path.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' chanwe_load_fonts()
+#' }
+chanwe_load_fonts <- function(path = NULL) {
+  if (!requireNamespace("systemfonts", quietly = TRUE)) {
+    warning("chanwe_load_fonts() requires the 'systemfonts' package.")
+    return(invisible(NULL))
+  }
+
+  if (is.null(path)) {
+    candidates <- c(
+      "_extensions/chanwe/fonts",
+      file.path(getwd(), "_extensions/chanwe/fonts"),
+      system.file("fonts", package = "chanwer")
+    )
+    path <- Find(function(p) nzchar(p) && dir.exists(p), candidates)
+  }
+
+  if (is.null(path) || !dir.exists(path)) {
+    warning(
+      "chanwe_load_fonts(): fonts directory not found. ",
+      "Pass `path` explicitly or install the chanwe-typst Quarto extension."
+    )
+    return(invisible(NULL))
+  }
+
+  .reg <- function(name, plain, bold = NULL, italic = NULL, bolditalic = NULL) {
+    fp <- function(f) { p <- file.path(path, f); if (!is.null(f) && file.exists(p)) p else NULL }
+    pp <- fp(plain)
+    if (is.null(pp)) return(invisible(NULL))
+    tryCatch(
+      systemfonts::register_font(
+        name       = name,
+        plain      = pp,
+        bold       = fp(bold),
+        italic     = fp(italic),
+        bolditalic = fp(bolditalic)
+      ),
+      error = function(e) NULL
+    )
+  }
+
+  .reg("Satoshi",
+    plain      = "Satoshi-Regular.ttf",
+    bold       = "Satoshi-Bold.ttf",
+    italic     = "Satoshi-Italic.ttf",
+    bolditalic = "Satoshi-BoldItalic.ttf"
+  )
+  .reg("Archivo",
+    plain      = "Archivo-Regular.ttf",
+    bold       = "Archivo-Bold.ttf",
+    italic     = "Archivo-Italic.ttf",
+    bolditalic = "Archivo-BoldItalic.ttf"
+  )
+  .reg("Fraunces 9pt",
+    plain      = "Fraunces9pt-Regular.ttf",
+    bold       = "Fraunces9pt-Bold.ttf",
+    italic     = "Fraunces9pt-Italic.ttf",
+    bolditalic = "Fraunces9pt-BoldItalic.ttf"
+  )
+
+  # Dedicated ExtraLight Italic variant used by chanwe_subtitle theme element
+  el_italic <- file.path(path, "Fraunces9pt-ExtraLightItalic.ttf")
+  if (file.exists(el_italic)) {
+    tryCatch(
+      systemfonts::register_font(name = ".chanwe-subtitle", plain = el_italic),
+      error = function(e) NULL
+    )
+  }
+
+  invisible(path)
+}
+
 chanwe_require_package <- function(pkg) {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     stop(

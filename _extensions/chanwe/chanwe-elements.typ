@@ -292,26 +292,48 @@
   )
 }
 
+#let _great-findings-row(number: "01", title: "", body) = {
+  grid(
+    columns: (auto, 1fr),
+    column-gutter: 6mm,
+    align: (left + top, left + top),
+    text(
+      font: _t.font-serif, size: 38pt, weight: 100, style: "italic",
+      fill: _t.primary, number,
+    ),
+    block(width: 100%)[
+      #block(below: 4mm)[
+        #text(font: _t.font-display, size: 11.5pt, weight: 700, fill: _t.ink, title)
+      ]
+      #set text(size: 9pt, fill: _t.fg-muted)
+      #set par(leading: 0.72em)
+      #body
+    ],
+  )
+}
+
 #let great-findings(number: "01", title: "", color: "white", body) = {
   let bg = if color == "light" or color == "gray" { _t.neutral-100 } else { none }
   block(width: 100%, fill: bg, radius: 4pt, inset: (top: 7mm, bottom: 7mm))[
-    #grid(
-      columns: (auto, 1fr),
-      column-gutter: 6mm,
-      align: (left + top, left + top),
-      text(
-        font: _t.font-serif, size: 38pt, weight: 100, style: "italic",
-        fill: _t.primary, number,
-      ),
-      block(width: 100%)[
-        #block(below: 4mm)[
-          #text(font: _t.font-display, size: 11.5pt, weight: 700, fill: _t.ink, title)
-        ]
-        #set text(size: 9pt, fill: _t.fg-muted)
-        #set par(leading: 0.72em)
-        #body
-      ],
-    )
+    #_great-findings-row(number: number, title: title, body)
+  ]
+}
+
+// item used inside a great-findings-grid (no individual bg)
+#let great-findings-item(number: "01", title: "", body) = {
+  block(width: 100%, inset: (top: 6mm, bottom: 6mm))[
+    #_great-findings-row(number: number, title: title, body)
+  ]
+}
+
+// wrapper that applies a unified background with dividers between items
+#let great-findings-grid(color: "white", body) = {
+  let bg = if color == "light" { _t.neutral-100 } else if color == "gray" { rgb("#F5F5F5") } else { none }
+  let stroke-top-bottom = if color == "white" { 0.5pt + _t.neutral-900 } else { none }
+  block(width: 100%, fill: bg, radius: if bg == none { 0pt } else { 4pt },
+    stroke: (top: stroke-top-bottom, bottom: stroke-top-bottom),
+    inset: (x: 6mm, y: 5mm))[
+    #body
   ]
 }
 

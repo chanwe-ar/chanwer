@@ -54,17 +54,12 @@ gt_theme_chanwe <- function(
     )
   )
 
-  gt::opt_table_font(
+  gt::tab_options(
     data = data,
-    font = "Satoshi",
-    size = gt::px(11),
-    color = colors[["typst-fg"]],
-    weight = 400,
-    style = "normal"
-  ) |>
-    gt::tab_options(
-      table.background.color = surface_fill,
-      table.font.color = colors[["typst-fg"]],
+    table.background.color = surface_fill,
+    table.font.size = gt::px(11),
+    table.font.color = colors[["typst-fg"]],
+    table.font.names = "Satoshi",
       table.border.top.color = border_color,
       table.border.top.width = gt::px(0.6),
       table.border.bottom.color = border_color,
@@ -105,7 +100,6 @@ gt_theme_chanwe <- function(
         gt::cell_text(
           color = colors[["typst-ink"]],
           weight = "bold",
-          font = gt::google_font("Archivo"),
           size = gt::px(16),
           align = "left"
         )
@@ -125,7 +119,6 @@ gt_theme_chanwe <- function(
       style = gt::cell_text(
         color = colors[["typst-ink"]],
         weight = "bold",
-        font = gt::google_font("Archivo"),
         size = gt::px(11)
       ),
       locations = gt::cells_column_labels()
@@ -144,8 +137,7 @@ gt_theme_chanwe <- function(
     gt::tab_style(
       style = gt::cell_text(
         color = colors[["typst-fg"]],
-        weight = "bold",
-        font = gt::google_font("Archivo")
+        weight = "bold"
       ),
       locations = gt::cells_stub(rows = gt::everything())
     ) |>
