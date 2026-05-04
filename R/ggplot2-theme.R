@@ -19,8 +19,9 @@ chanwe_discrete_pal <- function() {
 #' @param base_family Base font family.
 #' @param base_lineheight Base text line-height multiplier.
 #' @param legend_position Legend position passed to `theme(legend.position = )`.
-#' @param background Background surface variant: `"beige"` (`#F7F7F7`) or
-#'   `"white"` (`#FFFFFF`). Both use a light-gray border (`#F7F7F7`).
+#' @param bg_color Background hex color for the plot surface. Defaults to
+#'   `"#FFFFFF"` (white). Pass any hex string, e.g. `"#F5F5F5"` for the
+#'   standard ChanWe neutral-100 beige.
 #'
 #' @return A ggplot2 theme object.
 #' @export
@@ -34,33 +35,20 @@ chanwe_discrete_pal <- function() {
 #'       title = "Performance overview",
 #'       subtitle = chanwe_subtitle("Example subtitle")
 #'     ) +
-#'     theme_chanwe(
-#'       base_text_size = 12,
-#'       legend_position = "bottom",
-#'       background = "beige"
-#'     )
+#'     theme_chanwe(base_text_size = 12, legend_position = "bottom")
 #' }
 theme_chanwe <- function(
   base_text_size = 11.5,
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
-  background = c("beige", "white")
+  bg_color = "#FFFFFF"
 ) {
   chanwe_load_fonts()
 
   colors <- chanwe_get_colors()
-  background <- match.arg(background)
-  surface_fill <- switch(
-    background,
-    beige = colors[["typst-neutral-100"]],
-    white = colors[["typst-white"]]
-  )
-  outer_border_color <- switch(
-    background,
-    beige = colors[["typst-neutral-200"]],
-    white = colors[["typst-neutral-200"]]
-  )
+  surface_fill      <- bg_color
+  outer_border_color <- colors[["typst-neutral-200"]]
   panel_border_element <- ggplot2::element_blank()
 
   reg <- if (requireNamespace("systemfonts", quietly = TRUE)) {

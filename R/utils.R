@@ -17,6 +17,10 @@
 #' chanwe_load_fonts()
 #' }
 chanwe_load_fonts <- function(path = NULL) {
+  if (isTRUE(.chanwe_env$fonts_loaded) && is.null(path)) {
+    return(invisible(NULL))
+  }
+
   if (!requireNamespace("systemfonts", quietly = TRUE)) {
     warning("chanwe_load_fonts() requires the 'systemfonts' package.")
     return(invisible(NULL))
@@ -116,6 +120,7 @@ chanwe_load_fonts <- function(path = NULL) {
     }
   }
 
+  .chanwe_env$fonts_loaded <- TRUE
   invisible(path)
 }
 

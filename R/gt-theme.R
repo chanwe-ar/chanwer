@@ -1,190 +1,182 @@
 #' ChanWe Theme for gt Tables
 #'
-#' Applies ChanWe branding to [gt::gt()] tables with neutral surfaces,
-#' understated borders, editorial typography, and orange accents. This is the
-#' main entry point for `gt` tables when you need to control density and
-#' background explicitly.
+#' Applies ChanWe branding to [gt::gt()] tables: editorial typography,
+#' mono-caps column headers, clean black divider lines, and neutral surfaces.
 #'
 #' @param data A gt table object.
 #' @param variant One of `"spacious"` or `"compact"` to control table density.
-#'   Both variants keep a taller table header.
-#' @param background Background surface variant: `"beige"` (`#F7F7F7`) or
-#'   `"white"` (`#FFFFFF`). Both use a light-gray border (`#F7F7F7`).
+#' @param bg_color Background hex color for the table surface. Defaults to
+#'   `"#FFFFFF"`. Pass `"#F5F5F5"` for the standard neutral-100 beige.
 #'
 #' @return A themed gt table object.
 #' @export
 #'
 #' @examples
 #' if (requireNamespace("gt", quietly = TRUE)) {
-#'   tbl <- gt::gt(head(mtcars)) |>
-#'     gt::tab_header(
-#'       title = "Motor Trend Cars",
-#'       subtitle = "Spacious beige table"
-#'     ) |>
-#'     gt_theme_chanwe(variant = "spacious", background = "beige")
+#'   gt::gt(head(mtcars)) |>
+#'     gt::tab_header(title = "Motor Trend Cars", subtitle = "Top rows") |>
+#'     gt_theme_chanwe()
 #' }
 gt_theme_chanwe <- function(
   data,
-  variant = c("spacious", "compact"),
-  background = c("beige", "white")
+  variant   = c("spacious", "compact"),
+  bg_color  = "#FFFFFF"
 ) {
   chanwe_require_package("gt")
 
-  colors <- chanwe_get_colors()
+  colors  <- chanwe_get_colors()
   variant <- match.arg(variant)
-  background <- match.arg(background)
-  surface_fill <- switch(
-    background,
-    beige = colors[["typst-neutral-100"]],
-    white = colors[["typst-white"]]
-  )
-  border_color <- colors[["typst-neutral-300"]]
 
   density <- switch(
     variant,
     spacious = list(
-      heading_padding = gt::px(30),
-      column_labels_padding = gt::px(12),
-      data_row_padding = gt::px(10)
+      heading_padding       = gt::px(28),
+      column_labels_padding = gt::px(10),
+      data_row_padding      = gt::px(12)
     ),
     compact = list(
-      heading_padding = gt::px(22),
-      column_labels_padding = gt::px(9),
-      data_row_padding = gt::px(5)
+      heading_padding       = gt::px(18),
+      column_labels_padding = gt::px(7),
+      data_row_padding      = gt::px(6)
     )
   )
 
-  gt::tab_options(
-    data = data,
-    table.background.color = surface_fill,
-    table.font.size = gt::px(11),
-    table.font.color = colors[["typst-fg"]],
-    table.font.names = "Satoshi",
-      table.border.top.color = border_color,
-      table.border.top.width = gt::px(0.6),
-      table.border.bottom.color = border_color,
-      table.border.bottom.width = gt::px(1),
-      heading.background.color = surface_fill,
-      heading.title.font.weight = "bold",
-      heading.title.font.size = gt::px(16),
-      heading.subtitle.font.weight = "normal",
-      heading.subtitle.font.size = gt::px(12),
-      heading.padding = density$heading_padding,
-      heading.border.bottom.color = colors[["typst-primary"]],
-      heading.border.bottom.width = gt::px(2),
-      column_labels.background.color = surface_fill,
-      column_labels.font.weight = "bold",
-      column_labels.font.size = gt::px(14.5),
-      column_labels.padding = density$column_labels_padding,
-      column_labels.border.top.color = border_color,
-      column_labels.border.top.width = gt::px(0.6),
-      column_labels.border.bottom.color = colors[["typst-neutral-900"]],
-      column_labels.border.bottom.width = gt::px(2),
-      table_body.hlines.color = border_color,
-      table_body.hlines.width = gt::px(0.6),
-      table_body.vlines.color = border_color,
-      table_body.vlines.width = gt::px(0.6),
-      row.striping.background_color = surface_fill,
-      stub.background.color = surface_fill,
-      row_group.background.color = surface_fill,
-      summary_row.background.color = surface_fill,
-      grand_summary_row.background.color = surface_fill,
-      data_row.padding = density$data_row_padding,
-      source_notes.font.size = gt::px(11),
-      source_notes.background.color = surface_fill,
-      footnotes.font.size = gt::px(11),
-      footnotes.background.color = surface_fill
+  data |>
+    gt::tab_options(
+      table.background.color               = bg_color,
+      table.font.size                      = gt::px(13),
+      table.font.color                     = colors[["typst-fg"]],
+      table.font.names                     = "Satoshi",
+      table.border.top.color               = colors[["typst-ink"]],
+      table.border.top.width               = gt::px(1),
+      table.border.bottom.color            = colors[["typst-ink"]],
+      table.border.bottom.width            = gt::px(1),
+      heading.background.color             = bg_color,
+      heading.title.font.size              = gt::px(20),
+      heading.title.font.weight            = "bold",
+      heading.subtitle.font.size           = gt::px(13),
+      heading.subtitle.font.weight         = "normal",
+      heading.padding                      = density$heading_padding,
+      heading.border.bottom.color          = colors[["typst-neutral-200"]],
+      heading.border.bottom.width          = gt::px(1),
+      column_labels.background.color       = bg_color,
+      column_labels.font.size              = gt::px(10),
+      column_labels.font.weight            = "normal",
+      column_labels.padding                = density$column_labels_padding,
+      column_labels.border.top.color       = colors[["typst-ink"]],
+      column_labels.border.top.width       = gt::px(1),
+      column_labels.border.bottom.color    = colors[["typst-ink"]],
+      column_labels.border.bottom.width    = gt::px(1),
+      table_body.hlines.color              = colors[["typst-neutral-200"]],
+      table_body.hlines.width              = gt::px(0.5),
+      table_body.vlines.color              = "transparent",
+      table_body.vlines.width              = gt::px(0),
+      row.striping.background_color        = bg_color,
+      stub.background.color                = bg_color,
+      row_group.background.color           = bg_color,
+      summary_row.background.color         = bg_color,
+      grand_summary_row.background.color   = bg_color,
+      data_row.padding                     = density$data_row_padding,
+      source_notes.font.size               = gt::px(11),
+      source_notes.background.color        = bg_color,
+      footnotes.font.size                  = gt::px(11),
+      footnotes.background.color           = bg_color
     ) |>
     gt::tab_style(
-      style = list(
-        gt::cell_text(
-          color = colors[["typst-ink"]],
-          weight = "bold",
-          size = gt::px(16),
-          align = "left"
-        )
+      style = gt::cell_text(
+        font      = gt::google_font("Archivo"),
+        color     = colors[["typst-ink"]],
+        weight    = "bold",
+        size      = gt::px(20),
+        align     = "left"
       ),
       locations = gt::cells_title(groups = "title")
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["typst-fg-muted"]],
+        color  = colors[["typst-fg-muted"]],
         weight = "normal",
-        size = gt::px(12),
-        align = "left"
+        style  = "italic",
+        size   = gt::px(13),
+        align  = "left"
       ),
       locations = gt::cells_title(groups = "subtitle")
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["typst-ink"]],
-        weight = "bold",
-        size = gt::px(11)
+        font          = gt::google_font("JetBrains Mono"),
+        color         = colors[["typst-fg-subtle"]],
+        weight        = "normal",
+        size          = gt::px(10),
+        transform     = "uppercase",
+        v_align       = "middle"
       ),
       locations = gt::cells_column_labels()
     ) |>
     gt::tab_style(
       style = list(
         gt::cell_text(
-          color = colors[["typst-fg"]],
+          color  = colors[["typst-fg"]],
           weight = "normal",
-          size = gt::px(11)
+          size   = gt::px(13)
         ),
-        gt::cell_fill(color = surface_fill)
+        gt::cell_fill(color = bg_color)
       ),
       locations = gt::cells_body()
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["typst-fg"]],
-        weight = "bold"
+        color  = colors[["typst-fg-subtle"]],
+        weight = "normal",
+        size   = gt::px(12)
       ),
       locations = gt::cells_stub(rows = gt::everything())
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["typst-fg-subtle"]],
-        size = gt::px(10)
+        color  = colors[["typst-fg-subtle"]],
+        weight = "normal",
+        style  = "italic",
+        size   = gt::px(11)
       ),
       locations = gt::cells_source_notes()
     ) |>
     gt::tab_style(
       style = gt::cell_text(
-        color = colors[["typst-fg-subtle"]],
-        size = gt::px(10)
+        color  = colors[["typst-fg-subtle"]],
+        size   = gt::px(11)
       ),
       locations = gt::cells_footnotes()
     ) |>
+    gt::tab_style(
+      style = list(
+        gt::cell_text(
+          color  = colors[["typst-fg-muted"]],
+          weight = "bold",
+          size   = gt::px(12)
+        ),
+        gt::cell_fill(color = bg_color)
+      ),
+      locations = gt::cells_row_groups()
+    ) |>
     gt::opt_css(
       css = sprintf(
-        ".gt_table { border-radius: 0px; box-shadow: none; border-top: 1px solid %s; }
-         .gt_heading { border-top: none; border-left: 3px solid %s; padding-left: 12px; text-align: left !important; }
-         .gt_caption { color: %s; font-size: 10px; }
-         .gt_row { line-height: 1.5; color: %s; font-weight: 400; background: %s !important; }
-         .gt_row th, .gt_row td { background: %s !important; border-bottom: 1px solid %s; }
-         .gt_striped, .gt_striped th, .gt_striped td { background: %s !important; }
-         .gt_table tbody tr:nth-child(odd) > th,
-         .gt_table tbody tr:nth-child(odd) > td,
-         .gt_table tbody tr:nth-child(even) > th,
-         .gt_table tbody tr:nth-child(even) > td { background: %s !important; }
-         .gt_table tbody tr,
-         .gt_table tbody tr > th,
-         .gt_table tbody tr > td,
-         .gt_stub,
-         .gt_group_heading,
-         .gt_summary_row,
-         .gt_grand_summary_row { background: %s !important; background-color: %s !important; }",
-        colors[["typst-neutral-300"]],
-        colors[["typst-primary"]],
+        "
+        .gt_table { border-radius: 0; box-shadow: none; }
+        .gt_heading { border-top: none; padding-left: 0; text-align: left !important; }
+        .gt_col_heading { letter-spacing: 0.08em; }
+        .gt_row { line-height: 1.55; background: %s !important; }
+        .gt_row th, .gt_row td { background: %s !important; }
+        .gt_striped, .gt_striped th, .gt_striped td { background: %s !important; }
+        .gt_stub { background: %s !important; color: %s; font-size: 12px; }
+        .gt_group_heading { background: %s !important; }
+        .gt_summary_row, .gt_grand_summary_row { background: %s !important; }
+        .gt_sourcenotes { border-top: 1px solid %s; }
+        ",
+        bg_color, bg_color, bg_color, bg_color,
         colors[["typst-fg-subtle"]],
-        colors[["typst-fg"]],
-        surface_fill,
-        surface_fill,
-        colors[["typst-neutral-200"]],
-        surface_fill,
-        surface_fill,
-        surface_fill,
-        surface_fill
+        bg_color, bg_color,
+        colors[["typst-neutral-200"]]
       )
     )
 }
@@ -194,19 +186,17 @@ gt_theme_chanwe <- function(
 #' Convenience wrapper for [gt_theme_chanwe()] with `variant = "spacious"`.
 #'
 #' @param data A gt table object.
-#' @param background Background surface variant passed to [gt_theme_chanwe()].
+#' @param bg_color Background hex color passed to [gt_theme_chanwe()].
+#' @param background Deprecated. Use `bg_color` instead.
 #'
 #' @return A themed gt table object.
 #' @export
-#'
-#' @examples
-#' if (requireNamespace("gt", quietly = TRUE)) {
-#'   gt::gt(head(mtcars)) |>
-#'     gt::tab_header(title = "Spacious table") |>
-#'     gt_theme_chanwe_spacious()
-#' }
-gt_theme_chanwe_spacious <- function(data, background = c("beige", "white")) {
-  gt_theme_chanwe(data, variant = "spacious", background = background)
+gt_theme_chanwe_spacious <- function(data, bg_color = "#FFFFFF",
+                                     background = NULL) {
+  if (!is.null(background)) {
+    bg_color <- if (identical(background, "beige")) "#F5F5F5" else "#FFFFFF"
+  }
+  gt_theme_chanwe(data, variant = "spacious", bg_color = bg_color)
 }
 
 #' ChanWe Compact Theme for gt Tables
@@ -214,17 +204,15 @@ gt_theme_chanwe_spacious <- function(data, background = c("beige", "white")) {
 #' Convenience wrapper for [gt_theme_chanwe()] with `variant = "compact"`.
 #'
 #' @param data A gt table object.
-#' @param background Background surface variant passed to [gt_theme_chanwe()].
+#' @param bg_color Background hex color passed to [gt_theme_chanwe()].
+#' @param background Deprecated. Use `bg_color` instead.
 #'
 #' @return A themed gt table object.
 #' @export
-#'
-#' @examples
-#' if (requireNamespace("gt", quietly = TRUE)) {
-#'   gt::gt(head(mtcars)) |>
-#'     gt::tab_header(title = "Compact table") |>
-#'     gt_theme_chanwe_compact()
-#' }
-gt_theme_chanwe_compact <- function(data, background = c("beige", "white")) {
-  gt_theme_chanwe(data, variant = "compact", background = background)
+gt_theme_chanwe_compact <- function(data, bg_color = "#FFFFFF",
+                                    background = NULL) {
+  if (!is.null(background)) {
+    bg_color <- if (identical(background, "beige")) "#F5F5F5" else "#FFFFFF"
+  }
+  gt_theme_chanwe(data, variant = "compact", bg_color = bg_color)
 }

@@ -948,3 +948,4 @@ iris_tbl |>
     gt::tab_source_note("Source: Fisher, 1936 — Anderson iris data") |>
     gt_theme_chanwe(variant = "spacious", bg_color = "#F5F5F5")
 ```
+

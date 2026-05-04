@@ -5,21 +5,21 @@ library(ggplot2)
 
 devtools::load_all()
 
-# 1) ggplot2
-p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-  geom_point(size = 3) +
-  scale_color_chanwe_d() +
-  labs(
-    title = chanwe_title(
-      text = "Fuel efficiency by weight",
-      eyebrow = "TLDR;"
-    ),
-    subtitle = "Chanwe branded ggplot",
-    caption = chanwe_caption("Data: mtcars")
-  ) +
-  theme_chanwe()
+# # 1) ggplot2
+# p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+#   geom_point(size = 3) +
+#   scale_color_chanwe_d() +
+#   labs(
+#     title = chanwe_title(
+#       text = "Fuel efficiency by weight",
+#       eyebrow = "TLDR;"
+#     ),
+#     subtitle = "Chanwe branded ggplot",
+#     caption = chanwe_caption("Data: mtcars")
+#   ) +
+#   theme_chanwe(bg_color = "#fff")
 
-print(p)
+# print(p)
 
 mt <- tibble::as_tibble(mtcars, rownames = "model")
 mt <- mt |>
@@ -38,30 +38,30 @@ if (requireNamespace("gt", quietly = TRUE)) {
   print(gt_tbl)
 }
 
-# 3) reactable
-if (requireNamespace("reactable", quietly = TRUE)) {
-  react_tbl <- reactable::reactable(
-    head(mt),
-    theme = reactable_theme_chanwe(),
-    defaultPageSize = 6
-  )
+# # 3) reactable
+# if (requireNamespace("reactable", quietly = TRUE)) {
+#   react_tbl <- reactable::reactable(
+#     head(mt),
+#     theme = reactable_theme_chanwe(),
+#     defaultPageSize = 6
+#   )
 
-  print(react_tbl)
-}
+#   print(react_tbl)
+# }
 
-# 4) highcharter
-if (requireNamespace("highcharter", quietly = TRUE)) {
-  hc <- highcharter::hchart(
-    mtcars,
-    "scatter",
-    highcharter::hcaes(wt, mpg, group = cyl)
-  ) |>
-    highcharter::hc_title(text = "ChanWe highcharter") |>
-    highcharter::hc_add_theme(hc_theme_chanwe())
+# # 4) highcharter
+# if (requireNamespace("highcharter", quietly = TRUE)) {
+#   hc <- highcharter::hchart(
+#     mtcars,
+#     "scatter",
+#     highcharter::hcaes(wt, mpg, group = cyl)
+#   ) |>
+#     highcharter::hc_title(text = "ChanWe highcharter") |>
+#     highcharter::hc_add_theme(hc_theme_chanwe())
 
-  print(hc)
-}
+#   print(hc)
+# }
 
-# 5) Quarto CSS path
-cat("Use this stylesheet in Quarto:\n")
-cat(chanwe_reporting_css(), "\n")
+# # 5) Quarto CSS path
+# cat("Use this stylesheet in Quarto:\n")
+# cat(chanwe_reporting_css(), "\n")
