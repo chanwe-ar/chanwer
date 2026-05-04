@@ -10,7 +10,10 @@ p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
   geom_point(size = 3) +
   scale_color_chanwe_d() +
   labs(
-    title = "Fuel efficiency by weight",
+    title = chanwe_title(
+      text = "Fuel efficiency by weight",
+      eyebrow = "TLDR;"
+    ),
     subtitle = "Chanwe branded ggplot",
     caption = chanwe_caption("Data: mtcars")
   ) +

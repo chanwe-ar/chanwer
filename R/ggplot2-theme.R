@@ -122,7 +122,7 @@ theme_chanwe <- function(
       family = subtitle_family,
       color = colors[["typst-fg-subtle"]],
       face = subtitle_face,
-      size = base_text_size * 1.25,
+      size = base_text_size * 1.15,
       hjust = 0,
       margin = ggplot2::margin(t = 4, b = 20),
       lineheight = 1.3
@@ -269,15 +269,15 @@ chanwe_title <- function(text, eyebrow = NULL) {
     return(text)
   }
   if (!requireNamespace("ggtext", quietly = TRUE)) {
-    return(paste0("· ", toupper(eyebrow), "\n", text))
+    return(paste0("── ", toupper(eyebrow), "\n", text))
   }
   colors <- chanwe_get_colors()
   paste0(
     "<span style='font-family:JetBrains Mono;font-size:8pt;font-weight:500;",
-    "letter-spacing:0.18em;color:",
+    "letter-spacing:0.08em;color:",
     colors[["typst-primary"]],
     ";'>",
-    "· ",
+    "── ",
     toupper(eyebrow),
     "</span><br>",
     text
