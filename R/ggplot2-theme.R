@@ -31,7 +31,7 @@ chanwe_discrete_pal <- function() {
 #'     ggplot2::geom_point(size = 3) +
 #'     scale_color_chanwe_d() +
 #'     ggplot2::labs(
-#'       title = chanwe_title("Performance overview"),
+#'       title = "Performance overview",
 #'       subtitle = chanwe_subtitle("Example subtitle")
 #'     ) +
 #'     theme_chanwe(
@@ -63,47 +63,69 @@ theme_chanwe <- function(
   )
   panel_border_element <- ggplot2::element_blank()
 
-  registered <- requireNamespace("systemfonts", quietly = TRUE) &&
-    ".chanwe-subtitle" %in% systemfonts::registry_fonts()$family
-  subtitle_family <- if (registered) ".chanwe-subtitle" else "Fraunces 9pt"
-  subtitle_face   <- if (registered) "plain" else "italic"
+  reg <- if (requireNamespace("systemfonts", quietly = TRUE)) {
+    systemfonts::registry_fonts()$family
+  } else {
+    character(0)
+  }
+  title_family <- if (".chanwe-title" %in% reg) ".chanwe-title" else "Archivo"
+  title_face <- if (".chanwe-title" %in% reg) "plain" else "bold"
+  subtitle_family <- if (".chanwe-subtitle" %in% reg) {
+    ".chanwe-subtitle"
+  } else {
+    "Satoshi"
+  }
+  subtitle_face <- if (".chanwe-subtitle" %in% reg) "plain" else "plain"
+
+  mono_family <- if (
+    requireNamespace("systemfonts", quietly = TRUE) &&
+      "JetBrains Mono" %in%
+        c(
+          systemfonts::registry_fonts()$family,
+          systemfonts::system_fonts()$family
+        )
+  ) {
+    "JetBrains Mono"
+  } else {
+    "mono"
+  }
 
   title_element <- ggplot2::element_text(
-    family = "Archivo",
+    family = title_family,
     color = colors[["typst-ink"]],
-    face = "bold",
-    size = base_text_size * 1.25,
+    face = title_face,
+    size = base_text_size * 1.55,
     hjust = 0,
-    lineheight = 1.15,
-    margin = ggplot2::margin(b = 2)
+    lineheight = 1.10,
+    margin = ggplot2::margin(b = 4)
   )
   subtitle_element <- ggplot2::element_text(
     family = subtitle_family,
     color = colors[["typst-fg-muted"]],
     face = subtitle_face,
-    size = base_text_size * 0.70,
+    size = base_text_size * 0.88,
     hjust = 0,
-    margin = ggplot2::margin(t = 8, b = 18, l = 30)
+    margin = ggplot2::margin(t = 4, b = 20)
   )
 
   if (requireNamespace("ggtext", quietly = TRUE)) {
     title_element <- ggtext::element_markdown(
-      family = "Archivo",
+      family = title_family,
       color = colors[["typst-ink"]],
-      face = "bold",
-      size = base_text_size * 1.35,
+      face = title_face,
+      size = base_text_size * 1.60,
       hjust = 0,
-      lineheight = 1.15,
-      margin = ggplot2::margin(b = 2)
+      lineheight = 1.10,
+      margin = ggplot2::margin(b = 4)
     )
     subtitle_element <- ggtext::element_markdown(
       family = subtitle_family,
       color = colors[["typst-fg-muted"]],
       face = subtitle_face,
-      size = base_text_size * 0.70,
+      size = base_text_size * 0.88,
       hjust = 0,
-      margin = ggplot2::margin(t = 2, b = 18, l = 13),
-      lineheight = 1.2
+      margin = ggplot2::margin(t = 4, b = 20),
+      lineheight = 1.3
     )
   }
 
@@ -118,45 +140,57 @@ theme_chanwe <- function(
         lineheight = base_lineheight
       ),
       plot.title = title_element,
-      plot.caption = ggplot2::element_text(
-        color = colors[["typst-fg-subtle"]],
-        size = base_text_size * 0.64,
-        hjust = 1,
-        margin = ggplot2::margin(t = 10)
-      ),
+      plot.caption = if (requireNamespace("ggtext", quietly = TRUE)) {
+        ggtext::element_markdown(
+          family = mono_family,
+          color = colors[["typst-fg-subtle"]],
+          size = base_text_size * 0.85,
+          hjust = 0,
+          margin = ggplot2::margin(t = 4)
+        )
+      } else {
+        ggplot2::element_text(
+          family = mono_family,
+          color = colors[["typst-fg-subtle"]],
+          size = base_text_size * 0.85,
+          hjust = 0,
+          margin = ggplot2::margin(t = 14)
+        )
+      },
       axis.title = ggplot2::element_text(
-        color = colors[["typst-fg"]],
-        face = "bold",
-        size = base_text_size * 0.78
+        family = mono_family,
+        color = colors[["typst-fg-subtle"]],
+        face = "plain",
+        size = base_text_size * 1
       ),
       axis.text = ggplot2::element_text(
-        color = colors[["typst-fg-muted"]],
-        size = base_text_size * 0.64
+        color = colors[["typst-fg-subtle"]],
+        size = base_text_size * 0.75
       ),
       axis.title.x = ggplot2::element_text(
         hjust = 1,
-        margin = ggplot2::margin(t = 10)
+        margin = ggplot2::margin(t = 8)
       ),
       axis.title.y = ggplot2::element_text(
-        angle = 90,
-        vjust = 1,
-        hjust = 1,
-        margin = ggplot2::margin(r = 10)
+        angle = 0,
+        hjust = 0,
+        vjust = 1.02,
+        margin = ggplot2::margin(r = 8)
       ),
       axis.line = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_line(
-        color = colors[["typst-neutral-300"]],
+        color = colors[["typst-neutral-200"]],
         linewidth = 0.3
       ),
       panel.grid.major = ggplot2::element_line(
-        color = colors[["typst-neutral-300"]],
-        linewidth = 0.45
+        color = colors[["typst-neutral-200"]],
+        linewidth = 0.3
       ),
       panel.grid.minor = ggplot2::element_blank(),
       plot.background = ggplot2::element_rect(
         fill = surface_fill,
         color = outer_border_color,
-        linewidth = 0.4
+        linewidth = 0.3
       ),
       panel.background = ggplot2::element_rect(
         fill = surface_fill,
@@ -208,26 +242,39 @@ theme_chanwe <- function(
 
 #' ChanWe Title Helper
 #'
-#' Creates a title string prefixed with a `//` glyph in the ChanWe primary
-#' orange at weight 100. Use inside `ggplot2::labs(title = ...)` together with
-#' [theme_chanwe()]. The styled marker renders when `ggtext` is installed;
-#' falls back to plain `// text` otherwise.
+#' Adds an optional orange mono-caps eyebrow line above the plot title.
+#' Without an eyebrow, you can pass plain text directly to
+#' `labs(title = ...)` — [theme_chanwe()] styles it automatically.
 #'
 #' @param text Title text.
+#' @param eyebrow Optional eyebrow string shown above the title in orange mono
+#'   caps, e.g. `"SECTION · PROFITABILITY"`.
 #'
-#' @return A title string for use inside `labs(title = ...)`.
+#' @return A string for use inside `labs(title = ...)`.
 #' @export
 #'
 #' @examples
-#' chanwe_title("Performance Overview")
-chanwe_title <- function(text) {
+#' # Plain title — no helper needed, theme handles it:
+#' # labs(title = "Revenue vs EBITDA margin")
+#'
+#' # With eyebrow:
+#' chanwe_title("Revenue vs EBITDA margin", eyebrow = "SECTION · PROFITABILITY")
+chanwe_title <- function(text, eyebrow = NULL) {
+  if (is.null(eyebrow)) {
+    return(text)
+  }
   if (!requireNamespace("ggtext", quietly = TRUE)) {
-    return(paste0("// ", text))
+    return(paste0("· ", toupper(eyebrow), "\n", text))
   }
   colors <- chanwe_get_colors()
   paste0(
-    "<span style='color:", colors[["typst-primary"]], ";font-weight:100;'>//</span>",
-    "&ensp;&ensp;&ensp;",
+    "<span style='font-family:JetBrains Mono;font-size:8pt;font-weight:500;",
+    "letter-spacing:0.18em;color:",
+    colors[["typst-primary"]],
+    ";'>",
+    "· ",
+    toupper(eyebrow),
+    "</span><br>",
     text
   )
 }
@@ -246,24 +293,48 @@ chanwe_title <- function(text) {
 #'
 #' @examples
 #' chanwe_subtitle("Quarterly performance")
-chanwe_subtitle <- function(text, rule = "\u2500\u2500\u2500\u2500") {
+chanwe_subtitle <- function(text) {
   if (!requireNamespace("ggtext", quietly = TRUE)) {
     return(text)
   }
-
-  if (identical(rule, "\u2500\u2500\u2500\u2500")) {
-    return(paste0(
-      text,
-      "<br><span style='display:inline-block;width:26px;",
-      "border-top:1.4px solid #F7F7F7;line-height:0;'>&nbsp;</span>"
-    ))
-  }
-
+  # Explicitly set Fraunces Thin Italic via CSS so this helper renders in the
+  # decorative serif treatment regardless of the theme element's family.
   paste0(
+    "<span style='font-family:\"Fraunces 9pt\";font-style:italic;font-weight:100;'>",
     text,
-    "<br><span style='color:#F7F7F7;font-size:8pt;line-height:0.55;'>",
-    rule,
     "</span>"
+  )
+}
+
+#' ChanWe Caption Helper
+#'
+#' Returns a caption string with a full-width light-gray divider rule above it
+#' and a `//` marker before the text, styled to match the axis title treatment.
+#' Use inside `ggplot2::labs(caption = ...)` together with [theme_chanwe()].
+#'
+#' @param text Caption text.
+#'
+#' @return A markdown string for use inside `labs(caption = ...)`.
+#' @export
+#'
+#' @examples
+#' chanwe_caption("Q1 2026 · USD M and %.")
+chanwe_caption <- function(text) {
+  if (!requireNamespace("ggtext", quietly = TRUE)) {
+    return(paste0("// ", text))
+  }
+  colors <- chanwe_get_colors()
+  rule <- paste(rep("─", 160), collapse = "")
+  paste0(
+    "<span style='color:",
+    colors[["typst-neutral-300"]],
+    ";font-size:4pt;'>",
+    rule,
+    "</span><br>",
+    "<span style='font-family:JetBrains Mono;color:",
+    colors[["typst-fg-subtle"]],
+    ";'>// </span>",
+    text
   )
 }
 

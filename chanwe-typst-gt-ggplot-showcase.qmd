@@ -119,12 +119,12 @@ ggplot(mt, aes(wt, mpg, color = am)) +
     scale_color_chanwe_d() +
     theme_chanwe(background = "beige") +
     labs(
-        title = chanwe_title("Fuel economy vs weight"),
+        title = "Fuel economy vs weight",
         subtitle = chanwe_subtitle("Simple scatter · beige background"),
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "Transmission",
-        caption = "Source: Motor Trend, 1974"
+        caption = chanwe_caption("Source: Motor Trend, 1974")
     )
 ```
 
@@ -138,7 +138,7 @@ ggplot(mt, aes(cyl, fill = cyl)) +
     scale_fill_chanwe_d() +
     theme_chanwe(background = "white") +
     labs(
-        title = chanwe_title("Vehicle count by cylinder"),
+        title = "Vehicle count by cylinder",
         subtitle = chanwe_subtitle("Simple bar · white background"),
         x = "Cylinders",
         y = "Count",
@@ -160,7 +160,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     scale_color_chanwe_d() +
     theme_chanwe(background = "beige") +
     labs(
-        title = chanwe_title("Performance profile by transmission"),
+        title = "Performance profile by transmission",
         subtitle = chanwe_subtitle("Faceted by transmission type"),
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",

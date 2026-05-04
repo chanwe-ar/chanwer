@@ -74,13 +74,46 @@ chanwe_load_fonts <- function(path = NULL) {
     bolditalic = "Fraunces9pt-BoldItalic.ttf"
   )
 
-  # Dedicated ExtraLight Italic variant used by chanwe_subtitle theme element
-  el_italic <- file.path(path, "Fraunces9pt-ExtraLightItalic.ttf")
-  if (file.exists(el_italic)) {
+  # .chanwe-title: Archivo Bold (700) — bakes weight into the family so face="plain" is reliable
+  archivo_bold <- file.path(path, "Archivo-Bold.ttf")
+  if (file.exists(archivo_bold)) {
     tryCatch(
-      systemfonts::register_font(name = ".chanwe-subtitle", plain = el_italic),
+      systemfonts::register_font(name = ".chanwe-title", plain = archivo_bold),
       error = function(e) NULL
     )
+  }
+
+  # .chanwe-subtitle: Satoshi Light (300) — same approach
+  satoshi_light <- file.path(path, "Satoshi-Light.ttf")
+  if (file.exists(satoshi_light)) {
+    tryCatch(
+      systemfonts::register_font(name = ".chanwe-subtitle", plain = satoshi_light),
+      error = function(e) NULL
+    )
+  }
+
+  # .chanwe-title: lightest available Archivo from system fonts
+  # CSS font-weight:100 on the "Archivo" family resolves to the nearest
+  # bundled weight (Regular=400), not the thin system variant. Registering
+  # an explicit named family pointing to the system thin/extralight file
+  # gives reliable weight-100 rendering.
+  sys_f <- systemfonts::system_fonts()
+  archivo_light <- sys_f[
+    sys_f$family == "Archivo" & !sys_f$italic &
+    sys_f$weight %in% c("ultralight", "light"),
+  ]
+  if (nrow(archivo_light) > 0) {
+    w_order <- c("ultralight", "light")
+    for (w in w_order) {
+      hit <- archivo_light[archivo_light$weight == w, ]
+      if (nrow(hit) > 0) {
+        tryCatch(
+          systemfonts::register_font(name = ".chanwe-title", plain = hit$path[[1]]),
+          error = function(e) NULL
+        )
+        break
+      }
+    }
   }
 
   invisible(path)
