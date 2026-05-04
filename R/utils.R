@@ -74,20 +74,20 @@ chanwe_load_fonts <- function(path = NULL) {
     bolditalic = "Fraunces9pt-BoldItalic.ttf"
   )
 
-  # .chanwe-title: Archivo Bold (700) — bakes weight into the family so face="plain" is reliable
-  archivo_bold <- file.path(path, "Archivo-Bold.ttf")
-  if (file.exists(archivo_bold)) {
+  # .chanwe-title: Archivo Black (900) — bakes weight into the family so face="plain" is reliable
+  archivo_black <- file.path(path, "Archivo-Black.ttf")
+  if (file.exists(archivo_black)) {
     tryCatch(
-      systemfonts::register_font(name = ".chanwe-title", plain = archivo_bold),
+      systemfonts::register_font(name = ".chanwe-title", plain = archivo_black),
       error = function(e) NULL
     )
   }
 
-  # .chanwe-subtitle: Satoshi Light (300) — same approach
-  satoshi_light <- file.path(path, "Satoshi-Light.ttf")
-  if (file.exists(satoshi_light)) {
+  # .chanwe-subtitle: Satoshi Regular (400)
+  satoshi_regular <- file.path(path, "Satoshi-Regular.ttf")
+  if (file.exists(satoshi_regular)) {
     tryCatch(
-      systemfonts::register_font(name = ".chanwe-subtitle", plain = satoshi_light),
+      systemfonts::register_font(name = ".chanwe-subtitle", plain = satoshi_regular),
       error = function(e) NULL
     )
   }

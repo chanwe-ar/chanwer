@@ -101,11 +101,11 @@ theme_chanwe <- function(
   )
   subtitle_element <- ggplot2::element_text(
     family = subtitle_family,
-    color = colors[["typst-fg-muted"]],
+    color = colors[["typst-fg-subtle"]],
     face = subtitle_face,
-    size = base_text_size * 1.25,
+    size = base_text_size * 1.10,
     hjust = 0,
-    margin = ggplot2::margin(t = 4, b = 20)
+    margin = ggplot2::margin(t = 3, b = 25)
   )
 
   if (requireNamespace("ggtext", quietly = TRUE)) {
@@ -120,9 +120,9 @@ theme_chanwe <- function(
     )
     subtitle_element <- ggtext::element_markdown(
       family = subtitle_family,
-      color = colors[["typst-fg-muted"]],
+      color = colors[["typst-fg-subtle"]],
       face = subtitle_face,
-      size = base_text_size * 0.88,
+      size = base_text_size * 1.25,
       hjust = 0,
       margin = ggplot2::margin(t = 4, b = 20),
       lineheight = 1.3
@@ -141,12 +141,17 @@ theme_chanwe <- function(
       ),
       plot.title = title_element,
       plot.caption = if (requireNamespace("ggtext", quietly = TRUE)) {
-        ggtext::element_markdown(
+        ggtext::element_textbox_simple(
           family = mono_family,
           color = colors[["typst-fg-subtle"]],
           size = base_text_size * 0.85,
           hjust = 0,
-          margin = ggplot2::margin(t = 4)
+          halign = 0,
+          width = grid::unit(1, "npc"),
+          margin = ggplot2::margin(t = 4),
+          padding = ggplot2::margin(0),
+          box.colour = NA,
+          fill = NA
         )
       } else {
         ggplot2::element_text(
@@ -159,12 +164,12 @@ theme_chanwe <- function(
       },
       axis.title = ggplot2::element_text(
         family = mono_family,
-        color = colors[["typst-fg-subtle"]],
+        color = colors[["typst-ink"]],
         face = "plain",
         size = base_text_size * 0.85
       ),
       axis.text = ggplot2::element_text(
-        color = colors[["typst-fg-subtle"]],
+        color = colors[["typst-ink"]],
         size = base_text_size * 0.70
       ),
       axis.title.x = ggplot2::element_text(
@@ -209,13 +214,13 @@ theme_chanwe <- function(
       legend.justification = "center",
       legend.box.just = "center",
       legend.title = ggplot2::element_text(
-        color = colors[["typst-ink"]],
+        color = colors[["typst-fg-muted"]],
         face = "bold",
-        size = base_text_size * 0.70
+        size = base_text_size * 0.75
       ),
       legend.text = ggplot2::element_text(
-        color = colors[["typst-fg-muted"]],
-        size = base_text_size * 0.64
+        color = colors[["typst-ink"]],
+        size = base_text_size * 0.75
       ),
       legend.background = ggplot2::element_rect(
         fill = surface_fill,
@@ -324,13 +329,7 @@ chanwe_caption <- function(text) {
     return(paste0("// ", text))
   }
   colors <- chanwe_get_colors()
-  rule <- paste(rep("─", 600), collapse = "")
   paste0(
-    "<span style='color:",
-    colors[["typst-ink"]],
-    ";font-size:4pt;'>",
-    rule,
-    "</span><br>",
     "<span style='font-family:JetBrains Mono;color:",
     colors[["typst-primary"]],
     ";'>// </span>",
