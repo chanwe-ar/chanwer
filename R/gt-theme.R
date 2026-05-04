@@ -48,27 +48,27 @@ gt_theme_chanwe <- function(
       table.font.color                     = colors[["typst-fg"]],
       table.font.names                     = "Satoshi",
       table.border.top.color               = colors[["typst-ink"]],
-      table.border.top.width               = gt::px(1),
+      table.border.top.width               = gt::px(0.5),
       table.border.bottom.color            = colors[["typst-ink"]],
-      table.border.bottom.width            = gt::px(1),
+      table.border.bottom.width            = gt::px(0.5),
       heading.background.color             = bg_color,
-      heading.title.font.size              = gt::px(20),
+      heading.title.font.size              = gt::px(40),
       heading.title.font.weight            = "bold",
       heading.subtitle.font.size           = gt::px(13),
       heading.subtitle.font.weight         = "normal",
       heading.padding                      = density$heading_padding,
-      heading.border.bottom.color          = colors[["typst-neutral-200"]],
-      heading.border.bottom.width          = gt::px(1),
+      heading.border.bottom.color          = colors[["typst-ink"]],
+      heading.border.bottom.width          = gt::px(0.5),
       column_labels.background.color       = bg_color,
       column_labels.font.size              = gt::px(10),
       column_labels.font.weight            = "normal",
       column_labels.padding                = density$column_labels_padding,
       column_labels.border.top.color       = colors[["typst-ink"]],
-      column_labels.border.top.width       = gt::px(1),
+      column_labels.border.top.width       = gt::px(0.5),
       column_labels.border.bottom.color    = colors[["typst-ink"]],
-      column_labels.border.bottom.width    = gt::px(1),
+      column_labels.border.bottom.width    = gt::px(0.5),
       table_body.hlines.color              = colors[["typst-neutral-200"]],
-      table_body.hlines.width              = gt::px(0.5),
+      table_body.hlines.width              = gt::px(0.3),
       table_body.vlines.color              = "transparent",
       table_body.vlines.width              = gt::px(0),
       row.striping.background_color        = bg_color,
@@ -87,16 +87,16 @@ gt_theme_chanwe <- function(
         font      = gt::google_font("Archivo"),
         color     = colors[["typst-ink"]],
         weight    = "bold",
-        size      = gt::px(20),
+        size      = gt::px(40),
         align     = "left"
       ),
       locations = gt::cells_title(groups = "title")
     ) |>
     gt::tab_style(
       style = gt::cell_text(
+        font   = gt::google_font("Satoshi"),
         color  = colors[["typst-fg-muted"]],
         weight = "normal",
-        style  = "italic",
         size   = gt::px(13),
         align  = "left"
       ),
@@ -134,10 +134,10 @@ gt_theme_chanwe <- function(
     ) |>
     gt::tab_style(
       style = gt::cell_text(
+        font   = gt::google_font("JetBrains Mono"),
         color  = colors[["typst-fg-subtle"]],
         weight = "normal",
-        style  = "italic",
-        size   = gt::px(11)
+        size   = gt::px(10)
       ),
       locations = gt::cells_source_notes()
     ) |>
@@ -162,23 +162,58 @@ gt_theme_chanwe <- function(
     gt::opt_css(
       css = sprintf(
         "
-        .gt_table { border-radius: 0; box-shadow: none; }
+        .gt_table { border-radius: 0; box-shadow: none; border-top: 0.5px solid %s !important; border-bottom: 0.5px solid %s !important; }
         .gt_heading { border-top: none; padding-left: 0; text-align: left !important; }
+        .gt_title { padding-bottom: 2px !important; margin-bottom: 0 !important; }
+        .gt_subtitle { padding-top: 2px !important; margin-top: 0 !important; font-style: normal !important; }
+        .gt_col_headings { border-top: 0.5px solid %s !important; border-bottom: 0.5px solid %s !important; }
         .gt_col_heading { letter-spacing: 0.08em; }
         .gt_row { line-height: 1.55; background: %s !important; }
         .gt_row th, .gt_row td { background: %s !important; }
         .gt_striped, .gt_striped th, .gt_striped td { background: %s !important; }
-        .gt_stub { background: %s !important; color: %s; font-size: 12px; }
+        .gt_stub { background: %s !important; color: %s; font-size: 12px; border-right: none !important; }
         .gt_group_heading { background: %s !important; }
         .gt_summary_row, .gt_grand_summary_row { background: %s !important; }
-        .gt_sourcenotes { border-top: 1px solid %s; }
+        .gt_sourcenotes { border-top: 0.5px solid %s; border-bottom: 0.5px solid %s; padding-top: 14px; padding-bottom: 14px; font-style: normal !important; }
         ",
+        colors[["typst-ink"]], colors[["typst-ink"]],
+        colors[["typst-ink"]], colors[["typst-ink"]],
         bg_color, bg_color, bg_color, bg_color,
         colors[["typst-fg-subtle"]],
         bg_color, bg_color,
-        colors[["typst-neutral-200"]]
+        colors[["typst-ink"]], colors[["typst-ink"]]
       )
     )
+}
+
+#' ChanWe GT Eyebrow Helper
+#'
+#' Returns an HTML string for use inside `gt::html()` as the `title` argument.
+#' Renders an orange `──` rule followed by mono-caps eyebrow text above the
+#' title, matching the [chanwe_title()] treatment in ggplot2.
+#'
+#' @param eyebrow Eyebrow label string, e.g. `"SECTION · PEER BENCHMARK"`.
+#'
+#' @return An HTML string. Wrap the title with `gt::html(paste0(chanwe_gt_eyebrow("..."), "Title"))`.
+#' @export
+#'
+#' @examples
+#' if (requireNamespace("gt", quietly = TRUE)) {
+#'   gt::gt(head(mtcars)) |>
+#'     gt::tab_header(
+#'       title = gt::html(paste0(chanwe_gt_eyebrow("SECTION · FLEET"), "Operational Snapshot"))
+#'     ) |>
+#'     gt_theme_chanwe()
+#' }
+chanwe_gt_eyebrow <- function(eyebrow) {
+  color <- chanwe_get_colors()[["typst-primary"]]
+  paste0(
+    "<div style='font-family:\"JetBrains Mono\",monospace;font-size:7.5pt;",
+    "font-weight:500;letter-spacing:0.12em;text-transform:uppercase;",
+    "color:", color, ";margin-bottom:5px;'>",
+    "── ", toupper(eyebrow),
+    "</div>"
+  )
 }
 
 #' ChanWe Spacious Theme for gt Tables

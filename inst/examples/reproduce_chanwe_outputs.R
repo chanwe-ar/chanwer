@@ -2,6 +2,7 @@
 
 # library(chanwer)
 library(ggplot2)
+library(gt)
 
 devtools::load_all()
 
@@ -30,13 +31,20 @@ mt <- mt |>
   )
 
 # 2) gt
-if (requireNamespace("gt", quietly = TRUE)) {
-  gt_tbl <- gt::gt(head(mt, 10)) |>
-    gt::tab_header(title = "Operational Snapshot") |>
-    gt_theme_chanwe()
+gt_tbl <- gt::gt(head(mt, 10), rowname_col = "model") |>
+  gt::tab_header(
+    title = gt::html(paste0(
+      chanwe_gt_eyebrow("SECTION · OPERATIONAL"),
+      "Operational Snapshot"
+    )),
+    subtitle = "Fleet overview · mtcars sample · Q1 2026."
+  ) |>
+  gt::tab_source_note(
+    "Source · Motor Trend, 1974 · mtcars dataset."
+  ) |>
+  gt_theme_chanwe(bg_color = "#fff")
 
-  print(gt_tbl)
-}
+print(gt_tbl)
 
 # # 3) reactable
 # if (requireNamespace("reactable", quietly = TRUE)) {
