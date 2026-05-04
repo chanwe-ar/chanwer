@@ -1,6 +1,15 @@
 # Brand color tokens -------------------------------------------------------
 
 .chanwe_colors <- c(
+  # Editorial 8-color chart palette
+  "chart-coral"         = "#E05038",
+  "chart-electric-blue" = "#2B47C8",
+  "chart-jade"          = "#2E7A52",
+  "chart-saffron"       = "#C49A18",
+  "chart-magenta"       = "#7A3598",
+  "chart-teal"          = "#1A90A5",
+  "chart-vermillion"    = "#C23850",
+  "chart-ink"           = "#0F0F0F",
   "brand-orange" = "#E94B2B",
   "brand-black" = "#101010",
   "brand-white" = "#F7F7F7",
@@ -70,12 +79,19 @@
   info       = "typst-info"
 )
 
-.chanwe_chart_names <- c(
-  "typst-primary",
-  "typst-ink",
-  "typst-fg-muted",
-  "typst-neutral-300"
+# Editorial 8-color chart palette
+.chanwe_chart_colors <- c(
+  "chart-coral"         = "#E05038",
+  "chart-electric-blue" = "#2B47C8",
+  "chart-jade"          = "#2E7A52",
+  "chart-saffron"       = "#C49A18",
+  "chart-magenta"       = "#7A3598",
+  "chart-teal"          = "#1A90A5",
+  "chart-vermillion"    = "#C23850",
+  "chart-ink"           = "#0F0F0F"
 )
+
+.chanwe_chart_names <- names(.chanwe_chart_colors)
 
 .chanwe_palette_groups <- function() {
   list(
@@ -87,7 +103,7 @@
     p13_gray = .chanwe_colors[grep("^p13-gray", names(.chanwe_colors))],
     p14_accents = .chanwe_colors[grep("^p14", names(.chanwe_colors))],
     semantic = chanwe_get_semantic(),
-    chart = .chanwe_colors[.chanwe_chart_names]
+    chart = .chanwe_chart_colors
   )
 }
 
@@ -103,7 +119,7 @@ chanwe_get_semantic <- function() {
 }
 
 chanwe_get_chart <- function() {
-  .chanwe_colors[.chanwe_chart_names]
+  .chanwe_chart_colors
 }
 
 #' ChanWe Color Palette Tokens
