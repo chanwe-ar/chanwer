@@ -69,7 +69,7 @@ theme_chanwe <- function(
     character(0)
   }
   title_family <- if (".chanwe-title" %in% reg) ".chanwe-title" else "Archivo"
-  title_face <- if (".chanwe-title" %in% reg) "plain" else "bold"
+  title_face <- if (".chanwe-title" %in% reg) "plain" else "black"
   subtitle_family <- if (".chanwe-subtitle" %in% reg) {
     ".chanwe-subtitle"
   } else {
@@ -94,7 +94,7 @@ theme_chanwe <- function(
     family = title_family,
     color = colors[["typst-ink"]],
     face = title_face,
-    size = base_text_size * 1.55,
+    size = base_text_size * 2,
     hjust = 0,
     lineheight = 1.10,
     margin = ggplot2::margin(b = 4)
@@ -103,7 +103,7 @@ theme_chanwe <- function(
     family = subtitle_family,
     color = colors[["typst-fg-muted"]],
     face = subtitle_face,
-    size = base_text_size * 0.88,
+    size = base_text_size * 1.25,
     hjust = 0,
     margin = ggplot2::margin(t = 4, b = 20)
   )
@@ -113,7 +113,7 @@ theme_chanwe <- function(
       family = title_family,
       color = colors[["typst-ink"]],
       face = title_face,
-      size = base_text_size * 1.60,
+      size = base_text_size * 20,
       hjust = 0,
       lineheight = 1.10,
       margin = ggplot2::margin(b = 4)
@@ -161,11 +161,11 @@ theme_chanwe <- function(
         family = mono_family,
         color = colors[["typst-fg-subtle"]],
         face = "plain",
-        size = base_text_size * 1
+        size = base_text_size * 0.85
       ),
       axis.text = ggplot2::element_text(
         color = colors[["typst-fg-subtle"]],
-        size = base_text_size * 0.75
+        size = base_text_size * 0.70
       ),
       axis.title.x = ggplot2::element_text(
         hjust = 1,
@@ -327,12 +327,12 @@ chanwe_caption <- function(text) {
   rule <- paste(rep("─", 160), collapse = "")
   paste0(
     "<span style='color:",
-    colors[["typst-neutral-300"]],
+    colors[["typst-ink"]],
     ";font-size:4pt;'>",
     rule,
     "</span><br>",
     "<span style='font-family:JetBrains Mono;color:",
-    colors[["typst-fg-subtle"]],
+    colors[["typst-primary"]],
     ";'>// </span>",
     text
   )
