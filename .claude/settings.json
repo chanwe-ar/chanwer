@@ -5,7 +5,16 @@
       "Bash(ln -s /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/fonts)",
       "Bash(quarto render *)",
       "Bash(open /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/chanwe-typst-gt-ggplot-showcase.pdf)",
-      "Bash(Rscript -e 'library\\(systemfonts\\); f <- system_fonts\\(\\); f[grep\\('\\\\''Archivo|Fraunces|Satoshi'\\\\'', f$family, ignore.case=TRUE\\), c\\('\\\\''family'\\\\'','\\\\''style'\\\\'','\\\\''weight'\\\\'','\\\\''italic'\\\\'','\\\\''path'\\\\''\\)]')"
+      "Bash(Rscript -e 'library\\(systemfonts\\); f <- system_fonts\\(\\); f[grep\\('\\\\''Archivo|Fraunces|Satoshi'\\\\'', f$family, ignore.case=TRUE\\), c\\('\\\\''family'\\\\'','\\\\''style'\\\\'','\\\\''weight'\\\\'','\\\\''italic'\\\\'','\\\\''path'\\\\''\\)]')",
+      "Bash(Rscript -e ' *)",
+      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r120 -dFirstPage=4 -dLastPage=6 -sOutputFile=/tmp/showcase_p%d.png chanwe-typst-showcase.pdf)",
+      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r120 -dFirstPage=4 -dLastPage=6 -sOutputFile=\"/tmp/showcase_p%d.png\" chanwe-typst-showcase.pdf)",
+      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r120 -dFirstPage=7 -dLastPage=12 -sOutputFile=\"/tmp/showcase2_p%d.png\" chanwe-typst-showcase.pdf)",
+      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r120 -dFirstPage=32 -dLastPage=35 -sOutputFile=\"/tmp/showcase3_p%d.png\" chanwe-typst-showcase.pdf)",
+      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r120 -dFirstPage=9 -dLastPage=12 -sOutputFile=\"/tmp/fixed_p%d.png\" chanwe-typst-showcase.pdf)",
+      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -dFirstPage=9 -dLastPage=10 -sOutputFile=\"/tmp/font_check_p%d.png\" chanwe-typst-showcase.pdf)",
+      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -dFirstPage=9 -dLastPage=9 -sOutputFile=\"/tmp/yaxis_check.png\" chanwe-typst-showcase.pdf)",
+      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -dFirstPage=9 -dLastPage=9 -sOutputFile=\"/tmp/yaxis2.png\" chanwe-typst-showcase.pdf)"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

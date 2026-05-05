@@ -215,7 +215,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "HP band",
-        tag = chanwe_caption("Source: Motor Trend, 1974")
+        caption = chanwe_caption("Source: Motor Trend, 1974")
     )
 ```
 
@@ -266,7 +266,7 @@ ggplot(mt, aes(wt, mpg, color = qsec)) +
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "¼-mile (s)",
-        tag = chanwe_caption("Source: Motor Trend, 1974")
+        caption = chanwe_caption("Source: Motor Trend, 1974")
     )
 ```
 
@@ -336,7 +336,7 @@ mt |>
         x = "Cylinders",
         y = "Count",
         fill = "Transmission",
-        tag = chanwe_caption("Source: Motor Trend, 1974")
+        caption = chanwe_caption("Source: Motor Trend, 1974")
     )
 ```
 
@@ -381,7 +381,7 @@ ggplot(cyl_summary, aes(x = cyl, y = avg_mpg, color = cyl)) +
         subtitle = chanwe_subtitle("By cylinder count · white background"),
         x = "Cylinders",
         y = "Miles per gallon",
-        tag = chanwe_caption("Source: Motor Trend, 1974")
+        caption = chanwe_caption("Source: Motor Trend, 1974")
     )
 ```
 
@@ -426,7 +426,7 @@ ggplot(econ_long, aes(date, value, color = series)) +
         x = NULL,
         y = "Rate (%)",
         color = NULL,
-        tag = chanwe_caption("Source: US BEA & BLS")
+        caption = chanwe_caption("Source: US BEA & BLS")
     )
 ```
 
@@ -472,7 +472,7 @@ ggplot(econ |> filter(date >= as.Date("2000-01-01")), aes(date, uempmed)) +
         subtitle = chanwe_subtitle("Step line · 2000–2015"),
         x = NULL,
         y = "Weeks",
-        tag = chanwe_caption("Source: US Bureau of Labor Statistics")
+        caption = chanwe_caption("Source: US Bureau of Labor Statistics")
     )
 ```
 
@@ -525,7 +525,7 @@ ggplot(iris_tbl, aes(Sepal.Length, fill = species, color = species)) +
         y = "Density",
         fill = "Species",
         color = "Species",
-        tag = chanwe_caption("Source: Fisher, 1936")
+        caption = chanwe_caption("Source: Fisher, 1936")
     )
 ```
 
@@ -665,7 +665,7 @@ mt |>
         x = "Gears",
         y = "Cylinders",
         fill = "Avg MPG",
-        tag = chanwe_caption("Source: Motor Trend, 1974")
+        caption = chanwe_caption("Source: Motor Trend, 1974")
     )
 ```
 
@@ -713,7 +713,7 @@ ggplot(mpg_class, aes(drv, avg_hwy, fill = drv)) +
         ),
         x = "Drive type",
         y = "Avg highway MPG",
-        tag = chanwe_caption("Source: EPA fuel economy data")
+        caption = chanwe_caption("Source: EPA fuel economy data")
     )
 ```
 
@@ -785,7 +785,7 @@ ggplot(iris_range, aes(y = species, color = species)) +
         subtitle = chanwe_subtitle("Min · mean ◆ · max · white background"),
         x = "Petal length (cm)",
         y = NULL,
-        tag = chanwe_caption("Source: Fisher, 1936")
+        caption = chanwe_caption("Source: Fisher, 1936")
     )
 ```
 

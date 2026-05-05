@@ -6,21 +6,21 @@ library(gt)
 
 devtools::load_all()
 
-# # 1) ggplot2
-# p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-#   geom_point(size = 3) +
-#   scale_color_chanwe_d() +
-#   labs(
-#     title = chanwe_title(
-#       text = "Fuel efficiency by weight",
-#       eyebrow = "TLDR;"
-#     ),
-#     subtitle = "Chanwe branded ggplot",
-#     caption = chanwe_caption("Data: mtcars")
-#   ) +
-#   theme_chanwe(bg_color = "#fff")
+# 1) ggplot2
+p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+  geom_point(size = 3) +
+  scale_color_chanwe_d() +
+  labs(
+    title = chanwe_title(
+      text = "Fuel efficiency by weight",
+      eyebrow = "TLDR;"
+    ),
+    subtitle = "Chanwe branded ggplot",
+    caption = chanwe_caption("Data: mtcars")
+  ) +
+  theme_chanwe(bg_color = "#fff")
 
-# print(p)
+print(p)
 
 mt <- tibble::as_tibble(mtcars, rownames = "model")
 mt <- mt |>

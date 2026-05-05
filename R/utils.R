@@ -87,11 +87,19 @@ chanwe_load_fonts <- function(path = NULL) {
     )
   }
 
-  # .chanwe-subtitle: Satoshi Regular (400)
-  satoshi_regular <- file.path(path, "Satoshi-Regular.ttf")
-  if (file.exists(satoshi_regular)) {
+  # .chanwe-subtitle: Fraunces 9pt ExtraLight Italic — bakes style+weight into
+  # the family so the theme can use face="plain" for reliable rendering,
+  # avoiding gridtext CSS font-family parsing for quoted/multi-word names.
+  fraunces_el_it <- file.path(path, "Fraunces9pt-ExtraLightItalic.ttf")
+  if (!file.exists(fraunces_el_it)) {
+    fraunces_el_it <- file.path(path, "Fraunces9pt-ThinItalic.ttf")
+  }
+  if (!file.exists(fraunces_el_it)) {
+    fraunces_el_it <- file.path(path, "Fraunces9pt-Italic.ttf")
+  }
+  if (file.exists(fraunces_el_it)) {
     tryCatch(
-      systemfonts::register_font(name = ".chanwe-subtitle", plain = satoshi_regular),
+      systemfonts::register_font(name = ".chanwe-subtitle", plain = fraunces_el_it),
       error = function(e) NULL
     )
   }

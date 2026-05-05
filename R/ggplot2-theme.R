@@ -35,7 +35,7 @@ chanwe_discrete_pal <- function() {
 #'       title = "Performance overview",
 #'       subtitle = chanwe_subtitle("Example subtitle")
 #'     ) +
-#'     theme_chanwe(base_text_size = 12, legend_position = "bottom")
+#'     theme_chanwe(base_text_size = 9.5, legend_position = "bottom")
 #' }
 theme_chanwe <- function(
   base_text_size = 11.5,
@@ -47,7 +47,7 @@ theme_chanwe <- function(
   chanwe_load_fonts()
 
   colors <- chanwe_get_colors()
-  surface_fill      <- bg_color
+  surface_fill <- bg_color
   outer_border_color <- colors[["typst-neutral-200"]]
   panel_border_element <- ggplot2::element_blank()
 
@@ -90,7 +90,7 @@ theme_chanwe <- function(
   subtitle_element <- ggplot2::element_text(
     family = subtitle_family,
     color = colors[["typst-fg-subtle"]],
-    face = subtitle_face,
+    face = "plain",
     size = base_text_size * 1.10,
     hjust = 0,
     margin = ggplot2::margin(t = 3, b = 25)
@@ -109,7 +109,7 @@ theme_chanwe <- function(
     subtitle_element <- ggtext::element_markdown(
       family = subtitle_family,
       color = colors[["typst-fg-subtle"]],
-      face = subtitle_face,
+      face = "plain",
       size = base_text_size * 1.15,
       hjust = 0,
       margin = ggplot2::margin(t = 4, b = 20),
@@ -162,13 +162,13 @@ theme_chanwe <- function(
       ),
       axis.title.x = ggplot2::element_text(
         hjust = 1,
-        margin = ggplot2::margin(t = 8)
+        margin = ggplot2::margin(t = 10)
       ),
       axis.title.y = ggplot2::element_text(
-        angle = 0,
-        hjust = 0,
-        vjust = 1.02,
-        margin = ggplot2::margin(r = 8)
+        angle = 90,
+        hjust = 1,
+        vjust = 0.5,
+        margin = ggplot2::margin(0, 8, 0, 0)
       ),
       axis.line = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_line(
@@ -287,16 +287,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
 #' @examples
 #' chanwe_subtitle("Quarterly performance")
 chanwe_subtitle <- function(text) {
-  if (!requireNamespace("ggtext", quietly = TRUE)) {
-    return(text)
-  }
-  # Explicitly set Fraunces Thin Italic via CSS so this helper renders in the
-  # decorative serif treatment regardless of the theme element's family.
-  paste0(
-    "<span style='font-family:\"Fraunces 9pt\";font-style:italic;font-weight:100;'>",
-    text,
-    "</span>"
-  )
+  text
 }
 
 #' ChanWe Caption Helper

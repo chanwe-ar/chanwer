@@ -114,6 +114,15 @@ gt_theme_chanwe <- function(
       locations = gt::cells_column_labels()
     ) |>
     gt::tab_style(
+      style = gt::cell_borders(
+        sides  = c("top", "bottom"),
+        color  = colors[["typst-ink"]],
+        weight = gt::px(0.5),
+        style  = "solid"
+      ),
+      locations = gt::cells_column_labels(columns = gt::everything())
+    ) |>
+    gt::tab_style(
       style = list(
         gt::cell_text(
           color  = colors[["typst-fg"]],
