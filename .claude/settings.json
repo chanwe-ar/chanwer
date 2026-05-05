@@ -53,7 +53,9 @@
       "Bash(awk 'NR>=2157 && /stroke/' gt.typ)",
       "Bash(awk 'NR>=2157 && NR<=2175' gt.typ)",
       "Bash(Rscript -e \"source\\('R/kbl-theme.R'\\)\")",
-      "Bash(Rscript -e \"source\\('/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R'\\)\")"
+      "Bash(Rscript -e \"source\\('/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R'\\)\")",
+      "Bash(sed -i '' 's/bottom: 2pt, x: 2.5mm\\)/bottom: 5pt, x: 2.5mm\\)/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)",
+      "Bash(sed -i '' 's/\\(top: 2pt, bottom:/\\(top: 4pt, bottom:/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

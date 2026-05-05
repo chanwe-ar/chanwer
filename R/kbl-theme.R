@@ -10,6 +10,8 @@
 #' @param subtitle Subtitle line rendered below the title.
 #' @param eyebrow Small mono-caps label with an orange horizontal rule prefix.
 #' @param caption Source note at the bottom in JetBrains Mono.
+#' @param full_width Logical. If \code{TRUE}, columns share the full available
+#'   width equally (\code{"1fr"} each). Overridden by \code{col_widths}.
 #' @param col_widths Character vector of Typst column width specs, e.g.
 #'   \code{c("1fr", "auto", "20\%")}. Defaults to \code{"auto"} for every column.
 #' @param col_aligns Per-column alignment: \code{"left"}, \code{"right"}, or
@@ -26,7 +28,7 @@
 #' @param eyebrow_size Typst size string for the eyebrow. Default \code{"8.5pt"}.
 #' @param subtitle_size Typst size string for the subtitle. Default \code{"11pt"} / \code{"9pt"}.
 #' @param body_size Typst size string for data cell text. Default \code{"10pt"} / \code{"8pt"}.
-#' @param label_size Typst size string for column label text. Default \code{"8pt"} / \code{"7pt"}.
+#' @param header_size Typst size string for column label text. Default \code{"8pt"} / \code{"7pt"}.
 #' @param note_size Typst size string for the footer note. Default \code{"8pt"} / \code{"7pt"}.
 #' @param col_label_top Extra vertical space in pt above column label text
 #'   (between the separator line and the labels). Default \code{0}.
@@ -44,17 +46,18 @@ chanwe_kbl <- function(
   subtitle = NULL,
   eyebrow = NULL,
   caption = NULL,
+  full_width = TRUE,
   col_widths = NULL,
   col_aligns = NULL,
   col_labels = NULL,
   stub = NULL,
   density = c("spacious", "compact"),
   row_padding = NULL,
-  title_size = '16pt',
+  title_size = '18pt',
   eyebrow_size = '7pt',
-  subtitle_size = '10pt',
-  body_size = '8pt',
-  label_size = '8pt',
+  subtitle_size = '11pt',
+  body_size = '9pt',
+  header_size = '7pt',
   note_size = '8pt',
   col_label_top = 0,
   footer_top = 0,
@@ -94,8 +97,8 @@ chanwe_kbl <- function(
   } else {
     "8pt"
   }
-  label_pt <- if (!is.null(label_size)) {
-    label_size
+  label_pt <- if (!is.null(header_size)) {
+    header_size
   } else if (sp) {
     "8pt"
   } else {
@@ -110,7 +113,7 @@ chanwe_kbl <- function(
   }
 
   top_v <- if (sp) "6pt" else "4pt" # space inside title cell before eyebrow
-  bot_v <- if (sp) "5pt" else "1pt" # space inside subtitle cell before separator
+  bot_v <- if (sp) "15pt" else "3pt" # space inside subtitle cell before separator
 
   n <- ncol(data)
   nms <- colnames(data)
@@ -140,7 +143,7 @@ chanwe_kbl <- function(
     col_aligns <- rep(col_aligns, n)
   }
 
-  widths <- if (is.null(col_widths)) rep("auto", n) else col_widths
+  widths <- if (!is.null(col_widths)) col_widths else if (full_width) rep("1fr", n) else rep("auto", n)
 
   # apply format functions
   fmt_data <- data
@@ -170,8 +173,8 @@ chanwe_kbl <- function(
 
   # per-cell inset strings — header cells get tight bottom/top to avoid
   # excessive gap between title, subtitle, and separator
-  inset_title <- paste0("(top: ", inset_y, ", bottom: 2pt, x: 2.5mm)")
-  inset_sub <- paste0("(top: 1pt, bottom: ", inset_y, ", x: 2.5mm)")
+  inset_title <- paste0("(top: ", inset_y, ", bottom: 5pt, x: 2.5mm)")
+  inset_sub <- paste0("(top: 4pt, bottom: ", inset_y, ", x: 2.5mm)")
 
   # code builder
   L <- character(0)
