@@ -449,7 +449,12 @@ chanwe_gt_header <- function(
   out <- gt::tab_header(data, title = title_content, subtitle = subtitle)
 
   if (!is.null(caption)) {
-    out <- gt::tab_source_note(out, caption)
+    color <- chanwe_get_colors()[["typst-primary"]]
+    caption_html <- gt::html(paste0(
+      "<span style='font-family:\"JetBrains Mono\",monospace;color:", color, ";'>// </span>",
+      caption
+    ))
+    out <- gt::tab_source_note(out, caption_html)
   }
 
   out

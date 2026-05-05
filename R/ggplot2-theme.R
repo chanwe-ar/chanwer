@@ -415,7 +415,7 @@ chanwe_caption <- function(text) {
   paste0(
     "<span style='font-family:JetBrains Mono;color:",
     colors[["typst-primary"]],
-    ";'>// </span>",
+    ";'>// &ensp;</span>",
     text
   )
 }
