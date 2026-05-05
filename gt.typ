@@ -2154,14 +2154,15 @@
 <gt-tables>
 == Simple fleet view (kbl)
 <simple-fleet-view-kbl>
-#{ set table(inset: (x: 2.5mm, y: 4pt), stroke: none)
+#{ set table(inset: (x: 2.5mm, y: 8pt), stroke: none)
   [
   #table(
     columns: (auto, auto, auto, auto, auto),
     align: (left, right, left, right, right,),
     table.header(
       table.cell(align: left, colspan: 5, stroke: (top: 0.5pt + _t.ink))[#v(6pt, weak: false)#text(font: "JetBrains Mono", size: 9pt, fill: _t.primary, weight: "regular", tracking: 0.05em)[TABLE · SPACIOUS]#linebreak()#text(font: "Archivo", size: 19pt, fill: _t.ink, weight: "bold")[Simple fleet view]],
-      table.cell(align: left, colspan: 5)[#text(font: "Satoshi", size: 11pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(8pt, weak: false)],
+      table.cell(align: left, colspan: 5)[#text(font: "Satoshi", size: 11pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(5pt, weak: false)],
+      table.hline(stroke: 0.5pt + _t.ink),
       table.cell(align: left)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[MODEL]],
       table.cell(align: right)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[MPG]],
       table.cell(align: left)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[CYL]],
@@ -2210,7 +2211,10 @@
     table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[62]],
     table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[3.19]],
     table.hline(stroke: 0.5pt + _t.ink),
-    table.footer(table.cell(colspan: 5, align: left)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],)
+    table.footer(
+      table.hline(stroke: 0.5pt + _t.ink),
+      table.cell(colspan: 5, align: left)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+    )
   )
   ]
 }

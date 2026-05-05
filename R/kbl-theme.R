@@ -41,31 +41,31 @@
 #' @export
 chanwe_kbl <- function(
   data,
-  title      = NULL,
-  subtitle   = NULL,
-  eyebrow    = NULL,
-  caption    = NULL,
+  title = NULL,
+  subtitle = NULL,
+  eyebrow = NULL,
+  caption = NULL,
   col_widths = NULL,
   col_aligns = NULL,
   col_labels = NULL,
-  stub       = NULL,
-  density    = c("spacious", "compact"),
-  fmt        = list()
+  stub = NULL,
+  density = c("spacious", "compact"),
+  fmt = list()
 ) {
   chanwe_require_package("knitr")
   density <- match.arg(density)
 
   sp <- density == "spacious"
-  top_v      <- if (sp) "6pt"  else "4pt"
-  bot_v      <- if (sp) "8pt"  else "5pt"
-  inset_y    <- if (sp) "4pt"  else "2pt"
-  title_size <- if (sp) "19pt" else "16pt"
-  sub_size   <- if (sp) "11pt" else "9pt"
-  body_size  <- if (sp) "10pt" else "9pt"
-  label_size <- if (sp) "8pt"  else "7pt"
-  note_size  <- if (sp) "8pt"  else "7pt"
+  top_v <- if (sp) "6pt" else "4pt"
+  bot_v <- if (sp) "5pt" else "1pt" # space inside subtitle cell before separator
+  inset_y <- if (sp) "8pt" else "3pt" # row height; also breathing room after separator
+  title_size <- if (sp) "19pt" else "13pt"
+  sub_size <- if (sp) "11pt" else "9pt"
+  body_size <- if (sp) "10pt" else "8pt"
+  label_size <- if (sp) "8pt" else "7pt"
+  note_size <- if (sp) "8pt" else "7pt"
 
-  n   <- ncol(data)
+  n <- ncol(data)
   nms <- colnames(data)
 
   # displayed column labels
@@ -79,10 +79,16 @@ chanwe_kbl <- function(
 
   # column alignment — stub always left, others auto-detect
   if (is.null(col_aligns)) {
-    col_aligns <- vapply(seq_len(n), function(i) {
-      if (!is.null(stub) && nms[i] == stub) return("left")
-      if (is.numeric(data[[i]])) "right" else "left"
-    }, character(1))
+    col_aligns <- vapply(
+      seq_len(n),
+      function(i) {
+        if (!is.null(stub) && nms[i] == stub) {
+          return("left")
+        }
+        if (is.numeric(data[[i]])) "right" else "left"
+      },
+      character(1)
+    )
   } else if (length(col_aligns) == 1L) {
     col_aligns <- rep(col_aligns, n)
   }
@@ -102,15 +108,15 @@ chanwe_kbl <- function(
   esc <- function(x) {
     x <- as.character(x)
     x <- gsub("\\\\", "\\\\\\\\", x, perl = FALSE)
-    x <- gsub("[",    "\\[",       x, fixed = TRUE)
-    x <- gsub("]",    "\\]",       x, fixed = TRUE)
-    x <- gsub("#",    "\\#",       x, fixed = TRUE)
-    x <- gsub("@",    "\\@",       x, fixed = TRUE)
-    x <- gsub("_",    "\\_",       x, fixed = TRUE)
-    x <- gsub("*",    "\\*",       x, fixed = TRUE)
-    x <- gsub("`",    "\\`",       x, fixed = TRUE)
-    x <- gsub("$",    "\\$",       x, fixed = TRUE)
-    x <- gsub("<",    "\\<",       x, fixed = TRUE)
+    x <- gsub("[", "\\[", x, fixed = TRUE)
+    x <- gsub("]", "\\]", x, fixed = TRUE)
+    x <- gsub("#", "\\#", x, fixed = TRUE)
+    x <- gsub("@", "\\@", x, fixed = TRUE)
+    x <- gsub("_", "\\_", x, fixed = TRUE)
+    x <- gsub("*", "\\*", x, fixed = TRUE)
+    x <- gsub("`", "\\`", x, fixed = TRUE)
+    x <- gsub("$", "\\$", x, fixed = TRUE)
+    x <- gsub("<", "\\<", x, fixed = TRUE)
     x
   }
 
@@ -133,38 +139,68 @@ chanwe_kbl <- function(
       inner <- ""
       if (!is.null(eyebrow)) {
         inner <- paste0(
-          "#v(", top_v, ", weak: false)",
+          "#v(",
+          top_v,
+          ", weak: false)",
           '#text(font: "JetBrains Mono", size: 9pt, fill: _t.primary,',
-          ' weight: "regular", tracking: 0.05em)[', esc(toupper(eyebrow)), ']',
+          ' weight: "regular", tracking: 0.05em)[',
+          esc(toupper(eyebrow)),
+          ']',
           "#linebreak()"
         )
       }
       if (!is.null(title)) {
         inner <- paste0(
           inner,
-          '#text(font: "Archivo", size: ', title_size,
-          ', fill: _t.ink, weight: "bold")[', esc(title), ']'
+          '#text(font: "Archivo", size: ',
+          title_size,
+          ', fill: _t.ink, weight: "bold")[',
+          esc(title),
+          ']'
         )
       }
-      p("      table.cell(align: left, colspan: ", n,
-        ", stroke: (top: 0.5pt + _t.ink))[", inner, "],")
+      p(
+        "      table.cell(align: left, colspan: ",
+        n,
+        ", stroke: (top: 0.5pt + _t.ink))[",
+        inner,
+        "],"
+      )
     }
 
     # subtitle cell
     if (!is.null(subtitle)) {
-      p("      table.cell(align: left, colspan: ", n, ")[",
-        '#text(font: "Satoshi", size: ', sub_size,
-        ', fill: _t.fg-muted, weight: "regular")[', esc(subtitle), ']',
-        "#v(", bot_v, ", weak: false)",
-        "],")
+      p(
+        "      table.cell(align: left, colspan: ",
+        n,
+        ")[",
+        '#text(font: "Satoshi", size: ',
+        sub_size,
+        ', fill: _t.fg-muted, weight: "regular")[',
+        esc(subtitle),
+        ']',
+        "#v(",
+        bot_v,
+        ", weak: false)",
+        "],"
+      )
     }
+
+    # separator line between heading block and column labels
+    p("      table.hline(stroke: 0.5pt + _t.ink),")
 
     # column label cells
     for (i in seq_len(n)) {
-      p("      table.cell(align: ", col_aligns[i], ")[",
-        '#text(font: "JetBrains Mono", size: ', label_size,
+      p(
+        "      table.cell(align: ",
+        col_aligns[i],
+        ")[",
+        '#text(font: "JetBrains Mono", size: ',
+        label_size,
         ', fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[',
-        esc(toupper(labels[i])), ']],')
+        esc(toupper(labels[i])),
+        ']],'
+      )
     }
 
     p("    ),")
@@ -176,25 +212,46 @@ chanwe_kbl <- function(
   nr <- nrow(data)
   for (i in seq_len(nr)) {
     for (j in seq_len(n)) {
-      val       <- esc(fmt_data[[j]][i])
-      is_stub   <- !is.null(stub) && nms[j] == stub
-      fill      <- if (is_stub) "_t.fg-muted" else "_t.fg"
-      weight    <- if (is_stub) '"regular"' else '"regular"'
-      p("    table.cell(align: ", col_aligns[j], ")[",
-        '#text(font: "Satoshi", size: ', body_size,
-        ", fill: ", fill, ", weight: ", weight, ")[", val, "]],")
+      val <- esc(fmt_data[[j]][i])
+      is_stub <- !is.null(stub) && nms[j] == stub
+      fill <- if (is_stub) "_t.fg-muted" else "_t.fg"
+      weight <- if (is_stub) '"regular"' else '"regular"'
+      p(
+        "    table.cell(align: ",
+        col_aligns[j],
+        ")[",
+        '#text(font: "Satoshi", size: ',
+        body_size,
+        ", fill: ",
+        fill,
+        ", weight: ",
+        weight,
+        ")[",
+        val,
+        "]],"
+      )
     }
   }
 
   p("    table.hline(stroke: 0.5pt + _t.ink),")
 
   if (!is.null(caption)) {
-    p("    table.footer(table.cell(colspan: ", n, ", align: left)[",
-      '#text(font: "JetBrains Mono", size: ', note_size,
+    p("    table.footer(")
+    p("      table.hline(stroke: 0.5pt + _t.ink),")
+    p(
+      "      table.cell(colspan: ",
+      n,
+      ", align: left)[",
+      '#text(font: "JetBrains Mono", size: ',
+      note_size,
       ', fill: _t.fg-subtle)[',
-      '#text(fill: _t.primary)[/\\/]', esc(caption), ']],)')
+      '#text(fill: _t.primary)[/\\/]',
+      esc(caption),
+      ']],'
+    )
+    p("    )")
   } else {
-    p("    table.footer()")
+    p("    table.footer(table.hline(stroke: 0.5pt + _t.ink))")
   }
 
   p("  )")
