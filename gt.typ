@@ -2152,42 +2152,68 @@
 
 = GT Tables
 <gt-tables>
-== Simple fleet view
-<simple-fleet-view>
-#figure([
-#{set text(font: ("Satoshi",) , size: 8.25pt); table(
-  columns: (20%, 20%, 20%, 20%, 20%),
-  align: (left,right,center,right,right,),
-  table.header(table.cell(align: left, colspan: 5, fill: rgb("#ffffff"))[#set text(size: 16.5pt , weight: "bold" , fill: rgb("#0f0f0f")); ​
-    #block[
-    #set text(font: ("JetBrains Mono",) , size: 7.5pt , weight: "regular" , fill: rgb("#fb3d0e")); ── TABLE · SPACIOUS
-    ]
-    Simple fleet view],
-    table.cell(align: left, colspan: 5, fill: rgb("#ffffff"))[#set text(size: 10.5pt , weight: "regular" , style: "normal" , fill: rgb("#71706c")); Top 8 vehicles · mtcars · white background​],
-    table.cell(align: bottom + left, fill: rgb("#ffffff"))[#set text(size: 6.75pt , weight: "regular" , fill: rgb("#211f1c")); ], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (bottom: (paint: rgb("#0f0f0f"), thickness: 0.38pt), top: (paint: rgb("#0f0f0f"), thickness: 0.38pt)))[#set text(size: 6pt , weight: "regular" , fill: rgb("#928d86")); mpg], table.cell(align: horizon + center, fill: rgb("#ffffff"), stroke: (bottom: (paint: rgb("#0f0f0f"), thickness: 0.38pt), top: (paint: rgb("#0f0f0f"), thickness: 0.38pt)))[#set text(size: 6pt , weight: "regular" , fill: rgb("#928d86")); cyl], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (bottom: (paint: rgb("#0f0f0f"), thickness: 0.38pt), top: (paint: rgb("#0f0f0f"), thickness: 0.38pt)))[#set text(size: 6pt , weight: "regular" , fill: rgb("#928d86")); hp], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (bottom: (paint: rgb("#0f0f0f"), thickness: 0.38pt), top: (paint: rgb("#0f0f0f"), thickness: 0.38pt)))[#set text(size: 6pt , weight: "regular" , fill: rgb("#928d86")); wt],),
-  table.hline(),
-  table.cell(align: horizon + left, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#0f0f0f"), thickness: 0.38pt)))[#set text(size: 9pt , weight: "regular" , fill: rgb("#928d86")); Mazda RX4], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#0f0f0f"), thickness: 0.38pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 21.00], table.cell(align: horizon + center, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#0f0f0f"), thickness: 0.38pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 6], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#0f0f0f"), thickness: 0.38pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 110.00], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#0f0f0f"), thickness: 0.38pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 2.62],
-  table.cell(align: horizon + left, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 9pt , weight: "regular" , fill: rgb("#928d86")); Mazda RX4 Wag], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 21.00], table.cell(align: horizon + center, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 6], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 110.00], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 2.88],
-  table.cell(align: horizon + left, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 9pt , weight: "regular" , fill: rgb("#928d86")); Datsun 710], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 22.80], table.cell(align: horizon + center, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 4], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 93.00], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 2.32],
-  table.cell(align: horizon + left, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 9pt , weight: "regular" , fill: rgb("#928d86")); Hornet 4 Drive], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 21.40], table.cell(align: horizon + center, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 6], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 110.00], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 3.21],
-  table.cell(align: horizon + left, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 9pt , weight: "regular" , fill: rgb("#928d86")); Hornet Sportabout], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 18.70], table.cell(align: horizon + center, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 8], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 175.00], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 3.44],
-  table.cell(align: horizon + left, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 9pt , weight: "regular" , fill: rgb("#928d86")); Valiant], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 18.10], table.cell(align: horizon + center, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 6], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 105.00], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 3.46],
-  table.cell(align: horizon + left, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 9pt , weight: "regular" , fill: rgb("#928d86")); Duster 360], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 14.30], table.cell(align: horizon + center, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 8], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 245.00], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 3.57],
-  table.cell(align: horizon + left, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 9pt , weight: "regular" , fill: rgb("#928d86")); Merc 240D], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 24.40], table.cell(align: horizon + center, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 4], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 62.00], table.cell(align: horizon + right, fill: rgb("#ffffff"), stroke: (top: (paint: rgb("#e8e8e8"), thickness: 0.22pt)))[#set text(size: 7.5pt , weight: "regular" , fill: rgb("#211f1c")); 3.19],
-  table.hline(),
-  table.footer(table.cell(colspan: 5)[#text(fill: rgb("#fb3d0e"))[\/\/ ]Source · Motor Trend, 1974 · mtcars dataset.],),
-)}
-], caption: figure.caption(
-separator: "", 
-position: top, 
-[
-]), 
-kind: "quarto-float-tbl", 
-supplement: "Table", 
-)
-<tbl-simple>
-
-
+== Simple fleet view (kbl)
+<simple-fleet-view-kbl>
+#{ set table(inset: (x: 2.5mm, y: 4pt), stroke: none)
+  [
+  #table(
+    columns: (auto, auto, auto, auto, auto),
+    align: (left, right, left, right, right,),
+    table.header(
+      table.cell(align: left, colspan: 5, stroke: (top: 0.5pt + _t.ink))[#v(6pt, weak: false)#text(font: "JetBrains Mono", size: 9pt, fill: _t.primary, weight: "regular", tracking: 0.05em)[TABLE · SPACIOUS]#linebreak()#text(font: "Archivo", size: 19pt, fill: _t.ink, weight: "bold")[Simple fleet view]],
+      table.cell(align: left, colspan: 5)[#text(font: "Satoshi", size: 11pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(8pt, weak: false)],
+      table.cell(align: left)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[MODEL]],
+      table.cell(align: right)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[MPG]],
+      table.cell(align: left)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[CYL]],
+      table.cell(align: right)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[HP]],
+      table.cell(align: right)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[WT]],
+    ),
+    table.hline(stroke: 0.5pt + _t.ink),
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg-muted, weight: "regular")[Mazda RX4]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[21.00]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[6]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[110]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[2.62]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg-muted, weight: "regular")[Mazda RX4 Wag]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[21.00]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[6]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[110]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[2.88]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg-muted, weight: "regular")[Datsun 710]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[22.80]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[4]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[93]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[2.32]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg-muted, weight: "regular")[Hornet 4 Drive]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[21.40]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[6]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[110]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[3.21]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg-muted, weight: "regular")[Hornet Sportabout]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[18.70]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[8]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[175]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[3.44]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg-muted, weight: "regular")[Valiant]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[18.10]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[6]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[105]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[3.46]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg-muted, weight: "regular")[Duster 360]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[14.30]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[8]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[245]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[3.57]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg-muted, weight: "regular")[Merc 240D]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[24.40]],
+    table.cell(align: left)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[4]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[62]],
+    table.cell(align: right)[#text(font: "Satoshi", size: 10pt, fill: _t.fg, weight: "regular")[3.19]],
+    table.hline(stroke: 0.5pt + _t.ink),
+    table.footer(table.cell(colspan: 5, align: left)[#text(font: "JetBrains Mono", size: 8pt, fill: _t.fg-subtle)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],)
+  )
+  ]
+}
 
 
 

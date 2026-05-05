@@ -51,7 +51,8 @@
       "Bash(awk 'NR>=2600 && NR<=2615' chanwe-typst-showcase.typ)",
       "Bash(awk 'NR>=2158 && NR<=2175' gt.typ)",
       "Bash(awk 'NR>=2157 && /stroke/' gt.typ)",
-      "Bash(awk 'NR>=2157 && NR<=2175' gt.typ)"
+      "Bash(awk 'NR>=2157 && NR<=2175' gt.typ)",
+      "Bash(Rscript -e \"source\\('R/kbl-theme.R'\\)\")"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

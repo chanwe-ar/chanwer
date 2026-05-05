@@ -83,20 +83,22 @@ mt <- tibble::as_tibble(mtcars, rownames = "model") |>
 
 # GT Tables
 
-## Simple fleet view
+## Simple fleet view (kbl)
 
 ```{r}
-#| label: tbl-simple
 mt |>
     select(model, mpg, cyl, hp, wt) |>
     slice_head(n = 8) |>
-    gt(rowname_col = "model") |>
-    gt::fmt_number(columns = c(mpg, hp, wt), decimals = 2) |>
-    chanwe_gt_header(
+    chanwe_kbl(
         title = "Simple fleet view",
         subtitle = "Top 8 vehicles · mtcars · white background",
         eyebrow = "TABLE · SPACIOUS",
-        caption = "Source · Motor Trend, 1974 · mtcars dataset."
-    ) |>
-    gt_theme_chanwe(bg_color = "#FFFFFF")
+        caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+        stub = "model",
+        fmt = list(
+            mpg = \(x) formatC(x, digits = 2, format = "f"),
+            hp = \(x) formatC(x, digits = 0, format = "d"),
+            wt = \(x) formatC(x, digits = 2, format = "f")
+        )
+    )
 ```
