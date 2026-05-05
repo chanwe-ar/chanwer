@@ -258,8 +258,8 @@ theme_chanwe <- function(
       strip.text = ggplot2::element_text(
         family = mono_family,
         color = colors[["typst-ink"]],
-        face = "bold",
-        size = base_text_size * 0.85,
+        face = "plain",
+        size = base_text_size * 1,
         margin = ggplot2::margin(b = 6)
       ),
       legend.position = legend_position,

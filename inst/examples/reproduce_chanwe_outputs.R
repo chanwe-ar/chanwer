@@ -5,7 +5,6 @@ library(ggplot2)
 library(gt)
 
 devtools::load_all()
-mt <- tibble::as_tibble(mtcars, rownames = "model")
 mt <- tibble::as_tibble(mtcars, rownames = "model") |>
   dplyr::mutate(
     cyl = factor(cyl),
@@ -40,9 +39,9 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
 
 
 # 2) gt
-mt <- tibble::as_tibble(mtcars, rownames = "model") |>
+mt <- tibble::as_tibble(mtcars, rownames = "model")
 
-  gt_tbl <- gt::gt(head(mt, 10), rowname_col = "model") |>
+gt_tbl <- gt::gt(head(mt, 10), rowname_col = "model") |>
   chanwe_gt_header(
     title = "Operational Snapshot",
     subtitle = "Fleet overview · mtcars sample · Q1 2026.",

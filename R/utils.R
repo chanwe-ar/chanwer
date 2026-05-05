@@ -81,6 +81,12 @@ chanwe_load_fonts <- function(path = NULL) {
     italic     = "Fraunces9pt-Italic.ttf",
     bolditalic = "Fraunces9pt-BoldItalic.ttf"
   )
+  .reg("JetBrains Mono",
+    plain      = "JetBrainsMono-Regular.ttf",
+    bold       = "JetBrainsMono-Bold.ttf",
+    italic     = "JetBrainsMono-Italic.ttf",
+    bolditalic = "JetBrainsMono-BoldItalic.ttf"
+  )
 
   # .chanwe-title: Archivo ExtraBold (800) baked as plain face for element_markdown.
   # "Archivo ExtraBold": same file registered under its typographic family name

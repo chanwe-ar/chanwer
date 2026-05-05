@@ -500,8 +500,8 @@ ggplot(econ_long, aes(date, value, color = series)) +
 #| fig-height: 4.0
 ggplot(econ, aes(date, unemploy / 1000)) +
     geom_area(
-        fill = chanwe_get_colors()[["chart-electric-blue"]],
-        color = chanwe_get_colors()[["chart-electric-blue"]],
+        fill = chanwe_get_colors()[["chart-blue"]],
+        color = chanwe_get_colors()[["chart-blue"]],
         alpha = 0.18,
         linewidth = 0.6
     ) +
@@ -524,7 +524,7 @@ ggplot(econ, aes(date, unemploy / 1000)) +
 #| fig-height: 4.0
 ggplot(econ |> filter(date >= as.Date("2000-01-01")), aes(date, uempmed)) +
     geom_step(
-        color = chanwe_get_colors()[["chart-jade"]],
+        color = chanwe_get_colors()[["chart-green"]],
         linewidth = 0.7
     ) +
     theme_chanwe(bg_color = "#FFFFFF") +
@@ -680,7 +680,7 @@ ggplot(cor_mat, aes(from, to, fill = r)) +
         )
     ) +
     scale_fill_gradient2(
-        low = chanwe_get_colors()[["chart-electric-blue"]],
+        low = chanwe_get_colors()[["chart-blue"]],
         mid = chanwe_get_colors()[["typst-neutral-200"]],
         high = chanwe_get_colors()[["chart-coral"]],
         midpoint = 0,

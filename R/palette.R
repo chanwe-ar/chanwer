@@ -1,15 +1,15 @@
 # Brand color tokens -------------------------------------------------------
 
 .chanwe_colors <- c(
-  # Editorial 8-color chart palette
-  "chart-coral"         = "#E05038",
-  "chart-electric-blue" = "#2B47C8",
-  "chart-jade"          = "#2E7A52",
-  "chart-saffron"       = "#C49A18",
-  "chart-magenta"       = "#7A3598",
-  "chart-teal"          = "#1A90A5",
-  "chart-vermillion"    = "#C23850",
-  "chart-ink"           = "#0F0F0F",
+  # Editorial 8-color chart palette — p15 family primaries (shade -01)
+  "chart-coral"   = "#EE5524",
+  "chart-blue"    = "#0C48ED",
+  "chart-green"   = "#1EB508",
+  "chart-mustard" = "#E8B400",
+  "chart-violet"  = "#9B2E8F",
+  "chart-teal"    = "#14A4B8",
+  "chart-magenta" = "#EB03F2",
+  "chart-ink"     = "#141414",
   "brand-orange" = "#E94B2B",
   "brand-black" = "#101010",
   "brand-white" = "#F7F7F7",
@@ -113,16 +113,16 @@
   info       = "typst-info"
 )
 
-# Editorial 8-color chart palette
+# Editorial 8-color chart palette — p15 family primaries (shade -01)
 .chanwe_chart_colors <- c(
-  "chart-coral"         = "#E05038",
-  "chart-electric-blue" = "#2B47C8",
-  "chart-jade"          = "#2E7A52",
-  "chart-saffron"       = "#C49A18",
-  "chart-magenta"       = "#7A3598",
-  "chart-teal"          = "#1A90A5",
-  "chart-vermillion"    = "#C23850",
-  "chart-ink"           = "#0F0F0F"
+  "chart-coral"    = "#EE5524",
+  "chart-blue"     = "#0C48ED",
+  "chart-green"    = "#1EB508",
+  "chart-mustard"  = "#E8B400",
+  "chart-violet"   = "#9B2E8F",
+  "chart-teal"     = "#14A4B8",
+  "chart-magenta"  = "#EB03F2",
+  "chart-ink"      = "#141414"
 )
 
 .chanwe_chart_names <- names(.chanwe_chart_colors)
