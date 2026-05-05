@@ -146,15 +146,15 @@ theme_chanwe <- function(
     size = base_text_size * 1.8,
     hjust = 0,
     lineheight = 1.10,
-    margin = ggplot2::margin(b = 4)
+    margin = ggplot2::margin(b = 1)
   )
   subtitle_element <- ggplot2::element_text(
     family = subtitle_family,
     color = colors[["typst-fg-muted"]],
     face = "plain",
-    size = base_text_size * 1.2,
+    size = base_text_size * 1,
     hjust = 0,
-    margin = ggplot2::margin(t = 3, b = 25)
+    margin = ggplot2::margin(t = 3, b = 20)
   )
 
   if (requireNamespace("ggtext", quietly = TRUE)) {
@@ -164,16 +164,16 @@ theme_chanwe <- function(
       face = title_face,
       size = base_text_size * 1.8,
       hjust = 0,
-      lineheight = 1.10,
-      margin = ggplot2::margin(b = 4)
+      lineheight = 1,
+      margin = ggplot2::margin(b = 1)
     )
     subtitle_element <- ggtext::element_markdown(
       family = subtitle_family,
       color = colors[["typst-fg-muted"]],
       face = "plain",
-      size = base_text_size * 1.20,
+      size = base_text_size * 1,
       hjust = 0,
-      margin = ggplot2::margin(t = 2, b = 20),
+      margin = ggplot2::margin(t = 3, b = 20),
       lineheight = 1.3
     )
   }
@@ -193,7 +193,7 @@ theme_chanwe <- function(
         ggtext::element_textbox_simple(
           family = mono_family,
           color = colors[["typst-fg-muted"]],
-          size = base_text_size * 1.20,
+          size = base_text_size * 1.0,
           hjust = 0,
           halign = 0,
           width = grid::unit(1, "npc"),
@@ -350,7 +350,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
   tf <- if ("Archivo ExtraBold" %in% reg) "\"Archivo ExtraBold\"" else "Archivo"
   tw <- if ("Archivo ExtraBold" %in% reg) "normal" else "bold"
   paste0(
-    "<span style='font-family:\"JetBrains Mono\";font-size:7pt;font-weight:normal;line-height:2.8;color:",
+    "<span style='font-family:\"JetBrains Mono\";font-size:6pt;font-weight:normal;line-height:4.0;color:",
     colors[["typst-primary"]],
     ";'>── ",
     toupper(eyebrow),
