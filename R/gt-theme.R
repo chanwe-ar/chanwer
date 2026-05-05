@@ -161,6 +161,7 @@ gt_theme_chanwe <- function(
       style = gt::cell_text(
         font = gt::google_font("Archivo"),
         color = colors[["typst-fg-muted"]],
+        weight = "normal",
         size = sz(1.50),
         align = "left"
       ),
@@ -236,8 +237,7 @@ gt_theme_chanwe <- function(
       css = sprintf(
         "
         @import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300&display=swap');
-        .gt_subtitle { font-weight: 300 !important; }
+        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;700&display=swap');
         .gt_table { border-radius: 0; box-shadow: none; border-top: 0.5px solid %s !important; border-bottom: 0.5px solid %s !important; }
         .gt_heading { border-top: none; padding-left: 0; padding-top: 24px !important; text-align: left !important; }
         .gt_title { padding-bottom: 8px !important; margin-bottom: 0 !important; }

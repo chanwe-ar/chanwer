@@ -33,7 +33,13 @@
       "Read(//Library/Frameworks/R.framework/**)",
       "Edit(~/.claude/skills/chanwe-quarto-typst/**)",
       "Bash(R CMD build .)",
-      "Bash(R CMD build --no-build-vignettes .)"
+      "Bash(R CMD build --no-build-vignettes .)",
+      "Bash(Rscript -e \"cat\\(as.character\\(packageVersion\\('gt'\\)\\)\\)\")",
+      "Bash(Rscript -e \"cat\\(system.file\\(package='gt'\\)\\)\")",
+      "Bash(Rscript -e \"library\\(gt\\); ns <- getNamespace\\('gt'\\); fns <- ls\\(ns\\); cat\\(paste\\(head\\(fns[grepl\\('typst|Typst', fns\\)], 20\\), collapse='\\\\n'\\)\\)\")",
+      "Bash(Rscript -e \"library\\(gt\\); body_str <- deparse\\(getFromNamespace\\('render_formats_typst_body', 'gt'\\)\\); cat\\(paste\\(body_str[grepl\\('weight', body_str\\)], collapse='\\\\n'\\)\\)\")",
+      "Bash(Rscript -e \"library\\(gt\\); ns <- getNamespace\\('gt'\\); fns <- ls\\(ns\\); cat\\(paste\\(fns[grepl\\('render|format|output|as_typst|body_typst', fns, ignore.case=TRUE\\)], collapse='\\\\n'\\)\\)\")",
+      "Bash(Rscript --vanilla -e ' *)"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

@@ -92,7 +92,7 @@ chanwe_discrete_pal <- function() {
 #'     theme_chanwe(legend_position = "none")
 #' }
 theme_chanwe <- function(
-  base_text_size = 9.5,
+  base_text_size = 8,
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
