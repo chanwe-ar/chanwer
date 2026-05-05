@@ -12,9 +12,8 @@ execute:
   echo: false
   warning: false
   message: false
-  dev: ragg_png
-  fig-format: png
-  fig-dpi: 320
+  dev: svglite
+  fig-format: svg
 chanwe:
   document: "CHW · DEV"
   edition: "SHOWCASE / 2026"
@@ -61,10 +60,7 @@ chanwe_load_fonts()
 
 knitr::opts_chunk$set(dev = "ragg_png", dpi = 320)
 
-library(ggplot2)
 library(dplyr)
-library(tidyr)
-library(gt)
 
 # mtcars -----------------------------------------------------------------------
 mt <- tibble::as_tibble(mtcars, rownames = "model") |>
@@ -78,12 +74,18 @@ mt <- tibble::as_tibble(mtcars, rownames = "model") |>
             labels = c("Low", "Mid", "High")
         )
     )
+
+fmt_fleet <- list(
+    mpg = \(x) formatC(x, digits = 2, format = "f"),
+    hp = \(x) formatC(x, digits = 0, format = "d"),
+    wt = \(x) formatC(x, digits = 2, format = "f")
+)
 ```
 
 
-# GT Tables
+# kbl Tables
 
-## Spacious fleet view (kbl)
+## White background
 
 ```{r}
 mt |>
@@ -92,19 +94,15 @@ mt |>
     chanwe_kbl(
         title = "Simple fleet view",
         subtitle = "Top 8 vehicles · mtcars · white background",
-        eyebrow = "TABLE · SPACIOUS",
+        eyebrow = "TABLE · SPACIOUS · WHITE",
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
-        density = "spacious", # or "compact",
-        fmt = list(
-            mpg = \(x) formatC(x, digits = 2, format = "f"),
-            hp = \(x) formatC(x, digits = 0, format = "d"),
-            wt = \(x) formatC(x, digits = 2, format = "f")
-        )
+        bg = "white",
+        fmt = fmt_fleet
     )
 ```
 
-## Compact fleet view (kbl)
+## Beige background
 
 ```{r}
 mt |>
@@ -112,15 +110,28 @@ mt |>
     slice_head(n = 8) |>
     chanwe_kbl(
         title = "Simple fleet view",
-        subtitle = "Top 8 vehicles · mtcars · white background",
-        eyebrow = "TABLE · SPACIOUS",
+        subtitle = "Top 8 vehicles · mtcars · beige background",
+        eyebrow = "TABLE · SPACIOUS · BEIGE",
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
-        density = "compact",
-        fmt = list(
-            mpg = \(x) formatC(x, digits = 2, format = "f"),
-            hp = \(x) formatC(x, digits = 0, format = "d"),
-            wt = \(x) formatC(x, digits = 2, format = "f")
-        )
+        bg = "beige",
+        fmt = fmt_fleet
+    )
+```
+
+## Gray background
+
+```{r}
+mt |>
+    select(model, mpg, cyl, hp, wt) |>
+    slice_head(n = 8) |>
+    chanwe_kbl(
+        title = "Simple fleet view",
+        subtitle = "Top 8 vehicles · mtcars · gray background",
+        eyebrow = "TABLE · SPACIOUS · GRAY",
+        caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+        stub = "model",
+        bg = "gray",
+        fmt = fmt_fleet
     )
 ```

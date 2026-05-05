@@ -9,8 +9,11 @@ chanwe_palette(palette = NULL)
 \arguments{
 \item{palette}{Optional palette selector. Use \code{NULL} (default) to return
 all colors and grouped palettes. Supported names are \code{"all"}, \code{"core"},
-\code{"p13_orange"}, \code{"p13_gray"}, \code{"p14_accents"}, \code{"semantic"}, and
-\code{"chart"}.}
+\code{"p13_orange"}, \code{"p13_gray"}, \code{"p14_accents"}, \code{"p15_coral"},
+\code{"p15_vermillion"}, \code{"p15_green"}, \code{"p15_magenta"}, \code{"p15_blue"},
+\code{"p15_yellow"}, \code{"p15_cyan"}, \code{"p15_mustard"}, \code{"p15_violet"},
+\code{"p15_teal"}, \code{"p15_ink"}, \code{"mb_orange"}, \code{"mb_dark"}, \code{"mb_beige"},
+\code{"semantic"}, and \code{"chart"}.}
 }
 \value{
 If \code{palette = NULL}, a list containing \code{all} and \code{groups}.

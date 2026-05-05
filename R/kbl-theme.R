@@ -34,6 +34,9 @@
 #'   (between the separator line and the labels). Default \code{0}.
 #' @param footer_top Extra vertical space in pt above the footer note text.
 #'   Default \code{0}.
+#' @param bg Table background colour. Named shorthand: \code{"white"},
+#'   \code{"beige"} (\code{#F7F3EE}), \code{"gray"} (\code{#F5F5F5}).
+#'   Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Default \code{NULL} (transparent).
 #' @param fmt Named list of formatting functions, keyed by column name.
 #'   Each function receives the column vector and must return a character vector.
 #'
@@ -53,14 +56,15 @@ chanwe_kbl <- function(
   stub = NULL,
   density = c("spacious", "compact"),
   row_padding = NULL,
-  title_size = '18pt',
+  title_size = '20pt',
   eyebrow_size = '7pt',
   subtitle_size = '11pt',
-  body_size = '9pt',
-  header_size = '7pt',
-  note_size = '8pt',
+  body_size = '8pt',
+  header_size = '6pt',
+  note_size = '9pt',
   col_label_top = 0,
   footer_top = 0,
+  bg = NULL,
   fmt = list()
 ) {
   chanwe_require_package("knitr")
@@ -112,7 +116,7 @@ chanwe_kbl <- function(
     "7pt"
   }
 
-  top_v <- if (sp) "6pt" else "4pt" # space inside title cell before eyebrow
+  top_v <- if (sp) "14pt" else "6pt" # space inside title cell before eyebrow
   bot_v <- if (sp) "15pt" else "3pt" # space inside subtitle cell before separator
 
   n <- ncol(data)
@@ -143,7 +147,13 @@ chanwe_kbl <- function(
     col_aligns <- rep(col_aligns, n)
   }
 
-  widths <- if (!is.null(col_widths)) col_widths else if (full_width) rep("1fr", n) else rep("auto", n)
+  widths <- if (!is.null(col_widths)) {
+    col_widths
+  } else if (full_width) {
+    rep("1fr", n)
+  } else {
+    rep("auto", n)
+  }
 
   # apply format functions
   fmt_data <- data
@@ -175,12 +185,49 @@ chanwe_kbl <- function(
   # excessive gap between title, subtitle, and separator
   inset_title <- paste0("(top: ", inset_y, ", bottom: 5pt, x: 2.5mm)")
   inset_sub <- paste0("(top: 4pt, bottom: ", inset_y, ", x: 2.5mm)")
+  colhdr_top <- if (sp) "24pt" else "9pt"
+  inset_colhdr <- paste0(
+    "(top: ",
+    colhdr_top,
+    ", bottom: ",
+    inset_y,
+    ", x: 2.5mm)"
+  )
+  footer_top_inset <- if (sp) "14pt" else "6pt"
+  inset_footer <- paste0(
+    "(top: ",
+    footer_top_inset,
+    ", bottom: ",
+    inset_y,
+    ", x: 2.5mm)"
+  )
+
+  bg_fill <- if (is.null(bg)) {
+    ""
+  } else {
+    fill_val <- switch(
+      bg,
+      "white" = "white",
+      "beige" = 'rgb("#F7F3EE")',
+      "cream" = 'rgb("#F7F3EE")',
+      "gray" = 'rgb("#F5F5F5")',
+      "grey" = 'rgb("#F5F5F5")',
+      bg
+    )
+    paste0(", fill: ", fill_val)
+  }
 
   # code builder
   L <- character(0)
   p <- function(...) L <<- c(L, paste0(...))
 
-  p("#{ set table(inset: (x: 2.5mm, y: ", inset_y, "), stroke: none)")
+  p(
+    "#{ set table(inset: (x: 2.5mm, y: ",
+    inset_y,
+    "), stroke: none",
+    bg_fill,
+    ")"
+  )
   p("  [")
   p("  #table(")
   p("    columns: (", paste(widths, collapse = ", "), "),")
@@ -252,6 +299,8 @@ chanwe_kbl <- function(
       p(
         "      table.cell(align: ",
         col_aligns[i],
+        ", inset: ",
+        inset_colhdr,
         ")[",
         pt_v(col_label_top),
         '#text(font: "JetBrains Mono", size: ',
@@ -271,17 +320,20 @@ chanwe_kbl <- function(
   for (i in seq_len(nr)) {
     for (j in seq_len(n)) {
       val <- esc(fmt_data[[j]][i])
-      is_stub <- !is.null(stub) && nms[j] == stub
-      fill <- if (is_stub) "_t.fg-muted" else "_t.fg"
+      is_first <- j == 1L
+      fill <- if (is_first) "_t.ink" else "_t.fg-muted"
+      weight <- if (is_first) '"bold"' else '"regular"'
       p(
         "    table.cell(align: ",
         col_aligns[j],
         ")[",
-        '#text(font: "Satoshi", size: ',
+        '#text(font: "JetBrains Mono", size: ',
         body_pt,
         ', fill: ',
         fill,
-        ', weight: "regular")[',
+        ', weight: ',
+        weight,
+        ')[',
         val,
         "]],"
       )
@@ -296,7 +348,9 @@ chanwe_kbl <- function(
     p(
       "      table.cell(colspan: ",
       n,
-      ", align: left)[",
+      ", align: left, inset: ",
+      inset_footer,
+      ")[",
       pt_v(footer_top),
       '#text(font: "JetBrains Mono", size: ',
       note_pt,
