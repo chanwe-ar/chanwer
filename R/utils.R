@@ -82,11 +82,19 @@ chanwe_load_fonts <- function(path = NULL) {
     bolditalic = "Fraunces9pt-BoldItalic.ttf"
   )
 
-  # .chanwe-title: Archivo Bold (700) — bakes weight into the family so face="plain" is reliable
-  archivo_bold <- file.path(path, "Archivo-Bold.ttf")
-  if (file.exists(archivo_bold)) {
+  # .chanwe-title / ArchivoTitle: Archivo Black (900) baked as plain face.
+  # Two names registered: .chanwe-title for element_markdown family= param,
+  # ArchivoTitle as CSS-friendly alias (no leading dot) for use inside HTML
+  # spans in ggtext — gridtext CSS lookup silently fails on dot-prefixed names.
+  archivo_black <- file.path(path, "Archivo-Black.ttf")
+  archivo_title <- if (file.exists(archivo_black)) archivo_black else file.path(path, "Archivo-Bold.ttf")
+  if (file.exists(archivo_title)) {
     tryCatch(
-      systemfonts::register_font(name = ".chanwe-title", plain = archivo_bold),
+      systemfonts::register_font(name = ".chanwe-title", plain = archivo_title),
+      error = function(e) NULL
+    )
+    tryCatch(
+      systemfonts::register_font(name = "ArchivoTitle", plain = archivo_title),
       error = function(e) NULL
     )
   }

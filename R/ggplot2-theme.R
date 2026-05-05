@@ -16,7 +16,7 @@ chanwe_discrete_pal <- function() {
 #' brand-consistent color palettes.
 #'
 #' ## Typography
-#' - **Title**: Archivo Black (900) — large, tight tracking
+#' - **Title**: Archivo Black (900) — large, heavy weight
 #' - **Subtitle**: Archivo ExtraLight (200) — same family, featherweight contrast
 #' - **Body / axis text**: Satoshi Regular
 #' - **Axis titles, legend, caption**: JetBrains Mono
@@ -338,13 +338,19 @@ chanwe_title <- function(text, eyebrow = NULL) {
     return(text)
   }
   colors <- chanwe_get_colors()
+  reg <- if (requireNamespace("systemfonts", quietly = TRUE)) {
+    systemfonts::registry_fonts()$family
+  } else {
+    character(0)
+  }
+  tf <- if ("ArchivoTitle" %in% reg) "ArchivoTitle" else "Archivo"
   paste0(
     "<span style='font-family:\"JetBrains Mono\",monospace;font-size:8pt;font-weight:500;color:",
     colors[["typst-primary"]],
     ";'>── ",
     toupper(eyebrow),
     "</span><br>",
-    "<span style='font-family:Archivo,sans-serif;letter-spacing:0em;'>",
+    "<span style='font-family:", tf, ",sans-serif;font-weight:normal;letter-spacing:0em;'>",
     text,
     "</span>"
   )
