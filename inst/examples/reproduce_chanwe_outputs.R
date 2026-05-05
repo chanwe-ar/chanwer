@@ -41,17 +41,17 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
 # 2) gt
 mt <- tibble::as_tibble(mtcars, rownames = "model")
 
-gt_tbl <- gt::gt(head(mt, 10), rowname_col = "model") |>
+mt |>
+  dplyr::select(model, mpg, cyl, hp, wt) |>
+  dplyr::slice_head(n = 8) |>
+  gt(rowname_col = "model") |>
+  gt::fmt_number(columns = c(mpg, hp, wt), decimals = 2) |>
   chanwe_gt_header(
-    title = "Operational Snapshot",
-    subtitle = "Fleet overview · mtcars sample · Q1 2026.",
-    eyebrow = "SECTION · OPERATIONAL",
-    caption = "Source · Motor Trend, 1974 · mtcars dataset."
+    title = "Simple fleet view",
+    subtitle = "Top 8 vehicles · mtcars · white background",
+    eyebrow = "TABLE · SPACIOUS"
   ) |>
-  gt_theme_chanwe(bg_color = "#fff")
-
-print(gt_tbl)
-
+  gt_theme_chanwe(bg_color = "#FFFFFF")
 # # 3) reactable
 # if (requireNamespace("reactable", quietly = TRUE)) {
 #   react_tbl <- reactable::reactable(

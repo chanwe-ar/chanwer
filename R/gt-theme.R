@@ -180,16 +180,7 @@ gt_theme_chanwe <- function(
     ) |>
     gt::tab_style(
       style = gt::cell_borders(
-        sides = "top",
-        color = colors[["typst-ink"]],
-        weight = gt::px(1.5),
-        style = "solid"
-      ),
-      locations = gt::cells_column_labels(columns = gt::everything())
-    ) |>
-    gt::tab_style(
-      style = gt::cell_borders(
-        sides = "bottom",
+        sides = c("top", "bottom"),
         color = colors[["typst-ink"]],
         weight = gt::px(0.5),
         style = "solid"

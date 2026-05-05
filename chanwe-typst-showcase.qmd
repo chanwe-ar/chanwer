@@ -421,7 +421,7 @@ ggplot(mt, aes(hp, mpg, size = disp, color = cyl)) +
 #| fig-height: 4.2
 ggplot(mt, aes(wt, mpg, color = qsec)) +
     geom_point(size = 3.2, alpha = 0.9) +
-    scale_color_chanwe_c() +
+    scale_color_gradientn(colours = chanwe_palette("mb_orange")) +
     theme_chanwe(bg_color = "#FFFFFF") +
     labs(
         title = "Fuel economy vs weight",
@@ -512,7 +512,7 @@ mt |>
 #| fig-height: 4.8
 ggplot(mpg_make, aes(avg_hwy, reorder(manufacturer, avg_hwy), fill = avg_hwy)) +
     geom_col(width = 0.7) +
-    scale_fill_chanwe_c() +
+    scale_fill_gradientn(colours = chanwe_palette("mb_orange")) +
     theme_chanwe(bg_color = "#F5F5F5", legend_position = "none") +
     labs(
         title = "Highway fuel economy by manufacturer",
@@ -559,7 +559,7 @@ ggplot(cyl_summary, aes(x = cyl, y = avg_mpg, color = cyl)) +
 #| fig-height: 4.0
 ggplot(econ, aes(date, psavert)) +
     geom_line(
-        color = chanwe_get_colors()[["chart-coral"]],
+        color = chanwe_get_colors()[["mb-orange-950"]],
         linewidth = 0.75
     ) +
     theme_chanwe(bg_color = "#F5F5F5") +
@@ -602,8 +602,8 @@ ggplot(econ_long, aes(date, value, color = series)) +
 #| fig-height: 4.0
 ggplot(econ, aes(date, unemploy / 1000)) +
     geom_area(
-        fill = chanwe_get_colors()[["chart-blue"]],
-        color = chanwe_get_colors()[["chart-blue"]],
+        fill = chanwe_get_colors()[["mb-dark-700"]],
+        color = chanwe_get_colors()[["mb-dark-700"]],
         alpha = 0.18,
         linewidth = 0.6
     ) +
@@ -626,7 +626,7 @@ ggplot(econ, aes(date, unemploy / 1000)) +
 #| fig-height: 4.0
 ggplot(econ |> filter(date >= as.Date("2000-01-01")), aes(date, uempmed)) +
     geom_step(
-        color = chanwe_get_colors()[["chart-green"]],
+        color = chanwe_get_colors()[["mb-dark-500"]],
         linewidth = 0.7
     ) +
     theme_chanwe(bg_color = "#FFFFFF") +
@@ -782,9 +782,9 @@ ggplot(cor_mat, aes(from, to, fill = r)) +
         )
     ) +
     scale_fill_gradient2(
-        low = chanwe_get_colors()[["chart-blue"]],
-        mid = chanwe_get_colors()[["typst-neutral-200"]],
-        high = chanwe_get_colors()[["chart-coral"]],
+        low = chanwe_get_colors()[["mb-dark-800"]],
+        mid = chanwe_get_colors()[["mb-beige-200"]],
+        high = chanwe_get_colors()[["mb-orange-950"]],
         midpoint = 0,
         limits = c(-1, 1)
     ) +
@@ -820,7 +820,7 @@ mt |>
         size = 3.2,
         color = chanwe_get_colors()[["typst-ink"]]
     ) +
-    scale_fill_chanwe_c() +
+    scale_fill_gradientn(colours = chanwe_palette("mb_orange")) +
     theme_chanwe(bg_color = "#FFFFFF", legend_position = "right") +
     labs(
         title = "Average MPG by cylinder and gear",
