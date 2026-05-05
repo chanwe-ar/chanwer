@@ -162,7 +162,7 @@ theme_chanwe <- function(
       family = title_family,
       color = colors[["typst-ink"]],
       face = title_face,
-      size = base_text_size * 2.4,
+      size = base_text_size * 2,
       hjust = 0,
       lineheight = 1.10,
       margin = ggplot2::margin(b = 4)
@@ -173,7 +173,7 @@ theme_chanwe <- function(
       face = "plain",
       size = base_text_size * 1.20,
       hjust = 0,
-      margin = ggplot2::margin(t = 4, b = 20),
+      margin = ggplot2::margin(t = 2, b = 20),
       lineheight = 1.3
     )
   }
@@ -192,8 +192,8 @@ theme_chanwe <- function(
       plot.caption = if (requireNamespace("ggtext", quietly = TRUE)) {
         ggtext::element_textbox_simple(
           family = mono_family,
-          color = colors[["typst-fg-subtle"]],
-          size = base_text_size * 0.7,
+          color = colors[["typst-fg-muted"]],
+          size = base_text_size * 1.20,
           hjust = 0,
           halign = 0,
           width = grid::unit(1, "npc"),
@@ -205,8 +205,8 @@ theme_chanwe <- function(
       } else {
         ggplot2::element_text(
           family = mono_family,
-          color = colors[["typst-fg-subtle"]],
-          size = base_text_size * 0.85,
+          color = colors[["typst-fg-muted"]],
+          size = base_text_size * 1.20,
           hjust = 0,
           margin = ggplot2::margin(t = 14)
         )
@@ -215,11 +215,11 @@ theme_chanwe <- function(
         family = mono_family,
         color = colors[["typst-ink"]],
         face = "plain",
-        size = base_text_size * 0.85
+        size = base_text_size * 1
       ),
       axis.text = ggplot2::element_text(
         color = colors[["typst-ink"]],
-        size = base_text_size * 0.70
+        size = base_text_size * 0.80
       ),
       axis.title.x = ggplot2::element_text(
         hjust = 1,
@@ -266,12 +266,12 @@ theme_chanwe <- function(
         family = mono_family,
         color = colors[["typst-fg-muted"]],
         face = "plain",
-        size = base_text_size * 0.75
+        size = base_text_size * 0.95
       ),
       legend.text = ggplot2::element_text(
         family = mono_family,
         color = colors[["typst-ink"]],
-        size = base_text_size * 0.75
+        size = base_text_size * 0.95
       ),
       legend.background = ggplot2::element_rect(
         fill = surface_fill,
@@ -285,7 +285,7 @@ theme_chanwe <- function(
         fill = NA,
         color = NA
       ),
-      legend.key.size = grid::unit(0.65, "lines"),
+      legend.key.size = grid::unit(0.85, "lines"),
       panel.spacing = grid::unit(1.0, "lines"),
       plot.subtitle = subtitle_element,
       plot.title.position = "plot",
@@ -347,7 +347,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
   tf <- if ("Archivo ExtraBold" %in% reg) "\"Archivo ExtraBold\"" else "Archivo"
   tw <- if ("Archivo ExtraBold" %in% reg) "normal" else "700"
   paste0(
-    "<span style='font-family:\"JetBrains Mono\",monospace;font-size:8pt;font-weight:500;line-height:2.8;color:",
+    "<span style='font-family:\"JetBrains Mono\",monospace;font-size:7pt;font-weight:500;line-height:2.8;color:",
     colors[["typst-primary"]],
     ";'>── ",
     toupper(eyebrow),
