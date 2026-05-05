@@ -83,7 +83,7 @@ mt <- tibble::as_tibble(mtcars, rownames = "model") |>
 
 # GT Tables
 
-## Simple fleet view (kbl)
+## Spacious fleet view (kbl)
 
 ```{r}
 mt |>
@@ -95,6 +95,28 @@ mt |>
         eyebrow = "TABLE · SPACIOUS",
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
+        density = "spacious", # or "compact",
+        fmt = list(
+            mpg = \(x) formatC(x, digits = 2, format = "f"),
+            hp = \(x) formatC(x, digits = 0, format = "d"),
+            wt = \(x) formatC(x, digits = 2, format = "f")
+        )
+    )
+```
+
+## Compact fleet view (kbl)
+
+```{r}
+mt |>
+    select(model, mpg, cyl, hp, wt) |>
+    slice_head(n = 8) |>
+    chanwe_kbl(
+        title = "Simple fleet view",
+        subtitle = "Top 8 vehicles · mtcars · white background",
+        eyebrow = "TABLE · SPACIOUS",
+        caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+        stub = "model",
+        density = "compact",
         fmt = list(
             mpg = \(x) formatC(x, digits = 2, format = "f"),
             hp = \(x) formatC(x, digits = 0, format = "d"),
