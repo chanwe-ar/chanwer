@@ -39,7 +39,7 @@ brand-consistent color palettes.
 \subsection{Typography}{
 \itemize{
 \item \strong{Title}: Archivo ExtraBold (800) — large, heavy weight
-\item \strong{Subtitle}: Archivo ExtraLight (200) — same family, featherweight contrast
+\item \strong{Subtitle}: Archivo Light (300) — same family, featherweight contrast
 \item \strong{Body / axis text}: Satoshi Regular
 \item \strong{Axis titles, legend, caption}: JetBrains Mono
 }

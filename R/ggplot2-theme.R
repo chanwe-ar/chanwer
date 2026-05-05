@@ -143,7 +143,7 @@ theme_chanwe <- function(
     family = title_family,
     color = colors[["typst-ink"]],
     face = title_face,
-    size = base_text_size * 2.6,
+    size = base_text_size * 2.4,
     hjust = 0,
     lineheight = 1.10,
     margin = ggplot2::margin(b = 4)
@@ -152,7 +152,7 @@ theme_chanwe <- function(
     family = subtitle_family,
     color = colors[["typst-fg-muted"]],
     face = "plain",
-    size = base_text_size * 1.10,
+    size = base_text_size * 1.2,
     hjust = 0,
     margin = ggplot2::margin(t = 3, b = 25)
   )
@@ -162,7 +162,7 @@ theme_chanwe <- function(
       family = title_family,
       color = colors[["typst-ink"]],
       face = title_face,
-      size = base_text_size * 2.3,
+      size = base_text_size * 2.4,
       hjust = 0,
       lineheight = 1.10,
       margin = ggplot2::margin(b = 4)
@@ -171,7 +171,7 @@ theme_chanwe <- function(
       family = subtitle_family,
       color = colors[["typst-fg-muted"]],
       face = "plain",
-      size = base_text_size * 1.15,
+      size = base_text_size * 1.20,
       hjust = 0,
       margin = ggplot2::margin(t = 4, b = 20),
       lineheight = 1.3
@@ -193,7 +193,7 @@ theme_chanwe <- function(
         ggtext::element_textbox_simple(
           family = mono_family,
           color = colors[["typst-fg-subtle"]],
-          size = base_text_size * 0.85,
+          size = base_text_size * 0.7,
           hjust = 0,
           halign = 0,
           width = grid::unit(1, "npc"),
@@ -337,6 +337,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
   if (is.null(eyebrow)) {
     return(text)
   }
+  chanwe_load_fonts()
   colors <- chanwe_get_colors()
   reg <- if (requireNamespace("systemfonts", quietly = TRUE)) {
     systemfonts::registry_fonts()$family
@@ -346,7 +347,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
   tf <- if ("Archivo ExtraBold" %in% reg) "\"Archivo ExtraBold\"" else "Archivo"
   tw <- if ("Archivo ExtraBold" %in% reg) "normal" else "700"
   paste0(
-    "<span style='font-family:\"JetBrains Mono\",monospace;font-size:8pt;font-weight:500;color:",
+    "<span style='font-family:\"JetBrains Mono\",monospace;font-size:8pt;font-weight:500;line-height:2.8;color:",
     colors[["typst-primary"]],
     ";'>── ",
     toupper(eyebrow),

@@ -114,6 +114,7 @@ gt_theme_chanwe <- function(
       heading.title.font.size = sz(3.6),
       heading.title.font.weight = "bold",
       heading.subtitle.font.size = sz(1.8),
+      heading.subtitle.font.weight = "normal",
       heading.padding = density$heading_padding,
       heading.border.bottom.color = colors[["typst-ink"]],
       heading.border.bottom.width = gt::px(0.5),
@@ -151,7 +152,7 @@ gt_theme_chanwe <- function(
         font = gt::google_font("Archivo"),
         color = colors[["typst-ink"]],
         weight = "bold",
-        size = sz(3.6),
+        size = sz(3.00),
         align = "left"
       ),
       locations = gt::cells_title(groups = "title")
@@ -160,7 +161,7 @@ gt_theme_chanwe <- function(
       style = gt::cell_text(
         font = gt::google_font("Archivo"),
         color = colors[["typst-fg-muted"]],
-        size = sz(1.45),
+        size = sz(1.50),
         align = "left"
       ),
       locations = gt::cells_title(groups = "subtitle")
@@ -170,7 +171,7 @@ gt_theme_chanwe <- function(
         font = gt::google_font("JetBrains Mono"),
         color = colors[["typst-fg-subtle"]],
         weight = "normal",
-        size = sz(0.82),
+        size = sz(0.75),
         transform = "uppercase",
         v_align = "middle"
       ),
