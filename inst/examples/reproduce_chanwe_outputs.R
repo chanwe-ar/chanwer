@@ -52,30 +52,3 @@ mt |>
     caption = "Source · Motor Trend, 1974 · mtcars dataset."
   ) |>
   gt_theme_chanwe(bg_color = "#FFFFFF")
-# # 3) reactable
-# if (requireNamespace("reactable", quietly = TRUE)) {
-#   react_tbl <- reactable::reactable(
-#     head(mt),
-#     theme = reactable_theme_chanwe(),
-#     defaultPageSize = 6
-#   )
-
-#   print(react_tbl)
-# }
-
-# # 4) highcharter
-# if (requireNamespace("highcharter", quietly = TRUE)) {
-#   hc <- highcharter::hchart(
-#     mtcars,
-#     "scatter",
-#     highcharter::hcaes(wt, mpg, group = cyl)
-#   ) |>
-#     highcharter::hc_title(text = "ChanWe highcharter") |>
-#     highcharter::hc_add_theme(hc_theme_chanwe())
-
-#   print(hc)
-# }
-
-# # 5) Quarto CSS path
-# cat("Use this stylesheet in Quarto:\n")
-# cat(chanwe_reporting_css(), "\n")

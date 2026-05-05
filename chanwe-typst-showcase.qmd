@@ -958,7 +958,6 @@ ggplot(iris_range, aes(y = species, color = species)) +
 
 ```{r}
 #| label: tbl-simple
-#| tbl-cap: "Fleet overview — top 8 vehicles (white background)."
 mt |>
     select(model, mpg, cyl, hp, wt) |>
     slice_head(n = 8) |>
@@ -967,7 +966,8 @@ mt |>
     chanwe_gt_header(
         title = "Simple fleet view",
         subtitle = "Top 8 vehicles · mtcars · white background",
-        eyebrow = "TABLE · SPACIOUS"
+        eyebrow = "TABLE · SPACIOUS",
+        caption = "Source · Motor Trend, 1974 · mtcars dataset."
     ) |>
     gt_theme_chanwe(bg_color = "#FFFFFF")
 ```
@@ -976,7 +976,6 @@ mt |>
 
 ```{r}
 #| label: tbl-compact
-#| tbl-cap: "Fleet overview — compact density (neutral-100 background)."
 mt |>
     select(model, mpg, cyl, gear, am) |>
     slice_head(n = 10) |>
@@ -993,7 +992,6 @@ mt |>
 
 ```{r}
 #| label: tbl-complex
-#| tbl-cap: "Performance summary — grouped by transmission, with spanners."
 summary_tbl |>
     gt(groupname_col = "am") |>
     chanwe_gt_header(
@@ -1019,7 +1017,6 @@ summary_tbl |>
 
 ```{r}
 #| label: tbl-spacious-beige
-#| tbl-cap: "Spacious + neutral-100."
 summary_tbl |>
     gt(groupname_col = "am") |>
     chanwe_gt_header(
@@ -1035,7 +1032,6 @@ summary_tbl |>
 
 ```{r}
 #| label: tbl-spacious-white
-#| tbl-cap: "Spacious + white."
 summary_tbl |>
     gt(groupname_col = "am") |>
     chanwe_gt_header(
@@ -1051,7 +1047,6 @@ summary_tbl |>
 
 ```{r}
 #| label: tbl-compact-beige
-#| tbl-cap: "Compact + neutral-100."
 summary_tbl |>
     gt(groupname_col = "am") |>
     chanwe_gt_header(
@@ -1067,7 +1062,6 @@ summary_tbl |>
 
 ```{r}
 #| label: tbl-compact-white
-#| tbl-cap: "Compact + white."
 summary_tbl |>
     gt(groupname_col = "am") |>
     chanwe_gt_header(
@@ -1083,7 +1077,6 @@ summary_tbl |>
 
 ```{r}
 #| label: tbl-iris
-#| tbl-cap: "Iris species — mean dimensions with footnote annotations."
 iris_tbl |>
     group_by(species) |>
     summarise(

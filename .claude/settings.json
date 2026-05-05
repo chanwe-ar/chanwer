@@ -47,7 +47,11 @@
       "Bash(awk -F: '$1 > 2580 && $1 < 2680')",
       "Bash(awk 'NR>=2598 && NR<=2615' chanwe-typst-showcase.typ)",
       "Bash(awk 'NR>=2590 && NR<=2612' chanwe-typst-showcase.typ)",
-      "Bash(awk -F: '$1 > 2598 && $1 < 2650')"
+      "Bash(awk -F: '$1 > 2598 && $1 < 2650')",
+      "Bash(awk 'NR>=2600 && NR<=2615' chanwe-typst-showcase.typ)",
+      "Bash(awk 'NR>=2158 && NR<=2175' gt.typ)",
+      "Bash(awk 'NR>=2157 && /stroke/' gt.typ)",
+      "Bash(awk 'NR>=2157 && NR<=2175' gt.typ)"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

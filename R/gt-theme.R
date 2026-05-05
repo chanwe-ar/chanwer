@@ -440,13 +440,26 @@ chanwe_gt_header <- function(
 ) {
   chanwe_require_package("gt")
 
+  # Invisible zero-width-space spans — chanwe-filters.lua converts class
+  # chanwe-v-N to native #v(Npt) spacing in Typst, giving us heading cell
+  # padding that CSS padding cannot provide through the HTML→Typst pipeline.
+  # Class is used (not data-* attrs) because Pandoc strips data-* from spans.
+  v_top    <- '<span class="chanwe-v-6">​</span>'
+  v_bottom <- '<span class="chanwe-v-8">​</span>'
+
   title_content <- if (!is.null(eyebrow)) {
-    gt::html(paste0(chanwe_gt_eyebrow(eyebrow), title))
+    gt::html(paste0(v_top, chanwe_gt_eyebrow(eyebrow), title))
   } else {
     title
   }
 
-  out <- gt::tab_header(data, title = title_content, subtitle = subtitle)
+  sub_content <- if (!is.null(subtitle)) {
+    gt::html(paste0(subtitle, v_bottom))
+  } else {
+    NULL
+  }
+
+  out <- gt::tab_header(data, title = title_content, subtitle = sub_content)
 
   if (!is.null(caption)) {
     color <- chanwe_get_colors()[["typst-primary"]]
