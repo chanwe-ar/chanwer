@@ -5,7 +5,7 @@ library(ggplot2)
 library(gt)
 
 devtools::load_all()
-chanwe_load_fonts()
+# chanwe_load_fonts()
 
 # 1) ggplot2
 p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
@@ -23,25 +23,25 @@ p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
 
 print(p)
 
-# mt <- tibble::as_tibble(mtcars, rownames = "model")
-# mt <- mt |>
-#   dplyr::mutate(
-#     cyl = factor(cyl),
-#     gear = factor(gear),
-#     am = factor(am, labels = c("Automatic", "Manual"))
-#   )
+mt <- tibble::as_tibble(mtcars, rownames = "model")
+mt <- mt |>
+  dplyr::mutate(
+    cyl = factor(cyl),
+    gear = factor(gear),
+    am = factor(am, labels = c("Automatic", "Manual"))
+  )
 
-# # 2) gt
-# gt_tbl <- gt::gt(head(mt, 10), rowname_col = "model") |>
-#   chanwe_gt_header(
-#     title = "Operational Snapshot",
-#     subtitle = "Fleet overview · mtcars sample · Q1 2026.",
-#     eyebrow = "SECTION · OPERATIONAL",
-#     caption = "Source · Motor Trend, 1974 · mtcars dataset."
-#   ) |>
-#   gt_theme_chanwe(bg_color = "#fff")
+# 2) gt
+gt_tbl <- gt::gt(head(mt, 10), rowname_col = "model") |>
+  chanwe_gt_header(
+    title = "Operational Snapshot",
+    subtitle = "Fleet overview · mtcars sample · Q1 2026.",
+    eyebrow = "SECTION · OPERATIONAL",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset."
+  ) |>
+  gt_theme_chanwe(bg_color = "#fff")
 
-# print(gt_tbl)
+print(gt_tbl)
 
 # # 3) reactable
 # if (requireNamespace("reactable", quietly = TRUE)) {

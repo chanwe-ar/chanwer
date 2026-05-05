@@ -4,12 +4,19 @@
 \alias{gt_theme_chanwe_spacious}
 \title{ChanWe Spacious Theme for gt Tables}
 \usage{
-gt_theme_chanwe_spacious(data, bg_color = "white", background = NULL)
+gt_theme_chanwe_spacious(
+  data,
+  bg_color = "white",
+  base_text_size = 11,
+  background = NULL
+)
 }
 \arguments{
 \item{data}{A gt table object.}
 
 \item{bg_color}{Background color passed to \code{\link[=gt_theme_chanwe]{gt_theme_chanwe()}}. Accepts hex strings or \code{"white"}, \code{"gray"}, \code{"beige"}.}
+
+\item{base_text_size}{Base font size in pixels passed to \code{\link[=gt_theme_chanwe]{gt_theme_chanwe()}}. Default \code{11}.}
 
 \item{background}{Deprecated. Use \code{bg_color} instead.}
 }

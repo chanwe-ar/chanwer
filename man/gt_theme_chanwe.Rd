@@ -4,7 +4,12 @@
 \alias{gt_theme_chanwe}
 \title{ChanWe Theme for gt Tables}
 \usage{
-gt_theme_chanwe(data, variant = c("spacious", "compact"), bg_color = "white")
+gt_theme_chanwe(
+  data,
+  variant = c("spacious", "compact"),
+  bg_color = "white",
+  base_text_size = 11
+)
 }
 \arguments{
 \item{data}{A gt table object created with \code{\link[gt:gt]{gt::gt()}}.}
@@ -13,6 +18,17 @@ gt_theme_chanwe(data, variant = c("spacious", "compact"), bg_color = "white")
 
 \item{bg_color}{Background color. Accepts a hex string or \code{"white"}
 (default), \code{"gray"}, \code{"beige"}.}
+
+\item{base_text_size}{Base font size in pixels (default \code{11}). All other
+font sizes scale proportionally from this value:
+\itemize{
+\item Body cells: \verb{1.0×} base
+\item Title: \verb{~3.6×} base
+\item Subtitle: \verb{~1.45×} base
+\item Column labels: \verb{~0.82×} base
+\item Stub / row groups: \verb{~1.09×} base
+\item Source notes / footnotes: \verb{1.0×} base
+}}
 }
 \value{
 The input gt table with ChanWe styling applied.
@@ -73,5 +89,10 @@ if (requireNamespace("gt", quietly = TRUE)) {
   gt::gt(head(mtcars, 10)) |>
     gt::tab_header(title = "Compact view") |>
     gt_theme_chanwe(variant = "compact", bg_color = "gray")
+
+  ## Larger base size for presentations
+  gt::gt(head(mtcars, 6)) |>
+    gt::tab_header(title = "Larger text") |>
+    gt_theme_chanwe(base_text_size = 14)
 }
 }

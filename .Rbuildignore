@@ -4,3 +4,15 @@
 ^\.DS_Store$
 ^_pkgdown\.yml$
 ^LICENSE\.md$
+^\.quarto$
+^_quarto\.yml$
+^chanwe-typst-showcase.*$
+^chanwe-typst-gt-ggplot-showcase.*$
+^references\.bib$
+^figure$
+^lib$
+^_extensions$
+^chanwer_.*\.tar\.gz$
+^NEWS\.md$
+^README\.md$
+^AGENTS\.md$

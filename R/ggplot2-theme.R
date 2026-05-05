@@ -17,7 +17,7 @@ chanwe_discrete_pal <- function() {
 #'
 #' ## Typography
 #' - **Title**: Archivo ExtraBold (800) — large, heavy weight
-#' - **Subtitle**: Archivo ExtraLight (200) — same family, featherweight contrast
+#' - **Subtitle**: Archivo Light (300) — same family, featherweight contrast
 #' - **Body / axis text**: Satoshi Regular
 #' - **Axis titles, legend, caption**: JetBrains Mono
 #'
@@ -197,9 +197,9 @@ theme_chanwe <- function(
           hjust = 0,
           halign = 0,
           width = grid::unit(1, "npc"),
-          margin = ggplot2::margin(t = 4),
-          padding = ggplot2::margin(0),
-          box.colour = NA,
+          margin = ggplot2::margin(t = 10),
+          padding = ggplot2::margin(t = 8, r = 0, b = 0, l = 0),
+          box.colour = c(colors[["typst-ink"]], NA, NA, NA),
           fill = NA
         )
       } else {

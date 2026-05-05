@@ -38,7 +38,7 @@ brand-consistent color palettes.
 \details{
 \subsection{Typography}{
 \itemize{
-\item \strong{Title}: Archivo Black (900) — large, tight tracking
+\item \strong{Title}: Archivo ExtraBold (800) — large, heavy weight
 \item \strong{Subtitle}: Archivo ExtraLight (200) — same family, featherweight contrast
 \item \strong{Body / axis text}: Satoshi Regular
 \item \strong{Axis titles, legend, caption}: JetBrains Mono
