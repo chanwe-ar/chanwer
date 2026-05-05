@@ -339,14 +339,14 @@ chanwe_title <- function(text, eyebrow = NULL) {
   }
   colors <- chanwe_get_colors()
   paste0(
-    "<span style='font-family:JetBrains Mono;font-size:8pt;font-weight:500;",
-    "letter-spacing:0.08em;color:",
+    "<span style='font-family:\"JetBrains Mono\",monospace;font-size:8pt;font-weight:500;color:",
     colors[["typst-primary"]],
-    ";'>",
-    "── ",
+    ";'>── ",
     toupper(eyebrow),
     "</span><br>",
-    text
+    "<span style='font-family:Archivo,sans-serif;letter-spacing:0em;'>",
+    text,
+    "</span>"
   )
 }
 
