@@ -25,7 +25,10 @@
       "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); print\\(colors[grepl\\('beige|warm|sand|cream|neutral', names\\(colors\\), ignore.case=TRUE\\)]\\)\")",
       "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); print\\(colors\\)\")",
       "Bash(grep -v \"masked\\\\|Attaching\\\\|intersect\\\\|setdiff\\\\|setequal\\\\|union\\\\|filter\\\\|lag\\\\|^$\")",
-      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); library\\(gt\\); gt::gt\\(head\\(mtcars,3\\)\\) |> gt::tab_header\\(title='Test'\\) |> gt_theme_chanwe\\(\\); cat\\('OK\\\\n'\\)\")"
+      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); library\\(gt\\); gt::gt\\(head\\(mtcars,3\\)\\) |> gt::tab_header\\(title='Test'\\) |> gt_theme_chanwe\\(\\); cat\\('OK\\\\n'\\)\")",
+      "Bash(curl -s \"https://fonts.googleapis.com/css2?family=Archivo:wght@300&display=swap\")",
+      "Bash(curl -s -o /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/_extensions/chanwe/fonts/Archivo-Light.ttf https://fonts.gstatic.com/s/archivo/v25/k3k6o8UDI-1M0wlSV9XAw6lQkqWY8Q82sJaRE-NWIDdgffTTajNp8A.ttf)",
+      "Bash(curl -s -o /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/_extensions/chanwe/fonts/Archivo-Light.ttf https://fonts.gstatic.com/s/archivo/v25/k3k6o8UDI-1M0wlSV9XAw6lQkqWY8Q82sJaRE-NWIDdgffTTajNp8A.ttf)"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

@@ -161,7 +161,7 @@ gt_theme_chanwe <- function(
       style = gt::cell_text(
         font = gt::google_font("Archivo"),
         color = colors[["typst-fg-muted"]],
-        weight = "200",
+        weight = "300",
         size = sz(1.45),
         align = "left"
       ),

@@ -82,29 +82,29 @@ chanwe_load_fonts <- function(path = NULL) {
     bolditalic = "Fraunces9pt-BoldItalic.ttf"
   )
 
-  # .chanwe-title / ArchivoTitle: Archivo Black (900) baked as plain face.
-  # Two names registered: .chanwe-title for element_markdown family= param,
-  # ArchivoTitle as CSS-friendly alias (no leading dot) for use inside HTML
-  # spans in ggtext — gridtext CSS lookup silently fails on dot-prefixed names.
-  archivo_black <- file.path(path, "Archivo-Black.ttf")
-  archivo_title <- if (file.exists(archivo_black)) archivo_black else file.path(path, "Archivo-Bold.ttf")
+  # .chanwe-title: Archivo ExtraBold (800) baked as plain face for element_markdown.
+  # "Archivo ExtraBold": same file registered under its typographic family name
+  # so gridtext can resolve it via CSS font-family lookup (dot-prefixed names fail).
+  archivo_extrabold <- file.path(path, "Archivo-ExtraBold.ttf")
+  archivo_title <- if (file.exists(archivo_extrabold)) archivo_extrabold else file.path(path, "Archivo-Bold.ttf")
   if (file.exists(archivo_title)) {
     tryCatch(
       systemfonts::register_font(name = ".chanwe-title", plain = archivo_title),
       error = function(e) NULL
     )
     tryCatch(
-      systemfonts::register_font(name = "ArchivoTitle", plain = archivo_title),
+      systemfonts::register_font(name = "Archivo ExtraBold", plain = archivo_title),
       error = function(e) NULL
     )
   }
 
-  # .chanwe-subtitle: Archivo ExtraLight (200) — same family as the title but
-  # at weight 200 and no italic, baked into a named family for reliable rendering.
-  archivo_el <- file.path(path, "Archivo-ExtraLight.ttf")
-  if (file.exists(archivo_el)) {
+  # .chanwe-subtitle: Archivo Light (300) — one step above ExtraLight (200),
+  # baked as the plain face for reliable weight rendering.
+  archivo_light <- file.path(path, "Archivo-Light.ttf")
+  archivo_subtitle <- if (file.exists(archivo_light)) archivo_light else file.path(path, "Archivo-ExtraLight.ttf")
+  if (file.exists(archivo_subtitle)) {
     tryCatch(
-      systemfonts::register_font(name = ".chanwe-subtitle", plain = archivo_el),
+      systemfonts::register_font(name = ".chanwe-subtitle", plain = archivo_subtitle),
       error = function(e) NULL
     )
   }
