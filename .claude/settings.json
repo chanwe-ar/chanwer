@@ -39,7 +39,15 @@
       "Bash(Rscript -e \"library\\(gt\\); ns <- getNamespace\\('gt'\\); fns <- ls\\(ns\\); cat\\(paste\\(head\\(fns[grepl\\('typst|Typst', fns\\)], 20\\), collapse='\\\\n'\\)\\)\")",
       "Bash(Rscript -e \"library\\(gt\\); body_str <- deparse\\(getFromNamespace\\('render_formats_typst_body', 'gt'\\)\\); cat\\(paste\\(body_str[grepl\\('weight', body_str\\)], collapse='\\\\n'\\)\\)\")",
       "Bash(Rscript -e \"library\\(gt\\); ns <- getNamespace\\('gt'\\); fns <- ls\\(ns\\); cat\\(paste\\(fns[grepl\\('render|format|output|as_typst|body_typst', fns, ignore.case=TRUE\\)], collapse='\\\\n'\\)\\)\")",
-      "Bash(Rscript --vanilla -e ' *)"
+      "Bash(Rscript --vanilla -e ' *)",
+      "Bash(gh issue *)",
+      "WebFetch(domain:www.youtube.com)",
+      "WebFetch(domain:www.r-bloggers.com)",
+      "WebFetch(domain:albert-rapp.de)",
+      "Bash(awk -F: '$1 > 2580 && $1 < 2680')",
+      "Bash(awk 'NR>=2598 && NR<=2615' chanwe-typst-showcase.typ)",
+      "Bash(awk 'NR>=2590 && NR<=2612' chanwe-typst-showcase.typ)",
+      "Bash(awk -F: '$1 > 2598 && $1 < 2650')"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"
