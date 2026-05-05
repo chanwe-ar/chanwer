@@ -82,11 +82,11 @@ chanwe_load_fonts <- function(path = NULL) {
     bolditalic = "Fraunces9pt-BoldItalic.ttf"
   )
 
-  # .chanwe-title: Archivo Black (900) — bakes weight into the family so face="plain" is reliable
-  archivo_black <- file.path(path, "Archivo-Black.ttf")
-  if (file.exists(archivo_black)) {
+  # .chanwe-title: Archivo Bold (700) — bakes weight into the family so face="plain" is reliable
+  archivo_bold <- file.path(path, "Archivo-Bold.ttf")
+  if (file.exists(archivo_bold)) {
     tryCatch(
-      systemfonts::register_font(name = ".chanwe-title", plain = archivo_black),
+      systemfonts::register_font(name = ".chanwe-title", plain = archivo_bold),
       error = function(e) NULL
     )
   }

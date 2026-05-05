@@ -7,21 +7,21 @@ library(gt)
 devtools::load_all()
 chanwe_load_fonts()
 
-# 1) ggplot2
-p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-  geom_point(size = 3) +
-  scale_color_chanwe_d() +
-  labs(
-    title = chanwe_title(
-      text = "Fuel efficiency by weight",
-      eyebrow = "TLDR;"
-    ),
-    subtitle = "Chanwe branded ggplot",
-    caption = chanwe_caption("Data: mtcars")
-  ) +
-  theme_chanwe(bg_color = "white")
+# # 1) ggplot2
+# p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+#   geom_point(size = 3) +
+#   scale_color_chanwe_d() +
+#   labs(
+#     title = chanwe_title(
+#       text = "Fuel efficiency by weight",
+#       eyebrow = "TLDR;"
+#     ),
+#     subtitle = "Chanwe branded ggplot",
+#     caption = chanwe_caption("Data: mtcars")
+#   ) +
+#   theme_chanwe(bg_color = "white")
 
-print(p)
+# print(p)
 
 mt <- tibble::as_tibble(mtcars, rownames = "model")
 mt <- mt |>
@@ -33,15 +33,11 @@ mt <- mt |>
 
 # 2) gt
 gt_tbl <- gt::gt(head(mt, 10), rowname_col = "model") |>
-  gt::tab_header(
-    title = gt::html(paste0(
-      chanwe_gt_eyebrow("SECTION · OPERATIONAL"),
-      "Operational Snapshot"
-    )),
-    subtitle = "Fleet overview · mtcars sample · Q1 2026."
-  ) |>
-  gt::tab_source_note(
-    "Source · Motor Trend, 1974 · mtcars dataset."
+  chanwe_gt_header(
+    title = "Operational Snapshot",
+    subtitle = "Fleet overview · mtcars sample · Q1 2026.",
+    eyebrow = "SECTION · OPERATIONAL",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset."
   ) |>
   gt_theme_chanwe(bg_color = "#fff")
 

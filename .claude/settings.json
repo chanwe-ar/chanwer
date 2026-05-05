@@ -23,7 +23,9 @@
       "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); cat\\('typst-fg-subtle:', colors[['typst-fg-subtle']], '\\\\ntypst-fg-muted:', colors[['typst-fg-muted']], '\\\\ntypst-fg:', colors[['typst-fg']], '\\\\ntypst-ink:', colors[['typst-ink']], '\\\\n'\\)\")",
       "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); cat\\('neutral-200:', colors[['typst-neutral-200']], '\\\\nneutral-100:', colors[['typst-neutral-100']], '\\\\n'\\); print\\(names\\(colors\\)[grepl\\('neutral', names\\(colors\\)\\)]\\)\")",
       "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); print\\(colors[grepl\\('beige|warm|sand|cream|neutral', names\\(colors\\), ignore.case=TRUE\\)]\\)\")",
-      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); print\\(colors\\)\")"
+      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); print\\(colors\\)\")",
+      "Bash(grep -v \"masked\\\\|Attaching\\\\|intersect\\\\|setdiff\\\\|setequal\\\\|union\\\\|filter\\\\|lag\\\\|^$\")",
+      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); library\\(gt\\); gt::gt\\(head\\(mtcars,3\\)\\) |> gt::tab_header\\(title='Test'\\) |> gt_theme_chanwe\\(\\); cat\\('OK\\\\n'\\)\")"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

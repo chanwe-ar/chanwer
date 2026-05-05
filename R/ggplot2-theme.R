@@ -118,7 +118,7 @@ theme_chanwe <- function(
     character(0)
   }
   title_family <- if (".chanwe-title" %in% reg) ".chanwe-title" else "Archivo"
-  title_face <- if (".chanwe-title" %in% reg) "plain" else "black"
+  title_face <- if (".chanwe-title" %in% reg) "plain" else "bold"
   subtitle_family <- if (".chanwe-subtitle" %in% reg) {
     ".chanwe-subtitle"
   } else {
@@ -143,7 +143,7 @@ theme_chanwe <- function(
     family = title_family,
     color = colors[["typst-ink"]],
     face = title_face,
-    size = base_text_size * 2.3,
+    size = base_text_size * 2.6,
     hjust = 0,
     lineheight = 1.10,
     margin = ggplot2::margin(b = 4)
@@ -334,15 +334,10 @@ chanwe_title <- function(text, eyebrow = NULL) {
     }
     return(paste0("── ", toupper(eyebrow), "\n", text))
   }
-  colors <- chanwe_get_colors()
-  title_span <- paste0(
-    "<span style='letter-spacing:-0.2em;'>",
-    text,
-    "</span>"
-  )
   if (is.null(eyebrow)) {
-    return(title_span)
+    return(text)
   }
+  colors <- chanwe_get_colors()
   paste0(
     "<span style='font-family:JetBrains Mono;font-size:8pt;font-weight:500;",
     "letter-spacing:0.08em;color:",
@@ -351,7 +346,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
     "── ",
     toupper(eyebrow),
     "</span><br>",
-    title_span
+    text
   )
 }
 

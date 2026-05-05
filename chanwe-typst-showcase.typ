@@ -221,7 +221,9 @@
   fg-muted:    rgb("#71706C"),
   fg-subtle:   rgb("#928D86"),
   primary:     rgb("#FB3D0E"),
+  primary-dark: rgb("#EE5524"),
   primary-soft: rgb("#FB3D0E1A"),
+  beige:       rgb("#ECE5D8"),
   neutral-100: rgb("#F5F5F5"),
   neutral-200: rgb("#E8E8E8"),
   neutral-300: rgb("#D4D4D4"),
@@ -248,14 +250,14 @@
   #place(center + horizon, rotate(45deg, square(size: size * 0.72, fill: color)))
 ]
 
-#let chanwe-eyebrow(body, color: _t.primary, with-rule: false) = {
+#let chanwe-eyebrow(body, color: _t.primary, with-rule: false, size: 8.5pt) = {
   if with-rule {
     box(width: 22pt, height: 1.5pt, fill: color, baseline: -3pt)
     h(8pt)
   }
   text(
     font: _t.font-mono,
-    size: 8.5pt,
+    size: size,
     weight: 500,
     tracking: 0.18em,
     fill: color,
@@ -318,13 +320,14 @@
         grid(
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
-          [#box(baseline: 30%, image(_chanwe-assets + "Estrategia_Color.png", height: 2.08mm, fit: "contain")) #h(6pt) #upper[#doc-id #h(8pt) #text(fill: _t.neutral-300, edition)]],
-          {
-            box(width: 3pt, height: 3pt, fill: _t.primary, baseline: -0.5pt)
-            h(8pt)
-            text(fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))
-            text(fill: _t.fg-subtle, upper(" / " + str(counter(page).final().first())))
-          },
+          [#upper[#doc-id #h(8pt) #text(fill: _t.neutral-300, edition)]],
+          grid(
+            columns: (auto, auto),
+            column-gutter: 8pt,
+            align: left + horizon,
+            image(_chanwe-assets + "Estrategia_Color.png", height: 1.87mm, fit: "contain"),
+            [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-subtle, upper(" / " + str(counter(page).final().first())))],
+          ),
         )
       }),
     )
@@ -719,7 +722,7 @@
   }
 ]
 
-#let _gq-scheme(color) = if color == "light" {
+#let _gq-scheme(color, inset: false) = if color == "light" {
   (
     bg:     luma(244),
     eyebrow: _t.primary,
@@ -729,9 +732,19 @@
     source: _t.fg-subtle,
     line:   _t.primary,
   )
+} else if color == "beige" {
+  (
+    bg:     _t.beige,
+    eyebrow: _t.primary,
+    quote:  _t.neutral-900,
+    emph:   _t.primary,
+    attr:   _t.fg,
+    source: _t.fg-subtle,
+    line:   _t.primary,
+  )
 } else if color == "primary" {
   (
-    bg:     _t.primary,
+    bg:     if inset { _t.primary-dark } else { _t.primary },
     eyebrow: white,
     quote:  white,
     emph:   white,
@@ -751,7 +764,7 @@
   )
 }
 
-#let page-great-quote(attribution: none, source: none, color: "dark", body) = {
+#let page-great-quote(caption: none, source: none, color: "dark", body) = {
   let s = _gq-scheme(color)
   set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: s.bg)
   block(
@@ -760,28 +773,28 @@
     fill: s.bg,
   )[
     #show emph: it => text(fill: s.emph, style: "italic", it.body)
-    #chanwe-eyebrow("Verbatim", color: s.eyebrow, with-rule: true)
-    #v(20mm)
-    #set par(leading: 0.85em)
+    #chanwe-eyebrow("Verbatim", color: s.eyebrow, with-rule: true, size: 12pt)
+    #v(6mm)
+    #set par(leading: 0.64em)
     #text(
       font: _t.font-serif, size: 40pt, style: "italic", weight: 100,
       tracking: -0.01em, fill: s.quote,
     )[\u{201C}#body\u{201D}]
     #v(1fr)
-    #if attribution != none {
+    #if caption != none {
       line(length: 30%, stroke: 1pt + s.line)
       v(5mm)
-      text(font: _t.font-display, size: 12pt, weight: 600, fill: s.attr, attribution)
+      text(font: _t.font-display, size: 12pt, weight: 600, tracking: 0.08em, fill: s.attr, caption)
       if source != none {
-        linebreak()
+        v(3mm)
         text(font: _t.font-mono, size: 8pt, tracking: 0.18em, fill: s.source, upper(source))
       }
     }
   ]
 }
 
-#let inset-great-quote(attribution: none, source: none, color: "dark", body) = {
-  let s = _gq-scheme(color)
+#let inset-great-quote(caption: none, source: none, color: "dark", body) = {
+  let s = _gq-scheme(color, inset: true)
   move(dx: -18mm,
     block(
       width: 210mm,
@@ -789,18 +802,18 @@
       inset: (x: 22mm, top: 12mm, bottom: 14mm),
     )[
       #show emph: it => text(fill: s.emph, style: "italic", it.body)
-      #set par(leading: 0.85em)
+      #set par(leading: 0.64em)
       #chanwe-eyebrow("Verbatim", color: s.eyebrow, with-rule: true)
-      #v(6mm)
+      #v(3mm)
       #text(
         font: _t.font-serif, size: 22pt, style: "italic", weight: 100,
         tracking: -0.01em, fill: s.quote,
       )[\u{201C}#body\u{201D}]
-      #if attribution != none {
+      #if caption != none {
         v(8mm)
         line(length: 20%, stroke: 1pt + s.line)
         v(4mm)
-        text(font: _t.font-display, size: 10pt, weight: 600, fill: s.attr, attribution)
+        text(font: _t.font-display, size: 10pt, weight: 600, tracking: 0.08em, fill: s.attr, caption)
         if source != none {
           linebreak()
           v(1mm)
@@ -821,7 +834,7 @@
   caption: [],
   body,
 ) = {
-  let s = _gq-scheme(color)
+  let s = _gq-scheme(color, inset: true)
   let col-widths = if layout == "left" {
     (3fr, 7fr)
   } else if layout == "right" {
@@ -838,6 +851,7 @@
     }
     #if title != "" {
       block(below: 5mm, above: if eyebrow != none { 4mm } else { 0mm })[
+        #set par(leading: 0.64em)
         #text(font: _t.font-display, size: 14pt, weight: 700,
               tracking: -0.01em, fill: s.quote, title)
       ]
@@ -1907,7 +1921,7 @@
       column-gutter: 6mm,
       align: (left + bottom, left + bottom),
       text(font: _t.font-serif, style: "italic", weight: 100,
-           size: 24pt, fill: _t.primary,
+           size: 26.4pt, fill: _t.primary,
            counter(heading).display("1.1")),
       text(font: _t.font-display, size: 27pt, weight: 700,
            tracking: -0.01em, it.body),
