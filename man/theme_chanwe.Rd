@@ -5,7 +5,7 @@
 \title{ChanWe ggplot2 Theme}
 \usage{
 theme_chanwe(
-  base_text_size = 9.5,
+  base_text_size = 8,
   base_family = "Satoshi",
   base_lineheight = 1.6,
   legend_position = "bottom",

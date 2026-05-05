@@ -801,9 +801,10 @@ mt |>
     slice_head(n = 8) |>
     gt(rowname_col = "model") |>
     gt::fmt_number(columns = c(mpg, hp, wt), decimals = 2) |>
-    gt::tab_header(
+    chanwe_gt_header(
         title = "Simple fleet view",
-        subtitle = "White background"
+        subtitle = "Top 8 vehicles · mtcars · white background",
+        eyebrow = "TABLE · SPACIOUS"
     ) |>
     gt_theme_chanwe(bg_color = "#FFFFFF")
 ```
@@ -817,9 +818,10 @@ mt |>
     select(model, mpg, cyl, gear, am) |>
     slice_head(n = 10) |>
     gt(rowname_col = "model") |>
-    gt::tab_header(
+    chanwe_gt_header(
         title = "Compact fleet view",
-        subtitle = "Neutral-100 background"
+        subtitle = "Top 10 vehicles · mtcars · neutral-100 background",
+        eyebrow = "TABLE · COMPACT"
     ) |>
     gt_theme_chanwe_compact(bg_color = "#F5F5F5")
 ```
@@ -831,9 +833,11 @@ mt |>
 #| tbl-cap: "Performance summary — grouped by transmission, with spanners."
 summary_tbl |>
     gt(groupname_col = "am") |>
-    gt::tab_header(
+    chanwe_gt_header(
         title = "Complex performance summary",
-        subtitle = "Grouped by transmission"
+        subtitle = "Averages by cylinder count · grouped by transmission",
+        eyebrow = "TABLE · GROUPED",
+        caption = "Source · mtcars aggregated in setup chunk"
     ) |>
     gt::tab_spanner(label = "Averages", columns = c(avg_mpg, avg_hp, avg_wt)) |>
     gt::cols_label(
@@ -845,7 +849,6 @@ summary_tbl |>
     ) |>
     gt::fmt_number(columns = c(avg_mpg, avg_hp, avg_wt), decimals = 2) |>
     gt::fmt_number(columns = n, decimals = 0) |>
-    gt::tab_source_note("Source: mtcars aggregated in setup chunk") |>
     gt_theme_chanwe(variant = "spacious", bg_color = "#FFFFFF")
 ```
 
@@ -856,7 +859,11 @@ summary_tbl |>
 #| tbl-cap: "Spacious + neutral-100."
 summary_tbl |>
     gt(groupname_col = "am") |>
-    gt::tab_header(title = "Spacious + Neutral-100") |>
+    chanwe_gt_header(
+        title = "Spacious + Neutral-100",
+        subtitle = "Grouped by transmission · spacious density",
+        eyebrow = "TABLE · SPACIOUS"
+    ) |>
     gt::fmt_number(columns = c(avg_mpg, avg_hp, avg_wt), decimals = 2) |>
     gt_theme_chanwe(variant = "spacious", bg_color = "#F5F5F5")
 ```
@@ -868,7 +875,11 @@ summary_tbl |>
 #| tbl-cap: "Spacious + white."
 summary_tbl |>
     gt(groupname_col = "am") |>
-    gt::tab_header(title = "Spacious + White") |>
+    chanwe_gt_header(
+        title = "Spacious + White",
+        subtitle = "Grouped by transmission · spacious density",
+        eyebrow = "TABLE · SPACIOUS"
+    ) |>
     gt::fmt_number(columns = c(avg_mpg, avg_hp, avg_wt), decimals = 2) |>
     gt_theme_chanwe(variant = "spacious", bg_color = "#FFFFFF")
 ```
@@ -880,7 +891,11 @@ summary_tbl |>
 #| tbl-cap: "Compact + neutral-100."
 summary_tbl |>
     gt(groupname_col = "am") |>
-    gt::tab_header(title = "Compact + Neutral-100") |>
+    chanwe_gt_header(
+        title = "Compact + Neutral-100",
+        subtitle = "Grouped by transmission · compact density",
+        eyebrow = "TABLE · COMPACT"
+    ) |>
     gt::fmt_number(columns = c(avg_mpg, avg_hp, avg_wt), decimals = 2) |>
     gt_theme_chanwe(variant = "compact", bg_color = "#F5F5F5")
 ```
@@ -892,7 +907,11 @@ summary_tbl |>
 #| tbl-cap: "Compact + white."
 summary_tbl |>
     gt(groupname_col = "am") |>
-    gt::tab_header(title = "Compact + White") |>
+    chanwe_gt_header(
+        title = "Compact + White",
+        subtitle = "Grouped by transmission · compact density",
+        eyebrow = "TABLE · COMPACT"
+    ) |>
     gt::fmt_number(columns = c(avg_mpg, avg_hp, avg_wt), decimals = 2) |>
     gt_theme_chanwe(variant = "compact", bg_color = "#FFFFFF")
 ```
@@ -917,9 +936,11 @@ iris_tbl |>
         .groups = "drop"
     ) |>
     gt() |>
-    gt::tab_header(
+    chanwe_gt_header(
         title = "Iris species morphology",
-        subtitle = "Mean ± SD across four measurements"
+        subtitle = "Mean ± SD across four measurements · n = 50 per species",
+        eyebrow = "TABLE · SPECIES COMPARISON",
+        caption = "Source · Fisher, 1936 — Anderson iris data"
     ) |>
     gt::tab_spanner(label = "Sepal length (cm)", columns = c(sl_mean, sl_sd)) |>
     gt::tab_spanner(label = "Sepal width (cm)", columns = c(sw_mean, sw_sd)) |>
@@ -945,6 +966,5 @@ iris_tbl |>
             rows = species == "virginica"
         )
     ) |>
-    gt::tab_source_note("Source: Fisher, 1936 — Anderson iris data") |>
     gt_theme_chanwe(variant = "spacious", bg_color = "#F5F5F5")
 ```

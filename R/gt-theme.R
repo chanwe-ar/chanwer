@@ -152,7 +152,7 @@ gt_theme_chanwe <- function(
         font = gt::google_font("Archivo"),
         color = colors[["typst-ink"]],
         weight = "bold",
-        size = sz(3.00),
+        size = sz(2.00),
         align = "left"
       ),
       locations = gt::cells_title(groups = "title")
@@ -162,7 +162,7 @@ gt_theme_chanwe <- function(
         font = gt::google_font("Archivo"),
         color = colors[["typst-fg-muted"]],
         weight = "normal",
-        size = sz(1.50),
+        size = sz(1.25),
         align = "left"
       ),
       locations = gt::cells_title(groups = "subtitle")
@@ -192,7 +192,7 @@ gt_theme_chanwe <- function(
         gt::cell_text(
           color = colors[["typst-fg"]],
           weight = "normal",
-          size = sz(1.05)
+          size = sz(0.89)
         ),
         gt::cell_fill(color = bg_color)
       ),

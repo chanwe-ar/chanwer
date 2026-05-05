@@ -143,7 +143,7 @@ theme_chanwe <- function(
     family = title_family,
     color = colors[["typst-ink"]],
     face = title_face,
-    size = base_text_size * 2.4,
+    size = base_text_size * 2,
     hjust = 0,
     lineheight = 1.10,
     margin = ggplot2::margin(b = 4)
