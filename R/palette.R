@@ -50,6 +50,40 @@
   "p14-green-soft" = "#C9FFC0",
   "p14-red-strong" = "#F40C0C",
   "p14-red-soft" = "#F9A7A7",
+  # p15 — full 5-shade ramps (dark → light) for 11 semantic families
+  "p15-coral-01" = "#EE5524", "p15-coral-02" = "#F37548",
+  "p15-coral-03" = "#F79676", "p15-coral-04" = "#FBB89F",
+  "p15-coral-05" = "#FDD9C8",
+  "p15-vermillion-01" = "#F40C0C", "p15-vermillion-02" = "#F53333",
+  "p15-vermillion-03" = "#F75A5A", "p15-vermillion-04" = "#F88080",
+  "p15-vermillion-05" = "#F9A7A7",
+  "p15-green-01" = "#1EB508", "p15-green-02" = "#49C836",
+  "p15-green-03" = "#74DA64", "p15-green-04" = "#9EED92",
+  "p15-green-05" = "#C9FFC0",
+  "p15-magenta-01" = "#EB03F2", "p15-magenta-02" = "#F036F5",
+  "p15-magenta-03" = "#F469F9", "p15-magenta-04" = "#F99CFC",
+  "p15-magenta-05" = "#FDCFFF",
+  "p15-blue-01" = "#0C48ED", "p15-blue-02" = "#376AF2",
+  "p15-blue-03" = "#628BF6", "p15-blue-04" = "#8DADFB",
+  "p15-blue-05" = "#B8CEFF",
+  "p15-yellow-01" = "#F9E710", "p15-yellow-02" = "#FBEB3A",
+  "p15-yellow-03" = "#FCF064", "p15-yellow-04" = "#FEF48E",
+  "p15-yellow-05" = "#FFF8B8",
+  "p15-cyan-01" = "#11F7E6", "p15-cyan-02" = "#3AF9EB",
+  "p15-cyan-03" = "#64FBEF", "p15-cyan-04" = "#8DFDF3",
+  "p15-cyan-05" = "#B6FFF8",
+  "p15-mustard-01" = "#E8B400", "p15-mustard-02" = "#F0C32A",
+  "p15-mustard-03" = "#F6D255", "p15-mustard-04" = "#F8DD86",
+  "p15-mustard-05" = "#F8E7B6",
+  "p15-violet-01" = "#9B2E8F", "p15-violet-02" = "#B549AA",
+  "p15-violet-03" = "#C775BD", "p15-violet-04" = "#D7A2D2",
+  "p15-violet-05" = "#E5C9E0",
+  "p15-teal-01" = "#14A4B8", "p15-teal-02" = "#2BBED2",
+  "p15-teal-03" = "#5BCDDC", "p15-teal-04" = "#8AD9E5",
+  "p15-teal-05" = "#B8E7EE",
+  "p15-ink-01" = "#141414", "p15-ink-02" = "#3D3D3D",
+  "p15-ink-03" = "#666666", "p15-ink-04" = "#8F8F8F",
+  "p15-ink-05" = "#B8B8B8",
   # chanwe-typst report system tokens
   "typst-primary"     = "#FB3D0E",
   "typst-ink"         = "#0F0F0F",
@@ -102,6 +136,17 @@
     p13_orange = .chanwe_colors[grep("^p13-orange", names(.chanwe_colors))],
     p13_gray = .chanwe_colors[grep("^p13-gray", names(.chanwe_colors))],
     p14_accents = .chanwe_colors[grep("^p14", names(.chanwe_colors))],
+    p15_coral = .chanwe_colors[grep("^p15-coral", names(.chanwe_colors))],
+    p15_vermillion = .chanwe_colors[grep("^p15-vermillion", names(.chanwe_colors))],
+    p15_green = .chanwe_colors[grep("^p15-green", names(.chanwe_colors))],
+    p15_magenta = .chanwe_colors[grep("^p15-magenta", names(.chanwe_colors))],
+    p15_blue = .chanwe_colors[grep("^p15-blue", names(.chanwe_colors))],
+    p15_yellow = .chanwe_colors[grep("^p15-yellow", names(.chanwe_colors))],
+    p15_cyan = .chanwe_colors[grep("^p15-cyan", names(.chanwe_colors))],
+    p15_mustard = .chanwe_colors[grep("^p15-mustard", names(.chanwe_colors))],
+    p15_violet = .chanwe_colors[grep("^p15-violet", names(.chanwe_colors))],
+    p15_teal = .chanwe_colors[grep("^p15-teal", names(.chanwe_colors))],
+    p15_ink = .chanwe_colors[grep("^p15-ink", names(.chanwe_colors))],
     semantic = chanwe_get_semantic(),
     chart = .chanwe_chart_colors
   )
@@ -129,8 +174,10 @@ chanwe_get_chart <- function() {
 #'
 #' @param palette Optional palette selector. Use `NULL` (default) to return
 #'   all colors and grouped palettes. Supported names are `"all"`, `"core"`,
-#'   `"p13_orange"`, `"p13_gray"`, `"p14_accents"`, `"semantic"`, and
-#'   `"chart"`.
+#'   `"p13_orange"`, `"p13_gray"`, `"p14_accents"`, `"p15_coral"`,
+#'   `"p15_vermillion"`, `"p15_green"`, `"p15_magenta"`, `"p15_blue"`,
+#'   `"p15_yellow"`, `"p15_cyan"`, `"p15_mustard"`, `"p15_violet"`,
+#'   `"p15_teal"`, `"p15_ink"`, `"semantic"`, and `"chart"`.
 #'
 #' @return If `palette = NULL`, a list containing `all` and `groups`.
 #'   Otherwise, a named character vector of hex colors.

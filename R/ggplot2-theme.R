@@ -215,7 +215,7 @@ theme_chanwe <- function(
         family = mono_family,
         color = colors[["typst-ink"]],
         face = "plain",
-        size = base_text_size * 1
+        size = base_text_size * 0.8
       ),
       axis.text = ggplot2::element_text(
         color = colors[["typst-ink"]],
@@ -256,8 +256,11 @@ theme_chanwe <- function(
         color = NA
       ),
       strip.text = ggplot2::element_text(
+        family = mono_family,
         color = colors[["typst-ink"]],
-        face = "bold"
+        face = "bold",
+        size = base_text_size * 0.85,
+        margin = ggplot2::margin(b = 6)
       ),
       legend.position = legend_position,
       legend.justification = "center",
@@ -347,7 +350,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
   tf <- if ("Archivo ExtraBold" %in% reg) "\"Archivo ExtraBold\"" else "Archivo"
   tw <- if ("Archivo ExtraBold" %in% reg) "normal" else "bold"
   paste0(
-    "<span style='font-family:\"JetBrains Mono\",monospace;font-size:7pt;font-weight:normal;line-height:2.8;color:",
+    "<span style='font-family:\"JetBrains Mono\";font-size:7pt;font-weight:normal;line-height:2.8;color:",
     colors[["typst-primary"]],
     ";'>── ",
     toupper(eyebrow),
