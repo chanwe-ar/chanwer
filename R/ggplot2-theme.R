@@ -345,9 +345,9 @@ chanwe_title <- function(text, eyebrow = NULL) {
     character(0)
   }
   tf <- if ("Archivo ExtraBold" %in% reg) "\"Archivo ExtraBold\"" else "Archivo"
-  tw <- if ("Archivo ExtraBold" %in% reg) "normal" else "700"
+  tw <- if ("Archivo ExtraBold" %in% reg) "normal" else "bold"
   paste0(
-    "<span style='font-family:\"JetBrains Mono\",monospace;font-size:7pt;font-weight:500;line-height:2.8;color:",
+    "<span style='font-family:\"JetBrains Mono\",monospace;font-size:7pt;font-weight:normal;line-height:2.8;color:",
     colors[["typst-primary"]],
     ";'>── ",
     toupper(eyebrow),

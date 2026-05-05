@@ -42,7 +42,9 @@ vignettes/*.pdf
 # pkgdown site
 docs/
 figure/
-chanwe-typst-showcase_files/.DS_Store
+chanwe-typst-showcase_files/
+chanwe-typst-showcase.typ
+chanwe-typst-showcase.rmarkdown
 
 # translation temp files
 po/*~

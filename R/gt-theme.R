@@ -326,7 +326,7 @@ chanwe_gt_eyebrow <- function(eyebrow) {
   color <- chanwe_get_colors()[["typst-primary"]]
   paste0(
     "<div style='font-family:\"JetBrains Mono\",monospace;font-size:7.5pt;",
-    "font-weight:500;letter-spacing:0.12em;text-transform:uppercase;",
+    "font-weight:normal;letter-spacing:0.12em;text-transform:uppercase;",
     "color:",
     color,
     ";margin-bottom:5px;'>",
