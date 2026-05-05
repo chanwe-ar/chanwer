@@ -12,8 +12,10 @@ execute:
   echo: false
   warning: false
   message: false
-  dev: svglite
-  fig-format: svg
+knitr:
+  opts_chunk:
+    dev: svglite
+    out.width: "100%"
 chanwe:
   document: "CHW · DEV"
   edition: "SHOWCASE / 2026"
@@ -55,14 +57,14 @@ chanwe:
 ```{r}
 #| label: setup
 #| include: false
-devtools::load_all(".")
+devtools::load_all()
 chanwe_load_fonts()
 
-knitr::opts_chunk$set(dev = "ragg_png", dpi = 320)
-
+library(ggplot2)
 library(dplyr)
 
-# mtcars -----------------------------------------------------------------------
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"))
+
 mt <- tibble::as_tibble(mtcars, rownames = "model") |>
     mutate(
         cyl = factor(cyl),
@@ -133,5 +135,27 @@ mt |>
         stub = "model",
         bg = "gray",
         fmt = fmt_fleet
+    )
+```
+
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    facet_wrap(~am) +
+    scale_color_chanwe_d() +
+    theme_chanwe(bg_color = "#F5F5F5") +
+    labs(
+        title = chanwe_title(
+            "Performance profile by transmission",
+            eyebrow = "TLDR;"
+        ),
+        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
     )
 ```

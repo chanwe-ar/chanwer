@@ -56,12 +56,12 @@ chanwe_kbl <- function(
   stub = NULL,
   density = c("spacious", "compact"),
   row_padding = NULL,
-  title_size = '20pt',
-  eyebrow_size = '7pt',
-  subtitle_size = '11pt',
-  body_size = '8pt',
-  header_size = '6pt',
-  note_size = '9pt',
+  title_size = '18pt',
+  eyebrow_size = '6pt',
+  subtitle_size = '9pt',
+  body_size = '7pt',
+  header_size = '5.5pt',
+  note_size = '7pt',
   col_label_top = 0,
   footer_top = 0,
   bg = NULL,
@@ -250,7 +250,7 @@ chanwe_kbl <- function(
           ')[',
           esc(eyebrow),
           ']',
-          "#linebreak()"
+          "#v(8pt, weak: false)"
         )
       }
       if (!is.null(title)) {

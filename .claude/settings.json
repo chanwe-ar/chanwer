@@ -55,7 +55,11 @@
       "Bash(Rscript -e \"source\\('R/kbl-theme.R'\\)\")",
       "Bash(Rscript -e \"source\\('/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R'\\)\")",
       "Bash(sed -i '' 's/bottom: 2pt, x: 2.5mm\\)/bottom: 5pt, x: 2.5mm\\)/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)",
-      "Bash(sed -i '' 's/\\(top: 2pt, bottom:/\\(top: 4pt, bottom:/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)"
+      "Bash(sed -i '' 's/\\(top: 2pt, bottom:/\\(top: 4pt, bottom:/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)",
+      "Bash(Rscript -e 'install.packages\\(\"svglite\", repos = \"https://cloud.r-project.org\"\\)')",
+      "Bash(Rscript -e 'cat\\(\"svglite available:\", requireNamespace\\(\"svglite\", quietly=TRUE\\), \"\\\\n\"\\); cat\\(\"ragg available:\", requireNamespace\\(\"ragg\", quietly=TRUE\\), \"\\\\n\"\\); .libPaths\\(\\)')",
+      "Bash(Rscript -e 'svglite::svglite\\(file = tempfile\\(fileext = \".svg\"\\)\\); plot\\(1\\); dev.off\\(\\); cat\\(\"svglite device works\\\\n\"\\)')",
+      "Bash(Rscript -e 'packageVersion\\(\"knitr\"\\); cat\\(names\\(knitr:::auto_exts\\), \"\\\\n\"\\)')"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

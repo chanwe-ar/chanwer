@@ -92,7 +92,7 @@ chanwe_discrete_pal <- function() {
 #'     theme_chanwe(legend_position = "none")
 #' }
 theme_chanwe <- function(
-  base_text_size = 8,
+  base_text_size = 6.5,
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
@@ -118,7 +118,7 @@ theme_chanwe <- function(
     character(0)
   }
   title_family <- if (".chanwe-title" %in% reg) ".chanwe-title" else "Archivo"
-  title_face <- if (".chanwe-title" %in% reg) "plain" else "bold"
+  title_face <- "plain"
   subtitle_family <- if (".chanwe-subtitle" %in% reg) {
     ".chanwe-subtitle"
   } else {
@@ -193,7 +193,7 @@ theme_chanwe <- function(
         ggtext::element_textbox_simple(
           family = mono_family,
           color = colors[["typst-fg-muted"]],
-          size = base_text_size * 1.0,
+          size = base_text_size * 0.8,
           hjust = 0,
           halign = 0,
           width = grid::unit(1, "npc"),
@@ -269,12 +269,12 @@ theme_chanwe <- function(
         family = mono_family,
         color = colors[["typst-fg-muted"]],
         face = "plain",
-        size = base_text_size * 0.95
+        size = base_text_size * 0.85
       ),
       legend.text = ggplot2::element_text(
         family = mono_family,
         color = colors[["typst-ink"]],
-        size = base_text_size * 0.95
+        size = base_text_size * 0.85
       ),
       legend.background = ggplot2::element_rect(
         fill = surface_fill,
@@ -348,13 +348,13 @@ chanwe_title <- function(text, eyebrow = NULL) {
     character(0)
   }
   tf <- if ("Archivo ExtraBold" %in% reg) "\"Archivo ExtraBold\"" else "Archivo"
-  tw <- if ("Archivo ExtraBold" %in% reg) "normal" else "bold"
+  tw <- "300"
   paste0(
-    "<span style='font-family:\"JetBrains Mono\";font-size:6pt;font-weight:normal;line-height:4.0;color:",
+    "<span style='font-family:\"JetBrains Mono\";font-size:5pt;font-weight:normal;color:",
     colors[["typst-primary"]],
     ";'>── ",
     toupper(eyebrow),
-    "</span><br>",
+    "</span><br><span style='font-size:9pt;color:transparent;'>·</span><br>",
     "<span style='font-family:",
     tf,
     ",sans-serif;font-weight:",
