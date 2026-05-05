@@ -143,7 +143,7 @@ theme_chanwe <- function(
     family = title_family,
     color = colors[["typst-ink"]],
     face = title_face,
-    size = base_text_size * 1.8,
+    size = base_text_size * 1.9,
     hjust = 0,
     lineheight = 1.10,
     margin = ggplot2::margin(b = 1)
@@ -162,7 +162,7 @@ theme_chanwe <- function(
       family = title_family,
       color = colors[["typst-ink"]],
       face = title_face,
-      size = base_text_size * 1.8,
+      size = base_text_size * 1.9,
       hjust = 0,
       lineheight = 1,
       margin = ggplot2::margin(b = 1)
@@ -206,7 +206,7 @@ theme_chanwe <- function(
         ggplot2::element_text(
           family = mono_family,
           color = colors[["typst-fg-muted"]],
-          size = base_text_size * 1.20,
+          size = base_text_size * 0.8,
           hjust = 0,
           margin = ggplot2::margin(t = 14)
         )
@@ -215,11 +215,11 @@ theme_chanwe <- function(
         family = mono_family,
         color = colors[["typst-ink"]],
         face = "plain",
-        size = base_text_size * 0.8
+        size = base_text_size * 0.75
       ),
       axis.text = ggplot2::element_text(
         color = colors[["typst-ink"]],
-        size = base_text_size * 0.80
+        size = base_text_size * 0.75
       ),
       axis.title.x = ggplot2::element_text(
         hjust = 1,
@@ -269,12 +269,12 @@ theme_chanwe <- function(
         family = mono_family,
         color = colors[["typst-fg-muted"]],
         face = "plain",
-        size = base_text_size * 0.85
+        size = base_text_size * 0.8
       ),
       legend.text = ggplot2::element_text(
         family = mono_family,
         color = colors[["typst-ink"]],
-        size = base_text_size * 0.85
+        size = base_text_size * 0.8
       ),
       legend.background = ggplot2::element_rect(
         fill = surface_fill,
