@@ -84,6 +84,20 @@
   "p15-ink-01" = "#141414", "p15-ink-02" = "#3D3D3D",
   "p15-ink-03" = "#666666", "p15-ink-04" = "#8F8F8F",
   "p15-ink-05" = "#B8B8B8",
+  # mb — main brand palette (orange · dark · beige, 100–950 scale)
+  "mb-orange-100" = "#F8DDD9", "mb-orange-200" = "#F6CFC7",
+  "mb-orange-300" = "#F5C0B6", "mb-orange-400" = "#F2A393",
+  "mb-orange-500" = "#F09482", "mb-orange-600" = "#EF8670",
+  "mb-orange-700" = "#ED775F", "mb-orange-800" = "#EC684E",
+  "mb-orange-900" = "#EA5A3C", "mb-orange-950" = "#E94B2B",
+  "mb-dark-100" = "#CACACA", "mb-dark-200" = "#B8B8B8",
+  "mb-dark-300" = "#A5A5A5", "mb-dark-400" = "#929292",
+  "mb-dark-500" = "#6D6D6D", "mb-dark-600" = "#5B5B5B",
+  "mb-dark-700" = "#484848", "mb-dark-800" = "#353535",
+  "mb-dark-900" = "#232323", "mb-dark-950" = "#101010",
+  "mb-beige-100" = "#F6F1EB", "mb-beige-200" = "#ECE5D9",
+  "mb-beige-300" = "#E2DBD0", "mb-beige-400" = "#D9D2C6",
+  "mb-beige-500" = "#CFC8BD",
   # chanwe-typst report system tokens
   "typst-primary"     = "#FB3D0E",
   "typst-ink"         = "#0F0F0F",
@@ -147,6 +161,9 @@
     p15_violet = .chanwe_colors[grep("^p15-violet", names(.chanwe_colors))],
     p15_teal = .chanwe_colors[grep("^p15-teal", names(.chanwe_colors))],
     p15_ink = .chanwe_colors[grep("^p15-ink", names(.chanwe_colors))],
+    mb_orange = .chanwe_colors[grep("^mb-orange", names(.chanwe_colors))],
+    mb_dark   = .chanwe_colors[grep("^mb-dark",   names(.chanwe_colors))],
+    mb_beige  = .chanwe_colors[grep("^mb-beige",  names(.chanwe_colors))],
     semantic = chanwe_get_semantic(),
     chart = .chanwe_chart_colors
   )
@@ -177,7 +194,8 @@ chanwe_get_chart <- function() {
 #'   `"p13_orange"`, `"p13_gray"`, `"p14_accents"`, `"p15_coral"`,
 #'   `"p15_vermillion"`, `"p15_green"`, `"p15_magenta"`, `"p15_blue"`,
 #'   `"p15_yellow"`, `"p15_cyan"`, `"p15_mustard"`, `"p15_violet"`,
-#'   `"p15_teal"`, `"p15_ink"`, `"semantic"`, and `"chart"`.
+#'   `"p15_teal"`, `"p15_ink"`, `"mb_orange"`, `"mb_dark"`, `"mb_beige"`,
+#'   `"semantic"`, and `"chart"`.
 #'
 #' @return If `palette = NULL`, a list containing `all` and `groups`.
 #'   Otherwise, a named character vector of hex colors.

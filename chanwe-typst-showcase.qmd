@@ -163,19 +163,53 @@ primary orange `#FB3D0E`, and the 8-color editorial chart palette.
 
 # Brand Color System
 
+## Extended Palette · p15
+
 ```{r}
 #| label: fig-palette-p15
-#| fig-cap: "Brand color ramps — 11 semantic families, 5 shades each (dark → light)."
+#| fig-cap: "Extended color ramps — 11 semantic families, 5 shades each (dark → light)."
 #| fig-width: 9
 #| fig-height: 7.5
-
 families_df <- tibble::tibble(
-    key  = c("coral","vermillion","green","magenta","blue","yellow",
-             "cyan","mustard","violet","teal","ink"),
-    name = c("CORAL","VERMILLION","GREEN","MAGENTA","BLUE","YELLOW",
-             "CYAN","MUSTARD","VIOLET","TEAL","INK"),
-    sub  = c("HOUSE LEAD","ALERT","POSITIVE","CONTRAST","STRUCTURAL",
-             "ATTENTION","COOL","EARTHY","EDITORIAL","DEPTH","NEUTRAL ANCHOR")
+    key = c(
+        "coral",
+        "vermillion",
+        "green",
+        "magenta",
+        "blue",
+        "yellow",
+        "cyan",
+        "mustard",
+        "violet",
+        "teal",
+        "ink"
+    ),
+    name = c(
+        "CORAL",
+        "VERMILLION",
+        "GREEN",
+        "MAGENTA",
+        "BLUE",
+        "YELLOW",
+        "CYAN",
+        "MUSTARD",
+        "VIOLET",
+        "TEAL",
+        "INK"
+    ),
+    sub = c(
+        "HOUSE LEAD",
+        "ALERT",
+        "POSITIVE",
+        "CONTRAST",
+        "STRUCTURAL",
+        "ATTENTION",
+        "COOL",
+        "EARTHY",
+        "EDITORIAL",
+        "DEPTH",
+        "NEUTRAL ANCHOR"
+    )
 )
 
 clr <- chanwe_get_colors()
@@ -184,12 +218,18 @@ pal_df <- dplyr::bind_rows(lapply(seq_len(nrow(families_df)), function(i) {
     cols <- chanwe_palette(paste0("p15_", families_df$key[i]))
     tibble::tibble(
         family = paste0(
-            "**", families_df$name[i], "**",
-            " <span style='font-weight:normal;color:", clr[["typst-fg-muted"]], ";'>",
-            "· ", families_df$sub[i], "</span>"
+            "**",
+            families_df$name[i],
+            "**",
+            " <span style='font-weight:normal;color:",
+            clr[["typst-fg-muted"]],
+            ";'>",
+            "· ",
+            families_df$sub[i],
+            "</span>"
         ),
         shade = seq_along(cols),
-        hex   = unname(cols)
+        hex = unname(cols)
     )
 })) |>
     dplyr::mutate(family = factor(family, levels = unique(family)))
@@ -211,11 +251,73 @@ ggplot(pal_df, aes(shade, 1, fill = hex)) +
     theme(
         strip.text = ggtext::element_markdown(
             hjust = 0,
-            size  = 7.5,
+            size = 7.5,
             color = clr[["typst-ink"]],
             margin = margin(b = 5, t = 14)
         ),
         panel.spacing.x = unit(2.0, "lines"),
+        panel.spacing.y = unit(2.0, "lines"),
+        plot.margin = margin(14, 14, 14, 14),
+        plot.background = element_rect(fill = "#FFFFFF", color = NA)
+    )
+```
+
+## Main Brand · mb
+
+```{r}
+#| label: fig-palette-mb
+#| fig-cap: "Main brand palette — orange, dark, and beige ramps (100 → 950)."
+#| fig-width: 9
+#| fig-height: 3.2
+mb_families <- tibble::tibble(
+    key = c("orange", "dark", "beige"),
+    name = c("ORANGE", "DARK", "BEIGE"),
+    sub = c("PRIMARY BRAND", "NEUTRAL ANCHOR", "PAPER / WARM NEUTRAL")
+)
+
+clr <- chanwe_get_colors()
+
+mb_df <- dplyr::bind_rows(lapply(seq_len(nrow(mb_families)), function(i) {
+    cols <- chanwe_palette(paste0("mb_", mb_families$key[i]))
+    tibble::tibble(
+        family = paste0(
+            "**",
+            mb_families$name[i],
+            "**",
+            " <span style='font-weight:normal;color:",
+            clr[["typst-fg-muted"]],
+            ";'>",
+            "· ",
+            mb_families$sub[i],
+            "</span>"
+        ),
+        shade = seq_along(cols),
+        hex = unname(cols)
+    )
+})) |>
+    dplyr::mutate(family = factor(family, levels = unique(family)))
+
+ggplot(mb_df, aes(shade, 1, fill = hex)) +
+    geom_tile(color = "white", linewidth = 0.6, width = 0.94, height = 1.6) +
+    geom_text(
+        aes(y = 0.12, label = toupper(hex)),
+        size = 1.85,
+        family = "JetBrains Mono",
+        color = clr[["typst-fg-muted"]],
+        vjust = 1
+    ) +
+    scale_fill_identity() +
+    scale_x_continuous(expand = expansion(mult = 0.02)) +
+    facet_wrap(~family, ncol = 1) +
+    coord_cartesian(ylim = c(-0.08, 1.85), clip = "off") +
+    theme_void(base_family = "Satoshi") +
+    theme(
+        strip.text = ggtext::element_markdown(
+            hjust = 0,
+            size = 7.5,
+            color = clr[["typst-ink"]],
+            margin = margin(b = 5, t = 14)
+        ),
         panel.spacing.y = unit(2.0, "lines"),
         plot.margin = margin(14, 14, 14, 14),
         plot.background = element_rect(fill = "#FFFFFF", color = NA)
