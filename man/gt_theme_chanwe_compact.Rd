@@ -4,23 +4,18 @@
 \alias{gt_theme_chanwe_compact}
 \title{ChanWe Compact Theme for gt Tables}
 \usage{
-gt_theme_chanwe_compact(data, background = c("beige", "white"))
+gt_theme_chanwe_compact(data, bg_color = "white", background = NULL)
 }
 \arguments{
 \item{data}{A gt table object.}
 
-\item{background}{Background surface variant passed to \code{\link[=gt_theme_chanwe]{gt_theme_chanwe()}}.}
+\item{bg_color}{Background color passed to \code{\link[=gt_theme_chanwe]{gt_theme_chanwe()}}. Accepts hex strings or \code{"white"}, \code{"gray"}, \code{"beige"}.}
+
+\item{background}{Deprecated. Use \code{bg_color} instead.}
 }
 \value{
 A themed gt table object.
 }
 \description{
 Convenience wrapper for \code{\link[=gt_theme_chanwe]{gt_theme_chanwe()}} with \code{variant = "compact"}.
-}
-\examples{
-if (requireNamespace("gt", quietly = TRUE)) {
-  gt::gt(head(mtcars)) |>
-    gt::tab_header(title = "Compact table") |>
-    gt_theme_chanwe_compact()
-}
 }

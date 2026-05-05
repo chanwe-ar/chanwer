@@ -3,18 +3,43 @@
 \name{scale_color_chanwe_d}
 \alias{scale_color_chanwe_d}
 \alias{scale_fill_chanwe_d}
-\title{ChanWe Discrete Color Scale}
+\title{ChanWe Discrete Color Scales}
 \usage{
 scale_color_chanwe_d(...)
 
 scale_fill_chanwe_d(...)
 }
 \arguments{
-\item{...}{Additional arguments passed to \code{\link[ggplot2:discrete_scale]{ggplot2::discrete_scale()}}.}
+\item{...}{Additional arguments passed to \code{\link[ggplot2:discrete_scale]{ggplot2::discrete_scale()}},
+e.g. \code{name}, \code{labels}, \code{guide}, \code{drop}.}
 }
 \value{
 A ggplot2 scale object.
 }
 \description{
-Discrete ChanWe palette scale for color aesthetics.
+Apply the ChanWe categorical palette to \code{color} or \code{fill} aesthetics.
+Colors cycle through the brand chart palette when there are more categories
+than palette entries.
+}
+\details{
+\code{scale_color_chanwe_d()} maps to the \code{colour} aesthetic (points, lines,
+text). \code{scale_fill_chanwe_d()} maps to the \code{fill} aesthetic (bars, areas,
+ribbons).
+}
+\examples{
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+
+  ## Points colored by group
+  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+    ggplot2::geom_point(size = 3) +
+    scale_color_chanwe_d() +
+    theme_chanwe()
+
+  ## Bars filled by group
+  avg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+  ggplot2::ggplot(avg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
+    ggplot2::geom_col() +
+    scale_fill_chanwe_d() +
+    theme_chanwe(legend_position = "none")
+}
 }

@@ -14,7 +14,16 @@
       "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r120 -dFirstPage=9 -dLastPage=12 -sOutputFile=\"/tmp/fixed_p%d.png\" chanwe-typst-showcase.pdf)",
       "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -dFirstPage=9 -dLastPage=10 -sOutputFile=\"/tmp/font_check_p%d.png\" chanwe-typst-showcase.pdf)",
       "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -dFirstPage=9 -dLastPage=9 -sOutputFile=\"/tmp/yaxis_check.png\" chanwe-typst-showcase.pdf)",
-      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -dFirstPage=9 -dLastPage=9 -sOutputFile=\"/tmp/yaxis2.png\" chanwe-typst-showcase.pdf)"
+      "Bash(gs -dNOPAUSE -dBATCH -sDEVICE=png16m -r150 -dFirstPage=9 -dLastPage=9 -sOutputFile=\"/tmp/yaxis2.png\" chanwe-typst-showcase.pdf)",
+      "Bash(Rscript -e 'packageVersion\\('\\\\''systemfonts'\\\\''\\); library\\(systemfonts\\); sf <- system_fonts\\(\\); arch_el <- sf[sf$family=='\\\\''Archivo'\\\\'' & grepl\\('\\\\''ExtraLight'\\\\'', sf$style\\), ]; print\\(arch_el[, c\\('\\\\''family'\\\\'','\\\\''style'\\\\'','\\\\''weight'\\\\'','\\\\''path'\\\\''\\)]\\)')",
+      "Read(//System/Library/Fonts/**)",
+      "Bash(pip3 show *)",
+      "Bash(pip3 install *)",
+      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); cat\\('OK\\\\n'\\); chanwe_load_fonts\\(\\); cat\\('fonts OK\\\\n'\\)\")",
+      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); cat\\('typst-fg-subtle:', colors[['typst-fg-subtle']], '\\\\ntypst-fg-muted:', colors[['typst-fg-muted']], '\\\\ntypst-fg:', colors[['typst-fg']], '\\\\ntypst-ink:', colors[['typst-ink']], '\\\\n'\\)\")",
+      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); cat\\('neutral-200:', colors[['typst-neutral-200']], '\\\\nneutral-100:', colors[['typst-neutral-100']], '\\\\n'\\); print\\(names\\(colors\\)[grepl\\('neutral', names\\(colors\\)\\)]\\)\")",
+      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); print\\(colors[grepl\\('beige|warm|sand|cream|neutral', names\\(colors\\), ignore.case=TRUE\\)]\\)\")",
+      "Bash(Rscript -e \"devtools::load_all\\(quiet=TRUE\\); colors <- chanwe_get_colors\\(\\); print\\(colors\\)\")"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

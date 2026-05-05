@@ -75,14 +75,14 @@ local function Div(el)
   -- ::: {.page-great-quote attribution="Name" source="Work"}
   -- -------------------------------------------------------
   if el.classes:includes("page-great-quote") then
-    local attribution = attr(el, "attribution", "")
-    local source      = attr(el, "source", "")
-    local color       = attr(el, "color", "dark")
-    local inner       = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+    local caption = attr(el, "caption", "")
+    local source  = attr(el, "source", "")
+    local color   = attr(el, "color", "dark")
+    local inner   = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
 
     local call = string.format('#page-great-quote(\n  color: "%s"', color)
-    if attribution ~= "" then
-      call = call .. string.format(',\n  attribution: "%s"', escape_typst_str(attribution))
+    if caption ~= "" then
+      call = call .. string.format(',\n  caption: "%s"', escape_typst_str(caption))
     end
     if source ~= "" then
       call = call .. string.format(',\n  source: "%s"', escape_typst_str(source))
@@ -96,14 +96,14 @@ local function Div(el)
   -- ::: {.inset-great-quote attribution="Name" color="light"}
   -- -------------------------------------------------------
   if el.classes:includes("inset-great-quote") then
-    local attribution = attr(el, "attribution", "")
-    local source      = attr(el, "source", "")
-    local color       = attr(el, "color", "dark")
-    local inner       = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+    local caption = attr(el, "caption", "")
+    local source  = attr(el, "source", "")
+    local color   = attr(el, "color", "dark")
+    local inner   = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
 
     local call = string.format('#inset-great-quote(\n  color: "%s"', color)
-    if attribution ~= "" then
-      call = call .. string.format(',\n  attribution: "%s"', escape_typst_str(attribution))
+    if caption ~= "" then
+      call = call .. string.format(',\n  caption: "%s"', escape_typst_str(caption))
     end
     if source ~= "" then
       call = call .. string.format(',\n  source: "%s"', escape_typst_str(source))

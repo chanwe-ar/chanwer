@@ -4,37 +4,74 @@
 \alias{gt_theme_chanwe}
 \title{ChanWe Theme for gt Tables}
 \usage{
-gt_theme_chanwe(
-  data,
-  variant = c("spacious", "compact"),
-  background = c("beige", "white")
-)
+gt_theme_chanwe(data, variant = c("spacious", "compact"), bg_color = "white")
 }
 \arguments{
-\item{data}{A gt table object.}
+\item{data}{A gt table object created with \code{\link[gt:gt]{gt::gt()}}.}
 
-\item{variant}{One of \code{"spacious"} or \code{"compact"} to control table density.
-Both variants keep a taller table header.}
+\item{variant}{One of \code{"spacious"} (default) or \code{"compact"}.}
 
-\item{background}{Background surface variant: \code{"beige"} (\verb{#F7F7F7}) or
-\code{"white"} (\verb{#FFFFFF}). Both use a light-gray border (\verb{#F7F7F7}).}
+\item{bg_color}{Background color. Accepts a hex string or \code{"white"}
+(default), \code{"gray"}, \code{"beige"}.}
 }
 \value{
-A themed gt table object.
+The input gt table with ChanWe styling applied.
 }
 \description{
-Applies ChanWe branding to \code{\link[gt:gt]{gt::gt()}} tables with neutral surfaces,
-understated borders, editorial typography, and orange accents. This is the
-main entry point for \code{gt} tables when you need to control density and
-background explicitly.
+Applies ChanWe branding to a \code{\link[gt:gt]{gt::gt()}} table: Archivo title, Satoshi body
+text, JetBrains Mono column headers in mono-caps, thin black divider lines,
+and a neutral surface. Pairs with \code{\link[=chanwe_gt_eyebrow]{chanwe_gt_eyebrow()}} for the orange
+section-label treatment above the title.
+}
+\details{
+\subsection{Layout variants}{\tabular{llll}{
+   \code{variant} \tab Row padding \tab Heading padding \tab Use \cr
+   \code{"spacious"} (default) \tab 12 px \tab 28 px \tab Reports, presentations \cr
+   \code{"compact"} \tab 6 px \tab 18 px \tab Dense data, dashboards \cr
+}
+
+
+Convenience wrappers \code{\link[=gt_theme_chanwe_spacious]{gt_theme_chanwe_spacious()}} and
+\code{\link[=gt_theme_chanwe_compact]{gt_theme_chanwe_compact()}} call this function with the variant pre-set.
+}
+
+\subsection{Background variants}{\tabular{lll}{
+   Name \tab Hex \tab Use \cr
+   \code{"white"} \tab \verb{#FFFFFF} \tab Default \cr
+   \code{"gray"} \tab \verb{#F5F5F5} \tab Light neutral gray \cr
+   \code{"beige"} \tab \verb{#ECE5D8} \tab Warm brand beige \cr
+}
+
+}
 }
 \examples{
 if (requireNamespace("gt", quietly = TRUE)) {
-  tbl <- gt::gt(head(mtcars)) |>
+
+  ## Basic table
+  gt::gt(head(mtcars, 8)) |>
     gt::tab_header(
       title = "Motor Trend Cars",
-      subtitle = "Spacious beige table"
+      subtitle = "Top 8 rows · mtcars"
     ) |>
-    gt_theme_chanwe(variant = "spacious", background = "beige")
+    gt::tab_source_note("Source: Motor Trend, 1974") |>
+    gt_theme_chanwe()
+
+  ## With eyebrow, beige background, spacious variant
+  mt <- tibble::as_tibble(mtcars, rownames = "model")
+  gt::gt(head(mt, 6), rowname_col = "model") |>
+    gt::tab_header(
+      title = gt::html(paste0(
+        chanwe_gt_eyebrow("SECTION · FLEET"),
+        "Operational Snapshot"
+      )),
+      subtitle = "Fleet overview · mtcars sample"
+    ) |>
+    gt::tab_source_note("Source · Motor Trend, 1974") |>
+    gt_theme_chanwe(bg_color = "beige", variant = "spacious")
+
+  ## Compact variant, gray background
+  gt::gt(head(mtcars, 10)) |>
+    gt::tab_header(title = "Compact view") |>
+    gt_theme_chanwe(variant = "compact", bg_color = "gray")
 }
 }

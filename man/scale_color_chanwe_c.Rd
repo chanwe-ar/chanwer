@@ -6,12 +6,12 @@
 \title{ChanWe Continuous Color Scale}
 \usage{
 scale_color_chanwe_c(
-  colours = chanwe_get_colors()[c("p13-orange-10", "p13-orange-05", "brand-orange")],
+  colours = chanwe_get_colors()[c("p13-orange-10", "p13-orange-05", "typst-primary")],
   ...
 )
 
 scale_fill_chanwe_c(
-  colours = chanwe_get_colors()[c("p13-orange-10", "p13-orange-05", "brand-orange")],
+  colours = chanwe_get_colors()[c("p13-orange-10", "p13-orange-05", "typst-primary")],
   ...
 )
 }

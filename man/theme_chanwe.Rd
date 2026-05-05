@@ -5,47 +5,106 @@
 \title{ChanWe ggplot2 Theme}
 \usage{
 theme_chanwe(
-  base_text_size = 11.5,
-  base_family = "DM Sans",
+  base_text_size = 9.5,
+  base_family = "Satoshi",
   base_lineheight = 1.6,
   legend_position = "bottom",
-  background = c("beige", "white")
+  bg_color = "white"
 )
 }
 \arguments{
-\item{base_text_size}{Base text size in points.}
+\item{base_text_size}{Base text size in points. Default \code{9.5}.}
 
-\item{base_family}{Base font family.}
+\item{base_family}{Base font family for body text. Default \code{"Satoshi"}.}
 
-\item{base_lineheight}{Base text line-height multiplier.}
+\item{base_lineheight}{Base line-height multiplier. Default \code{1.60}.}
 
-\item{legend_position}{Legend position passed to \code{theme(legend.position = )}.}
+\item{legend_position}{Legend position string passed to
+\code{theme(legend.position = )}. Default \code{"bottom"}.}
 
-\item{background}{Background surface variant: \code{"beige"} (\verb{#F7F7F7}) or
-\code{"white"} (\verb{#FFFFFF}). Both use a light-gray border (\verb{#F7F7F7}).}
+\item{bg_color}{Background color for the plot surface. Accepts a hex string
+or one of \code{"white"} (default), \code{"gray"}, \code{"beige"}.}
 }
 \value{
-A ggplot2 theme object.
+A ggplot2 theme object. Add to any ggplot with \code{+ theme_chanwe()}.
 }
 \description{
-A clean editorial ggplot2 theme with ChanWe typography, neutral paper,
-orange accents, minimal chrome, and compact rectangular geometry.
-Use \code{\link[=chanwe_title]{chanwe_title()}} and \code{\link[=chanwe_subtitle]{chanwe_subtitle()}} with this theme for the
-standard ChanWe title treatment.
+A clean editorial ggplot2 theme with ChanWe typography, neutral surfaces,
+orange accents, and minimal chrome. Pairs with \code{\link[=chanwe_title]{chanwe_title()}},
+\code{\link[=chanwe_subtitle]{chanwe_subtitle()}}, and \code{\link[=chanwe_caption]{chanwe_caption()}} for the full ChanWe title
+treatment, and with \code{\link[=scale_color_chanwe_d]{scale_color_chanwe_d()}} / \code{\link[=scale_fill_chanwe_d]{scale_fill_chanwe_d()}} for
+brand-consistent color palettes.
+}
+\details{
+\subsection{Typography}{
+\itemize{
+\item \strong{Title}: Archivo Black (900) — large, tight tracking
+\item \strong{Subtitle}: Archivo ExtraLight (200) — same family, featherweight contrast
+\item \strong{Body / axis text}: Satoshi Regular
+\item \strong{Axis titles, legend, caption}: JetBrains Mono
+}
+
+Call \code{\link[=chanwe_load_fonts]{chanwe_load_fonts()}} once per session to register the custom font
+families before rendering. \code{theme_chanwe()} calls it automatically.
+}
+
+\subsection{Background variants}{
+
+Pass a named shortcut or any hex string to \code{bg_color}:\tabular{lll}{
+   Name \tab Hex \tab Use \cr
+   \code{"white"} \tab \verb{#FFFFFF} \tab Default — clean white \cr
+   \code{"gray"} \tab \verb{#F5F5F5} \tab Light neutral gray \cr
+   \code{"beige"} \tab \verb{#ECE5D8} \tab Warm brand beige \cr
+}
+
+}
 }
 \examples{
 if (requireNamespace("ggplot2", quietly = TRUE)) {
-  p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+
+  ## Basic scatter — white background, bottom legend
+  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
     ggplot2::geom_point(size = 3) +
     scale_color_chanwe_d() +
     ggplot2::labs(
-      title = chanwe_title("Performance overview"),
-      subtitle = chanwe_subtitle("Example subtitle")
+      title = chanwe_title("Fuel efficiency by weight"),
+      subtitle = "Highway mpg vs vehicle weight",
+      caption = chanwe_caption("Source: Motor Trend, 1974")
     ) +
-    theme_chanwe(
-      base_text_size = 12,
-      legend_position = "bottom",
-      background = "beige"
-    )
+    theme_chanwe()
+
+  ## With eyebrow, beige background, no legend
+  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+    ggplot2::geom_point(size = 3) +
+    scale_color_chanwe_d() +
+    ggplot2::labs(
+      title = chanwe_title("Fuel efficiency", eyebrow = "SECTION · FLEET"),
+      subtitle = "Highway mpg vs vehicle weight",
+      caption = chanwe_caption("Source: Motor Trend, 1974")
+    ) +
+    theme_chanwe(bg_color = "beige", legend_position = "none")
+
+  ## Bar chart — gray background, fill scale
+  avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+  ggplot2::ggplot(avg_mpg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
+    ggplot2::geom_col(width = 0.6) +
+    scale_fill_chanwe_d() +
+    ggplot2::labs(
+      title = chanwe_title("Average MPG by cylinder count"),
+      caption = chanwe_caption("Source: mtcars")
+    ) +
+    theme_chanwe(bg_color = "gray", legend_position = "none")
+
+  ## Faceted line chart
+  ggplot2::ggplot(ggplot2::economics_long,
+    ggplot2::aes(date, value01, color = variable)) +
+    ggplot2::geom_line(linewidth = 0.6) +
+    ggplot2::facet_wrap(~variable, scales = "free_y", ncol = 2) +
+    scale_color_chanwe_d() +
+    ggplot2::labs(
+      title = chanwe_title("US economic indicators", eyebrow = "MACRO"),
+      caption = chanwe_caption("Source: ggplot2::economics_long")
+    ) +
+    theme_chanwe(legend_position = "none")
 }
 }

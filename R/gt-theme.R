@@ -1,28 +1,71 @@
 #' ChanWe Theme for gt Tables
 #'
-#' Applies ChanWe branding to [gt::gt()] tables: editorial typography,
-#' mono-caps column headers, clean black divider lines, and neutral surfaces.
+#' Applies ChanWe branding to a [gt::gt()] table: Archivo title, Satoshi body
+#' text, JetBrains Mono column headers in mono-caps, thin black divider lines,
+#' and a neutral surface. Pairs with [chanwe_gt_eyebrow()] for the orange
+#' section-label treatment above the title.
 #'
-#' @param data A gt table object.
-#' @param variant One of `"spacious"` or `"compact"` to control table density.
-#' @param bg_color Background hex color for the table surface. Defaults to
-#'   `"#FFFFFF"`. Pass `"#F5F5F5"` for the standard neutral-100 beige.
+#' ## Layout variants
+#' | `variant` | Row padding | Heading padding | Use |
+#' |-----------|-------------|-----------------|-----|
+#' | `"spacious"` (default) | 12 px | 28 px | Reports, presentations |
+#' | `"compact"` | 6 px | 18 px | Dense data, dashboards |
 #'
-#' @return A themed gt table object.
+#' Convenience wrappers [gt_theme_chanwe_spacious()] and
+#' [gt_theme_chanwe_compact()] call this function with the variant pre-set.
+#'
+#' ## Background variants
+#' | Name | Hex | Use |
+#' |------|-----|-----|
+#' | `"white"` | `#FFFFFF` | Default |
+#' | `"gray"` | `#F5F5F5` | Light neutral gray |
+#' | `"beige"` | `#ECE5D8` | Warm brand beige |
+#'
+#' @param data A gt table object created with [gt::gt()].
+#' @param variant One of `"spacious"` (default) or `"compact"`.
+#' @param bg_color Background color. Accepts a hex string or `"white"`
+#'   (default), `"gray"`, `"beige"`.
+#'
+#' @return The input gt table with ChanWe styling applied.
 #' @export
 #'
 #' @examples
 #' if (requireNamespace("gt", quietly = TRUE)) {
-#'   gt::gt(head(mtcars)) |>
-#'     gt::tab_header(title = "Motor Trend Cars", subtitle = "Top rows") |>
+#'
+#'   ## Basic table
+#'   gt::gt(head(mtcars, 8)) |>
+#'     gt::tab_header(
+#'       title = "Motor Trend Cars",
+#'       subtitle = "Top 8 rows · mtcars"
+#'     ) |>
+#'     gt::tab_source_note("Source: Motor Trend, 1974") |>
 #'     gt_theme_chanwe()
+#'
+#'   ## With eyebrow, beige background, spacious variant
+#'   mt <- tibble::as_tibble(mtcars, rownames = "model")
+#'   gt::gt(head(mt, 6), rowname_col = "model") |>
+#'     gt::tab_header(
+#'       title = gt::html(paste0(
+#'         chanwe_gt_eyebrow("SECTION · FLEET"),
+#'         "Operational Snapshot"
+#'       )),
+#'       subtitle = "Fleet overview · mtcars sample"
+#'     ) |>
+#'     gt::tab_source_note("Source · Motor Trend, 1974") |>
+#'     gt_theme_chanwe(bg_color = "beige", variant = "spacious")
+#'
+#'   ## Compact variant, gray background
+#'   gt::gt(head(mtcars, 10)) |>
+#'     gt::tab_header(title = "Compact view") |>
+#'     gt_theme_chanwe(variant = "compact", bg_color = "gray")
 #' }
 gt_theme_chanwe <- function(
   data,
   variant   = c("spacious", "compact"),
-  bg_color  = "#FFFFFF"
+  bg_color  = "white"
 ) {
   chanwe_require_package("gt")
+  bg_color <- chanwe_resolve_bg(bg_color)
 
   colors  <- chanwe_get_colors()
   variant <- match.arg(variant)
@@ -197,22 +240,51 @@ gt_theme_chanwe <- function(
 
 #' ChanWe GT Eyebrow Helper
 #'
-#' Returns an HTML string for use inside `gt::html()` as the `title` argument.
-#' Renders an orange `──` rule followed by mono-caps eyebrow text above the
-#' title, matching the [chanwe_title()] treatment in ggplot2.
+#' Returns an HTML `<div>` for use inside `gt::html()` in `tab_header(title =
+#' ...)`. Renders an orange `──` rule followed by mono-caps JetBrains Mono
+#' text above the main title, matching the [chanwe_title()] eyebrow treatment
+#' in ggplot2.
 #'
-#' @param eyebrow Eyebrow label string, e.g. `"SECTION · PEER BENCHMARK"`.
+#' **Usage pattern:**
+#' ```r
+#' gt::tab_header(
+#'   title = gt::html(paste0(chanwe_gt_eyebrow("SECTION LABEL"), "Title text"))
+#' )
+#' ```
 #'
-#' @return An HTML string. Wrap the title with `gt::html(paste0(chanwe_gt_eyebrow("..."), "Title"))`.
+#' @param eyebrow Short label string shown above the title, e.g.
+#'   `"SECTION · PEER BENCHMARK"`. Automatically upper-cased.
+#'
+#' @return An HTML string. Concatenate with the title string and wrap in
+#'   [gt::html()].
 #' @export
 #'
 #' @examples
 #' if (requireNamespace("gt", quietly = TRUE)) {
-#'   gt::gt(head(mtcars)) |>
+#'
+#'   ## Single eyebrow + title
+#'   gt::gt(head(mtcars, 5)) |>
 #'     gt::tab_header(
-#'       title = gt::html(paste0(chanwe_gt_eyebrow("SECTION · FLEET"), "Operational Snapshot"))
+#'       title = gt::html(paste0(
+#'         chanwe_gt_eyebrow("SECTION · FLEET"),
+#'         "Operational Snapshot"
+#'       )),
+#'       subtitle = "mtcars sample"
 #'     ) |>
 #'     gt_theme_chanwe()
+#'
+#'   ## With row stubs and source note
+#'   mt <- tibble::as_tibble(mtcars, rownames = "model")
+#'   gt::gt(head(mt, 6), rowname_col = "model") |>
+#'     gt::tab_header(
+#'       title = gt::html(paste0(
+#'         chanwe_gt_eyebrow("OVERVIEW · Q1 2026"),
+#'         "Fleet Performance"
+#'       )),
+#'       subtitle = "Weight, MPG and horsepower · mtcars"
+#'     ) |>
+#'     gt::tab_source_note("Source · Motor Trend, 1974") |>
+#'     gt_theme_chanwe(bg_color = "beige")
 #' }
 chanwe_gt_eyebrow <- function(eyebrow) {
   color <- chanwe_get_colors()[["typst-primary"]]
@@ -230,15 +302,15 @@ chanwe_gt_eyebrow <- function(eyebrow) {
 #' Convenience wrapper for [gt_theme_chanwe()] with `variant = "spacious"`.
 #'
 #' @param data A gt table object.
-#' @param bg_color Background hex color passed to [gt_theme_chanwe()].
+#' @param bg_color Background color passed to [gt_theme_chanwe()]. Accepts hex strings or `"white"`, `"gray"`, `"beige"`.
 #' @param background Deprecated. Use `bg_color` instead.
 #'
 #' @return A themed gt table object.
 #' @export
-gt_theme_chanwe_spacious <- function(data, bg_color = "#FFFFFF",
+gt_theme_chanwe_spacious <- function(data, bg_color = "white",
                                      background = NULL) {
   if (!is.null(background)) {
-    bg_color <- if (identical(background, "beige")) "#F5F5F5" else "#FFFFFF"
+    bg_color <- if (identical(background, "beige")) "#ECE5D8" else "#FFFFFF"
   }
   gt_theme_chanwe(data, variant = "spacious", bg_color = bg_color)
 }
@@ -248,15 +320,15 @@ gt_theme_chanwe_spacious <- function(data, bg_color = "#FFFFFF",
 #' Convenience wrapper for [gt_theme_chanwe()] with `variant = "compact"`.
 #'
 #' @param data A gt table object.
-#' @param bg_color Background hex color passed to [gt_theme_chanwe()].
+#' @param bg_color Background color passed to [gt_theme_chanwe()]. Accepts hex strings or `"white"`, `"gray"`, `"beige"`.
 #' @param background Deprecated. Use `bg_color` instead.
 #'
 #' @return A themed gt table object.
 #' @export
-gt_theme_chanwe_compact <- function(data, bg_color = "#FFFFFF",
+gt_theme_chanwe_compact <- function(data, bg_color = "white",
                                     background = NULL) {
   if (!is.null(background)) {
-    bg_color <- if (identical(background, "beige")) "#F5F5F5" else "#FFFFFF"
+    bg_color <- if (identical(background, "beige")) "#ECE5D8" else "#FFFFFF"
   }
   gt_theme_chanwe(data, variant = "compact", bg_color = bg_color)
 }

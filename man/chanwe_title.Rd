@@ -2,34 +2,41 @@
 % Please edit documentation in R/ggplot2-theme.R
 \name{chanwe_title}
 \alias{chanwe_title}
-\title{ChanWe Title Helper with Estrategia Marker}
+\title{ChanWe Title Helper}
 \usage{
-chanwe_title(
-  text,
-  marker_path = NULL,
-  marker_width_px = NULL,
-  marker_scale = 0.02
-)
+chanwe_title(text, eyebrow = NULL)
 }
 \arguments{
-\item{text}{Title text.}
+\item{text}{Main title string. Rendered in Archivo Black by \code{\link[=theme_chanwe]{theme_chanwe()}}.}
 
-\item{marker_path}{Optional path to the marker image file.}
-
-\item{marker_width_px}{Optional marker width in pixels. If \code{NULL} (default),
-width is derived from \code{marker_scale} and the source image width.}
-
-\item{marker_scale}{Relative width multiplier applied to the source image
-width when \code{marker_width_px = NULL}. Use \code{0.01} for ~1\% of image width.}
+\item{eyebrow}{Optional short label above the title, e.g.
+\code{"SECTION · PROFITABILITY"}. Displayed in orange mono caps.}
 }
 \value{
-A title string for use inside \code{labs(title = ...)}.
+A character string for \code{labs(title = ...)}.
 }
 \description{
-Creates a title string with a small \code{Estrategia_Color1.png} image placed
-before the title text. Use this inside \code{ggplot2::labs(title = ...)} together
-with \code{\link[=theme_chanwe]{theme_chanwe()}}. The marker renders when \code{ggtext} is installed.
+Produces a title string for \code{labs(title = ...)} styled by \code{\link[=theme_chanwe]{theme_chanwe()}}.
+Without an eyebrow you can pass plain text directly — this helper is only
+needed when you want the orange mono-caps eyebrow line above the title.
+}
+\details{
+The eyebrow renders as a small-caps JetBrains Mono label in the brand orange
+(\verb{#FB3D0E}), prefixed by \verb{──}. Requires the \code{ggtext} package for HTML
+rendering; falls back to plain \verb{──  EYEBROW\\nTitle} when unavailable.
 }
 \examples{
-chanwe_title("Performance Overview")
+## Plain title — pass directly, no helper needed:
+# ggplot2::labs(title = "Revenue vs EBITDA margin")
+
+## Title with section eyebrow:
+chanwe_title("Revenue vs EBITDA margin", eyebrow = "SECTION · PROFITABILITY")
+
+## Use in a full plot:
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+    ggplot2::geom_point() +
+    ggplot2::labs(title = chanwe_title("Fleet overview", eyebrow = "TLDR;")) +
+    theme_chanwe()
+}
 }

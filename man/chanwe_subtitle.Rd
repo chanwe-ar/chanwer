@@ -2,23 +2,26 @@
 % Please edit documentation in R/ggplot2-theme.R
 \name{chanwe_subtitle}
 \alias{chanwe_subtitle}
-\title{ChanWe Subtitle Helper with Subtle Separator Rule}
+\title{ChanWe Subtitle Helper}
 \usage{
-chanwe_subtitle(text, rule = "────")
+chanwe_subtitle(text)
 }
 \arguments{
 \item{text}{Subtitle text.}
-
-\item{rule}{Character glyph sequence used for the accent rule.}
 }
 \value{
-A markdown string for use inside \code{labs(subtitle = ...)}.
+The input string unchanged.
 }
 \description{
-Creates a subtitle string with a short, subtle light-gray separator line on the
-next line. The accent is rendered when used with \code{theme_chanwe()} and
-the \code{ggtext} package is installed.
+Returns the subtitle string as-is for use in \code{labs(subtitle = ...)}.
+\code{\link[=theme_chanwe]{theme_chanwe()}} styles it automatically in Archivo ExtraLight (200), so
+no wrapper is needed — this function exists as a discoverable entry point
+and may gain formatting options in future versions.
 }
 \examples{
+## Pass directly — theme handles the font:
+# ggplot2::labs(subtitle = "Quarterly performance")
+
+## Or via the helper (equivalent):
 chanwe_subtitle("Quarterly performance")
 }

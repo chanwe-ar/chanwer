@@ -27,7 +27,11 @@ chanwe_load_fonts <- function(path = NULL) {
   }
 
   if (is.null(path)) {
+    # system.file(package=) returns the inst/ dir; dirname() gives package root
+    pkg_inst <- tryCatch(system.file(package = "chanwer"), error = function(e) "")
+    pkg_root <- if (nzchar(pkg_inst)) dirname(pkg_inst) else ""
     candidates <- c(
+      if (nzchar(pkg_root)) file.path(pkg_root, "_extensions/chanwe/fonts"),
       "_extensions/chanwe/fonts",
       file.path(getwd(), "_extensions/chanwe/fonts"),
       system.file("fonts", package = "chanwer")
@@ -87,49 +91,29 @@ chanwe_load_fonts <- function(path = NULL) {
     )
   }
 
-  # .chanwe-subtitle: Fraunces 9pt ExtraLight Italic — bakes style+weight into
-  # the family so the theme can use face="plain" for reliable rendering,
-  # avoiding gridtext CSS font-family parsing for quoted/multi-word names.
-  fraunces_el_it <- file.path(path, "Fraunces9pt-ExtraLightItalic.ttf")
-  if (!file.exists(fraunces_el_it)) {
-    fraunces_el_it <- file.path(path, "Fraunces9pt-ThinItalic.ttf")
-  }
-  if (!file.exists(fraunces_el_it)) {
-    fraunces_el_it <- file.path(path, "Fraunces9pt-Italic.ttf")
-  }
-  if (file.exists(fraunces_el_it)) {
+  # .chanwe-subtitle: Archivo ExtraLight (200) — same family as the title but
+  # at weight 200 and no italic, baked into a named family for reliable rendering.
+  archivo_el <- file.path(path, "Archivo-ExtraLight.ttf")
+  if (file.exists(archivo_el)) {
     tryCatch(
-      systemfonts::register_font(name = ".chanwe-subtitle", plain = fraunces_el_it),
+      systemfonts::register_font(name = ".chanwe-subtitle", plain = archivo_el),
       error = function(e) NULL
     )
   }
 
-  # .chanwe-title: lightest available Archivo from system fonts
-  # CSS font-weight:100 on the "Archivo" family resolves to the nearest
-  # bundled weight (Regular=400), not the thin system variant. Registering
-  # an explicit named family pointing to the system thin/extralight file
-  # gives reliable weight-100 rendering.
-  sys_f <- systemfonts::system_fonts()
-  archivo_light <- sys_f[
-    sys_f$family == "Archivo" & !sys_f$italic &
-    sys_f$weight %in% c("ultralight", "light"),
-  ]
-  if (nrow(archivo_light) > 0) {
-    w_order <- c("ultralight", "light")
-    for (w in w_order) {
-      hit <- archivo_light[archivo_light$weight == w, ]
-      if (nrow(hit) > 0) {
-        tryCatch(
-          systemfonts::register_font(name = ".chanwe-title", plain = hit$path[[1]]),
-          error = function(e) NULL
-        )
-        break
-      }
-    }
-  }
-
   .chanwe_env$fonts_loaded <- TRUE
   invisible(path)
+}
+
+chanwe_resolve_bg <- function(bg_color) {
+  switch(
+    tolower(trimws(bg_color)),
+    white = "#FFFFFF",
+    gray  = "#F5F5F5",
+    grey  = "#F5F5F5",
+    beige = "#ECE5D8",
+    bg_color
+  )
 }
 
 chanwe_require_package <- function(pkg) {

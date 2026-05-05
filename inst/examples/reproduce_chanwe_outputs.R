@@ -5,6 +5,7 @@ library(ggplot2)
 library(gt)
 
 devtools::load_all()
+chanwe_load_fonts()
 
 # 1) ggplot2
 p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
@@ -18,7 +19,7 @@ p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
     subtitle = "Chanwe branded ggplot",
     caption = chanwe_caption("Data: mtcars")
   ) +
-  theme_chanwe(bg_color = "#fff")
+  theme_chanwe(bg_color = "white")
 
 print(p)
 

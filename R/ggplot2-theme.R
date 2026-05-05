@@ -9,46 +9,107 @@ chanwe_discrete_pal <- function() {
 
 #' ChanWe ggplot2 Theme
 #'
-#' A clean editorial ggplot2 theme with ChanWe typography, neutral paper,
-#' orange accents, minimal chrome, and compact rectangular geometry.
-#' Use [chanwe_title()] and [chanwe_subtitle()] with this theme for the
-#' standard ChanWe title treatment: Archivo Bold heading with an orange `//`
-#' marker, Fraunces 9pt ExtraLight Italic subtitle.
+#' A clean editorial ggplot2 theme with ChanWe typography, neutral surfaces,
+#' orange accents, and minimal chrome. Pairs with [chanwe_title()],
+#' [chanwe_subtitle()], and [chanwe_caption()] for the full ChanWe title
+#' treatment, and with [scale_color_chanwe_d()] / [scale_fill_chanwe_d()] for
+#' brand-consistent color palettes.
 #'
-#' @param base_text_size Base text size in points.
-#' @param base_family Base font family.
-#' @param base_lineheight Base text line-height multiplier.
-#' @param legend_position Legend position passed to `theme(legend.position = )`.
-#' @param bg_color Background hex color for the plot surface. Defaults to
-#'   `"#FFFFFF"` (white). Pass any hex string, e.g. `"#F5F5F5"` for the
-#'   standard ChanWe neutral-100 beige.
+#' ## Typography
+#' - **Title**: Archivo Black (900) — large, tight tracking
+#' - **Subtitle**: Archivo ExtraLight (200) — same family, featherweight contrast
+#' - **Body / axis text**: Satoshi Regular
+#' - **Axis titles, legend, caption**: JetBrains Mono
 #'
-#' @return A ggplot2 theme object.
+#' Call [chanwe_load_fonts()] once per session to register the custom font
+#' families before rendering. `theme_chanwe()` calls it automatically.
+#'
+#' ## Background variants
+#' Pass a named shortcut or any hex string to `bg_color`:
+#' | Name | Hex | Use |
+#' |------|-----|-----|
+#' | `"white"` | `#FFFFFF` | Default — clean white |
+#' | `"gray"` | `#F5F5F5` | Light neutral gray |
+#' | `"beige"` | `#ECE5D8` | Warm brand beige |
+#'
+#' @param base_text_size Base text size in points. Default `9.5`.
+#' @param base_family Base font family for body text. Default `"Satoshi"`.
+#' @param base_lineheight Base line-height multiplier. Default `1.60`.
+#' @param legend_position Legend position string passed to
+#'   `theme(legend.position = )`. Default `"bottom"`.
+#' @param bg_color Background color for the plot surface. Accepts a hex string
+#'   or one of `"white"` (default), `"gray"`, `"beige"`.
+#'
+#' @return A ggplot2 theme object. Add to any ggplot with `+ theme_chanwe()`.
 #' @export
 #'
 #' @examples
 #' if (requireNamespace("ggplot2", quietly = TRUE)) {
-#'   p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+#'
+#'   ## Basic scatter — white background, bottom legend
+#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
 #'     ggplot2::geom_point(size = 3) +
 #'     scale_color_chanwe_d() +
 #'     ggplot2::labs(
-#'       title = "Performance overview",
-#'       subtitle = chanwe_subtitle("Example subtitle")
+#'       title = chanwe_title("Fuel efficiency by weight"),
+#'       subtitle = "Highway mpg vs vehicle weight",
+#'       caption = chanwe_caption("Source: Motor Trend, 1974")
 #'     ) +
-#'     theme_chanwe(base_text_size = 9.5, legend_position = "bottom")
+#'     theme_chanwe()
+#'
+#'   ## With eyebrow, beige background, no legend
+#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+#'     ggplot2::geom_point(size = 3) +
+#'     scale_color_chanwe_d() +
+#'     ggplot2::labs(
+#'       title = chanwe_title("Fuel efficiency", eyebrow = "SECTION · FLEET"),
+#'       subtitle = "Highway mpg vs vehicle weight",
+#'       caption = chanwe_caption("Source: Motor Trend, 1974")
+#'     ) +
+#'     theme_chanwe(bg_color = "beige", legend_position = "none")
+#'
+#'   ## Bar chart — gray background, fill scale
+#'   avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+#'   ggplot2::ggplot(avg_mpg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
+#'     ggplot2::geom_col(width = 0.6) +
+#'     scale_fill_chanwe_d() +
+#'     ggplot2::labs(
+#'       title = chanwe_title("Average MPG by cylinder count"),
+#'       caption = chanwe_caption("Source: mtcars")
+#'     ) +
+#'     theme_chanwe(bg_color = "gray", legend_position = "none")
+#'
+#'   ## Faceted line chart
+#'   ggplot2::ggplot(ggplot2::economics_long,
+#'     ggplot2::aes(date, value01, color = variable)) +
+#'     ggplot2::geom_line(linewidth = 0.6) +
+#'     ggplot2::facet_wrap(~variable, scales = "free_y", ncol = 2) +
+#'     scale_color_chanwe_d() +
+#'     ggplot2::labs(
+#'       title = chanwe_title("US economic indicators", eyebrow = "MACRO"),
+#'       caption = chanwe_caption("Source: ggplot2::economics_long")
+#'     ) +
+#'     theme_chanwe(legend_position = "none")
 #' }
 theme_chanwe <- function(
-  base_text_size = 11.5,
+  base_text_size = 9.5,
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
-  bg_color = "#FFFFFF"
+  bg_color = "white"
 ) {
   chanwe_load_fonts()
 
+  bg_color <- chanwe_resolve_bg(bg_color)
   colors <- chanwe_get_colors()
   surface_fill <- bg_color
   outer_border_color <- colors[["typst-neutral-200"]]
+  grid_color <- switch(
+    bg_color,
+    "#FFFFFF" = colors[["typst-neutral-100"]], # #F5F5F5 — lighter on white
+    "#ECE5D8" = "#D9CCBA", # warm tone matching beige palette
+    colors[["typst-neutral-200"]] # #E8E8E8 — default for gray etc.
+  )
   panel_border_element <- ggplot2::element_blank()
 
   reg <- if (requireNamespace("systemfonts", quietly = TRUE)) {
@@ -63,7 +124,7 @@ theme_chanwe <- function(
   } else {
     "Satoshi"
   }
-  subtitle_face <- if (".chanwe-subtitle" %in% reg) "plain" else "plain"
+  subtitle_face <- "plain"
 
   mono_family <- if (
     requireNamespace("systemfonts", quietly = TRUE) &&
@@ -82,14 +143,14 @@ theme_chanwe <- function(
     family = title_family,
     color = colors[["typst-ink"]],
     face = title_face,
-    size = base_text_size * 2,
+    size = base_text_size * 2.3,
     hjust = 0,
     lineheight = 1.10,
     margin = ggplot2::margin(b = 4)
   )
   subtitle_element <- ggplot2::element_text(
     family = subtitle_family,
-    color = colors[["typst-fg-subtle"]],
+    color = colors[["typst-fg-muted"]],
     face = "plain",
     size = base_text_size * 1.10,
     hjust = 0,
@@ -101,14 +162,14 @@ theme_chanwe <- function(
       family = title_family,
       color = colors[["typst-ink"]],
       face = title_face,
-      size = base_text_size * 2,
+      size = base_text_size * 2.3,
       hjust = 0,
       lineheight = 1.10,
       margin = ggplot2::margin(b = 4)
     )
     subtitle_element <- ggtext::element_markdown(
       family = subtitle_family,
-      color = colors[["typst-fg-subtle"]],
+      color = colors[["typst-fg-muted"]],
       face = "plain",
       size = base_text_size * 1.15,
       hjust = 0,
@@ -172,11 +233,11 @@ theme_chanwe <- function(
       ),
       axis.line = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_line(
-        color = colors[["typst-neutral-200"]],
+        color = grid_color,
         linewidth = 0.3
       ),
       panel.grid.major = ggplot2::element_line(
-        color = colors[["typst-neutral-200"]],
+        color = grid_color,
         linewidth = 0.3
       ),
       panel.grid.minor = ggplot2::element_blank(),
@@ -202,11 +263,13 @@ theme_chanwe <- function(
       legend.justification = "center",
       legend.box.just = "center",
       legend.title = ggplot2::element_text(
+        family = mono_family,
         color = colors[["typst-fg-muted"]],
-        face = "bold",
+        face = "plain",
         size = base_text_size * 0.75
       ),
       legend.text = ggplot2::element_text(
+        family = mono_family,
         color = colors[["typst-ink"]],
         size = base_text_size * 0.75
       ),
@@ -235,31 +298,51 @@ theme_chanwe <- function(
 
 #' ChanWe Title Helper
 #'
-#' Adds an optional orange mono-caps eyebrow line above the plot title.
-#' Without an eyebrow, you can pass plain text directly to
-#' `labs(title = ...)` — [theme_chanwe()] styles it automatically.
+#' Produces a title string for `labs(title = ...)` styled by [theme_chanwe()].
+#' Without an eyebrow you can pass plain text directly — this helper is only
+#' needed when you want the orange mono-caps eyebrow line above the title.
 #'
-#' @param text Title text.
-#' @param eyebrow Optional eyebrow string shown above the title in orange mono
-#'   caps, e.g. `"SECTION · PROFITABILITY"`.
+#' The eyebrow renders as a small-caps JetBrains Mono label in the brand orange
+#' (`#FB3D0E`), prefixed by `──`. Requires the `ggtext` package for HTML
+#' rendering; falls back to plain `──  EYEBROW\nTitle` when unavailable.
 #'
-#' @return A string for use inside `labs(title = ...)`.
+#' @param text Main title string. Rendered in Archivo Black by [theme_chanwe()].
+#' @param eyebrow Optional short label above the title, e.g.
+#'   `"SECTION · PROFITABILITY"`. Displayed in orange mono caps.
+#'
+#' @return A character string for `labs(title = ...)`.
 #' @export
 #'
 #' @examples
-#' # Plain title — no helper needed, theme handles it:
-#' # labs(title = "Revenue vs EBITDA margin")
+#' ## Plain title — pass directly, no helper needed:
+#' # ggplot2::labs(title = "Revenue vs EBITDA margin")
 #'
-#' # With eyebrow:
+#' ## Title with section eyebrow:
 #' chanwe_title("Revenue vs EBITDA margin", eyebrow = "SECTION · PROFITABILITY")
+#'
+#' ## Use in a full plot:
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+#'     ggplot2::geom_point() +
+#'     ggplot2::labs(title = chanwe_title("Fleet overview", eyebrow = "TLDR;")) +
+#'     theme_chanwe()
+#' }
 chanwe_title <- function(text, eyebrow = NULL) {
-  if (is.null(eyebrow)) {
-    return(text)
-  }
   if (!requireNamespace("ggtext", quietly = TRUE)) {
+    if (is.null(eyebrow)) {
+      return(text)
+    }
     return(paste0("── ", toupper(eyebrow), "\n", text))
   }
   colors <- chanwe_get_colors()
+  title_span <- paste0(
+    "<span style='letter-spacing:-0.2em;'>",
+    text,
+    "</span>"
+  )
+  if (is.null(eyebrow)) {
+    return(title_span)
+  }
   paste0(
     "<span style='font-family:JetBrains Mono;font-size:8pt;font-weight:500;",
     "letter-spacing:0.08em;color:",
@@ -268,23 +351,27 @@ chanwe_title <- function(text, eyebrow = NULL) {
     "── ",
     toupper(eyebrow),
     "</span><br>",
-    text
+    title_span
   )
 }
 
-#' ChanWe Subtitle Helper with Subtle Separator Rule
+#' ChanWe Subtitle Helper
 #'
-#' Creates a subtitle string with a short, subtle light-gray separator line on the
-#' next line. The accent is rendered when used with `theme_chanwe()` and
-#' the `ggtext` package is installed.
+#' Returns the subtitle string as-is for use in `labs(subtitle = ...)`.
+#' [theme_chanwe()] styles it automatically in Archivo ExtraLight (200), so
+#' no wrapper is needed — this function exists as a discoverable entry point
+#' and may gain formatting options in future versions.
 #'
 #' @param text Subtitle text.
-#' @param rule Character glyph sequence used for the accent rule.
 #'
-#' @return A markdown string for use inside `labs(subtitle = ...)`.
+#' @return The input string unchanged.
 #' @export
 #'
 #' @examples
+#' ## Pass directly — theme handles the font:
+#' # ggplot2::labs(subtitle = "Quarterly performance")
+#'
+#' ## Or via the helper (equivalent):
 #' chanwe_subtitle("Quarterly performance")
 chanwe_subtitle <- function(text) {
   text
@@ -292,17 +379,27 @@ chanwe_subtitle <- function(text) {
 
 #' ChanWe Caption Helper
 #'
-#' Returns a caption string with a full-width light-gray divider rule above it
-#' and a `//` marker before the text, styled to match the axis title treatment.
-#' Use inside `ggplot2::labs(caption = ...)` together with [theme_chanwe()].
+#' Prepends an orange `//` marker to the caption text, rendered in JetBrains
+#' Mono by [theme_chanwe()]. Use inside `labs(caption = ...)`.
 #'
-#' @param text Caption text.
+#' Requires the `ggtext` package for HTML rendering; falls back to plain
+#' `"// text"` when unavailable.
 #'
-#' @return A markdown string for use inside `labs(caption = ...)`.
+#' @param text Caption text, e.g. source line or data note.
+#'
+#' @return A character string for `labs(caption = ...)`.
 #' @export
 #'
 #' @examples
 #' chanwe_caption("Q1 2026 · USD M and %.")
+#' chanwe_caption("Source: Motor Trend, 1974 · mtcars dataset")
+#'
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+#'     ggplot2::geom_point() +
+#'     ggplot2::labs(caption = chanwe_caption("Source: mtcars")) +
+#'     theme_chanwe()
+#' }
 chanwe_caption <- function(text) {
   if (!requireNamespace("ggtext", quietly = TRUE)) {
     return(paste0("// ", text))
@@ -316,14 +413,38 @@ chanwe_caption <- function(text) {
   )
 }
 
-#' ChanWe Discrete Color Scale
+#' ChanWe Discrete Color Scales
 #'
-#' Discrete ChanWe palette scale for color aesthetics.
+#' Apply the ChanWe categorical palette to `color` or `fill` aesthetics.
+#' Colors cycle through the brand chart palette when there are more categories
+#' than palette entries.
 #'
-#' @param ... Additional arguments passed to [ggplot2::discrete_scale()].
+#' `scale_color_chanwe_d()` maps to the `colour` aesthetic (points, lines,
+#' text). `scale_fill_chanwe_d()` maps to the `fill` aesthetic (bars, areas,
+#' ribbons).
+#'
+#' @param ... Additional arguments passed to [ggplot2::discrete_scale()],
+#'   e.g. `name`, `labels`, `guide`, `drop`.
 #'
 #' @return A ggplot2 scale object.
 #' @export
+#'
+#' @examples
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'
+#'   ## Points colored by group
+#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+#'     ggplot2::geom_point(size = 3) +
+#'     scale_color_chanwe_d() +
+#'     theme_chanwe()
+#'
+#'   ## Bars filled by group
+#'   avg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+#'   ggplot2::ggplot(avg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
+#'     ggplot2::geom_col() +
+#'     scale_fill_chanwe_d() +
+#'     theme_chanwe(legend_position = "none")
+#' }
 scale_color_chanwe_d <- function(...) {
   ggplot2::discrete_scale(
     aesthetics = "colour",
