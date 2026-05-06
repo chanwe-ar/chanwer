@@ -62,7 +62,8 @@
       "Bash(Rscript -e 'packageVersion\\(\"knitr\"\\); cat\\(names\\(knitr:::auto_exts\\), \"\\\\n\"\\)')",
       "Bash(sed -i '' '348s/0.5pt + _t.ink/0.3pt + _t.ink/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)",
       "Bash(sed -i '' '365s/0.5pt + _t.ink/0.3pt + _t.ink/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)",
-      "Bash(Rscript -e \"devtools::document\\(\\)\")"
+      "Bash(Rscript -e \"devtools::document\\(\\)\")",
+      "Bash(grep -v \"^$\\\\|system-reminder\\\\|Available\\\\|TRIGGER\\\\|SKIP\")"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"
