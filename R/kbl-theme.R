@@ -116,8 +116,8 @@ chanwe_kbl <- function(
     "7pt"
   }
 
-  top_v <- if (sp) "14pt" else "6pt" # space inside title cell before eyebrow
-  bot_v <- if (sp) "15pt" else "3pt" # space inside subtitle cell before separator
+  top_v <- if (sp) "2pt" else "2pt" # space inside title cell before eyebrow
+  bot_v <- if (sp) "2pt" else "2pt" # space inside subtitle cell before separator
 
   n <- ncol(data)
   nms <- colnames(data)
@@ -185,7 +185,7 @@ chanwe_kbl <- function(
   # excessive gap between title, subtitle, and separator
   inset_title <- paste0("(top: ", inset_y, ", bottom: 5pt, x: 2.5mm)")
   inset_sub <- paste0("(top: 4pt, bottom: ", inset_y, ", x: 2.5mm)")
-  colhdr_top <- if (sp) "24pt" else "9pt"
+  colhdr_top <- if (sp) "20pt" else "12pt"
   inset_colhdr <- paste0(
     "(top: ",
     colhdr_top,
@@ -193,7 +193,7 @@ chanwe_kbl <- function(
     inset_y,
     ", x: 2.5mm)"
   )
-  footer_top_inset <- if (sp) "14pt" else "6pt"
+  footer_top_inset <- if (sp) "10pt" else "8pt"
   inset_footer <- paste0(
     "(top: ",
     footer_top_inset,
@@ -268,7 +268,7 @@ chanwe_kbl <- function(
         n,
         ", inset: ",
         inset_title,
-        ", stroke: (top: 0.5pt + _t.ink))[",
+        ", stroke: (top: 0.2pt + _t.ink))[",
         inner,
         "],"
       )
@@ -293,7 +293,7 @@ chanwe_kbl <- function(
       )
     }
 
-    p("      table.hline(stroke: 0.5pt + _t.ink),")
+    p("      table.hline(stroke: 0.3pt + _t.ink),")
 
     for (i in seq_len(n)) {
       p(
@@ -314,7 +314,7 @@ chanwe_kbl <- function(
     p("    ),")
   }
 
-  p("    table.hline(stroke: 0.5pt + _t.ink),")
+  p("    table.hline(stroke: 0.8pt + _t.ink),")
 
   nr <- nrow(data)
   for (i in seq_len(nr)) {
@@ -338,13 +338,14 @@ chanwe_kbl <- function(
         "]],"
       )
     }
+    if (i < nr) p('    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),')
   }
 
   p("    table.hline(stroke: 0.5pt + _t.ink),")
 
   if (!is.null(caption)) {
     p("    table.footer(")
-    p("      table.hline(stroke: 0.5pt + _t.ink),")
+    p("      table.hline(stroke: 0.3pt + _t.ink),")
     p(
       "      table.cell(colspan: ",
       n,
@@ -361,7 +362,7 @@ chanwe_kbl <- function(
     )
     p("    )")
   } else {
-    p("    table.footer(table.hline(stroke: 0.5pt + _t.ink))")
+    p("    table.footer(table.hline(stroke: 0.2pt + _t.ink))")
   }
 
   p("  )")
