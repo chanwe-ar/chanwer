@@ -1,9 +1,18 @@
 #' Load ChanWe Fonts into systemfonts
 #'
-#' Registers Satoshi, Archivo, and Fraunces 9pt font families (plus the
-#' `.chanwe-subtitle` ExtraLight Italic variant) with [systemfonts::register_font()],
-#' making them available to the ragg device and ggplot2.
+#' Registers all ChanWe font families with [systemfonts::register_font()],
+#' making them available to the ragg and svglite devices and to ggplot2.
 #' Call once per session before creating plots with [theme_chanwe()].
+#'
+#' Registered families:
+#' - `"Satoshi"` — Regular / Bold / Italic / BoldItalic
+#' - `"Archivo"` — Regular / Bold / Italic / BoldItalic
+#' - `"Archivo SemiBold"` — plain face = SemiBold (600); used by [chanwe_title()]
+#' - `"Archivo ExtraBold"` — plain face = ExtraBold (800)
+#' - `".chanwe-subtitle"` — plain face = Archivo Light (300)
+#' - `"Fraunces 9pt"` — Regular / Bold / Italic / BoldItalic
+#' - `"JetBrains Mono"` — Regular / Bold / Italic / BoldItalic
+#' - `"JetBrains Mono Thin"` — plain face = Thin (100); used by axis titles / facet labels
 #'
 #' @param path Directory containing the TTF files. Defaults to
 #'   `_extensions/chanwe/fonts` relative to the working directory (i.e. the

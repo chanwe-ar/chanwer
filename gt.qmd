@@ -175,7 +175,28 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     geom_point(size = 2.2, alpha = 0.88) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     scale_color_chanwe_d() +
-    theme_chanwe(bg_color = "#fff") +
+    theme_chanwe(bg_color = "white") +
+    labs(
+        title = chanwe_title(
+            "Simple fleet view",
+            eyebrow = "TLDR;"
+        ),
+        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band"
+    )
+```
+
+##### Plot 3
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(bg_color = "gray") +
     labs(
         title = chanwe_title(
             "Simple fleet view",

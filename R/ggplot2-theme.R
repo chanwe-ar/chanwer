@@ -16,29 +16,36 @@ chanwe_discrete_pal <- function() {
 #' brand-consistent color palettes.
 #'
 #' ## Typography
-#' - **Title**: Archivo ExtraBold (800) — large, heavy weight
-#' - **Subtitle**: Archivo Light (300) — same family, featherweight contrast
-#' - **Body / axis text**: Satoshi Regular
-#' - **Axis titles, legend, caption**: JetBrains Mono
+#' | Element | Font | Weight |
+#' |---------|------|--------|
+#' | Title (with eyebrow) | Archivo SemiBold | 600 |
+#' | Subtitle | Satoshi | 400 |
+#' | Axis text | Satoshi | 400 |
+#' | Axis titles | JetBrains Mono Thin | 100 |
+#' | Facet strip labels | JetBrains Mono Thin | 100 |
+#' | Legend text / title | JetBrains Mono | 400 |
+#' | Caption | JetBrains Mono | 400 |
 #'
 #' Call [chanwe_load_fonts()] once per session to register the custom font
-#' families before rendering. `theme_chanwe()` calls it automatically.
+#' families. `theme_chanwe()` calls it automatically.
 #'
 #' ## Background variants
-#' Pass a named shortcut or any hex string to `bg_color`:
-#' | Name | Hex | Use |
-#' |------|-----|-----|
-#' | `"white"` | `#FFFFFF` | Default — clean white |
-#' | `"gray"` | `#F5F5F5` | Light neutral gray |
-#' | `"beige"` | `#ECE5D8` | Warm brand beige |
+#' | Name | Hex | Major grid | Minor grid |
+#' |------|-----|------------|------------|
+#' | `"white"` | `#FFFFFF` | `#F0F0F0` | `#F4F4F4` |
+#' | `"gray"` | `#F5F5F5` | `#E8E8E8` | `#EBEBEB` |
+#' | `"beige"` | `#ECE5D8` | `#E0D6CA` | `#E6DDD2` |
 #'
-#' @param base_text_size Base text size in points. Default `9.5`.
+#' @param base_text_size Base text size in points. Default `6.5`.
 #' @param base_family Base font family for body text. Default `"Satoshi"`.
 #' @param base_lineheight Base line-height multiplier. Default `1.60`.
 #' @param legend_position Legend position string passed to
 #'   `theme(legend.position = )`. Default `"bottom"`.
 #' @param bg_color Background color for the plot surface. Accepts a hex string
 #'   or one of `"white"` (default), `"gray"`, `"beige"`.
+#' @param plot_padding Uniform outer margin in pts applied to all four sides of
+#'   the plot (title, caption, and panel included). Default `2`.
+#'   Pass a single number, e.g. `plot_padding = 18`.
 #'
 #' @return A ggplot2 theme object. Add to any ggplot with `+ theme_chanwe()`.
 #' @export
@@ -110,6 +117,12 @@ theme_chanwe <- function(
     "#FFFFFF" = "#F0F0F0",
     "#ECE5D8" = "#E0D6CA",
     colors[["typst-neutral-200"]]
+  )
+  grid_color_minor <- switch(
+    bg_color,
+    "#FFFFFF" = "#F4F4F4",
+    "#ECE5D8" = "#E6DDD2",
+    "#EBEBEB"
   )
   panel_border_element <- ggplot2::element_blank()
 
@@ -243,9 +256,12 @@ theme_chanwe <- function(
       ),
       panel.grid.major = ggplot2::element_line(
         color = grid_color,
-        linewidth = 0.3
+        linewidth = 0.15
       ),
-      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_line(
+        color = grid_color_minor,
+        linewidth = 0.1
+      ),
       plot.background = ggplot2::element_rect(fill = surface_fill, color = NA),
       panel.background = ggplot2::element_rect(
         fill = surface_fill,

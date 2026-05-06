@@ -14,7 +14,7 @@ theme_chanwe(
 )
 }
 \arguments{
-\item{base_text_size}{Base text size in points. Default \code{9.5}.}
+\item{base_text_size}{Base text size in points. Default \code{6.5}.}
 
 \item{base_family}{Base font family for body text. Default \code{"Satoshi"}.}
 
@@ -25,6 +25,10 @@ theme_chanwe(
 
 \item{bg_color}{Background color for the plot surface. Accepts a hex string
 or one of \code{"white"} (default), \code{"gray"}, \code{"beige"}.}
+
+\item{plot_padding}{Uniform outer margin in pts applied to all four sides of
+the plot (title, caption, and panel included). Default \code{2}.
+Pass a single number, e.g. \code{plot_padding = 18}.}
 }
 \value{
 A ggplot2 theme object. Add to any ggplot with \code{+ theme_chanwe()}.
@@ -37,25 +41,27 @@ treatment, and with \code{\link[=scale_color_chanwe_d]{scale_color_chanwe_d()}} 
 brand-consistent color palettes.
 }
 \details{
-\subsection{Typography}{
-\itemize{
-\item \strong{Title}: Archivo ExtraBold (800) — large, heavy weight
-\item \strong{Subtitle}: Archivo Light (300) — same family, featherweight contrast
-\item \strong{Body / axis text}: Satoshi Regular
-\item \strong{Axis titles, legend, caption}: JetBrains Mono
+\subsection{Typography}{\tabular{lll}{
+   Element \tab Font \tab Weight \cr
+   Title (with eyebrow) \tab Archivo SemiBold \tab 600 \cr
+   Subtitle \tab Satoshi \tab 400 \cr
+   Axis text \tab Satoshi \tab 400 \cr
+   Axis titles \tab JetBrains Mono Thin \tab 100 \cr
+   Facet strip labels \tab JetBrains Mono Thin \tab 100 \cr
+   Legend text / title \tab JetBrains Mono \tab 400 \cr
+   Caption \tab JetBrains Mono \tab 400 \cr
 }
+
 
 Call \code{\link[=chanwe_load_fonts]{chanwe_load_fonts()}} once per session to register the custom font
-families before rendering. \code{theme_chanwe()} calls it automatically.
+families. \code{theme_chanwe()} calls it automatically.
 }
 
-\subsection{Background variants}{
-
-Pass a named shortcut or any hex string to \code{bg_color}:\tabular{lll}{
-   Name \tab Hex \tab Use \cr
-   \code{"white"} \tab \verb{#FFFFFF} \tab Default — clean white \cr
-   \code{"gray"} \tab \verb{#F5F5F5} \tab Light neutral gray \cr
-   \code{"beige"} \tab \verb{#ECE5D8} \tab Warm brand beige \cr
+\subsection{Background variants}{\tabular{llll}{
+   Name \tab Hex \tab Major grid \tab Minor grid \cr
+   \code{"white"} \tab \verb{#FFFFFF} \tab \verb{#F0F0F0} \tab \verb{#F4F4F4} \cr
+   \code{"gray"} \tab \verb{#F5F5F5} \tab \verb{#E8E8E8} \tab \verb{#EBEBEB} \cr
+   \code{"beige"} \tab \verb{#ECE5D8} \tab \verb{#E0D6CA} \tab \verb{#E6DDD2} \cr
 }
 
 }

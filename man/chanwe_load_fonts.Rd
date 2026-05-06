@@ -15,10 +15,22 @@ fonts bundled with the chanwe-typst Quarto extension).}
 Invisibly, the resolved fonts directory path.
 }
 \description{
-Registers Satoshi, Archivo, and Fraunces 9pt font families (plus the
-\code{.chanwe-subtitle} ExtraLight Italic variant) with \code{\link[systemfonts:register_font]{systemfonts::register_font()}},
-making them available to the ragg device and ggplot2.
+Registers all ChanWe font families with \code{\link[systemfonts:register_font]{systemfonts::register_font()}},
+making them available to the ragg and svglite devices and to ggplot2.
 Call once per session before creating plots with \code{\link[=theme_chanwe]{theme_chanwe()}}.
+}
+\details{
+Registered families:
+\itemize{
+\item \code{"Satoshi"} — Regular / Bold / Italic / BoldItalic
+\item \code{"Archivo"} — Regular / Bold / Italic / BoldItalic
+\item \code{"Archivo SemiBold"} — plain face = SemiBold (600); used by \code{\link[=chanwe_title]{chanwe_title()}}
+\item \code{"Archivo ExtraBold"} — plain face = ExtraBold (800)
+\item \code{".chanwe-subtitle"} — plain face = Archivo Light (300)
+\item \code{"Fraunces 9pt"} — Regular / Bold / Italic / BoldItalic
+\item \code{"JetBrains Mono"} — Regular / Bold / Italic / BoldItalic
+\item \code{"JetBrains Mono Thin"} — plain face = Thin (100); used by axis titles / facet labels
+}
 }
 \examples{
 \dontrun{

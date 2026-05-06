@@ -2380,3 +2380,7 @@
 ===== Plot 2
 <plot-2>
 #box(image("gt_files/figure-typst/unnamed-chunk-5-1.svg", width: 100.0%))
+
+===== Plot 3
+<plot-3>
+#box(image("gt_files/figure-typst/unnamed-chunk-6-1.svg", width: 100.0%))
