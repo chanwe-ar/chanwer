@@ -42,13 +42,13 @@
 
 #let chanwe-eyebrow(body, color: _t.primary, with-rule: false, size: 8.5pt) = {
   if with-rule {
-    box(width: 22pt, height: 1.5pt, fill: color, baseline: -3pt)
+    box(width: 22pt, height: 0.75pt, fill: color, baseline: -3pt)
     h(8pt)
   }
   text(
     font: _t.font-mono,
     size: size,
-    weight: 500,
+    weight: 300,
     tracking: 0.18em,
     fill: color,
     upper(body),

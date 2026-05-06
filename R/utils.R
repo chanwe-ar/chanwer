@@ -87,6 +87,23 @@ chanwe_load_fonts <- function(path = NULL) {
     italic     = "JetBrainsMono-Italic.ttf",
     bolditalic = "JetBrainsMono-BoldItalic.ttf"
   )
+  .reg("JetBrains Mono Thin",
+    plain      = "JetBrainsMono-Thin.ttf",
+    bold       = "JetBrainsMono-ExtraLight.ttf",
+    italic     = "JetBrainsMono-ThinItalic.ttf",
+    bolditalic = "JetBrainsMono-ExtraLightItalic.ttf"
+  )
+
+  # Archivo SemiBold (600) — registered as its own family so gridtext resolves it
+  # via font-family lookup. Weight 600 alone won't work since systemfonts only
+  # snaps to registered weights (400 / 700 from the main "Archivo" registration).
+  archivo_semibold <- file.path(path, "Archivo-SemiBold.ttf")
+  if (file.exists(archivo_semibold)) {
+    tryCatch(
+      systemfonts::register_font(name = "Archivo SemiBold", plain = archivo_semibold),
+      error = function(e) NULL
+    )
+  }
 
   # .chanwe-title: Archivo ExtraBold (800) baked as plain face for element_markdown.
   # "Archivo ExtraBold": same file registered under its typographic family name

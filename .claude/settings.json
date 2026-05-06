@@ -61,7 +61,8 @@
       "Bash(Rscript -e 'svglite::svglite\\(file = tempfile\\(fileext = \".svg\"\\)\\); plot\\(1\\); dev.off\\(\\); cat\\(\"svglite device works\\\\n\"\\)')",
       "Bash(Rscript -e 'packageVersion\\(\"knitr\"\\); cat\\(names\\(knitr:::auto_exts\\), \"\\\\n\"\\)')",
       "Bash(sed -i '' '348s/0.5pt + _t.ink/0.3pt + _t.ink/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)",
-      "Bash(sed -i '' '365s/0.5pt + _t.ink/0.3pt + _t.ink/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)"
+      "Bash(sed -i '' '365s/0.5pt + _t.ink/0.3pt + _t.ink/' /Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwer/R/kbl-theme.R)",
+      "Bash(Rscript -e \"devtools::document\\(\\)\")"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

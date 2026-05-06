@@ -96,7 +96,8 @@ theme_chanwe <- function(
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
-  bg_color = "white"
+  bg_color = "white",
+  plot_padding = 2
 ) {
   chanwe_load_fonts()
 
@@ -106,9 +107,9 @@ theme_chanwe <- function(
   outer_border_color <- colors[["typst-neutral-200"]]
   grid_color <- switch(
     bg_color,
-    "#FFFFFF" = colors[["typst-neutral-100"]], # #F5F5F5 — lighter on white
-    "#ECE5D8" = "#D9CCBA", # warm tone matching beige palette
-    colors[["typst-neutral-200"]] # #E8E8E8 — default for gray etc.
+    "#FFFFFF" = "#F0F0F0",
+    "#ECE5D8" = "#E0D6CA",
+    colors[["typst-neutral-200"]]
   )
   panel_border_element <- ggplot2::element_blank()
 
@@ -117,13 +118,9 @@ theme_chanwe <- function(
   } else {
     character(0)
   }
-  title_family <- if (".chanwe-title" %in% reg) ".chanwe-title" else "Archivo"
+  title_family <- "Archivo"
   title_face <- "plain"
-  subtitle_family <- if (".chanwe-subtitle" %in% reg) {
-    ".chanwe-subtitle"
-  } else {
-    "Satoshi"
-  }
+  subtitle_family <- "Satoshi"
   subtitle_face <- "plain"
 
   mono_family <- if (
@@ -137,6 +134,14 @@ theme_chanwe <- function(
     "JetBrains Mono"
   } else {
     "mono"
+  }
+  mono_thin_family <- if (
+    requireNamespace("systemfonts", quietly = TRUE) &&
+      "JetBrains Mono Thin" %in% systemfonts::registry_fonts()$family
+  ) {
+    "JetBrains Mono Thin"
+  } else {
+    mono_family
   }
 
   title_element <- ggplot2::element_text(
@@ -212,7 +217,7 @@ theme_chanwe <- function(
         )
       },
       axis.title = ggplot2::element_text(
-        family = mono_family,
+        family = mono_thin_family,
         color = colors[["typst-ink"]],
         face = "plain",
         size = base_text_size * 0.75
@@ -241,11 +246,7 @@ theme_chanwe <- function(
         linewidth = 0.3
       ),
       panel.grid.minor = ggplot2::element_blank(),
-      plot.background = ggplot2::element_rect(
-        fill = surface_fill,
-        color = outer_border_color,
-        linewidth = 0.3
-      ),
+      plot.background = ggplot2::element_rect(fill = surface_fill, color = NA),
       panel.background = ggplot2::element_rect(
         fill = surface_fill,
         color = NA
@@ -256,7 +257,7 @@ theme_chanwe <- function(
         color = NA
       ),
       strip.text = ggplot2::element_text(
-        family = mono_family,
+        family = mono_thin_family,
         color = colors[["typst-ink"]],
         face = "plain",
         size = base_text_size * 1,
@@ -293,7 +294,12 @@ theme_chanwe <- function(
       plot.subtitle = subtitle_element,
       plot.title.position = "plot",
       plot.caption.position = "plot",
-      plot.margin = ggplot2::margin(2, 2, 2, 2)
+      plot.margin = ggplot2::margin(
+        plot_padding,
+        plot_padding,
+        plot_padding,
+        plot_padding
+      )
     )
   )
   theme_obj
@@ -347,8 +353,13 @@ chanwe_title <- function(text, eyebrow = NULL) {
   } else {
     character(0)
   }
-  tf <- if ("Archivo ExtraBold" %in% reg) "\"Archivo ExtraBold\"" else "Archivo"
-  tw <- "300"
+  tf <- if ("Archivo SemiBold" %in% reg) {
+    "\"Archivo SemiBold\""
+  } else if ("Archivo ExtraBold" %in% reg) {
+    "\"Archivo ExtraBold\""
+  } else {
+    "Archivo"
+  }
   paste0(
     "<span style='font-family:\"JetBrains Mono\";font-size:5pt;font-weight:normal;color:",
     colors[["typst-primary"]],
@@ -357,9 +368,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
     "</span><br><span style='font-size:9pt;color:transparent;'>·</span><br>",
     "<span style='font-family:",
     tf,
-    ",sans-serif;font-weight:",
-    tw,
-    ";letter-spacing:0em;'>",
+    ",sans-serif;letter-spacing:0em;'>",
     text,
     "</span>"
   )

@@ -26,6 +26,8 @@ chanwe_kbl(
   col_label_top = 0,
   footer_top = 0,
   bg = NULL,
+  top_border = TRUE,
+  header_rule = TRUE,
   fmt = list()
 )
 }

@@ -9,7 +9,8 @@ theme_chanwe(
   base_family = "Satoshi",
   base_lineheight = 1.6,
   legend_position = "bottom",
-  bg_color = "white"
+  bg_color = "white",
+  plot_padding = 2
 )
 }
 \arguments{

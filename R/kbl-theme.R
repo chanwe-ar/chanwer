@@ -88,7 +88,7 @@ chanwe_kbl <- function(
   } else {
     "16pt"
   }
-  eyebrow_pt <- if (!is.null(eyebrow_size)) eyebrow_size else "8.5pt"
+  eyebrow_pt <- if (!is.null(eyebrow_size)) eyebrow_size else "6pt"
   sub_pt <- if (!is.null(subtitle_size)) {
     subtitle_size
   } else if (sp) {
@@ -310,7 +310,7 @@ chanwe_kbl <- function(
         pt_v(col_label_top),
         '#text(font: "JetBrains Mono", size: ',
         label_pt,
-        ', fill: _t.fg-subtle, weight: "regular", tracking: 0.05em)[',
+        ', fill: _t.fg-subtle, weight: "thin", tracking: 0.05em)[',
         esc(toupper(labels[i])),
         ']],'
       )
@@ -327,7 +327,7 @@ chanwe_kbl <- function(
       val <- esc(fmt_data[[j]][i])
       is_first <- j == 1L
       fill <- if (is_first) "_t.ink" else "_t.fg-muted"
-      weight <- if (is_first) '"bold"' else '"regular"'
+      weight <- if (is_first) '"medium"' else '"light"'
       p(
         "    table.cell(align: ",
         col_aligns[j],
@@ -360,7 +360,7 @@ chanwe_kbl <- function(
       pt_v(footer_top),
       '#text(font: "JetBrains Mono", size: ',
       note_pt,
-      ', fill: _t.fg-subtle)[',
+      ', fill: _t.fg-muted)[',
       '#text(fill: _t.primary)[/\\/]',
       esc(caption),
       ']],'
