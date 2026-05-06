@@ -77,16 +77,16 @@ chanwe_kbl <- function(
   inset_y <- if (!is.null(row_padding)) {
     row_padding
   } else if (sp) {
-    "8pt"
+    "10pt"
   } else {
-    "3pt"
+    "5pt"
   }
   title_pt <- if (!is.null(title_size)) {
     title_size
   } else if (sp) {
     "19pt"
   } else {
-    "13pt"
+    "16pt"
   }
   eyebrow_pt <- if (!is.null(eyebrow_size)) eyebrow_size else "8.5pt"
   sub_pt <- if (!is.null(subtitle_size)) {
@@ -94,14 +94,14 @@ chanwe_kbl <- function(
   } else if (sp) {
     "11pt"
   } else {
-    "9pt"
+    "10pt"
   }
   body_pt <- if (!is.null(body_size)) {
     body_size
   } else if (sp) {
     "10pt"
   } else {
-    "8pt"
+    "7pt"
   }
   label_pt <- if (!is.null(header_size)) {
     header_size
@@ -187,7 +187,7 @@ chanwe_kbl <- function(
   # excessive gap between title, subtitle, and separator
   inset_title <- paste0("(top: ", inset_y, ", bottom: 5pt, x: 2.5mm)")
   inset_sub <- paste0("(top: 4pt, bottom: ", inset_y, ", x: 2.5mm)")
-  colhdr_top <- if (sp) "20pt" else "12pt"
+  colhdr_top <- if (sp) "20pt" else "14pt"
   inset_colhdr <- paste0(
     "(top: ",
     colhdr_top,
@@ -195,7 +195,7 @@ chanwe_kbl <- function(
     inset_y,
     ", x: 2.5mm)"
   )
-  footer_top_inset <- if (sp) "10pt" else "8pt"
+  footer_top_inset <- if (sp) "10pt" else "9pt"
   inset_footer <- paste0(
     "(top: ",
     footer_top_inset,

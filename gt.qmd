@@ -122,6 +122,7 @@ mt |>
     )
 ```
 
+# New page 
 ## Gray background
 
 ```{r}
@@ -136,9 +137,12 @@ mt |>
         stub = "model",
         bg = "gray",
         density = 'compact',
+        top_border = FALSE,
         fmt = fmt_fleet
     )
 ```
+
+
 
 
 ```{r}
@@ -148,7 +152,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     facet_wrap(~am) +
     scale_color_chanwe_d() +
-    theme_chanwe(bg_color = "#F5F5F5") +
+    theme_chanwe(bg_color = "#fff") +
     labs(
         title = chanwe_title(
             "Performance profile by transmission",

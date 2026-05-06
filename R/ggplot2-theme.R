@@ -293,7 +293,7 @@ theme_chanwe <- function(
       plot.subtitle = subtitle_element,
       plot.title.position = "plot",
       plot.caption.position = "plot",
-      plot.margin = ggplot2::margin(22, 22, 18, 22)
+      plot.margin = ggplot2::margin(2, 2, 2, 2)
     )
   )
   theme_obj
