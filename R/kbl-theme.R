@@ -65,6 +65,8 @@ chanwe_kbl <- function(
   col_label_top = 0,
   footer_top = 0,
   bg = NULL,
+  top_border = TRUE,
+  header_rule = TRUE,
   fmt = list()
 ) {
   chanwe_require_package("knitr")
@@ -268,7 +270,8 @@ chanwe_kbl <- function(
         n,
         ", inset: ",
         inset_title,
-        ", stroke: (top: 0.2pt + _t.ink))[",
+        if (top_border) ", stroke: (top: 0.1pt + _t.ink)" else "",
+        ")[",
         inner,
         "],"
       )
@@ -293,7 +296,9 @@ chanwe_kbl <- function(
       )
     }
 
-    p("      table.hline(stroke: 0.3pt + _t.ink),")
+    if (header_rule) {
+      p("      table.hline(stroke: 0.7pt + _t.ink),")
+    }
 
     for (i in seq_len(n)) {
       p(
@@ -314,7 +319,7 @@ chanwe_kbl <- function(
     p("    ),")
   }
 
-  p("    table.hline(stroke: 0.8pt + _t.ink),")
+  p("    table.hline(stroke: 0.1pt + _t.ink),")
 
   nr <- nrow(data)
   for (i in seq_len(nr)) {
@@ -362,7 +367,7 @@ chanwe_kbl <- function(
     )
     p("    )")
   } else {
-    p("    table.footer(table.hline(stroke: 0.2pt + _t.ink))")
+    p("    table.footer(table.hline(stroke: 0.1pt + _t.ink))")
   }
 
   p("  )")

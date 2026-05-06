@@ -117,6 +117,7 @@ mt |>
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
         bg = "beige",
+        top_border = FALSE,
         fmt = fmt_fleet
     )
 ```
@@ -134,6 +135,7 @@ mt |>
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
         bg = "gray",
+        density = 'compact',
         fmt = fmt_fleet
     )
 ```
