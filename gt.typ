@@ -2113,7 +2113,7 @@
   title: [Chanwe Showcase: ggplot2 + gt],
   subtitle: [Tables and plots aligned with chanwe-typst design tokens],
   author: "Alejandro Abraham",
-  date: "2026-05-06",
+  date: "2026-05-07",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",

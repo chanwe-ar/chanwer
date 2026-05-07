@@ -175,7 +175,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     geom_point(size = 2.2, alpha = 0.88) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     scale_color_chanwe_d() +
-    theme_chanwe(bg_color = "white") +
+    theme_chanwe(bg_color = "white", plot_borders = TRUE) +
     labs(
         title = chanwe_title(
             "Simple fleet view",
@@ -196,7 +196,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     geom_point(size = 2.2, alpha = 0.88) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     scale_color_chanwe_d() +
-    theme_chanwe(bg_color = "gray") +
+    theme_chanwe(bg_color = "gray", plot_borders = TRUE) +
     labs(
         title = chanwe_title(
             "Simple fleet view",

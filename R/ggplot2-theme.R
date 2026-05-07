@@ -104,7 +104,8 @@ theme_chanwe <- function(
   base_lineheight = 1.60,
   legend_position = "bottom",
   bg_color = "white",
-  plot_padding = 2
+  plot_padding = 2,
+  plot_borders = TRUE
 ) {
   chanwe_load_fonts()
 
@@ -185,14 +186,20 @@ theme_chanwe <- function(
       lineheight = 1,
       margin = ggplot2::margin(b = 1)
     )
-    subtitle_element <- ggtext::element_markdown(
+    subtitle_element <- ggtext::element_textbox_simple(
       family = subtitle_family,
       color = colors[["typst-fg-muted"]],
       face = "plain",
       size = base_text_size * 1,
       hjust = 0,
-      margin = ggplot2::margin(t = 3, b = 20),
-      lineheight = 1.3
+      halign = 0,
+      lineheight = 1.3,
+      width = grid::unit(1, "npc"),
+      margin = ggplot2::margin(t = 3, b = if (plot_borders) 14 else 20),
+      padding = ggplot2::margin(t = 0, r = 0, b = if (plot_borders) 6 else 0, l = 0),
+      box.colour = if (plot_borders) c(NA, NA, colors[["typst-ink"]], NA) else NULL,
+      linewidth = 0.3,
+      fill = NA
     )
   }
 
@@ -216,8 +223,13 @@ theme_chanwe <- function(
           halign = 0,
           width = grid::unit(1, "npc"),
           margin = ggplot2::margin(t = 10),
-          padding = ggplot2::margin(t = 8, r = 0, b = 0, l = 0),
-          box.colour = c(colors[["typst-ink"]], NA, NA, NA),
+          padding = ggplot2::margin(t = 8, r = 0, b = if (plot_borders) 6 else 0, l = 0),
+          box.colour = if (plot_borders) {
+            c(colors[["typst-ink"]], NA, colors[["typst-ink"]], NA)
+          } else {
+            c(colors[["typst-ink"]], NA, NA, NA)
+          },
+          linewidth = 0.3,
           fill = NA
         )
       } else {
@@ -380,7 +392,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
     "Archivo"
   }
   paste0(
-    "<span style='font-family:\"JetBrains Mono\";font-size:5pt;font-weight:normal;color:",
+    "<span style='font-family:\"JetBrains Mono\";font-size:6pt;font-weight:normal;color:",
     colors[["typst-primary"]],
     ";'>── ",
     toupper(eyebrow),

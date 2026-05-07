@@ -10,7 +10,8 @@ theme_chanwe(
   base_lineheight = 1.6,
   legend_position = "bottom",
   bg_color = "white",
-  plot_padding = 2
+  plot_padding = 2,
+  plot_borders = TRUE
 )
 }
 \arguments{
