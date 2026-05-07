@@ -115,15 +115,15 @@ theme_chanwe <- function(
   outer_border_color <- colors[["typst-neutral-200"]]
   grid_color <- switch(
     bg_color,
-    "#FFFFFF" = "#F0F0F0",
-    "#ECE5D8" = "#E0D6CA",
+    "#FFFFFF" = "#E8E8E8",
+    "#ECE5D8" = "#D8CEC0",
     colors[["typst-neutral-200"]]
   )
   grid_color_minor <- switch(
     bg_color,
-    "#FFFFFF" = "#F4F4F4",
-    "#ECE5D8" = "#E6DDD2",
-    "#EBEBEB"
+    "#FFFFFF" = "#EEEEEE",
+    "#ECE5D8" = "#DEDAD0",
+    "#E5E5E5"
   )
   panel_border_element <- ggplot2::element_blank()
 
@@ -196,8 +196,17 @@ theme_chanwe <- function(
       lineheight = 1.3,
       width = grid::unit(1, "npc"),
       margin = ggplot2::margin(t = 3, b = if (plot_borders) 14 else 20),
-      padding = ggplot2::margin(t = 0, r = 0, b = if (plot_borders) 6 else 0, l = 0),
-      box.colour = if (plot_borders) c(NA, NA, colors[["typst-ink"]], NA) else NULL,
+      padding = ggplot2::margin(
+        t = 0,
+        r = 0,
+        b = if (plot_borders) 6 else 0,
+        l = 0
+      ),
+      box.colour = if (plot_borders) {
+        c(NA, NA, colors[["typst-ink"]], NA)
+      } else {
+        NULL
+      },
       linewidth = 0.3,
       fill = NA
     )
@@ -223,7 +232,12 @@ theme_chanwe <- function(
           halign = 0,
           width = grid::unit(1, "npc"),
           margin = ggplot2::margin(t = 10),
-          padding = ggplot2::margin(t = 8, r = 0, b = if (plot_borders) 6 else 0, l = 0),
+          padding = ggplot2::margin(
+            t = 8,
+            r = 0,
+            b = if (plot_borders) 6 else 0,
+            l = 0
+          ),
           box.colour = if (plot_borders) {
             c(colors[["typst-ink"]], NA, colors[["typst-ink"]], NA)
           } else {

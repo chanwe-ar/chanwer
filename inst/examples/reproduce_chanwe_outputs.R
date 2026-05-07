@@ -5,6 +5,7 @@ library(ggplot2)
 library(kableExtra)
 library(gt)
 library(magrittr)
+library(grid)
 
 devtools::load_all()
 mt <- tibble::as_tibble(mtcars, rownames = "model") |>
