@@ -250,7 +250,7 @@ theme_chanwe <- function(
         margin = ggplot2::margin(0, 8, 0, 0)
       ),
       axis.line = ggplot2::element_line(
-        color = grid_color,
+        color = 'white',
         linewidth = 0.15
       ),
       axis.ticks = ggplot2::element_line(
