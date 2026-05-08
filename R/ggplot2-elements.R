@@ -1,0 +1,395 @@
+#' @importFrom ggplot2 element_grob
+#' @importFrom grid makeContent heightDetails widthDetails
+
+# Internal separator for structured label encoding — unlikely in normal text
+.CW_SEP <- "\x1F"
+
+# ─── helpers ─────────────────────────────────────────────────────────────────
+
+# Measure string height in pt by creating a textGrob with the given gpar
+.cw_str_h <- function(text, gp) {
+  grid::convertHeight(
+    grid::unit(1, "grobheight", grid::textGrob(text, gp = gp)),
+    "pt", valueOnly = TRUE
+  )
+}
+
+# ─── element constructors ────────────────────────────────────────────────────
+
+new_element_chanwe_title <- function(
+  family         = "Archivo",
+  size           = 18,
+  colour         = "#1A1A1A",
+  hjust          = 0,
+  vjust          = 1,
+  eyebrow_family = "JetBrains Mono",
+  eyebrow_size   = 6,
+  eyebrow_colour = "#FB3D0E",
+  ink_colour     = "#1A1A1A",
+  inherit.blank  = FALSE
+) {
+  structure(
+    list(
+      family         = family,  face = "bold", colour = colour, size = size,
+      hjust          = hjust,   vjust = vjust, angle = 0, lineheight = 1.1,
+      margin         = ggplot2::margin(0, 0, 2, 0),
+      debug          = FALSE,   inherit.blank = inherit.blank,
+      eyebrow_family = eyebrow_family,
+      eyebrow_size   = eyebrow_size,
+      eyebrow_colour = eyebrow_colour,
+      ink_colour     = ink_colour
+    ),
+    class = c("element_chanwe_title", "element_text", "element")
+  )
+}
+
+new_element_chanwe_subtitle <- function(
+  family        = "Satoshi",
+  size          = 9,
+  colour        = "#555555",
+  hjust         = 0,
+  vjust         = 1,
+  ink_colour    = "#1A1A1A",
+  inherit.blank = FALSE
+) {
+  structure(
+    list(
+      family        = family, face = "plain", colour = colour, size = size,
+      hjust         = hjust,  vjust = vjust,  angle = 0, lineheight = 1.3,
+      margin        = ggplot2::margin(3, 0, 20, 0),
+      debug         = FALSE,  inherit.blank = inherit.blank,
+      ink_colour    = ink_colour
+    ),
+    class = c("element_chanwe_subtitle", "element_text", "element")
+  )
+}
+
+new_element_chanwe_caption <- function(
+  family         = "JetBrains Mono",
+  size           = 7,
+  colour         = "#555555",
+  hjust          = 0,
+  vjust          = 1,
+  primary_colour = "#FB3D0E",
+  ink_colour     = "#1A1A1A",
+  inherit.blank  = FALSE
+) {
+  structure(
+    list(
+      family         = family, face = "plain", colour = colour, size = size,
+      hjust          = hjust,  vjust = vjust,  angle = 0, lineheight = 1.2,
+      margin         = ggplot2::margin(10, 0, 0, 0),
+      debug          = FALSE,  inherit.blank = inherit.blank,
+      primary_colour = primary_colour,
+      ink_colour     = ink_colour
+    ),
+    class = c("element_chanwe_caption", "element_text", "element")
+  )
+}
+
+# ─── gTree builders (called from element_grob methods) ───────────────────────
+
+# Builds a gTree whose makeContent positions everything with absolute pt coords.
+# y=0 is BOTTOM of grob, y=total_h is TOP (standard grid convention).
+# Since ggplot2 renders the title row with y=top at the visual top,
+# high y-values appear at the visual top of the allocated row.
+
+.cw_title_tree <- function(title_text, eyebrow_text, draw_top,
+                             title_gp, eyebrow_gp, ink_col) {
+  grid::gTree(
+    title_text   = title_text,
+    eyebrow_text = eyebrow_text,
+    draw_top     = draw_top,
+    title_gp     = title_gp,
+    eyebrow_gp   = eyebrow_gp,
+    ink_col      = ink_col,
+    cl           = "cw_title_tree"
+  )
+}
+
+.cw_title_heights <- function(x) {
+  t_h  <- .cw_str_h(x$title_text, x$title_gp)
+  has_ey <- !is.null(x$eyebrow_text) && nzchar(x$eyebrow_text)
+  ey_h <- if (has_ey) .cw_str_h(x$eyebrow_text, x$eyebrow_gp) else 0
+  bot  <- 2                                          # bottom padding
+  gap1 <- if (has_ey) 3 else 0                       # gap: title → eyebrow
+  gap2 <- if (x$draw_top && has_ey) 5 else
+          if (x$draw_top)           3 else 0         # gap: eyebrow/title → line
+  ln_h <- if (x$draw_top) 0.3 else 0
+  total <- bot + t_h + gap1 + ey_h + gap2 + ln_h
+  list(t_h = t_h, ey_h = ey_h, has_ey = has_ey,
+       bot = bot, gap1 = gap1, gap2 = gap2, ln_h = ln_h, total = total)
+}
+
+#' @method makeContent cw_title_tree
+#' @export
+makeContent.cw_title_tree <- function(x) {
+  d   <- .cw_title_heights(x)
+  # positions: y measured from BOTTOM of grob (y=0=bottom, y=total=top=visual top)
+  title_y <- d$bot + d$t_h / 2
+  ey_y    <- d$bot + d$t_h + d$gap1 + d$ey_h / 2
+  line_y  <- d$total - d$ln_h / 2
+
+  ch <- grid::gList(
+    grid::textGrob(x$title_text,
+                   x    = grid::unit(0, "npc"),
+                   y    = grid::unit(title_y, "pt"),
+                   just = c("left", "center"),
+                   gp   = x$title_gp)
+  )
+  if (d$has_ey) {
+    ch <- grid::gList(ch,
+      grid::textGrob(paste0("── ", toupper(x$eyebrow_text)),
+                     x    = grid::unit(0, "npc"),
+                     y    = grid::unit(ey_y, "pt"),
+                     just = c("left", "center"),
+                     gp   = x$eyebrow_gp))
+  }
+  if (x$draw_top) {
+    ch <- grid::gList(ch,
+      grid::linesGrob(
+        x  = grid::unit(c(0, 1), "npc"),
+        y  = grid::unit(c(line_y, line_y), "pt"),
+        gp = grid::gpar(col = x$ink_col, lwd = 0.3, lend = "square")))
+  }
+  grid::setChildren(x, ch)
+}
+
+#' @method heightDetails cw_title_tree
+#' @export
+heightDetails.cw_title_tree <- function(x) {
+  grid::unit(.cw_title_heights(x)$total, "pt")
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+.cw_subtitle_tree <- function(sub_text, note_text, draw_middle,
+                               sub_gp, note_gp, ink_col) {
+  grid::gTree(
+    sub_text    = sub_text,
+    note_text   = note_text,
+    draw_middle = draw_middle,
+    sub_gp      = sub_gp,
+    note_gp     = note_gp,
+    ink_col     = ink_col,
+    cl          = "cw_subtitle_tree"
+  )
+}
+
+.cw_subtitle_heights <- function(x) {
+  s_h   <- .cw_str_h(x$sub_text, x$sub_gp)
+  has_n <- !is.null(x$note_text) && nzchar(x$note_text)
+  n_h   <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
+  top   <- 3                                    # top padding (matches margin t=3)
+  bot   <- 20                                   # bottom padding (matches margin b=20)
+  gap_ln <- if (x$draw_middle) 5 else 0         # gap: subtitle → line
+  ln_h  <- if (x$draw_middle) 0.3 else 0
+  gap_n <- if (has_n) 3 else 0                  # gap: line → note
+  total <- top + s_h + gap_ln + ln_h + gap_n + n_h + bot
+  list(s_h = s_h, n_h = n_h, has_n = has_n,
+       top = top, bot = bot, gap_ln = gap_ln, ln_h = ln_h,
+       gap_n = gap_n, total = total)
+}
+
+#' @method makeContent cw_subtitle_tree
+#' @export
+makeContent.cw_subtitle_tree <- function(x) {
+  d   <- .cw_subtitle_heights(x)
+  # Build from bottom up:
+  # bot_pad | note | gap_n | line | gap_ln | subtitle | top_pad
+  note_y  <- d$bot + d$n_h / 2
+  line_y  <- d$bot + d$n_h + d$gap_n + d$ln_h / 2
+  sub_y   <- d$bot + d$n_h + d$gap_n + d$ln_h + d$gap_ln + d$s_h / 2
+
+  ch <- grid::gList(
+    grid::textGrob(x$sub_text,
+                   x    = grid::unit(0, "npc"),
+                   y    = grid::unit(sub_y, "pt"),
+                   just = c("left", "center"),
+                   gp   = x$sub_gp)
+  )
+  if (x$draw_middle) {
+    ch <- grid::gList(ch,
+      grid::linesGrob(
+        x  = grid::unit(c(0, 1), "npc"),
+        y  = grid::unit(c(line_y, line_y), "pt"),
+        gp = grid::gpar(col = x$ink_col, lwd = 0.3, lend = "square")))
+  }
+  if (d$has_n) {
+    ch <- grid::gList(ch,
+      grid::textGrob(x$note_text,
+                     x    = grid::unit(0, "npc"),
+                     y    = grid::unit(note_y, "pt"),
+                     just = c("left", "center"),
+                     gp   = x$note_gp))
+  }
+  grid::setChildren(x, ch)
+}
+
+#' @method heightDetails cw_subtitle_tree
+#' @export
+heightDetails.cw_subtitle_tree <- function(x) {
+  grid::unit(.cw_subtitle_heights(x)$total, "pt")
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+.cw_caption_tree <- function(cap_text, draw_bottom,
+                              cap_gp, pfx_gp, ink_col) {
+  grid::gTree(
+    cap_text    = cap_text,
+    draw_bottom = draw_bottom,
+    cap_gp      = cap_gp,
+    pfx_gp      = pfx_gp,
+    ink_col     = ink_col,
+    cl          = "cw_caption_tree"
+  )
+}
+
+.cw_caption_heights <- function(x) {
+  c_h   <- .cw_str_h(x$cap_text, x$cap_gp)
+  top   <- 10          # top padding (matches margin t=10)
+  bot   <- 4           # bottom padding
+  tln_h <- 0.3         # top divider line
+  gap1  <- 5           # gap: top line → text
+  gap2  <- if (x$draw_bottom) 4 else 0
+  bln_h <- if (x$draw_bottom) 0.3 else 0
+  total <- bot + bln_h + gap2 + c_h + gap1 + tln_h + top
+  list(c_h = c_h, top = top, bot = bot,
+       tln_h = tln_h, gap1 = gap1, gap2 = gap2, bln_h = bln_h, total = total)
+}
+
+#' @method makeContent cw_caption_tree
+#' @export
+makeContent.cw_caption_tree <- function(x) {
+  d  <- .cw_caption_heights(x)
+  # Build from bottom up:
+  # bot | bot_line | gap2 | cap_text | gap1 | top_line | top_pad
+  bln_y  <- d$bot + d$bln_h / 2
+  cap_y  <- d$bot + d$bln_h + d$gap2 + d$c_h / 2
+  tln_y  <- d$bot + d$bln_h + d$gap2 + d$c_h + d$gap1 + d$tln_h / 2
+
+  # "// " prefix + text on the same row
+  pfx_str <- "//  "
+  pfx_g   <- grid::textGrob(pfx_str,
+                              x    = grid::unit(0, "npc"),
+                              y    = grid::unit(cap_y, "pt"),
+                              just = c("left", "center"),
+                              gp   = x$pfx_gp)
+  cap_g   <- grid::textGrob(x$cap_text,
+                              x    = grid::unit(1, "grobwidth", pfx_g),
+                              y    = grid::unit(cap_y, "pt"),
+                              just = c("left", "center"),
+                              gp   = x$cap_gp)
+
+  ch <- grid::gList(
+    pfx_g,
+    cap_g,
+    grid::linesGrob(
+      x  = grid::unit(c(0, 1), "npc"),
+      y  = grid::unit(c(tln_y, tln_y), "pt"),
+      gp = grid::gpar(col = x$ink_col, lwd = 0.3, lend = "square"))
+  )
+  if (x$draw_bottom) {
+    ch <- grid::gList(ch,
+      grid::linesGrob(
+        x  = grid::unit(c(0, 1), "npc"),
+        y  = grid::unit(c(bln_y, bln_y), "pt"),
+        gp = grid::gpar(col = x$ink_col, lwd = 0.3, lend = "square")))
+  }
+  grid::setChildren(x, ch)
+}
+
+#' @method heightDetails cw_caption_tree
+#' @export
+heightDetails.cw_caption_tree <- function(x) {
+  grid::unit(.cw_caption_heights(x)$total, "pt")
+}
+
+# ─── element_grob dispatch ───────────────────────────────────────────────────
+
+#' @method element_grob element_chanwe_title
+#' @export
+element_grob.element_chanwe_title <- function(element, label = "", ...) {
+  if (is.null(label) || identical(label, "")) return(grid::zeroGrob())
+
+  pb       <- getOption("chanwer.plot_borders", default = "none")
+  draw_top <- pb %in% c("top", "top_bottom", "complete")
+  ink      <- element$ink_colour %||_% "#1A1A1A"
+
+  parts       <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
+  has_eyebrow <- length(parts) == 2L
+  eyebrow_text <- if (has_eyebrow) parts[1L] else NULL
+  title_text   <- if (has_eyebrow) parts[2L] else parts[1L]
+
+  title_gp  <- grid::gpar(
+    fontfamily = element$family  %||_% "Archivo",
+    fontsize   = element$size    %||_% 18,
+    fontface   = "bold",
+    col        = element$colour  %||_% ink
+  )
+  eyebrow_gp <- grid::gpar(
+    fontfamily = element$eyebrow_family %||_% "JetBrains Mono",
+    fontsize   = element$eyebrow_size   %||_% 6,
+    col        = element$eyebrow_colour %||_% "#FB3D0E"
+  )
+
+  .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink)
+}
+
+#' @method element_grob element_chanwe_subtitle
+#' @export
+element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
+  if (is.null(label) || identical(label, "")) return(grid::zeroGrob())
+
+  pb          <- getOption("chanwer.plot_borders", default = "none")
+  draw_middle <- pb %in% c("middle", "complete")
+  ink         <- element$ink_colour %||_% "#1A1A1A"
+
+  parts     <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
+  sub_text  <- parts[1L]
+  note_text <- if (length(parts) >= 2L && nzchar(parts[2L])) parts[2L] else NULL
+
+  sub_size <- element$size %||_% 9
+  sub_gp   <- grid::gpar(
+    fontfamily = element$family %||_% "Satoshi",
+    fontsize   = sub_size,
+    col        = element$colour %||_% "#555555"
+  )
+  note_gp  <- grid::gpar(
+    fontfamily = element$family %||_% "Satoshi",
+    fontsize   = sub_size * 0.85,
+    fontface   = "italic",
+    col        = element$colour %||_% "#555555"
+  )
+
+  .cw_subtitle_tree(sub_text, note_text, draw_middle, sub_gp, note_gp, ink)
+}
+
+#' @method element_grob element_chanwe_caption
+#' @export
+element_grob.element_chanwe_caption <- function(element, label = "", ...) {
+  if (is.null(label) || identical(label, "")) return(grid::zeroGrob())
+
+  pb          <- getOption("chanwer.plot_borders", default = "none")
+  draw_bottom <- pb %in% c("bottom", "top_bottom", "complete")
+  ink         <- element$ink_colour     %||_% "#1A1A1A"
+  primary     <- element$primary_colour %||_% "#FB3D0E"
+  cap_size    <- element$size           %||_% 7
+
+  cap_gp <- grid::gpar(
+    fontfamily = element$family %||_% "JetBrains Mono",
+    fontsize   = cap_size,
+    col        = element$colour %||_% "#555555"
+  )
+  pfx_gp <- grid::gpar(
+    fontfamily = element$family %||_% "JetBrains Mono",
+    fontsize   = cap_size,
+    col        = primary
+  )
+
+  .cw_caption_tree(as.character(label), draw_bottom, cap_gp, pfx_gp, ink)
+}
+
+# Lightweight NULL-coalesce used only within this file
+`%||_%` <- function(a, b) if (!is.null(a)) a else b

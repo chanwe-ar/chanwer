@@ -5,13 +5,13 @@
 \title{ChanWe ggplot2 Theme}
 \usage{
 theme_chanwe(
-  base_text_size = 6.5,
+  base_text_size = 7,
   base_family = "Satoshi",
   base_lineheight = 1.6,
   legend_position = "bottom",
-  bg_color = "white",
-  plot_padding = 2,
-  plot_borders = "complete"
+  bg_color = "beige",
+  plot_padding = 10,
+  plot_borders = "none"
 )
 }
 \arguments{

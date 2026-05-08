@@ -159,47 +159,21 @@ theme_chanwe <- function(
     mono_family
   }
 
-  title_element <- ggplot2::element_text(
-    family = title_family,
-    color = colors[["typst-ink"]],
-    face = title_face,
-    size = base_text_size * 1.9,
-    hjust = 0,
-    lineheight = 1.10,
-    margin = ggplot2::margin(b = 1)
+  title_element <- new_element_chanwe_title(
+    family         = title_family,
+    size           = base_text_size * 1.9,
+    colour         = colors[["typst-ink"]],
+    eyebrow_family = mono_family,
+    eyebrow_size   = base_text_size * 0.86,
+    eyebrow_colour = colors[["typst-primary"]],
+    ink_colour     = colors[["typst-ink"]]
   )
-  subtitle_element <- ggplot2::element_text(
-    family = subtitle_family,
-    color = colors[["typst-fg-muted"]],
-    face = "plain",
-    size = base_text_size * 1,
-    hjust = 0,
-    margin = ggplot2::margin(t = 3, b = 20)
+  subtitle_element <- new_element_chanwe_subtitle(
+    family     = subtitle_family,
+    size       = base_text_size * 1.0,
+    colour     = colors[["typst-fg-muted"]],
+    ink_colour = colors[["typst-ink"]]
   )
-
-  if (requireNamespace("ggtext", quietly = TRUE)) {
-    title_element <- ggtext::element_markdown(
-      family = title_family,
-      color = colors[["typst-ink"]],
-      face = title_face,
-      size = base_text_size * 1.9,
-      hjust = 0,
-      lineheight = 1,
-      margin = ggplot2::margin(b = 1)
-    )
-    subtitle_element <- ggtext::element_textbox_simple(
-      family = subtitle_family,
-      color = colors[["typst-fg-muted"]],
-      face = "plain",
-      size = base_text_size * 1,
-      hjust = 0,
-      halign = 0,
-      lineheight = 1.3,
-      width = grid::unit(2, "npc"),
-      margin = ggplot2::margin(t = 3, b = 20),
-      fill = NA
-    )
-  }
 
   theme_obj <- ggplot2::`%+replace%`(
     ggplot2::theme_minimal(
@@ -212,29 +186,13 @@ theme_chanwe <- function(
         lineheight = base_lineheight
       ),
       plot.title = title_element,
-      plot.caption = if (requireNamespace("ggtext", quietly = TRUE)) {
-        ggtext::element_textbox_simple(
-          family = mono_family,
-          color = colors[["typst-fg-muted"]],
-          size = base_text_size * 0.8,
-          hjust = 0,
-          halign = 0,
-          width = grid::unit(1, "npc"),
-          margin = ggplot2::margin(t = 10),
-          padding = ggplot2::margin(t = 8, r = 0, b = 10, l = 0),
-          box.colour = c(colors[["typst-ink"]], NA, NA, NA),
-          linewidth = 0.3,
-          fill = NA
-        )
-      } else {
-        ggplot2::element_text(
-          family = mono_family,
-          color = colors[["typst-fg-muted"]],
-          size = base_text_size * 0.8,
-          hjust = 0,
-          margin = ggplot2::margin(t = 14)
-        )
-      },
+      plot.caption = new_element_chanwe_caption(
+        family         = mono_family,
+        size           = base_text_size * 0.8,
+        colour         = colors[["typst-fg-muted"]],
+        primary_colour = colors[["typst-primary"]],
+        ink_colour     = colors[["typst-ink"]]
+      ),
       axis.title = ggplot2::element_text(
         family = mono_thin_family,
         color = colors[["typst-ink"]],
@@ -362,54 +320,8 @@ theme_chanwe <- function(
 #'     theme_chanwe()
 #' }
 chanwe_title <- function(text, eyebrow = NULL) {
-  if (!requireNamespace("ggtext", quietly = TRUE)) {
-    if (is.null(eyebrow)) {
-      return(text)
-    }
-    return(paste0("── ", toupper(eyebrow), "\n", text))
-  }
-  chanwe_load_fonts()
-  colors <- chanwe_get_colors()
-  pb <- getOption("chanwer.plot_borders", default = "complete")
-  top_line <- if (pb %in% c("top", "top_bottom", "complete")) {
-    paste0(
-      "<span style='font-family:\"JetBrains Mono\",monospace;font-size:3.5pt;color:",
-      colors[["typst-ink"]],
-      ";'>",
-      strrep("─", 500),
-      "</span><br>"
-    )
-  } else {
-    ""
-  }
-  if (is.null(eyebrow)) {
-    return(paste0(top_line, text))
-  }
-  reg <- if (requireNamespace("systemfonts", quietly = TRUE)) {
-    systemfonts::registry_fonts()$family
-  } else {
-    character(0)
-  }
-  tf <- if ("Archivo SemiBold" %in% reg) {
-    "\"Archivo SemiBold\""
-  } else if ("Archivo ExtraBold" %in% reg) {
-    "\"Archivo ExtraBold\""
-  } else {
-    "Archivo"
-  }
-  paste0(
-    top_line,
-    "<span style='font-family:\"JetBrains Mono\";font-size:6pt;font-weight:normal;color:",
-    colors[["typst-primary"]],
-    ";'>── ",
-    toupper(eyebrow),
-    "</span><br><span style='font-size:9pt;color:transparent;'>·</span><br>",
-    "<span style='font-family:",
-    tf,
-    ",sans-serif;letter-spacing:0em;'>",
-    text,
-    "</span>"
-  )
+  if (is.null(eyebrow)) return(text)
+  paste(eyebrow, text, sep = .CW_SEP)
 }
 
 #' ChanWe Subtitle Helper
@@ -439,41 +351,8 @@ chanwe_title <- function(text, eyebrow = NULL) {
 #'   note = "Max peel measured when foil breaks, otherwise average peel"
 #' )
 chanwe_subtitle <- function(text, note = NULL) {
-  if (!requireNamespace("ggtext", quietly = TRUE)) {
-    if (is.null(note)) {
-      return(text)
-    }
-    return(paste0(text, "\n", note))
-  }
-  colors <- chanwe_get_colors()
-  pb <- getOption("chanwer.plot_borders", default = "complete")
-  show_line <- pb %in% c("middle", "complete")
-  line_html <- if (show_line) {
-    paste0(
-      "<span style='font-family:\"JetBrains Mono\",monospace;font-size:3.5pt;color:",
-      colors[["typst-ink"]],
-      ";'>",
-      strrep("─", 500),
-      "</span>"
-    )
-  } else {
-    ""
-  }
-  note_html <- if (!is.null(note)) {
-    paste0(
-      "<br><span style='font-size:5pt;color:",
-      colors[["typst-fg-muted"]],
-      ";font-style:italic;'>",
-      note,
-      "</span>"
-    )
-  } else {
-    ""
-  }
-  if (!show_line && is.null(note)) {
-    return(text)
-  }
-  paste0(text, if (show_line) "<br>" else "", line_html, note_html)
+  if (is.null(note)) return(text)
+  paste(text, note, sep = .CW_SEP)
 }
 
 #' ChanWe Caption Helper
@@ -500,29 +379,7 @@ chanwe_subtitle <- function(text, note = NULL) {
 #'     theme_chanwe()
 #' }
 chanwe_caption <- function(text) {
-  if (!requireNamespace("ggtext", quietly = TRUE)) {
-    return(paste0("// ", text))
-  }
-  colors <- chanwe_get_colors()
-  pb <- getOption("chanwer.plot_borders", default = "complete")
-  line_html <- if (pb %in% c("bottom", "top_bottom", "complete")) {
-    paste0(
-      "<br><span style='font-family:\"JetBrains Mono\",monospace;font-size:3.5pt;color:",
-      colors[["typst-ink"]],
-      ";'>",
-      strrep("─", 500),
-      "</span>"
-    )
-  } else {
-    ""
-  }
-  paste0(
-    "<span style='font-family:JetBrains Mono;color:",
-    colors[["typst-primary"]],
-    ";'>// &ensp;</span>",
-    text,
-    line_html
-  )
+  as.character(text)
 }
 
 #' ChanWe Discrete Color Scales

@@ -33,8 +33,6 @@ mt <- tibble::as_tibble(mtcars, rownames = "model") |>
       labels = c("Low", "Mid", "High")
     )
   )
-chanwe_load_fonts()
-
 ggplot(mt, aes(wt, mpg, color = hp_band)) +
   geom_point(size = 2.2, alpha = 0.88) +
   geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
@@ -53,42 +51,41 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     caption = chanwe_caption("Source: Motor Trend, 1974")
   )
 
-ggplot(mt, aes(wt, mpg, color = hp_band)) +
-  geom_point(size = 2.2, alpha = 0.88) +
-  geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
-  # facet_wrap(~am) +
-  scale_color_chanwe_d() +
-  theme_chanwe(bg_color = "gray", plot_borders = "none") +
-  labs(
-    title = chanwe_title(
-      "Performance profile by transmission",
-      eyebrow = "TLDR;"
-    ),
-    subtitle = chanwe_subtitle("Faceted by transmission type"),
-    x = "Weight (1000 lbs)",
-    y = "Miles per gallon",
-    color = "HP band",
-    caption = chanwe_caption("Source: Motor Trend, 1974")
-  )
+# ggplot(mt, aes(wt, mpg, color = hp_band)) +
+#   geom_point(size = 2.2, alpha = 0.88) +
+#   geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+#   # facet_wrap(~am) +
+#   scale_color_chanwe_d() +
+#   theme_chanwe(bg_color = "gray", plot_borders = "none") +
+#   labs(
+#     title = chanwe_title(
+#       "Performance profile by transmission",
+#       eyebrow = "TLDR;"
+#     ),
+#     subtitle = chanwe_subtitle("Faceted by transmission type"),
+#     x = "Weight (1000 lbs)",
+#     y = "Miles per gallon",
+#     color = "HP band",
+#     caption = chanwe_caption("Source: Motor Trend, 1974")
+#   )
 
-ggplot(mt, aes(wt, mpg, color = hp_band)) +
-  geom_point(size = 2.2, alpha = 0.88) +
-  geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
-  # facet_wrap(~am) +
-  scale_color_chanwe_d() +
-  theme_chanwe(bg_color = "white") +
-  labs(
-    title = chanwe_title(
-      "Performance profile by transmission",
-      eyebrow = "TLDR;"
-    ),
-    subtitle = chanwe_subtitle("Faceted by transmission type"),
-    x = "Weight (1000 lbs)",
-    y = "Miles per gallon",
-    color = "HP band",
-    caption = chanwe_caption("Source: Motor Trend, 1974")
-  )
-
+# ggplot(mt, aes(wt, mpg, color = hp_band)) +
+#   geom_point(size = 2.2, alpha = 0.88) +
+#   geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+#   # facet_wrap(~am) +
+#   scale_color_chanwe_d() +
+#   theme_chanwe(bg_color = "white") +
+#   labs(
+#     title = chanwe_title(
+#       "Performance profile by transmission",
+#       eyebrow = "TLDR;"
+#     ),
+#     subtitle = chanwe_subtitle("Faceted by transmission type"),
+#     x = "Weight (1000 lbs)",
+#     y = "Miles per gallon",
+#     color = "HP band",
+#     caption = chanwe_caption("Source: Motor Trend, 1974")
+#   )
 
 pdf_preview(
   ggplot(mt, aes(wt, mpg, color = hp_band)) +

@@ -26,7 +26,7 @@
 #' chanwe_load_fonts()
 #' }
 chanwe_load_fonts <- function(path = NULL) {
-  if (isTRUE(.chanwe_env$fonts_loaded) && is.null(path)) {
+  if (isTRUE(getOption("chanwer.fonts_loaded")) && is.null(path)) {
     return(invisible(NULL))
   }
 
@@ -141,7 +141,7 @@ chanwe_load_fonts <- function(path = NULL) {
     )
   }
 
-  .chanwe_env$fonts_loaded <- TRUE
+  options(chanwer.fonts_loaded = TRUE)
   invisible(path)
 }
 

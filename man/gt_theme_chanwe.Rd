@@ -54,7 +54,7 @@ Convenience wrappers \code{\link[=gt_theme_chanwe_spacious]{gt_theme_chanwe_spac
 \subsection{Background variants}{\tabular{lll}{
    Name \tab Hex \tab Use \cr
    \code{"white"} \tab \verb{#FFFFFF} \tab Default \cr
-   \code{"gray"} \tab \verb{#F5F5F5} \tab Light neutral gray \cr
+   \code{"gray"} \tab \verb{#F2F2F2} \tab Light neutral gray \cr
    \code{"beige"} \tab \verb{#ECE5D8} \tab Warm brand beige \cr
 }
 
