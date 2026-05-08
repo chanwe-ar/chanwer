@@ -18,8 +18,8 @@ chanwe_kbl(
   density = c("spacious", "compact"),
   row_padding = NULL,
   title_size = "18pt",
-  eyebrow_size = "6pt",
-  subtitle_size = "9pt",
+  eyebrow_size = "5pt",
+  subtitle_size = "7.5pt",
   body_size = "7pt",
   header_size = "5.5pt",
   note_size = "7pt",
@@ -94,7 +94,6 @@ Works in Quarto documents rendered with \code{format: chanwe-typst}.
 }
 \description{
 Generates a styled Typst table directly from a data frame, bypassing the
-HTML→Pandoc→Typst pipeline. Matches the visual design of
-\code{\link[=gt_theme_chanwe]{gt_theme_chanwe()}}: Archivo title, Satoshi body, JetBrains Mono column
-headers, thin ink divider lines. No CSS translation losses.
+HTML→Pandoc→Typst pipeline. Archivo title, Satoshi body, JetBrains Mono
+column headers, thin ink divider lines. No CSS translation losses.
 }

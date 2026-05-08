@@ -24,7 +24,6 @@ Imports:
     grDevices
 Suggests:
     ggtext,
-    gt,
     highcharter,
     knitr,
     reactable,

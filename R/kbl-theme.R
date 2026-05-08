@@ -1,9 +1,8 @@
 #' ChanWe Table via Native Typst Output
 #'
 #' Generates a styled Typst table directly from a data frame, bypassing the
-#' HTML→Pandoc→Typst pipeline. Matches the visual design of
-#' [gt_theme_chanwe()]: Archivo title, Satoshi body, JetBrains Mono column
-#' headers, thin ink divider lines. No CSS translation losses.
+#' HTML→Pandoc→Typst pipeline. Archivo title, Satoshi body, JetBrains Mono
+#' column headers, thin ink divider lines. No CSS translation losses.
 #'
 #' @param data A data frame or tibble.
 #' @param title Table title.
@@ -57,8 +56,8 @@ chanwe_kbl <- function(
   density = c("spacious", "compact"),
   row_padding = NULL,
   title_size = '18pt',
-  eyebrow_size = '6pt',
-  subtitle_size = '9pt',
+  eyebrow_size = '5pt',
+  subtitle_size = '7.5pt',
   body_size = '7pt',
   header_size = '5.5pt',
   note_size = '7pt',
@@ -88,13 +87,13 @@ chanwe_kbl <- function(
   } else {
     "16pt"
   }
-  eyebrow_pt <- if (!is.null(eyebrow_size)) eyebrow_size else "6pt"
+  eyebrow_pt <- if (!is.null(eyebrow_size)) eyebrow_size else "4pt"
   sub_pt <- if (!is.null(subtitle_size)) {
     subtitle_size
   } else if (sp) {
-    "11pt"
-  } else {
     "10pt"
+  } else {
+    "9pt"
   }
   body_pt <- if (!is.null(body_size)) {
     body_size
@@ -252,7 +251,7 @@ chanwe_kbl <- function(
           ')[',
           esc(eyebrow),
           ']',
-          "#v(8pt, weak: false)"
+          "#v(-10pt, weak: false)"
         )
       }
       if (!is.null(title)) {
@@ -260,7 +259,7 @@ chanwe_kbl <- function(
           inner,
           '#text(font: "Archivo", size: ',
           title_pt,
-          ', fill: _t.ink, weight: "bold")[',
+          ', fill: _t.ink, weight: "semibold")[',
           esc(title),
           ']'
         )
@@ -310,7 +309,7 @@ chanwe_kbl <- function(
         pt_v(col_label_top),
         '#text(font: "JetBrains Mono", size: ',
         label_pt,
-        ', fill: _t.fg-subtle, weight: "thin", tracking: 0.05em)[',
+        ', fill: _t.primary, weight: "thin", tracking: 0.05em)[',
         esc(toupper(labels[i])),
         ']],'
       )
@@ -326,8 +325,8 @@ chanwe_kbl <- function(
     for (j in seq_len(n)) {
       val <- esc(fmt_data[[j]][i])
       is_first <- j == 1L
-      fill <- if (is_first) "_t.ink" else "_t.fg-muted"
-      weight <- if (is_first) '"medium"' else '"light"'
+      fill <- if (is_first) "_t.fg-subtle" else "_t.ink"
+      weight <- if (is_first) '"light"' else '"light"'
       p(
         "    table.cell(align: ",
         col_aligns[j],

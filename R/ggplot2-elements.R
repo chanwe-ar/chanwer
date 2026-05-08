@@ -220,6 +220,7 @@ heightDetails.cw_title_tree <- function(x) {
   draw_middle,
   sub_gp,
   note_gp,
+  sep_gp,
   ink_col
 ) {
   grid::gTree(
@@ -228,6 +229,7 @@ heightDetails.cw_title_tree <- function(x) {
     draw_middle = draw_middle,
     sub_gp = sub_gp,
     note_gp = note_gp,
+    sep_gp = sep_gp,
     ink_col = ink_col,
     cl = "cw_subtitle_tree"
   )
@@ -278,10 +280,12 @@ makeContent.cw_subtitle_tree <- function(x) {
   if (x$draw_middle) {
     ch <- grid::gList(
       ch,
-      grid::linesGrob(
-        x = grid::unit(c(0, 1), "npc"),
-        y = grid::unit(c(line_y, line_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.1, lend = "square")
+      grid::textGrob(
+        strrep("─", 400),
+        x    = grid::unit(0, "npc"),
+        y    = grid::unit(line_y, "pt"),
+        just = c("left", "center"),
+        gp   = x$sep_gp
       )
     )
   }
@@ -308,12 +312,13 @@ heightDetails.cw_subtitle_tree <- function(x) {
 
 # ─────────────────────────────────────────────────────────────────────────────
 
-.cw_caption_tree <- function(cap_text, draw_bottom, cap_gp, pfx_gp, ink_col) {
+.cw_caption_tree <- function(cap_text, draw_bottom, cap_gp, pfx_gp, sep_gp, ink_col) {
   grid::gTree(
     cap_text = cap_text,
     draw_bottom = draw_bottom,
     cap_gp = cap_gp,
     pfx_gp = pfx_gp,
+    sep_gp = sep_gp,
     ink_col = ink_col,
     cl = "cw_caption_tree"
   )
@@ -323,8 +328,8 @@ heightDetails.cw_subtitle_tree <- function(x) {
   c_h <- .cw_str_h(x$cap_text, x$cap_gp)
   top <- 10 # top padding (matches margin t=10)
   bot <- 4 # bottom padding
-  tln_h <- 0.3 # top divider line
-  gap1 <- 5 # gap: top line → text
+  tln_h <- 0
+  gap1  <- 0
   gap2 <- if (x$draw_bottom) 4 else 0
   bln_h <- if (x$draw_bottom) 0.3 else 0
   total <- bot + bln_h + gap2 + c_h + gap1 + tln_h + top
@@ -367,22 +372,16 @@ makeContent.cw_caption_tree <- function(x) {
     gp = x$cap_gp
   )
 
-  ch <- grid::gList(
-    pfx_g,
-    cap_g,
-    grid::linesGrob(
-      x = grid::unit(c(0, 1), "npc"),
-      y = grid::unit(c(tln_y, tln_y), "pt"),
-      gp = grid::gpar(col = '#0F0F0F', lwd = 0.1, lend = "square")
-    )
-  )
+  ch <- grid::gList(pfx_g, cap_g)
   if (x$draw_bottom) {
     ch <- grid::gList(
       ch,
-      grid::linesGrob(
-        x = grid::unit(c(0, 1), "npc"),
-        y = grid::unit(c(bln_y, bln_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.08, lend = "square")
+      grid::textGrob(
+        strrep("─", 400),
+        x    = grid::unit(0, "npc"),
+        y    = grid::unit(bln_y, "pt"),
+        just = c("left", "center"),
+        gp   = x$sep_gp
       )
     )
   }
@@ -453,6 +452,11 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     fontface = "italic",
     col = element$colour %||_% "#555555"
   )
+  sep_gp <- grid::gpar(
+    fontfamily = "JetBrains Mono",
+    fontsize   = sub_size * 0.65,
+    col        = ink
+  )
 
   .cw_subtitle_tree(
     sub_text,
@@ -460,6 +464,7 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     draw_middle = TRUE,
     sub_gp,
     note_gp,
+    sep_gp,
     ink
   )
 }
@@ -487,8 +492,13 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
     fontsize = cap_size,
     col = primary
   )
+  sep_gp <- grid::gpar(
+    fontfamily = element$family %||_% "JetBrains Mono",
+    fontsize   = cap_size,
+    col        = ink
+  )
 
-  .cw_caption_tree(as.character(label), draw_bottom, cap_gp, pfx_gp, ink)
+  .cw_caption_tree(as.character(label), draw_bottom, cap_gp, pfx_gp, sep_gp, ink)
 }
 
 # Lightweight NULL-coalesce used only within this file
