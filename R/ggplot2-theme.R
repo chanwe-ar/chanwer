@@ -133,8 +133,8 @@ theme_chanwe <- function(
   } else {
     character(0)
   }
-  title_family <- "Archivo"
-  title_face <- "plain"
+  title_family <- if ("Archivo SemiBold" %in% reg) "Archivo SemiBold" else "Archivo"
+  title_face   <- if (title_family == "Archivo SemiBold") "plain" else "bold"
   subtitle_family <- "Satoshi"
   subtitle_face <- "plain"
 
@@ -161,6 +161,7 @@ theme_chanwe <- function(
 
   title_element <- new_element_chanwe_title(
     family         = title_family,
+    face           = title_face,
     size           = base_text_size * 1.9,
     colour         = colors[["typst-ink"]],
     eyebrow_family = mono_family,
@@ -197,11 +198,11 @@ theme_chanwe <- function(
         family = mono_thin_family,
         color = colors[["typst-ink"]],
         face = "plain",
-        size = base_text_size * 0.75
+        size = base_text_size * 0.60
       ),
       axis.text = ggplot2::element_text(
         color = colors[["typst-ink"]],
-        size = base_text_size * 0.75
+        size = base_text_size * 0.60
       ),
       axis.title.x = ggplot2::element_text(
         hjust = 1,
