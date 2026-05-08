@@ -103,9 +103,9 @@ theme_chanwe <- function(
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
-  bg_color = "white",
+  bg_color = "beige",
   plot_padding = 10,
-  plot_borders = "complete"
+  plot_borders = "none"
 ) {
   chanwe_load_fonts()
   options(chanwer.plot_borders = plot_borders)
@@ -117,13 +117,13 @@ theme_chanwe <- function(
   grid_color <- switch(
     bg_color,
     "#FFFFFF" = "#E8E8E8",
-    "#ECE5D8" = "#D8CEC0",
+    "#F5F1EB" = "#E8E2D8",
     colors[["typst-neutral-200"]]
   )
   grid_color_minor <- switch(
     bg_color,
     "#FFFFFF" = "#EEEEEE",
-    "#ECE5D8" = "#DEDAD0",
+    "#F5F1EB" = "#EDE8E0",
     "#E5E5E5"
   )
   panel_border_element <- ggplot2::element_blank()
@@ -221,23 +221,8 @@ theme_chanwe <- function(
           halign = 0,
           width = grid::unit(1, "npc"),
           margin = ggplot2::margin(t = 10),
-          padding = ggplot2::margin(
-            t = 8,
-            r = 0,
-            b = if (plot_borders %in% c("bottom", "top_bottom", "complete")) {
-              6
-            } else {
-              0
-            },
-            l = 0
-          ),
-          box.colour = if (
-            plot_borders %in% c("bottom", "top_bottom", "complete")
-          ) {
-            c(colors[["typst-ink"]], NA, colors[["typst-ink"]], NA)
-          } else {
-            c(colors[["typst-ink"]], NA, NA, NA)
-          },
+          padding = ggplot2::margin(t = 8, r = 0, b = 10, l = 0),
+          box.colour = c(colors[["typst-ink"]], NA, NA, NA),
           linewidth = 0.3,
           fill = NA
         )
@@ -519,11 +504,24 @@ chanwe_caption <- function(text) {
     return(paste0("// ", text))
   }
   colors <- chanwe_get_colors()
+  pb <- getOption("chanwer.plot_borders", default = "complete")
+  line_html <- if (pb %in% c("bottom", "top_bottom", "complete")) {
+    paste0(
+      "<br><span style='font-family:\"JetBrains Mono\",monospace;font-size:3.5pt;color:",
+      colors[["typst-ink"]],
+      ";'>",
+      strrep("─", 500),
+      "</span>"
+    )
+  } else {
+    ""
+  }
   paste0(
     "<span style='font-family:JetBrains Mono;color:",
     colors[["typst-primary"]],
     ";'>// &ensp;</span>",
-    text
+    text,
+    line_html
   )
 }
 

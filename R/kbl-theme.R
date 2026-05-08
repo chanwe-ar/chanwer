@@ -210,10 +210,10 @@ chanwe_kbl <- function(
     fill_val <- switch(
       bg,
       "white" = "white",
-      "beige" = 'rgb("#F7F3EE")',
-      "cream" = 'rgb("#F7F3EE")',
-      "gray" = 'rgb("#F5F5F5")',
-      "grey" = 'rgb("#F5F5F5")',
+      "beige" = 'rgb("#F5F1EB")',
+      "cream" = 'rgb("#F5F1EB")',
+      "gray" = 'rgb("#F2F2F2")',
+      "grey" = 'rgb("#F2F2F2")',
       bg
     )
     paste0(", fill: ", fill_val)

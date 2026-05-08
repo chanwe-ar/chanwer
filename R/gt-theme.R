@@ -18,7 +18,7 @@
 #' | Name | Hex | Use |
 #' |------|-----|-----|
 #' | `"white"` | `#FFFFFF` | Default |
-#' | `"gray"` | `#F5F5F5` | Light neutral gray |
+#' | `"gray"` | `#F2F2F2` | Light neutral gray |
 #' | `"beige"` | `#ECE5D8` | Warm brand beige |
 #'
 #' @param data A gt table object created with [gt::gt()].
@@ -493,7 +493,7 @@ gt_theme_chanwe_spacious <- function(
   background = NULL
 ) {
   if (!is.null(background)) {
-    bg_color <- if (identical(background, "beige")) "#ECE5D8" else "#FFFFFF"
+    bg_color <- if (identical(background, "beige")) "#F5F1EB" else "#FFFFFF"
   }
   gt_theme_chanwe(
     data,
@@ -521,7 +521,7 @@ gt_theme_chanwe_compact <- function(
   background = NULL
 ) {
   if (!is.null(background)) {
-    bg_color <- if (identical(background, "beige")) "#ECE5D8" else "#FFFFFF"
+    bg_color <- if (identical(background, "beige")) "#F5F1EB" else "#FFFFFF"
   }
   gt_theme_chanwe(
     data,

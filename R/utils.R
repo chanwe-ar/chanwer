@@ -149,9 +149,9 @@ chanwe_resolve_bg <- function(bg_color) {
   switch(
     tolower(trimws(bg_color)),
     white = "#FFFFFF",
-    gray  = "#F5F5F5",
-    grey  = "#F5F5F5",
-    beige = "#ECE5D8",
+    gray  = "#F2F2F2",
+    grey  = "#F2F2F2",
+    beige = "#F5F1EB",
     bg_color
   )
 }
