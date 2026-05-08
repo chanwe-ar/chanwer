@@ -117,14 +117,14 @@ theme_chanwe <- function(
   grid_color <- switch(
     bg_color,
     "#FFFFFF" = "#E8E8E8",
-    "#F5F1EB" = "#E8E2D8",
-    colors[["typst-neutral-200"]]
+    "#F5F1EB" = "#D8D1C7",
+    "#E0E0E0"
   )
   grid_color_minor <- switch(
     bg_color,
     "#FFFFFF" = "#EEEEEE",
-    "#F5F1EB" = "#EDE8E0",
-    "#E5E5E5"
+    "#F5F1EB" = "#E3DDD5",
+    "#EAEAEA"
   )
   panel_border_element <- ggplot2::element_blank()
 
@@ -232,7 +232,10 @@ theme_chanwe <- function(
         color = grid_color,
         linewidth = 0.04
       ),
-      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_line(
+        color = grid_color_minor,
+        linewidth = 0.02
+      ),
       plot.background = ggplot2::element_rect(fill = surface_fill, color = NA),
       panel.background = ggplot2::element_rect(
         fill = surface_fill,
