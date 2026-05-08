@@ -140,8 +140,8 @@ new_element_chanwe_caption <- function(
   t_h <- .cw_str_h(x$title_text, x$title_gp)
   has_ey <- !is.null(x$eyebrow_text) && nzchar(x$eyebrow_text)
   ey_h <- if (has_ey) .cw_str_h(x$eyebrow_text, x$eyebrow_gp) else 0
-  bot <- 2 # bottom padding
-  gap1 <- if (has_ey) 8 else 0 # gap: title → eyebrow
+  bot <- 1 # bottom padding
+  gap1 <- if (has_ey) 6 else 0 # gap: title → eyebrow
   gap2 <- if (x$draw_top && has_ey) {
     5
   } else if (x$draw_top) {
@@ -239,9 +239,9 @@ heightDetails.cw_title_tree <- function(x) {
   s_h <- .cw_str_h(x$sub_text, x$sub_gp)
   has_n <- !is.null(x$note_text) && nzchar(x$note_text)
   n_h <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
-  top <- 6 # top padding (matches margin t=3)
+  top <- 5 # top padding
   bot <- 20 # bottom padding (matches margin b=20)
-  gap_ln <- if (x$draw_middle) 11 else 0 # gap: subtitle → line
+  gap_ln <- if (x$draw_middle) 8 else 0 # gap: subtitle → line
   ln_h <- if (x$draw_middle) 0.3 else 0
   gap_n <- if (has_n) 3 else 0 # gap: line → note
   total <- top + s_h + gap_ln + ln_h + gap_n + n_h + bot
@@ -282,10 +282,10 @@ makeContent.cw_subtitle_tree <- function(x) {
       ch,
       grid::textGrob(
         strrep("─", 400),
-        x    = grid::unit(0, "npc"),
-        y    = grid::unit(line_y, "pt"),
+        x = grid::unit(0, "npc"),
+        y = grid::unit(line_y, "pt"),
         just = c("left", "center"),
-        gp   = x$sep_gp
+        gp = x$sep_gp
       )
     )
   }
@@ -312,7 +312,14 @@ heightDetails.cw_subtitle_tree <- function(x) {
 
 # ─────────────────────────────────────────────────────────────────────────────
 
-.cw_caption_tree <- function(cap_text, draw_bottom, cap_gp, pfx_gp, sep_gp, ink_col) {
+.cw_caption_tree <- function(
+  cap_text,
+  draw_bottom,
+  cap_gp,
+  pfx_gp,
+  sep_gp,
+  ink_col
+) {
   grid::gTree(
     cap_text = cap_text,
     draw_bottom = draw_bottom,
@@ -329,7 +336,7 @@ heightDetails.cw_subtitle_tree <- function(x) {
   top <- 10 # top padding (matches margin t=10)
   bot <- 4 # bottom padding
   tln_h <- 0
-  gap1  <- 0
+  gap1 <- 0
   gap2 <- if (x$draw_bottom) 4 else 0
   bln_h <- if (x$draw_bottom) 0.3 else 0
   total <- bot + bln_h + gap2 + c_h + gap1 + tln_h + top
@@ -378,10 +385,10 @@ makeContent.cw_caption_tree <- function(x) {
       ch,
       grid::textGrob(
         strrep("─", 400),
-        x    = grid::unit(0, "npc"),
-        y    = grid::unit(bln_y, "pt"),
+        x = grid::unit(0, "npc"),
+        y = grid::unit(bln_y, "pt"),
         just = c("left", "center"),
-        gp   = x$sep_gp
+        gp = x$sep_gp
       )
     )
   }
@@ -454,8 +461,8 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
   )
   sep_gp <- grid::gpar(
     fontfamily = "JetBrains Mono",
-    fontsize   = sub_size * 0.65,
-    col        = ink
+    fontsize = sub_size * 0.65,
+    col = ink
   )
 
   .cw_subtitle_tree(
@@ -494,11 +501,18 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
   )
   sep_gp <- grid::gpar(
     fontfamily = element$family %||_% "JetBrains Mono",
-    fontsize   = cap_size,
-    col        = ink
+    fontsize = cap_size,
+    col = ink
   )
 
-  .cw_caption_tree(as.character(label), draw_bottom, cap_gp, pfx_gp, sep_gp, ink)
+  .cw_caption_tree(
+    as.character(label),
+    draw_bottom,
+    cap_gp,
+    pfx_gp,
+    sep_gp,
+    ink
+  )
 }
 
 # Lightweight NULL-coalesce used only within this file
