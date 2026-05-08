@@ -224,20 +224,20 @@ theme_chanwe <- function(
       ),
       axis.line.x = ggplot2::element_line(
         color = colors[["typst-ink"]],
-        linewidth = 0.1
+        linewidth = 0.07
       ),
       axis.line.y = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_line(
         color = grid_color,
-        linewidth = 0.15
+        linewidth = 0.07
       ),
       panel.grid.major = ggplot2::element_line(
         color = grid_color,
-        linewidth = 0.15
+        linewidth = 0.08
       ),
       panel.grid.minor = ggplot2::element_line(
         color = grid_color_minor,
-        linewidth = 0.1
+        linewidth = 0.05
       ),
       plot.background = ggplot2::element_rect(fill = surface_fill, color = NA),
       panel.background = ggplot2::element_rect(

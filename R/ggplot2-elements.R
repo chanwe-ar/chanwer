@@ -199,7 +199,7 @@ makeContent.cw_title_tree <- function(x) {
       grid::linesGrob(
         x = grid::unit(c(0, 1), "npc"),
         y = grid::unit(c(line_y, line_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.2, lend = "square")
+        gp = grid::gpar(col = x$ink_col, lwd = 0.1, lend = "square")
       )
     )
   }
@@ -281,7 +281,7 @@ makeContent.cw_subtitle_tree <- function(x) {
       grid::linesGrob(
         x = grid::unit(c(0, 1), "npc"),
         y = grid::unit(c(line_y, line_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.3, lend = "square")
+        gp = grid::gpar(col = x$ink_col, lwd = 0.1, lend = "square")
       )
     )
   }
@@ -382,7 +382,7 @@ makeContent.cw_caption_tree <- function(x) {
       grid::linesGrob(
         x = grid::unit(c(0, 1), "npc"),
         y = grid::unit(c(bln_y, bln_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.3, lend = "square")
+        gp = grid::gpar(col = x$ink_col, lwd = 0.08, lend = "square")
       )
     )
   }
