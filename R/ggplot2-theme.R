@@ -99,15 +99,16 @@ chanwe_discrete_pal <- function() {
 #'     theme_chanwe(legend_position = "none")
 #' }
 theme_chanwe <- function(
-  base_text_size = 6.5,
+  base_text_size = 7,
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
   bg_color = "white",
-  plot_padding = 2,
-  plot_borders = TRUE
+  plot_padding = 10,
+  plot_borders = "complete"
 ) {
   chanwe_load_fonts()
+  options(chanwer.plot_borders = plot_borders)
 
   bg_color <- chanwe_resolve_bg(bg_color)
   colors <- chanwe_get_colors()
@@ -194,20 +195,8 @@ theme_chanwe <- function(
       hjust = 0,
       halign = 0,
       lineheight = 1.3,
-      width = grid::unit(1, "npc"),
-      margin = ggplot2::margin(t = 3, b = if (plot_borders) 14 else 20),
-      padding = ggplot2::margin(
-        t = 0,
-        r = 0,
-        b = if (plot_borders) 6 else 0,
-        l = 0
-      ),
-      box.colour = if (plot_borders) {
-        c(NA, NA, colors[["typst-ink"]], NA)
-      } else {
-        NULL
-      },
-      linewidth = 0.3,
+      width = grid::unit(2, "npc"),
+      margin = ggplot2::margin(t = 3, b = 20),
       fill = NA
     )
   }
@@ -235,10 +224,16 @@ theme_chanwe <- function(
           padding = ggplot2::margin(
             t = 8,
             r = 0,
-            b = if (plot_borders) 6 else 0,
+            b = if (plot_borders %in% c("bottom", "top_bottom", "complete")) {
+              6
+            } else {
+              0
+            },
             l = 0
           ),
-          box.colour = if (plot_borders) {
+          box.colour = if (
+            plot_borders %in% c("bottom", "top_bottom", "complete")
+          ) {
             c(colors[["typst-ink"]], NA, colors[["typst-ink"]], NA)
           } else {
             c(colors[["typst-ink"]], NA, NA, NA)
@@ -388,11 +383,23 @@ chanwe_title <- function(text, eyebrow = NULL) {
     }
     return(paste0("── ", toupper(eyebrow), "\n", text))
   }
-  if (is.null(eyebrow)) {
-    return(text)
-  }
   chanwe_load_fonts()
   colors <- chanwe_get_colors()
+  pb <- getOption("chanwer.plot_borders", default = "complete")
+  top_line <- if (pb %in% c("top", "top_bottom", "complete")) {
+    paste0(
+      "<span style='font-family:\"JetBrains Mono\",monospace;font-size:3.5pt;color:",
+      colors[["typst-ink"]],
+      ";'>",
+      strrep("─", 500),
+      "</span><br>"
+    )
+  } else {
+    ""
+  }
+  if (is.null(eyebrow)) {
+    return(paste0(top_line, text))
+  }
   reg <- if (requireNamespace("systemfonts", quietly = TRUE)) {
     systemfonts::registry_fonts()$family
   } else {
@@ -406,6 +413,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
     "Archivo"
   }
   paste0(
+    top_line,
     "<span style='font-family:\"JetBrains Mono\";font-size:6pt;font-weight:normal;color:",
     colors[["typst-primary"]],
     ";'>── ",
@@ -421,24 +429,66 @@ chanwe_title <- function(text, eyebrow = NULL) {
 
 #' ChanWe Subtitle Helper
 #'
-#' Returns the subtitle string as-is for use in `labs(subtitle = ...)`.
-#' [theme_chanwe()] styles it automatically in Archivo ExtraLight (200), so
-#' no wrapper is needed — this function exists as a discoverable entry point
-#' and may gain formatting options in future versions.
+#' Produces a subtitle string for `labs(subtitle = ...)` styled by
+#' [theme_chanwe()]. Without a note you can pass plain text directly — this
+#' helper is only needed when you want a smaller italic note line below the
+#' main subtitle.
 #'
-#' @param text Subtitle text.
+#' Requires the `ggtext` package for HTML rendering; falls back to
+#' `"text\nnote"` when unavailable.
 #'
-#' @return The input string unchanged.
+#' @param text Main subtitle string.
+#' @param note Optional smaller italic line below the subtitle, e.g. a
+#'   methodological caveat or data note.
+#'
+#' @return A character string for `labs(subtitle = ...)`.
 #' @export
 #'
 #' @examples
-#' ## Pass directly — theme handles the font:
-#' # ggplot2::labs(subtitle = "Quarterly performance")
+#' ## Plain subtitle — pass directly, no helper needed:
+#' # ggplot2::labs(subtitle = "Faceted by transmission type")
 #'
-#' ## Or via the helper (equivalent):
-#' chanwe_subtitle("Quarterly performance")
-chanwe_subtitle <- function(text) {
-  text
+#' ## Subtitle with a note:
+#' chanwe_subtitle(
+#'   "Faceted by transmission type",
+#'   note = "Max peel measured when foil breaks, otherwise average peel"
+#' )
+chanwe_subtitle <- function(text, note = NULL) {
+  if (!requireNamespace("ggtext", quietly = TRUE)) {
+    if (is.null(note)) {
+      return(text)
+    }
+    return(paste0(text, "\n", note))
+  }
+  colors <- chanwe_get_colors()
+  pb <- getOption("chanwer.plot_borders", default = "complete")
+  show_line <- pb %in% c("middle", "complete")
+  line_html <- if (show_line) {
+    paste0(
+      "<span style='font-family:\"JetBrains Mono\",monospace;font-size:3.5pt;color:",
+      colors[["typst-ink"]],
+      ";'>",
+      strrep("─", 500),
+      "</span>"
+    )
+  } else {
+    ""
+  }
+  note_html <- if (!is.null(note)) {
+    paste0(
+      "<br><span style='font-size:5pt;color:",
+      colors[["typst-fg-muted"]],
+      ";font-style:italic;'>",
+      note,
+      "</span>"
+    )
+  } else {
+    ""
+  }
+  if (!show_line && is.null(note)) {
+    return(text)
+  }
+  paste0(text, if (show_line) "<br>" else "", line_html, note_html)
 }
 
 #' ChanWe Caption Helper

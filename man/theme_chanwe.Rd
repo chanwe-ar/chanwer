@@ -11,7 +11,7 @@ theme_chanwe(
   legend_position = "bottom",
   bg_color = "white",
   plot_padding = 2,
-  plot_borders = TRUE
+  plot_borders = "complete"
 )
 }
 \arguments{

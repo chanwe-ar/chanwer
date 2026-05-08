@@ -4,24 +4,34 @@
 \alias{chanwe_subtitle}
 \title{ChanWe Subtitle Helper}
 \usage{
-chanwe_subtitle(text)
+chanwe_subtitle(text, note = NULL)
 }
 \arguments{
-\item{text}{Subtitle text.}
+\item{text}{Main subtitle string.}
+
+\item{note}{Optional smaller italic line below the subtitle, e.g. a
+methodological caveat or data note.}
 }
 \value{
-The input string unchanged.
+A character string for \code{labs(subtitle = ...)}.
 }
 \description{
-Returns the subtitle string as-is for use in \code{labs(subtitle = ...)}.
-\code{\link[=theme_chanwe]{theme_chanwe()}} styles it automatically in Archivo ExtraLight (200), so
-no wrapper is needed — this function exists as a discoverable entry point
-and may gain formatting options in future versions.
+Produces a subtitle string for \code{labs(subtitle = ...)} styled by
+\code{\link[=theme_chanwe]{theme_chanwe()}}. Without a note you can pass plain text directly — this
+helper is only needed when you want a smaller italic note line below the
+main subtitle.
+}
+\details{
+Requires the \code{ggtext} package for HTML rendering; falls back to
+\code{"text\\nnote"} when unavailable.
 }
 \examples{
-## Pass directly — theme handles the font:
-# ggplot2::labs(subtitle = "Quarterly performance")
+## Plain subtitle — pass directly, no helper needed:
+# ggplot2::labs(subtitle = "Faceted by transmission type")
 
-## Or via the helper (equivalent):
-chanwe_subtitle("Quarterly performance")
+## Subtitle with a note:
+chanwe_subtitle(
+  "Faceted by transmission type",
+  note = "Max peel measured when foil breaks, otherwise average peel"
+)
 }

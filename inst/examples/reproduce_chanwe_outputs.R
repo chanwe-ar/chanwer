@@ -24,7 +24,7 @@ chanwe_load_fonts()
 ggplot(mt, aes(wt, mpg, color = hp_band)) +
   geom_point(size = 2.2, alpha = 0.88) +
   geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
-  facet_wrap(~am) +
+  # facet_wrap(~am) +
   scale_color_chanwe_d() +
   theme_chanwe(bg_color = "#F5F5F5") +
   labs(
