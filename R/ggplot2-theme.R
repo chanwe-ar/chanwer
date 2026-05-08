@@ -176,7 +176,7 @@ theme_chanwe <- function(
   subtitle_element <- new_element_chanwe_subtitle(
     family = subtitle_family,
     size = base_text_size * 1.0,
-    colour = colors[["typst-fg-muted"]],
+    colour = '#656460',
     ink_colour = colors[["typst-ink"]]
   )
 
@@ -219,12 +219,17 @@ theme_chanwe <- function(
         margin = ggplot2::margin(0, 8, 0, 0)
       ),
       axis.line = ggplot2::element_line(
-        color = 'white',
+        color = grid_color,
         linewidth = 0.15
       ),
+      axis.line.x = ggplot2::element_line(
+        color = colors[["typst-ink"]],
+        linewidth = 0.1
+      ),
+      axis.line.y = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_line(
         color = grid_color,
-        linewidth = 0.3
+        linewidth = 0.15
       ),
       panel.grid.major = ggplot2::element_line(
         color = grid_color,

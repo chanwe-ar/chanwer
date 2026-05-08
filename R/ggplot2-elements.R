@@ -199,7 +199,7 @@ makeContent.cw_title_tree <- function(x) {
       grid::linesGrob(
         x = grid::unit(c(0, 1), "npc"),
         y = grid::unit(c(line_y, line_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.3, lend = "square")
+        gp = grid::gpar(col = x$ink_col, lwd = 0.2, lend = "square")
       )
     )
   }
@@ -237,9 +237,9 @@ heightDetails.cw_title_tree <- function(x) {
   s_h <- .cw_str_h(x$sub_text, x$sub_gp)
   has_n <- !is.null(x$note_text) && nzchar(x$note_text)
   n_h <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
-  top <- 5.5 # top padding (matches margin t=3)
+  top <- 6 # top padding (matches margin t=3)
   bot <- 20 # bottom padding (matches margin b=20)
-  gap_ln <- if (x$draw_middle) 5 else 0 # gap: subtitle → line
+  gap_ln <- if (x$draw_middle) 11 else 0 # gap: subtitle → line
   ln_h <- if (x$draw_middle) 0.3 else 0
   gap_n <- if (has_n) 3 else 0 # gap: line → note
   total <- top + s_h + gap_ln + ln_h + gap_n + n_h + bot
@@ -373,7 +373,7 @@ makeContent.cw_caption_tree <- function(x) {
     grid::linesGrob(
       x = grid::unit(c(0, 1), "npc"),
       y = grid::unit(c(tln_y, tln_y), "pt"),
-      gp = grid::gpar(col = x$ink_col, lwd = 0.3, lend = "square")
+      gp = grid::gpar(col = '#0F0F0F', lwd = 0.1, lend = "square")
     )
   )
   if (x$draw_bottom) {
