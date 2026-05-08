@@ -133,8 +133,12 @@ theme_chanwe <- function(
   } else {
     character(0)
   }
-  title_family <- if ("Archivo SemiBold" %in% reg) "Archivo SemiBold" else "Archivo"
-  title_face   <- if (title_family == "Archivo SemiBold") "plain" else "bold"
+  title_family <- if ("Archivo SemiBold" %in% reg) {
+    "Archivo SemiBold"
+  } else {
+    "Archivo"
+  }
+  title_face <- if (title_family == "Archivo SemiBold") "plain" else "bold"
   subtitle_family <- "Satoshi"
   subtitle_face <- "plain"
 
@@ -160,19 +164,19 @@ theme_chanwe <- function(
   }
 
   title_element <- new_element_chanwe_title(
-    family         = title_family,
-    face           = title_face,
-    size           = base_text_size * 1.9,
-    colour         = colors[["typst-ink"]],
+    family = title_family,
+    face = title_face,
+    size = base_text_size * 1.9,
+    colour = colors[["typst-ink"]],
     eyebrow_family = mono_family,
-    eyebrow_size   = base_text_size * 0.86,
+    eyebrow_size = base_text_size * 0.70,
     eyebrow_colour = colors[["typst-primary"]],
-    ink_colour     = colors[["typst-ink"]]
+    ink_colour = colors[["typst-ink"]]
   )
   subtitle_element <- new_element_chanwe_subtitle(
-    family     = subtitle_family,
-    size       = base_text_size * 1.0,
-    colour     = colors[["typst-fg-muted"]],
+    family = subtitle_family,
+    size = base_text_size * 1.0,
+    colour = colors[["typst-fg-muted"]],
     ink_colour = colors[["typst-ink"]]
   )
 
@@ -188,11 +192,11 @@ theme_chanwe <- function(
       ),
       plot.title = title_element,
       plot.caption = new_element_chanwe_caption(
-        family         = mono_family,
-        size           = base_text_size * 0.8,
-        colour         = colors[["typst-fg-muted"]],
+        family = mono_family,
+        size = base_text_size * 0.8,
+        colour = colors[["typst-fg-muted"]],
         primary_colour = colors[["typst-primary"]],
-        ink_colour     = colors[["typst-ink"]]
+        ink_colour = colors[["typst-ink"]]
       ),
       axis.title = ggplot2::element_text(
         family = mono_thin_family,
@@ -321,7 +325,9 @@ theme_chanwe <- function(
 #'     theme_chanwe()
 #' }
 chanwe_title <- function(text, eyebrow = NULL) {
-  if (is.null(eyebrow)) return(text)
+  if (is.null(eyebrow)) {
+    return(text)
+  }
   paste(eyebrow, text, sep = .CW_SEP)
 }
 
@@ -352,7 +358,9 @@ chanwe_title <- function(text, eyebrow = NULL) {
 #'   note = "Max peel measured when foil breaks, otherwise average peel"
 #' )
 chanwe_subtitle <- function(text, note = NULL) {
-  if (is.null(note)) return(text)
+  if (is.null(note)) {
+    return(text)
+  }
   paste(text, note, sep = .CW_SEP)
 }
 

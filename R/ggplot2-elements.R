@@ -141,7 +141,7 @@ new_element_chanwe_caption <- function(
   has_ey <- !is.null(x$eyebrow_text) && nzchar(x$eyebrow_text)
   ey_h <- if (has_ey) .cw_str_h(x$eyebrow_text, x$eyebrow_gp) else 0
   bot <- 2 # bottom padding
-  gap1 <- if (has_ey) 9 else 0 # gap: title → eyebrow
+  gap1 <- if (has_ey) 8 else 0 # gap: title → eyebrow
   gap2 <- if (x$draw_top && has_ey) {
     5
   } else if (x$draw_top) {
@@ -237,7 +237,7 @@ heightDetails.cw_title_tree <- function(x) {
   s_h <- .cw_str_h(x$sub_text, x$sub_gp)
   has_n <- !is.null(x$note_text) && nzchar(x$note_text)
   n_h <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
-  top <- 3 # top padding (matches margin t=3)
+  top <- 5.5 # top padding (matches margin t=3)
   bot <- 20 # bottom padding (matches margin b=20)
   gap_ln <- if (x$draw_middle) 5 else 0 # gap: subtitle → line
   ln_h <- if (x$draw_middle) 0.3 else 0
@@ -401,7 +401,7 @@ heightDetails.cw_caption_tree <- function(x) {
 #' @export
 element_grob.element_chanwe_title <- function(element, label = "", ...) {
   if (is.null(label) || identical(label, "")) {
-    return(grid::zeroGrob())
+    return(grid::nullGrob())
   }
 
   pb <- getOption("chanwer.plot_borders", default = "none")
@@ -432,11 +432,9 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
 #' @export
 element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
   if (is.null(label) || identical(label, "")) {
-    return(grid::zeroGrob())
+    return(grid::nullGrob())
   }
 
-  pb <- getOption("chanwer.plot_borders", default = "none")
-  draw_middle <- pb %in% c("middle", "complete")
   ink <- element$ink_colour %||_% "#1A1A1A"
 
   parts <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
@@ -456,14 +454,21 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     col = element$colour %||_% "#555555"
   )
 
-  .cw_subtitle_tree(sub_text, note_text, draw_middle, sub_gp, note_gp, ink)
+  .cw_subtitle_tree(
+    sub_text,
+    note_text,
+    draw_middle = TRUE,
+    sub_gp,
+    note_gp,
+    ink
+  )
 }
 
 #' @method element_grob element_chanwe_caption
 #' @export
 element_grob.element_chanwe_caption <- function(element, label = "", ...) {
   if (is.null(label) || identical(label, "")) {
-    return(grid::zeroGrob())
+    return(grid::nullGrob())
   }
 
   pb <- getOption("chanwer.plot_borders", default = "none")
