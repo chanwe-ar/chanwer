@@ -265,7 +265,7 @@
   body,
 ) = {
   let bg      = if color == "gray" or color == "light" { _t.neutral-100 } else { white }
-  let borders = color != "gray" and color != "light"
+  let borders = color != "gray" and color != "light" and color != "white"
   move(dx: -18mm,
     block(
       width: 210mm,
@@ -424,4 +424,14 @@
     row-gutter: 4mm,
     ..items,
   )
+}
+
+#let fig-border(body) = {
+  v(4mm, weak: true)
+  block(breakable: false)[
+    #line(length: 100%, stroke: 0.1pt + _t.ink)
+    #pad(top: 0mm, bottom: 0mm)[#body]
+    #line(length: 100%, stroke: 0.1pt + _t.ink)
+  ]
+  v(4mm, weak: true)
 }

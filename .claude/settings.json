@@ -66,7 +66,9 @@
       "Bash(grep -v \"^$\\\\|system-reminder\\\\|Available\\\\|TRIGGER\\\\|SKIP\")",
       "Bash(Rscript -e \"devtools::load_all\\(\\); cat\\('OK\\\\n'\\)\")",
       "Bash(Rscript -e \"devtools::document\\(\\); devtools::load_all\\(\\); cat\\('OK\\\\n'\\)\")",
-      "Bash(Rscript -e \"cat\\('element_grob exported:', 'element_grob' %in% getNamespaceExports\\('ggplot2'\\), '\\\\n'\\)\")"
+      "Bash(Rscript -e \"cat\\('element_grob exported:', 'element_grob' %in% getNamespaceExports\\('ggplot2'\\), '\\\\n'\\)\")",
+      "Bash(Rscript -e \"devtools::document\\(pkg = '.'\\)\")",
+      "Bash(R --no-save --no-restore -e \"devtools::document\\(\\); cat\\('DONE\\\\n'\\)\")"
     ],
     "additionalDirectories": [
       "/Users/alejandro.abraham@scalapay.com/Documents/GitHub/chanwe/chanwe-typst/fonts"

@@ -24,8 +24,7 @@ chanwe:
   section: "R Package"
   topic: "chanwer"
   rail-eyebrow: "VISUAL REFERENCE"
-  hero-image: "assets/bg_mountains.jpg"
-  wordmark: "assets/Logo_Negro.png"
+  hero-image: "_extensions/chanwe/assets/bg_mountains.jpg"
   cover: true
   toc: true
   toc-eyebrow: "Document map"
@@ -87,6 +86,24 @@ fmt_fleet <- list(
 
 # kbl Tables
 
+### Ivory background
+
+```{r}
+mt |>
+    select(model, mpg, cyl, hp, wt) |>
+    slice_head(n = 8) |>
+    chanwe_kbl(
+        title = "Simple fleet view",
+        subtitle = "Top 8 vehicles · mtcars · white background",
+        eyebrow = "TABLE · SPACIOUS · WHITE",
+        caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+        stub = "model",
+        bg = "white-ivory",
+        fmt = fmt_fleet
+    )
+```
+
+
 ## White background
 
 ```{r}
@@ -136,7 +153,7 @@ mt |>
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
         bg = "gray",
-        density = 'compact',
+        padding = 0,
         top_border = FALSE,
         fmt = fmt_fleet
     )
@@ -144,6 +161,10 @@ mt |>
 
 
 ##### Plot 1
+
+::: {.inset-great-figure eyebrow="FY 2025" title="Revenue by Segment" layout="left" position="right" color="beige" source="Data: FY 2025 — valores normalizados"}
+La categoria C presenta el valor mas alto del conjunto. Los segmentos A y E muestran rendimiento dentro del rango esperado, mientras que F establece el piso de referencia para el analisis diferencial.
+
 
 ```{r}
 #| dev.args: !expr list(bg = "transparent")
@@ -166,6 +187,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     )
 ```
 
+:::
 
 ##### Plot 2
 
@@ -175,7 +197,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     geom_point(size = 2.2, alpha = 0.88) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     scale_color_chanwe_d() +
-    theme_chanwe(bg_color = "white", plot_borders = TRUE) +
+    theme_chanwe(bg_color = "ivory") +
     labs(
         title = chanwe_title(
             "Simple fleet view",
@@ -197,6 +219,28 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     scale_color_chanwe_d() +
     theme_chanwe(bg_color = "gray", plot_borders = TRUE) +
+    labs(
+        title = chanwe_title(
+            "Simple fleet view",
+            eyebrow = "TLDR;"
+        ),
+        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band"
+    )
+```
+
+
+##### Plot 4
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(bg_color = "white", plot_borders = TRUE) +
     labs(
         title = chanwe_title(
             "Simple fleet view",

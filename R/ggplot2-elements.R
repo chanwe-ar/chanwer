@@ -140,6 +140,7 @@ new_element_chanwe_caption <- function(
   t_h <- .cw_str_h(x$title_text, x$title_gp)
   has_ey <- !is.null(x$eyebrow_text) && nzchar(x$eyebrow_text)
   ey_h <- if (has_ey) .cw_str_h(x$eyebrow_text, x$eyebrow_gp) else 0
+  top <- if (has_ey) 8 else 0 # top padding above eyebrow
   bot <- 1 # bottom padding
   gap1 <- if (has_ey) 6 else 0 # gap: title → eyebrow
   gap2 <- if (x$draw_top && has_ey) {
@@ -150,11 +151,12 @@ new_element_chanwe_caption <- function(
     0
   } # gap: eyebrow/title → line
   ln_h <- if (x$draw_top) 0.3 else 0
-  total <- bot + t_h + gap1 + ey_h + gap2 + ln_h
+  total <- top + bot + t_h + gap1 + ey_h + gap2 + ln_h
   list(
     t_h = t_h,
     ey_h = ey_h,
     has_ey = has_ey,
+    top = top,
     bot = bot,
     gap1 = gap1,
     gap2 = gap2,
@@ -170,7 +172,7 @@ makeContent.cw_title_tree <- function(x) {
   # positions: y measured from BOTTOM of grob (y=0=bottom, y=total=top=visual top)
   title_y <- d$bot + d$t_h / 2
   ey_y <- d$bot + d$t_h + d$gap1 + d$ey_h / 2
-  line_y <- d$total - d$ln_h / 2
+  line_y <- d$total - d$top - d$ln_h / 2
 
   ch <- grid::gList(
     grid::textGrob(
@@ -241,7 +243,7 @@ heightDetails.cw_title_tree <- function(x) {
   n_h <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
   top <- 5 # top padding
   bot <- 20 # bottom padding (matches margin b=20)
-  gap_ln <- if (x$draw_middle) 8 else 0 # gap: subtitle → line
+  gap_ln <- if (x$draw_middle) 14 else 0 # gap: subtitle → line
   ln_h <- if (x$draw_middle) 0.3 else 0
   gap_n <- if (has_n) 3 else 0 # gap: line → note
   total <- top + s_h + gap_ln + ln_h + gap_n + n_h + bot

@@ -32,9 +32,10 @@ chanwe_discrete_pal <- function() {
 #' ## Background variants
 #' | Name | Hex | Major grid | Minor grid |
 #' |------|-----|------------|------------|
-#' | `"white"` | `#FFFFFF` | `#F0F0F0` | `#F4F4F4` |
-#' | `"gray"` | `#F5F5F5` | `#E8E8E8` | `#EBEBEB` |
-#' | `"beige"` | `#ECE5D8` | `#E0D6CA` | `#E6DDD2` |
+#' | `"white-ivory"` | `#FAF9F7` | `#ECEAE6` | `#F1F0ED` |
+#' | `"white"` | `#FFFFFF` | `#E8E8E8` | `#EEEEEE` |
+#' | `"gray"` | `#F2F2F2` | `#E0E0E0` | `#EAEAEA` |
+#' | `"beige"` | `#F5F1EB` | `#D8D1C7` | `#E3DDD5` |
 #'
 #' @param base_text_size Base text size in points. Default `6.5`.
 #' @param base_family Base font family for body text. Default `"Satoshi"`.
@@ -42,7 +43,7 @@ chanwe_discrete_pal <- function() {
 #' @param legend_position Legend position string passed to
 #'   `theme(legend.position = )`. Default `"bottom"`.
 #' @param bg_color Background color for the plot surface. Accepts a hex string
-#'   or one of `"white"` (default), `"gray"`, `"beige"`.
+#'   or one of `"white-ivory"` (default), `"white"`, `"gray"`, `"beige"`.
 #' @param plot_padding Uniform outer margin in pts applied to all four sides of
 #'   the plot (title, caption, and panel included). Default `2`.
 #'   Pass a single number, e.g. `plot_padding = 18`.
@@ -99,11 +100,11 @@ chanwe_discrete_pal <- function() {
 #'     theme_chanwe(legend_position = "none")
 #' }
 theme_chanwe <- function(
-  base_text_size = 7,
+  base_text_size = 6.5,
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
-  bg_color = "beige",
+  bg_color = "white-ivory",
   plot_padding = 10,
   plot_borders = "none"
 ) {
@@ -116,12 +117,14 @@ theme_chanwe <- function(
   outer_border_color <- colors[["typst-neutral-200"]]
   grid_color <- switch(
     bg_color,
+    "#FAF9F7" = "#ECEAE6",
     "#FFFFFF" = "#E8E8E8",
     "#F5F1EB" = "#D8D1C7",
     "#E0E0E0"
   )
   grid_color_minor <- switch(
     bg_color,
+    "#FAF9F7" = "#F1F0ED",
     "#FFFFFF" = "#EEEEEE",
     "#F5F1EB" = "#E3DDD5",
     "#EAEAEA"

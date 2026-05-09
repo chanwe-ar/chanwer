@@ -111,5 +111,8 @@ $for(chanwe.back-cover-cols)$
 $endfor$
   ),
 $endif$
+$if(chanwe.page-bg)$
+  page-bg: rgb("#$chanwe.page-bg$"),
+$endif$
   doc,
 )

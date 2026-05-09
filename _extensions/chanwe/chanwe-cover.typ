@@ -17,7 +17,7 @@
   volume: "Vol. II",
   rail-eyebrow: "Quarto · Style Guide",
   hero-image: none,
-  wordmark: none,
+  wordmark: none, // defaults to Logo_Negro.png below
   stamp: ("est.", "mdz", "2026"),
   hero-caption-1: "N 32°53′ · W 68°50′",
   hero-caption-2: "Cordón del Plata · ARG",
@@ -27,7 +27,7 @@
   show-date-strip: false,
 ) = {
   let hero-image = _chanwe-clean-path(hero-image)
-  let wordmark   = _chanwe-clean-path(wordmark)
+  let wordmark   = if wordmark == none { _chanwe-assets + "Logo_Negro.png" } else { _chanwe-clean-path(wordmark) }
   set page(
     paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.paper,
     foreground: place(top + left, dx: 50mm, dy: -50mm,
@@ -99,9 +99,9 @@
         ]
 
         #if subtitle != none {
-          v(14mm)
+          v(8mm)
           set par(leading: 0.55em)
-          set text(font: _t.font-serif, size: 12pt, weight: 200, style: "italic", fill: _t.fg-subtle)
+          set text(font: _t.font-serif, size: 14pt, weight: 200, style: "italic", fill: _t.fg-subtle)
           subtitle
         }
 
@@ -168,12 +168,7 @@
     inset: (x: 14mm, top: 0mm, bottom: 0mm),
   )[
     #set align(center + horizon)
-    #if wordmark != none {
-      align(center + horizon, image(wordmark, height: 45mm, fit: "contain"))
-    } else {
-      text(font: _t.font-display, size: 72pt, weight: 800, tracking: -0.04em,
-           fill: _t.ink, "chanwe")
-    }
+    #align(center + horizon, image(wordmark, height: 45mm, fit: "contain"))
   ]
 
   // ---- BLANK INTERSTITIAL PAGE ------------------------------

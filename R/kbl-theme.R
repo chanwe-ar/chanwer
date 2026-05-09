@@ -33,9 +33,12 @@
 #'   (between the separator line and the labels). Default \code{0}.
 #' @param footer_top Extra vertical space in pt above the footer note text.
 #'   Default \code{0}.
-#' @param bg Table background colour. Named shorthand: \code{"white"},
-#'   \code{"beige"} (\code{#F7F3EE}), \code{"gray"} (\code{#F5F5F5}).
-#'   Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Default \code{NULL} (transparent).
+#' @param bg Table background colour. Named shorthand: \code{"white-ivory"}
+#'   (default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
+#'   \code{"gray"} (\code{#F2F2F2}).
+#'   Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.
+#' @param padding Uniform outer margin in pts applied around the entire table
+#'   block (equivalent to \code{plot_padding} in \code{theme_chanwe()}). Default \code{0}.
 #' @param fmt Named list of formatting functions, keyed by column name.
 #'   Each function receives the column vector and must return a character vector.
 #'
@@ -63,9 +66,10 @@ chanwe_kbl <- function(
   note_size = '7pt',
   col_label_top = 0,
   footer_top = 0,
-  bg = NULL,
+  bg = "white-ivory",
   top_border = TRUE,
   header_rule = TRUE,
+  padding = 12.5,
   fmt = list()
 ) {
   chanwe_require_package("knitr")
@@ -117,8 +121,8 @@ chanwe_kbl <- function(
     "7pt"
   }
 
-  top_v <- if (sp) "2pt" else "2pt" # space inside title cell before eyebrow
-  bot_v <- if (sp) "2pt" else "2pt" # space inside subtitle cell before separator
+  top_v <- if (sp) "8pt" else "4pt" # space inside title cell before eyebrow
+  bot_v <- if (sp) "8pt" else "4pt" # space inside subtitle cell before separator
 
   n <- ncol(data)
   nms <- colnames(data)
@@ -203,11 +207,13 @@ chanwe_kbl <- function(
     ", x: 2.5mm)"
   )
 
-  bg_fill <- if (is.null(bg)) {
-    ""
+  fill_val <- if (is.null(bg)) {
+    NULL
   } else {
-    fill_val <- switch(
+    switch(
       bg,
+      "white-ivory" = 'rgb("#FAF9F7")',
+      "ivory" = 'rgb("#FAF9F7")',
       "white" = "white",
       "beige" = 'rgb("#F5F1EB")',
       "cream" = 'rgb("#F5F1EB")',
@@ -215,8 +221,8 @@ chanwe_kbl <- function(
       "grey" = 'rgb("#F2F2F2")',
       bg
     )
-    paste0(", fill: ", fill_val)
   }
+  bg_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
 
   # code builder
   L <- character(0)
@@ -372,6 +378,15 @@ chanwe_kbl <- function(
   p("  )")
   p("  ]")
   p("}")
+
+  if (padding > 0) {
+    pad_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
+    L <- c(
+      paste0("#block(inset: (x: ", padding, "pt, y: 0pt)", pad_fill, ")["),
+      L,
+      "]"
+    )
+  }
 
   knitr::asis_output(paste0(
     "\n```{=typst}\n",

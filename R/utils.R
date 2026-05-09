@@ -148,10 +148,12 @@ chanwe_load_fonts <- function(path = NULL) {
 chanwe_resolve_bg <- function(bg_color) {
   switch(
     tolower(trimws(bg_color)),
-    white = "#FFFFFF",
-    gray  = "#F2F2F2",
-    grey  = "#F2F2F2",
-    beige = "#F5F1EB",
+    white          = "#FFFFFF",
+    "white-ivory"  = "#FAF9F7",
+    ivory          = "#FAF9F7",
+    gray           = "#F2F2F2",
+    grey           = "#F2F2F2",
+    beige          = "#F5F1EB",
     bg_color
   )
 }

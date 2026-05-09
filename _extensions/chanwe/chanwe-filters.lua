@@ -286,6 +286,14 @@ local function Div(el)
   end
 
   -- -------------------------------------------------------
+  -- ::: {.fig-border}
+  -- -------------------------------------------------------
+  if el.classes:includes("fig-border") then
+    local inner = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+    return pandoc.RawBlock("typst", "#fig-border[\n" .. inner .. "\n]")
+  end
+
+  -- -------------------------------------------------------
   -- ::: {.callout kind="note" title="Label"}
   -- -------------------------------------------------------
   if el.classes:includes("chanwe-callout") then

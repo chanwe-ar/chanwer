@@ -12,20 +12,20 @@
     grid(
       columns: (10mm, 14mm, 1fr, 12mm),
       column-gutter: 4mm,
-      align: (left + horizon, left + horizon, left + horizon, right + horizon),
+      align: (left + bottom, left + bottom, left + bottom, right + bottom),
       [],
-      text(font: _t.font-mono, size: 9pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-display, size: 9pt, weight: 100, fill: _t.fg-subtle, label),
-      text(font: _t.font-mono, size: 9pt, tracking: 0.14em, weight: 100, fill: _t.fg-subtle, page),
+      text(font: _t.font-mono, size: 6pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
+      text(font: _t.font-mono, size: 6pt, weight: 100, fill: _t.fg-subtle, label),
+      text(font: _t.font-mono, size: 6pt, tracking: 0.14em, weight: 100, fill: _t.fg-subtle, page),
     )
   } else {
     grid(
       columns: (14mm, 1fr, 12mm),
       column-gutter: 4mm,
-      align: (left + horizon, left + horizon, right + horizon),
-      text(font: _t.font-mono, size: 9pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-display, size: 9pt, weight: 100, fill: _t.fg-muted, label),
-      text(font: _t.font-mono, size: 9pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
+      align: (left + bottom, left + bottom, right + bottom),
+      text(font: _t.font-mono, size: 6pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
+      text(font: _t.font-mono, size: 6pt, weight: 100, fill: _t.ink, label),
+      text(font: _t.font-mono, size: 6pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
     )
   }
 ]
@@ -56,9 +56,9 @@
     // rows with explicit spacing and light gray separator after each
     #for (i, r) in rows.enumerate() {
       let is_sub = r.at("sub", default: false)
-      v(if i == 0 { 0.3mm } else if is_sub { 0.1mm } else { 0.2mm })
+      v(if i == 0 { 0.1mm } else if is_sub { 0mm } else { 0.1mm })
       chanwe-toc-row(..r)
-      v(0.2mm)
+      v(0.1mm)
       line(length: 100%, stroke: 0.5pt + _t.border)
     }
   ]
@@ -186,7 +186,7 @@
                        size: 32pt, fill: _t.primary, cur-part.number),
                   {
                     text(font: _t.font-serif, style: "italic", weight: 200,
-                         size: 26pt, tracking: -0.02em, fill: luma(185),
+                         size: 26pt, tracking: -0.02em, fill: luma(90),
                          cur-part.title)
                     text(font: _t.font-serif, style: "italic", weight: 200,
                          size: 26pt, fill: _t.primary, ".")
@@ -205,13 +205,14 @@
               align: (left + bottom, left + bottom, right + bottom),
               text(font: _t.font-serif, style: "italic", weight: 300,
                    size: 24pt, fill: _t.primary, _pad2(n)),
-              text(font: _t.font-display, size: 16pt, weight: 700,
+              text(font: _t.font-display, size: 16pt, weight: 600,
                    fill: _t.neutral-900, it.body()),
               text(font: _t.font-mono, size: 7pt, tracking: 0.18em,
                    fill: _t.fg-subtle, upper(pages_str)),
             )
             #v(4mm)
             #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
+            #v(2mm)
           ]
         }
       } else if it.level == 2 {
@@ -220,9 +221,9 @@
         context {
           let n  = _h2.get().first()
           let pg = counter(page).at(it.element.location()).first()
-          v(3mm)
-          chanwe-toc-row(num: _pad2(n), label: it.body(), page: _pad2(pg))
-          v(0mm)
+          v(1.5mm)
+          chanwe-toc-row(num: _pad2(n), label: it.element.body, page: _pad2(pg))
+          v(-1.5mm)
           line(length: 100%, stroke: 0.5pt + _t.border)
         }
       } else if it.level == 3 {
@@ -231,9 +232,9 @@
           let h2n = _h2.get().first()
           let h3n = _h3.get().first()
           let pg  = counter(page).at(it.element.location()).first()
-          v(3mm)
-          chanwe-toc-row(num: str(h2n) + "." + str(h3n), label: it.body(), page: _pad2(pg), sub: true)
-          v(0mm)
+          v(1.5mm)
+          chanwe-toc-row(num: str(h2n) + "." + str(h3n), label: it.element.body, page: _pad2(pg), sub: true)
+          v(-1.5mm)
           line(length: 100%, stroke: 0.5pt + _t.border)
         }
       }

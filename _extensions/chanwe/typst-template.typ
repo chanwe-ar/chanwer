@@ -13,7 +13,7 @@
   primary:     rgb("#FB3D0E"),
   primary-dark: rgb("#EE5524"),
   primary-soft: rgb("#FB3D0E1A"),
-  beige:       rgb("#ECE5D8"),
+  beige:       rgb("#F5F1EB"),
   neutral-100: rgb("#F5F5F5"),
   neutral-200: rgb("#E8E8E8"),
   neutral-300: rgb("#D4D4D4"),
@@ -28,6 +28,41 @@
 
 // expose tokens as a global so partials and user code can use them
 #let _t = chanwe-tokens
+
+// ---------- Brand palette ------------------------------------
+// Three brand color ramps (100 = lightest, 950 = darkest).
+#let main_brand = (
+  // Orange — primary brand color
+  orange-100: rgb("#f8ddd9"),
+  orange-200: rgb("#f6cfc7"),
+  orange-300: rgb("#f5c0b6"),
+  orange-400: rgb("#f2a393"),
+  orange-500: rgb("#f09482"),
+  orange-600: rgb("#ef8670"),
+  orange-700: rgb("#ed775f"),
+  orange-800: rgb("#ec684e"),
+  orange-900: rgb("#ea5a3c"),
+  orange-950: rgb("#e94b2b"),
+
+  // Dark — ink / neutral ramp
+  dark-100: rgb("#cacaca"),
+  dark-200: rgb("#b8b8b8"),
+  dark-300: rgb("#a5a5a5"),
+  dark-400: rgb("#929292"),
+  dark-500: rgb("#6d6d6d"),
+  dark-600: rgb("#5b5b5b"),
+  dark-700: rgb("#484848"),
+  dark-800: rgb("#353535"),
+  dark-900: rgb("#232323"),
+  dark-950: rgb("#101010"),
+
+  // Beige — paper / warm neutral ramp
+  beige-100: rgb("#F6F1EB"),
+  beige-200: rgb("#ECE5D9"),
+  beige-300: rgb("#E2DBD0"),
+  beige-400: rgb("#D9D2C6"),
+  beige-500: rgb("#CFC8BD"),
+)
 
 // assets path — override with chanwe-assets: in document YAML if the
 // extension installed to a different path (e.g. _extensions/chanwe/)
@@ -48,7 +83,7 @@
   text(
     font: _t.font-mono,
     size: size,
-    weight: 300,
+    weight: 500,
     tracking: 0.18em,
     fill: color,
     upper(body),
@@ -111,13 +146,7 @@
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
           [#upper[#doc-id #h(8pt) #text(fill: _t.neutral-300, edition)]],
-          grid(
-            columns: (auto, auto),
-            column-gutter: 8pt,
-            align: left + horizon,
-            image(_chanwe-assets + "Estrategia_Color.png", height: 1.87mm, fit: "contain"),
-            [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-subtle, upper(" / " + str(counter(page).final().first())))],
-          ),
+          [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-subtle, upper(" / " + str(counter(page).final().first())))],
         )
       }),
     )
@@ -187,6 +216,8 @@ $chanwe-charts.typ()$
   back-cover-tagline-1: "Less template,",
   back-cover-tagline-2: "more report.",
   back-cover-cols: (),
+  // page
+  page-bg: rgb("#FAFAFA"),
   // body
   body,
 ) = {
@@ -194,6 +225,7 @@ $chanwe-charts.typ()$
   _chanwe-doc.update((doc-id: doc-id, edition: edition, meta-rows: meta-rows))
 
   // ---- global text + page defaults ---------------------------
+  set page(fill: page-bg)
   set text(font: _t.font-sans, size: 11pt, fill: _t.fg, lang: "en")
   set par(leading: 0.85em, justify: false, spacing: 1.0em)
   set heading(numbering: "1.1.1.")
@@ -256,31 +288,32 @@ $chanwe-charts.typ()$
         columns: (auto, 1fr),
         column-gutter: 8mm,
         align: (left + bottom, left + bottom),
-        text(font: _t.font-serif, style: "italic", weight: 100,
-             size: 48pt, fill: _t.primary,
+        text(font: _t.font-serif, style: "italic", weight: 300,
+             size: 60pt, fill: _t.primary,
              counter(heading).display("1")),
         block()[
           #set par(leading: 0.18em)
-          #text(font: _t.font-display, size: 30pt, weight: 700,
+          #text(font: _t.font-display, size: 30pt, weight: 600,
                tracking: -0.025em, fill: _t.neutral-900, it.body)
         ],
       )
-      #v(4mm)
+      #v(1.5mm)
       #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
     ]
   }
   show heading.where(level: 2): it => block(above: 32mm, below: 12mm)[
+    #set par(leading: 0.2em)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 6mm,
       align: (left + bottom, left + bottom),
-      text(font: _t.font-serif, style: "italic", weight: 100,
-           size: 26.4pt, fill: _t.primary,
+      text(font: _t.font-mono, weight: 100,
+           size: 15pt, fill: _t.primary,
            counter(heading).display("1.1")),
-      text(font: _t.font-display, size: 27pt, weight: 700,
+      text(font: _t.font-display, size: 19pt, weight: 600,
            tracking: -0.01em, it.body),
     )
-    #v(3mm)
+    #v(0mm)
     #line(length: 100%, stroke: 0.5pt + _t.neutral-300)
   ]
   show heading.where(level: 3): it => block(above: 22mm, below: 5.5mm)[
@@ -288,10 +321,10 @@ $chanwe-charts.typ()$
       columns: (auto, 1fr),
       column-gutter: 4mm,
       align: (left + bottom, left + bottom),
-      text(font: _t.font-serif, style: "italic", weight: 100,
-           size: 18pt, fill: _t.primary,
+      text(font: _t.font-mono, weight: 100,
+           size: 12pt, fill: _t.primary,
            counter(heading).display("1.1.1")),
-      text(font: _t.font-display, size: 17pt, weight: 700,
+      text(font: _t.font-display, size: 15pt, weight: 600,
            tracking: -0.01em, it.body),
     )
   ]
@@ -301,9 +334,9 @@ $chanwe-charts.typ()$
       column-gutter: 4mm,
       align: (left + bottom, left + bottom),
       text(font: _t.font-serif, style: "italic", weight: 100,
-           size: 14pt, fill: _t.primary,
+           size: 10pt, fill: _t.primary,
            counter(heading).display("1.1.1.1")),
-      text(font: _t.font-display, size: 14pt, weight: 700,
+      text(font: _t.font-display, size: 13pt, weight: 700,
            tracking: -0.01em, it.body),
     )
   ]
@@ -365,6 +398,17 @@ $chanwe-charts.typ()$
     it.body
     v(-0.25pt)
     line(length: 100%, stroke: 0.5pt + _t.ink)
+    v(15mm, weak: true)
+  }
+  show figure.where(kind: image): it => {
+    v(15mm, weak: true)
+    line(length: 100%, stroke: 0.3pt + _t.ink)
+    v(4mm)
+    it.body
+    v(3mm)
+    line(length: 100%, stroke: 0.3pt + _t.ink)
+    v(2mm)
+    it.caption
     v(15mm, weak: true)
   }
   show figure: set block(above: 15mm, below: 15mm)

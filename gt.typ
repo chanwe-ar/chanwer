@@ -223,7 +223,7 @@
   primary:     rgb("#FB3D0E"),
   primary-dark: rgb("#EE5524"),
   primary-soft: rgb("#FB3D0E1A"),
-  beige:       rgb("#ECE5D8"),
+  beige:       rgb("#F5F1EB"),
   neutral-100: rgb("#F5F5F5"),
   neutral-200: rgb("#E8E8E8"),
   neutral-300: rgb("#D4D4D4"),
@@ -238,6 +238,41 @@
 
 // expose tokens as a global so partials and user code can use them
 #let _t = chanwe-tokens
+
+// ---------- Brand palette ------------------------------------
+// Three brand color ramps (100 = lightest, 950 = darkest).
+#let main_brand = (
+  // Orange — primary brand color
+  orange-100: rgb("#f8ddd9"),
+  orange-200: rgb("#f6cfc7"),
+  orange-300: rgb("#f5c0b6"),
+  orange-400: rgb("#f2a393"),
+  orange-500: rgb("#f09482"),
+  orange-600: rgb("#ef8670"),
+  orange-700: rgb("#ed775f"),
+  orange-800: rgb("#ec684e"),
+  orange-900: rgb("#ea5a3c"),
+  orange-950: rgb("#e94b2b"),
+
+  // Dark — ink / neutral ramp
+  dark-100: rgb("#cacaca"),
+  dark-200: rgb("#b8b8b8"),
+  dark-300: rgb("#a5a5a5"),
+  dark-400: rgb("#929292"),
+  dark-500: rgb("#6d6d6d"),
+  dark-600: rgb("#5b5b5b"),
+  dark-700: rgb("#484848"),
+  dark-800: rgb("#353535"),
+  dark-900: rgb("#232323"),
+  dark-950: rgb("#101010"),
+
+  // Beige — paper / warm neutral ramp
+  beige-100: rgb("#F6F1EB"),
+  beige-200: rgb("#ECE5D9"),
+  beige-300: rgb("#E2DBD0"),
+  beige-400: rgb("#D9D2C6"),
+  beige-500: rgb("#CFC8BD"),
+)
 
 // assets path — override with chanwe-assets: in document YAML if the
 // extension installed to a different path (e.g. _extensions/chanwe/)
@@ -258,7 +293,7 @@
   text(
     font: _t.font-mono,
     size: size,
-    weight: 300,
+    weight: 500,
     tracking: 0.18em,
     fill: color,
     upper(body),
@@ -321,13 +356,7 @@
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
           [#upper[#doc-id #h(8pt) #text(fill: _t.neutral-300, edition)]],
-          grid(
-            columns: (auto, auto),
-            column-gutter: 8pt,
-            align: left + horizon,
-            image(_chanwe-assets + "Estrategia_Color.png", height: 1.87mm, fit: "contain"),
-            [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-subtle, upper(" / " + str(counter(page).final().first())))],
-          ),
+          [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-subtle, upper(" / " + str(counter(page).final().first())))],
         )
       }),
     )
@@ -367,7 +396,7 @@
   volume: "Vol. II",
   rail-eyebrow: "Quarto · Style Guide",
   hero-image: none,
-  wordmark: none,
+  wordmark: none, // defaults to Logo_Negro.png below
   stamp: ("est.", "mdz", "2026"),
   hero-caption-1: "N 32°53′ · W 68°50′",
   hero-caption-2: "Cordón del Plata · ARG",
@@ -377,7 +406,7 @@
   show-date-strip: false,
 ) = {
   let hero-image = _chanwe-clean-path(hero-image)
-  let wordmark   = _chanwe-clean-path(wordmark)
+  let wordmark   = if wordmark == none { _chanwe-assets + "Logo_Negro.png" } else { _chanwe-clean-path(wordmark) }
   set page(
     paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.paper,
     foreground: place(top + left, dx: 50mm, dy: -50mm,
@@ -449,9 +478,9 @@
         ]
 
         #if subtitle != none {
-          v(14mm)
+          v(8mm)
           set par(leading: 0.55em)
-          set text(font: _t.font-serif, size: 12pt, weight: 200, style: "italic", fill: _t.fg-subtle)
+          set text(font: _t.font-serif, size: 14pt, weight: 200, style: "italic", fill: _t.fg-subtle)
           subtitle
         }
 
@@ -518,12 +547,7 @@
     inset: (x: 14mm, top: 0mm, bottom: 0mm),
   )[
     #set align(center + horizon)
-    #if wordmark != none {
-      align(center + horizon, image(wordmark, height: 45mm, fit: "contain"))
-    } else {
-      text(font: _t.font-display, size: 72pt, weight: 800, tracking: -0.04em,
-           fill: _t.ink, "chanwe")
-    }
+    #align(center + horizon, image(wordmark, height: 45mm, fit: "contain"))
   ]
 
   // ---- BLANK INTERSTITIAL PAGE ------------------------------
@@ -900,7 +924,7 @@
   body,
 ) = {
   let bg      = if color == "gray" or color == "light" { _t.neutral-100 } else { white }
-  let borders = color != "gray" and color != "light"
+  let borders = color != "gray" and color != "light" and color != "white"
   move(dx: -18mm,
     block(
       width: 210mm,
@@ -1059,6 +1083,16 @@
     row-gutter: 4mm,
     ..items,
   )
+}
+
+#let fig-border(body) = {
+  v(4mm, weak: true)
+  block(breakable: false)[
+    #line(length: 100%, stroke: 0.1pt + _t.ink)
+    #pad(top: 0mm, bottom: 0mm)[#body]
+    #line(length: 100%, stroke: 0.1pt + _t.ink)
+  ]
+  v(4mm, weak: true)
 }// =============================================================
 // chanwe-pages.typ — editorial pages 1:1 to HTML
 // AGENDA · ABSTRACT · CHAPTER SEPARATOR · BACK COVER
@@ -1073,20 +1107,20 @@
     grid(
       columns: (10mm, 14mm, 1fr, 12mm),
       column-gutter: 4mm,
-      align: (left + horizon, left + horizon, left + horizon, right + horizon),
+      align: (left + bottom, left + bottom, left + bottom, right + bottom),
       [],
-      text(font: _t.font-mono, size: 9pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-display, size: 9pt, weight: 100, fill: _t.fg-subtle, label),
-      text(font: _t.font-mono, size: 9pt, tracking: 0.14em, weight: 100, fill: _t.fg-subtle, page),
+      text(font: _t.font-mono, size: 6pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
+      text(font: _t.font-mono, size: 6pt, weight: 100, fill: _t.fg-subtle, label),
+      text(font: _t.font-mono, size: 6pt, tracking: 0.14em, weight: 100, fill: _t.fg-subtle, page),
     )
   } else {
     grid(
       columns: (14mm, 1fr, 12mm),
       column-gutter: 4mm,
-      align: (left + horizon, left + horizon, right + horizon),
-      text(font: _t.font-mono, size: 9pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-display, size: 9pt, weight: 100, fill: _t.fg-muted, label),
-      text(font: _t.font-mono, size: 9pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
+      align: (left + bottom, left + bottom, right + bottom),
+      text(font: _t.font-mono, size: 6pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
+      text(font: _t.font-mono, size: 6pt, weight: 100, fill: _t.ink, label),
+      text(font: _t.font-mono, size: 6pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
     )
   }
 ]
@@ -1117,9 +1151,9 @@
     // rows with explicit spacing and light gray separator after each
     #for (i, r) in rows.enumerate() {
       let is_sub = r.at("sub", default: false)
-      v(if i == 0 { 0.3mm } else if is_sub { 0.1mm } else { 0.2mm })
+      v(if i == 0 { 0.1mm } else if is_sub { 0mm } else { 0.1mm })
       chanwe-toc-row(..r)
-      v(0.2mm)
+      v(0.1mm)
       line(length: 100%, stroke: 0.5pt + _t.border)
     }
   ]
@@ -1247,7 +1281,7 @@
                        size: 32pt, fill: _t.primary, cur-part.number),
                   {
                     text(font: _t.font-serif, style: "italic", weight: 200,
-                         size: 26pt, tracking: -0.02em, fill: luma(185),
+                         size: 26pt, tracking: -0.02em, fill: luma(90),
                          cur-part.title)
                     text(font: _t.font-serif, style: "italic", weight: 200,
                          size: 26pt, fill: _t.primary, ".")
@@ -1266,13 +1300,14 @@
               align: (left + bottom, left + bottom, right + bottom),
               text(font: _t.font-serif, style: "italic", weight: 300,
                    size: 24pt, fill: _t.primary, _pad2(n)),
-              text(font: _t.font-display, size: 16pt, weight: 700,
+              text(font: _t.font-display, size: 16pt, weight: 600,
                    fill: _t.neutral-900, it.body()),
               text(font: _t.font-mono, size: 7pt, tracking: 0.18em,
                    fill: _t.fg-subtle, upper(pages_str)),
             )
             #v(4mm)
             #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
+            #v(2mm)
           ]
         }
       } else if it.level == 2 {
@@ -1281,9 +1316,9 @@
         context {
           let n  = _h2.get().first()
           let pg = counter(page).at(it.element.location()).first()
-          v(3mm)
-          chanwe-toc-row(num: _pad2(n), label: it.body(), page: _pad2(pg))
-          v(0mm)
+          v(1.5mm)
+          chanwe-toc-row(num: _pad2(n), label: it.element.body, page: _pad2(pg))
+          v(-1.5mm)
           line(length: 100%, stroke: 0.5pt + _t.border)
         }
       } else if it.level == 3 {
@@ -1292,9 +1327,9 @@
           let h2n = _h2.get().first()
           let h3n = _h3.get().first()
           let pg  = counter(page).at(it.element.location()).first()
-          v(3mm)
-          chanwe-toc-row(num: str(h2n) + "." + str(h3n), label: it.body(), page: _pad2(pg), sub: true)
-          v(0mm)
+          v(1.5mm)
+          chanwe-toc-row(num: str(h2n) + "." + str(h3n), label: it.element.body, page: _pad2(pg), sub: true)
+          v(-1.5mm)
           line(length: 100%, stroke: 0.5pt + _t.border)
         }
       }
@@ -1833,6 +1868,8 @@
   back-cover-tagline-1: "Less template,",
   back-cover-tagline-2: "more report.",
   back-cover-cols: (),
+  // page
+  page-bg: rgb("#FAFAFA"),
   // body
   body,
 ) = {
@@ -1840,6 +1877,7 @@
   _chanwe-doc.update((doc-id: doc-id, edition: edition, meta-rows: meta-rows))
 
   // ---- global text + page defaults ---------------------------
+  set page(fill: page-bg)
   set text(font: _t.font-sans, size: 11pt, fill: _t.fg, lang: "en")
   set par(leading: 0.85em, justify: false, spacing: 1.0em)
   set heading(numbering: "1.1.1.")
@@ -1902,31 +1940,32 @@
         columns: (auto, 1fr),
         column-gutter: 8mm,
         align: (left + bottom, left + bottom),
-        text(font: _t.font-serif, style: "italic", weight: 100,
-             size: 48pt, fill: _t.primary,
+        text(font: _t.font-serif, style: "italic", weight: 300,
+             size: 60pt, fill: _t.primary,
              counter(heading).display("1")),
         block()[
           #set par(leading: 0.18em)
-          #text(font: _t.font-display, size: 30pt, weight: 700,
+          #text(font: _t.font-display, size: 30pt, weight: 600,
                tracking: -0.025em, fill: _t.neutral-900, it.body)
         ],
       )
-      #v(4mm)
+      #v(1.5mm)
       #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
     ]
   }
   show heading.where(level: 2): it => block(above: 32mm, below: 12mm)[
+    #set par(leading: 0.2em)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 6mm,
       align: (left + bottom, left + bottom),
-      text(font: _t.font-serif, style: "italic", weight: 100,
-           size: 26.4pt, fill: _t.primary,
+      text(font: _t.font-mono, weight: 100,
+           size: 15pt, fill: _t.primary,
            counter(heading).display("1.1")),
-      text(font: _t.font-display, size: 27pt, weight: 700,
+      text(font: _t.font-display, size: 19pt, weight: 600,
            tracking: -0.01em, it.body),
     )
-    #v(3mm)
+    #v(0mm)
     #line(length: 100%, stroke: 0.5pt + _t.neutral-300)
   ]
   show heading.where(level: 3): it => block(above: 22mm, below: 5.5mm)[
@@ -1934,10 +1973,10 @@
       columns: (auto, 1fr),
       column-gutter: 4mm,
       align: (left + bottom, left + bottom),
-      text(font: _t.font-serif, style: "italic", weight: 100,
-           size: 18pt, fill: _t.primary,
+      text(font: _t.font-mono, weight: 100,
+           size: 12pt, fill: _t.primary,
            counter(heading).display("1.1.1")),
-      text(font: _t.font-display, size: 17pt, weight: 700,
+      text(font: _t.font-display, size: 15pt, weight: 600,
            tracking: -0.01em, it.body),
     )
   ]
@@ -1947,9 +1986,9 @@
       column-gutter: 4mm,
       align: (left + bottom, left + bottom),
       text(font: _t.font-serif, style: "italic", weight: 100,
-           size: 14pt, fill: _t.primary,
+           size: 10pt, fill: _t.primary,
            counter(heading).display("1.1.1.1")),
-      text(font: _t.font-display, size: 14pt, weight: 700,
+      text(font: _t.font-display, size: 13pt, weight: 700,
            tracking: -0.01em, it.body),
     )
   ]
@@ -2011,6 +2050,17 @@
     it.body
     v(-0.25pt)
     line(length: 100%, stroke: 0.5pt + _t.ink)
+    v(15mm, weak: true)
+  }
+  show figure.where(kind: image): it => {
+    v(15mm, weak: true)
+    line(length: 100%, stroke: 0.3pt + _t.ink)
+    v(4mm)
+    it.body
+    v(3mm)
+    line(length: 100%, stroke: 0.3pt + _t.ink)
+    v(2mm)
+    it.caption
     v(15mm, weak: true)
   }
   show figure: set block(above: 15mm, below: 15mm)
@@ -2113,7 +2163,7 @@
   title: [Chanwe Showcase: ggplot2 + gt],
   subtitle: [Tables and plots aligned with chanwe-typst design tokens],
   author: "Alejandro Abraham",
-  date: "2026-05-08",
+  date: "2026-05-09",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",
@@ -2121,8 +2171,7 @@
   section: "R Package",
   topic: "chanwer",
   rail-eyebrow: "VISUAL REFERENCE",
-  hero-image: "assets/bg\_mountains.jpg",
-  wordmark: "assets/Logo\_Negro.png",
+  hero-image: "\_extensions/chanwe/assets/bg\_mountains.jpg",
   cover: true,
   toc: true,
   toc-eyebrow: "Document map",
@@ -2152,16 +2201,92 @@
 
 = kbl Tables
 <kbl-tables>
+=== Ivory background
+<ivory-background>
+#block(inset: (x: 12.5pt, y: 0pt), fill: rgb("#FAF9F7"))[
+#{ set table(inset: (x: 2.5mm, y: 10pt), stroke: none, fill: rgb("#FAF9F7"))
+  [
+  #table(
+    columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+    align: (left, right, left, right, right,),
+    table.header(
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · WHITE]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
+      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(8pt, weak: false)],
+      table.hline(stroke: 0.7pt + _t.ink),
+      table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MODEL]],
+      table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MPG]],
+      table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[CYL]],
+      table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[HP]],
+      table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[WT]],
+    ),
+    table.hline(stroke: 0.1pt + _t.ink),
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-subtle, weight: "light")[Mazda RX4]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[21.00]],
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[6]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[110]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[2.62]],
+    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-subtle, weight: "light")[Mazda RX4 Wag]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[21.00]],
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[6]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[110]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[2.88]],
+    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-subtle, weight: "light")[Datsun 710]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[22.80]],
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[4]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[93]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[2.32]],
+    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-subtle, weight: "light")[Hornet 4 Drive]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[21.40]],
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[6]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[110]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[3.21]],
+    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-subtle, weight: "light")[Hornet Sportabout]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[18.70]],
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[8]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[175]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[3.44]],
+    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-subtle, weight: "light")[Valiant]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[18.10]],
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[6]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[105]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[3.46]],
+    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-subtle, weight: "light")[Duster 360]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[14.30]],
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[8]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[245]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[3.57]],
+    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-subtle, weight: "light")[Merc 240D]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[24.40]],
+    table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[4]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[62]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "light")[3.19]],
+    table.hline(stroke: 0.5pt + _t.ink),
+    table.footer(
+      table.hline(stroke: 0.3pt + _t.ink),
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+    )
+  )
+  ]
+}
+]
 == White background
 <white-background>
+#block(inset: (x: 12.5pt, y: 0pt), fill: white)[
 #{ set table(inset: (x: 2.5mm, y: 10pt), stroke: none, fill: white)
   [
   #table(
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(2pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · WHITE]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
-      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(2pt, weak: false)],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · WHITE]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
+      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MPG]],
@@ -2225,16 +2350,18 @@
   )
   ]
 }
+]
 == Beige background
 <beige-background>
+#block(inset: (x: 12.5pt, y: 0pt), fill: rgb("#F5F1EB"))[
 #{ set table(inset: (x: 2.5mm, y: 10pt), stroke: none, fill: rgb("#F5F1EB"))
   [
   #table(
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm))[#v(2pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · BEIGE]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
-      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · beige background]#v(2pt, weak: false)],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · BEIGE]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
+      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · beige background]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MPG]],
@@ -2298,24 +2425,25 @@
   )
   ]
 }
+]
 = New page
 <new-page>
 == Gray background
 <gray-background>
-#{ set table(inset: (x: 2.5mm, y: 5pt), stroke: none, fill: rgb("#F2F2F2"))
+#{ set table(inset: (x: 2.5mm, y: 10pt), stroke: none, fill: rgb("#F2F2F2"))
   [
   #table(
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 5pt, bottom: 5pt, x: 2.5mm))[#v(2pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · GRAY]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
-      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 5pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · gray background]#v(2pt, weak: false)],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · GRAY]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
+      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · gray background]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
-      table.cell(align: left, inset: (top: 14pt, bottom: 5pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MODEL]],
-      table.cell(align: right, inset: (top: 14pt, bottom: 5pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MPG]],
-      table.cell(align: left, inset: (top: 14pt, bottom: 5pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[CYL]],
-      table.cell(align: right, inset: (top: 14pt, bottom: 5pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[HP]],
-      table.cell(align: right, inset: (top: 14pt, bottom: 5pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[WT]],
+      table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MODEL]],
+      table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MPG]],
+      table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[CYL]],
+      table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[HP]],
+      table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[WT]],
     ),
     table.hline(stroke: 0.1pt + _t.ink),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-subtle, weight: "light")[Mazda RX4]],
@@ -2368,19 +2496,42 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 9pt, bottom: 5pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
 }
 ===== Plot 1
 <plot-1>
-#box(image("gt_files/figure-typst/unnamed-chunk-4-1.svg", width: 100.0%))
+#inset-great-figure(
+  eyebrow: "FY 2025",
+  title: "Revenue by Segment",
+  color: "beige",
+  layout: "left",
+  position: "right",
+  source: "Data: FY 2025 — valores normalizados",
+  caption: [
+La categoria C presenta el valor mas alto del conjunto. Los segmentos A
+y E muestran rendimiento dentro del rango esperado, mientras que F
+establece el piso de referencia para el analisis diferencial.
 
+  ],
+)[
+#block[
+#block[
+#box(image("gt_files/figure-typst/unnamed-chunk-5-1.svg", width: 100.0%))
+
+]
+]
+]
 ===== Plot 2
 <plot-2>
-#box(image("gt_files/figure-typst/unnamed-chunk-5-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-6-1.svg", width: 100.0%))
 
 ===== Plot 3
 <plot-3>
-#box(image("gt_files/figure-typst/unnamed-chunk-6-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-7-1.svg", width: 100.0%))
+
+===== Plot 4
+<plot-4>
+#box(image("gt_files/figure-typst/unnamed-chunk-8-1.svg", width: 100.0%))

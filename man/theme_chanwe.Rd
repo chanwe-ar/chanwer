@@ -5,11 +5,11 @@
 \title{ChanWe ggplot2 Theme}
 \usage{
 theme_chanwe(
-  base_text_size = 7,
+  base_text_size = 6.5,
   base_family = "Satoshi",
   base_lineheight = 1.6,
   legend_position = "bottom",
-  bg_color = "beige",
+  bg_color = "white-ivory",
   plot_padding = 10,
   plot_borders = "none"
 )
@@ -25,7 +25,7 @@ theme_chanwe(
 \code{theme(legend.position = )}. Default \code{"bottom"}.}
 
 \item{bg_color}{Background color for the plot surface. Accepts a hex string
-or one of \code{"white"} (default), \code{"gray"}, \code{"beige"}.}
+or one of \code{"white-ivory"} (default), \code{"white"}, \code{"gray"}, \code{"beige"}.}
 
 \item{plot_padding}{Uniform outer margin in pts applied to all four sides of
 the plot (title, caption, and panel included). Default \code{2}.
@@ -60,9 +60,10 @@ families. \code{theme_chanwe()} calls it automatically.
 
 \subsection{Background variants}{\tabular{llll}{
    Name \tab Hex \tab Major grid \tab Minor grid \cr
-   \code{"white"} \tab \verb{#FFFFFF} \tab \verb{#F0F0F0} \tab \verb{#F4F4F4} \cr
-   \code{"gray"} \tab \verb{#F5F5F5} \tab \verb{#E8E8E8} \tab \verb{#EBEBEB} \cr
-   \code{"beige"} \tab \verb{#ECE5D8} \tab \verb{#E0D6CA} \tab \verb{#E6DDD2} \cr
+   \code{"white-ivory"} \tab \verb{#FAF9F7} \tab \verb{#ECEAE6} \tab \verb{#F1F0ED} \cr
+   \code{"white"} \tab \verb{#FFFFFF} \tab \verb{#E8E8E8} \tab \verb{#EEEEEE} \cr
+   \code{"gray"} \tab \verb{#F2F2F2} \tab \verb{#E0E0E0} \tab \verb{#EAEAEA} \cr
+   \code{"beige"} \tab \verb{#F5F1EB} \tab \verb{#D8D1C7} \tab \verb{#E3DDD5} \cr
 }
 
 }

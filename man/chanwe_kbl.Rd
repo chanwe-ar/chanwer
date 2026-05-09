@@ -25,9 +25,10 @@ chanwe_kbl(
   note_size = "7pt",
   col_label_top = 0,
   footer_top = 0,
-  bg = NULL,
+  bg = "white-ivory",
   top_border = TRUE,
   header_rule = TRUE,
+  padding = 12.5,
   fmt = list()
 )
 }
@@ -81,9 +82,13 @@ data rows and column labels (e.g. \code{"6pt"}). Defaults to \code{"8pt"}
 \item{footer_top}{Extra vertical space in pt above the footer note text.
 Default \code{0}.}
 
-\item{bg}{Table background colour. Named shorthand: \code{"white"},
-\code{"beige"} (\code{#F7F3EE}), \code{"gray"} (\code{#F5F5F5}).
-Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Default \code{NULL} (transparent).}
+\item{bg}{Table background colour. Named shorthand: \code{"white-ivory"}
+(default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
+\code{"gray"} (\code{#F2F2F2}).
+Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.}
+
+\item{padding}{Uniform outer margin in pts applied around the entire table
+block (equivalent to \code{plot_padding} in \code{theme_chanwe()}). Default \code{0}.}
 
 \item{fmt}{Named list of formatting functions, keyed by column name.
 Each function receives the column vector and must return a character vector.}
