@@ -487,7 +487,7 @@ makeContent.cw_subtitle_tree <- function(x) {
           grid::textGrob(
             paste0(arrow, m$value),
             x = grid::unit(col_x, "npc"),
-            y = grid::unit(kpi_center_y - 8, "pt"),
+            y = grid::unit(kpi_center_y - 4, "pt"),
             just = c("right", "center"),
             gp = val_m_gp
           )

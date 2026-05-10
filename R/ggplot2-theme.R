@@ -117,10 +117,10 @@ theme_chanwe <- function(
   outer_border_color <- colors[["typst-neutral-200"]]
   grid_color <- switch(
     bg_color,
-    "#FAF9F7" = "#D9D7D1",
-    "#FFFFFF" = "#D5D5D5",
-    "#F5F1EB" = "#C3BCB1",
-    "#CDCDCD"
+    "#FAF9F7" = "#D0CEC8",
+    "#FFFFFF" = "#CCCCCC",
+    "#F5F1EB" = "#BAB3A8",
+    "#C4C4C4"
   )
   grid_color_minor <- switch(
     bg_color,
@@ -267,8 +267,8 @@ theme_chanwe <- function(
         margin = ggplot2::margin(b = 6)
       ),
       legend.position = legend_position,
-      legend.justification = "center",
-      legend.box.just = "center",
+      legend.justification = c(1, 0),
+      legend.box.just = "right",
       legend.title = ggplot2::element_text(
         family = mono_family,
         color = colors[["typst-fg-muted"]],
