@@ -180,7 +180,8 @@ theme_chanwe <- function(
     family = subtitle_family,
     size = base_text_size * 1.0,
     colour = '#656460',
-    ink_colour = colors[["typst-ink"]]
+    ink_colour = colors[["typst-ink"]],
+    mono_family = mono_family
   )
 
   theme_obj <- ggplot2::`%+replace%`(
@@ -336,19 +337,91 @@ chanwe_title <- function(text, eyebrow = NULL) {
   paste(eyebrow, text, sep = .CW_SEP)
 }
 
+#' ChanWe KPI Panel Encoder
+#'
+#' Encodes KPI data for use with the `kpi` argument of [chanwe_subtitle()].
+#' The KPI panel renders between the subtitle separator line and the chart as a
+#' scoreboard row: a large hero value on the left and up to three period-change
+#' metrics on the right (with automatic ▲/▼ color indicators).
+#'
+#' @param num Hero value string shown in large type, e.g. `"45,91"`.
+#' @param label Unit label shown beside the hero value, e.g. `"USD MM"`.
+#' @param period Date or period string shown below the label,
+#'   e.g. `"05·MAY·2026"`.
+#' @param mtc1_num,mtc2_num,mtc3_num Formatted metric value strings,
+#'   e.g. `"0,19%"`. Pass `NULL` to omit a metric.
+#' @param mtc1_label,mtc2_label,mtc3_label Short column header for each
+#'   metric, e.g. `"WoW"`, `"MoM"`, `"YoY"`.
+#' @param mtc1_direction,mtc2_direction,mtc3_direction Direction indicator:
+#'   `"+"` renders ▲ in green, `"-"` renders ▼ in red, anything else is
+#'   neutral.
+#'
+#' @return An encoded string for use in [chanwe_subtitle()] `kpi` argument.
+#' @export
+#'
+#' @examples
+#' chanwe_kpi(
+#'   num = "45,91", label = "USD MM", period = "05·MAY·2026",
+#'   mtc1_num = "0,19%",  mtc1_label = "WoW", mtc1_direction = "+",
+#'   mtc2_num = "3,29%",  mtc2_label = "MoM", mtc2_direction = "+",
+#'   mtc3_num = "17,78%", mtc3_label = "YoY", mtc3_direction = "+"
+#' )
+#'
+#' ## Use in a full plot:
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+#'     ggplot2::geom_line() +
+#'     ggplot2::labs(
+#'       title    = chanwe_title("Fleet overview", eyebrow = "MOTOR TREND"),
+#'       subtitle = chanwe_subtitle(
+#'         "Highway mpg vs vehicle weight",
+#'         kpi = chanwe_kpi(
+#'           num = "21,0", label = "MPG", period = "1974",
+#'           mtc1_num = "2,1%",  mtc1_label = "WoW", mtc1_direction = "+",
+#'           mtc2_num = "0,5%",  mtc2_label = "MoM", mtc2_direction = "-",
+#'           mtc3_num = "4,3%",  mtc3_label = "YoY", mtc3_direction = "+"
+#'         )
+#'       ),
+#'       caption = chanwe_caption("Source: mtcars")
+#'     ) +
+#'     theme_chanwe()
+#' }
+chanwe_kpi <- function(
+  num,
+  label     = "",
+  period    = "",
+  mtc1_num  = NULL, mtc1_label = NULL, mtc1_direction = "+",
+  mtc2_num  = NULL, mtc2_label = NULL, mtc2_direction = "+",
+  mtc3_num  = NULL, mtc3_label = NULL, mtc3_direction = "+"
+) {
+  raw_metrics <- list(
+    list(num = mtc1_num, label = mtc1_label, direction = mtc1_direction),
+    list(num = mtc2_num, label = mtc2_label, direction = mtc2_direction),
+    list(num = mtc3_num, label = mtc3_label, direction = mtc3_direction)
+  )
+  metric_fields <- character(0)
+  for (m in raw_metrics) {
+    if (!is.null(m$num) && !is.null(m$label)) {
+      dir <- if (identical(m$direction, "+")) 1L else if (identical(m$direction, "-")) -1L else 0L
+      metric_fields <- c(metric_fields, m$label, as.character(m$num), as.character(dir))
+    }
+  }
+  paste(c(as.character(num), label, period, metric_fields), collapse = .CW_KPI_SEP)
+}
+
 #' ChanWe Subtitle Helper
 #'
 #' Produces a subtitle string for `labs(subtitle = ...)` styled by
-#' [theme_chanwe()]. Without a note you can pass plain text directly — this
-#' helper is only needed when you want a smaller italic note line below the
-#' main subtitle.
-#'
-#' Requires the `ggtext` package for HTML rendering; falls back to
-#' `"text\nnote"` when unavailable.
+#' [theme_chanwe()]. Without a note or kpi you can pass plain text directly —
+#' this helper is only needed when you want a smaller italic note line below
+#' the main subtitle, or a KPI scoreboard panel (see [chanwe_kpi()]).
 #'
 #' @param text Main subtitle string.
 #' @param note Optional smaller italic line below the subtitle, e.g. a
-#'   methodological caveat or data note.
+#'   methodological caveat. Ignored when `kpi` is supplied.
+#' @param kpi Optional KPI panel encoded with [chanwe_kpi()]. When provided,
+#'   a scoreboard row with a hero value and period-change metrics is rendered
+#'   between the subtitle separator and the chart.
 #'
 #' @return A character string for `labs(subtitle = ...)`.
 #' @export
@@ -362,11 +435,22 @@ chanwe_title <- function(text, eyebrow = NULL) {
 #'   "Faceted by transmission type",
 #'   note = "Max peel measured when foil breaks, otherwise average peel"
 #' )
-chanwe_subtitle <- function(text, note = NULL) {
-  if (is.null(note)) {
-    return(text)
-  }
-  paste(text, note, sep = .CW_SEP)
+#'
+#' ## Subtitle with KPI scoreboard:
+#' chanwe_subtitle(
+#'   "Evolución de reservas internacionales brutas (USD MM).",
+#'   kpi = chanwe_kpi(
+#'     num = "45,91", label = "USD MM", period = "05·MAY·2026",
+#'     mtc1_num = "0,19%",  mtc1_label = "WoW", mtc1_direction = "+",
+#'     mtc2_num = "3,29%",  mtc2_label = "MoM", mtc2_direction = "+",
+#'     mtc3_num = "17,78%", mtc3_label = "YoY", mtc3_direction = "+"
+#'   )
+#' )
+chanwe_subtitle <- function(text, note = NULL, kpi = NULL) {
+  if (is.null(kpi) && is.null(note)) return(text)
+  note_part <- if (!is.null(note) && is.null(kpi)) note else ""
+  if (is.null(kpi)) return(paste(text, note_part, sep = .CW_SEP))
+  paste(text, note_part, kpi, sep = .CW_SEP)
 }
 
 #' ChanWe Caption Helper

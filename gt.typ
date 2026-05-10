@@ -2163,7 +2163,7 @@
   title: [Chanwe Showcase: ggplot2 + gt],
   subtitle: [Tables and plots aligned with chanwe-typst design tokens],
   author: "Alejandro Abraham",
-  date: "2026-05-09",
+  date: "2026-05-10",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",
@@ -2535,3 +2535,7 @@ establece el piso de referencia para el analisis diferencial.
 ===== Plot 4
 <plot-4>
 #box(image("gt_files/figure-typst/unnamed-chunk-8-1.svg", width: 100.0%))
+
+= Complex
+<complex>
+#box(image("gt_files/figure-typst/unnamed-chunk-9-1.svg", width: 100.0%))

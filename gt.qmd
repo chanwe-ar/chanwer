@@ -86,7 +86,7 @@ fmt_fleet <- list(
 
 # kbl Tables
 
-### Ivory background
+##### Ivory background
 
 ```{r}
 mt |>
@@ -104,7 +104,7 @@ mt |>
 ```
 
 
-## White background
+##### White background
 
 ```{r}
 mt |>
@@ -121,7 +121,7 @@ mt |>
     )
 ```
 
-## Beige background
+##### Beige background
 
 ```{r}
 mt |>
@@ -139,8 +139,7 @@ mt |>
     )
 ```
 
-# New page 
-## Gray background
+##### Gray background
 
 ```{r}
 mt |>
@@ -159,6 +158,8 @@ mt |>
     )
 ```
 
+
+# Plots
 
 ##### Plot 1
 
@@ -251,4 +252,57 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
         y = "Miles per gallon",
         color = "HP band"
     )
+```
+
+
+# Complex
+
+##### KPI
+
+```{r}
+# 1. Encode the KPI data
+kpi <- chanwe_kpi(
+    num = "45,91",
+    label = "USD MM",
+    period = "05·MAY·2026",
+    mtc1_num = "0,19%",
+    mtc1_label = "WoW",
+    mtc1_direction = "+",
+    mtc2_num = "3,17%",
+    mtc2_label = "MoM",
+    mtc2_direction = "-",
+    mtc3_num = "17,78%",
+    mtc3_label = "YoY",
+    mtc3_direction = "+"
+)
+
+
+# 2. Use it in labs()
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(bg_color = "white", plot_borders = TRUE) +
+    labs(
+        title = chanwe_title(
+            "Simple fleet view",
+            eyebrow = "TLDR;"
+        ),
+        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band"
+    ) +
+    labs(
+        title = chanwe_title(
+            "Reservas Internacionales",
+            eyebrow = "BCRA · SECTOR EXTERNO"
+        ),
+        subtitle = chanwe_subtitle(
+            "Evolución de reservas internacionales brutas (USD MM).",
+            kpi = kpi
+        ),
+        caption = chanwe_caption("Fuente: BCRA")
+    ) +
+    theme_chanwe()
 ```
