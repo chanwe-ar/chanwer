@@ -117,17 +117,17 @@ theme_chanwe <- function(
   outer_border_color <- colors[["typst-neutral-200"]]
   grid_color <- switch(
     bg_color,
+    "#FAF9F7" = "#D9D7D1",
+    "#FFFFFF" = "#D5D5D5",
+    "#F5F1EB" = "#C3BCB1",
+    "#CDCDCD"
+  )
+  grid_color_minor <- switch(
+    bg_color,
     "#FAF9F7" = "#E2E0DA",
     "#FFFFFF" = "#DEDEDE",
     "#F5F1EB" = "#CCC5BA",
     "#D6D6D6"
-  )
-  grid_color_minor <- switch(
-    bg_color,
-    "#FAF9F7" = "#F1F0ED",
-    "#FFFFFF" = "#EEEEEE",
-    "#F5F1EB" = "#E3DDD5",
-    "#EAEAEA"
   )
   panel_border_element <- ggplot2::element_blank()
 

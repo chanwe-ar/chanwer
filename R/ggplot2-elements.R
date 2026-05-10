@@ -387,12 +387,12 @@ makeContent.cw_subtitle_tree <- function(x) {
       )
     )
 
-    # Hero value — Archivo SemiBold (weight 600), same as h1 heading
+    # Hero value — Fraunces SemiBold Italic (weight 600), same weight as h1 heading
     val_gp <- grid::gpar(
-      fontfamily = "Archivo SemiBold",
-      fontface   = "plain",
-      fontsize   = 24,
-      col        = ink
+      fontfamily = "Fraunces 9pt Regular",
+      fontface = "italic",
+      fontsize = 24,
+      col = ink
     )
     val_g <- grid::textGrob(
       kpi$value,
@@ -407,12 +407,12 @@ makeContent.cw_subtitle_tree <- function(x) {
     side_x <- grid::unit(1, "grobwidth", val_g) + grid::unit(6, "pt")
     unit_gp <- grid::gpar(
       fontfamily = mono_fam,
-      fontsize = 5.0,
+      fontsize = 4.5,
       col = fg_muted
     )
     as_of_gp <- grid::gpar(
       fontfamily = mono_fam,
-      fontsize = 5,
+      fontsize = 4.5,
       col = fg_muted
     )
     date_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 6.0, col = fg_muted)
@@ -450,7 +450,7 @@ makeContent.cw_subtitle_tree <- function(x) {
       col_step <- 0.13 # spacing between column right-edges
       lbl_gp <- grid::gpar(
         fontfamily = mono_fam,
-        fontsize = 5,
+        fontsize = 4.,
         col = fg_muted
       )
       for (i in seq_along(kpi$metrics)) {
@@ -472,7 +472,7 @@ makeContent.cw_subtitle_tree <- function(x) {
         }
         val_m_gp <- grid::gpar(
           fontfamily = mono_fam,
-          fontsize = 8,
+          fontsize = 6.5,
           col = m_col
         )
         ch <- grid::gList(
@@ -480,14 +480,14 @@ makeContent.cw_subtitle_tree <- function(x) {
           grid::textGrob(
             toupper(m$label),
             x = grid::unit(col_x, "npc"),
-            y = grid::unit(kpi_center_y + 5, "pt"),
+            y = grid::unit(kpi_center_y + 2, "pt"),
             just = c("right", "center"),
             gp = lbl_gp
           ),
           grid::textGrob(
             paste0(arrow, m$value),
             x = grid::unit(col_x, "npc"),
-            y = grid::unit(kpi_center_y - 5, "pt"),
+            y = grid::unit(kpi_center_y - 8, "pt"),
             just = c("right", "center"),
             gp = val_m_gp
           )

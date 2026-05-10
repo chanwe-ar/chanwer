@@ -91,6 +91,37 @@ chanwe_load_fonts <- function(path = NULL) {
     italic     = "Fraunces9pt-Italic.ttf",
     bolditalic = "Fraunces9pt-BoldItalic.ttf"
   )
+
+  # Fraunces 9pt weight variants — each as its own family so they can be
+  # referenced by name (systemfonts only snaps to 400/700 from the base family)
+  .fraunces_weights <- list(
+    list(name = "Fraunces 9pt Thin",             plain = "Fraunces9pt-Thin.ttf",            italic = "Fraunces9pt-ThinItalic.ttf"),
+    list(name = "Fraunces 9pt ExtraLight",       plain = "Fraunces9pt-ExtraLight.ttf",      italic = "Fraunces9pt-ExtraLightItalic.ttf"),
+    list(name = "Fraunces 9pt Light",            plain = "Fraunces9pt-Light.ttf",           italic = "Fraunces9pt-LightItalic.ttf"),
+    list(name = "Fraunces 9pt Light Italic",     plain = "Fraunces9pt-LightItalic.ttf",     italic = "Fraunces9pt-LightItalic.ttf"),
+    list(name = "Fraunces 9pt Regular",          plain = "Fraunces9pt-Regular.ttf",         italic = "Fraunces9pt-Italic.ttf"),
+    list(name = "Fraunces 9pt Italic",           plain = "Fraunces9pt-Italic.ttf",          italic = "Fraunces9pt-Italic.ttf"),
+    list(name = "Fraunces 9pt Medium",           plain = "Fraunces9pt-Medium.ttf",          italic = "Fraunces9pt-MediumItalic.ttf"),
+    list(name = "Fraunces 9pt SemiBold",         plain = "Fraunces9pt-SemiBold.ttf",        italic = "Fraunces9pt-SemiBoldItalic.ttf"),
+    list(name = "Fraunces 9pt Bold",             plain = "Fraunces9pt-Bold.ttf",            italic = "Fraunces9pt-BoldItalic.ttf"),
+    list(name = "Fraunces 9pt ExtraBold",        plain = "Fraunces9pt-ExtraBold.ttf",       italic = "Fraunces9pt-ExtraBoldItalic.ttf"),
+    list(name = "Fraunces 9pt Black",            plain = "Fraunces9pt-Black.ttf",           italic = "Fraunces9pt-BlackItalic.ttf")
+  )
+  for (.fw in .fraunces_weights) {
+    .pp <- file.path(path, .fw$plain)
+    .ip <- file.path(path, .fw$italic)
+    if (file.exists(.pp)) {
+      tryCatch(
+        systemfonts::register_font(
+          name   = .fw$name,
+          plain  = .pp,
+          italic = if (file.exists(.ip)) .ip else NULL
+        ),
+        error = function(e) NULL
+      )
+    }
+  }
+  rm(.fraunces_weights, .fw, .pp, .ip)
   .reg("JetBrains Mono",
     plain      = "JetBrainsMono-Regular.ttf",
     bold       = "JetBrainsMono-Bold.ttf",
@@ -121,10 +152,15 @@ chanwe_load_fonts <- function(path = NULL) {
   # Archivo SemiBold (600) — registered as its own family so gridtext resolves it
   # via font-family lookup. Weight 600 alone won't work since systemfonts only
   # snaps to registered weights (400 / 700 from the main "Archivo" registration).
-  archivo_semibold <- file.path(path, "Archivo-SemiBold.ttf")
+  archivo_semibold        <- file.path(path, "Archivo-SemiBold.ttf")
+  archivo_semibold_italic <- file.path(path, "Archivo-SemiBoldItalic.ttf")
   if (file.exists(archivo_semibold)) {
     tryCatch(
-      systemfonts::register_font(name = "Archivo SemiBold", plain = archivo_semibold),
+      systemfonts::register_font(
+        name   = "Archivo SemiBold",
+        plain  = archivo_semibold,
+        italic = if (file.exists(archivo_semibold_italic)) archivo_semibold_italic else NULL
+      ),
       error = function(e) NULL
     )
   }
