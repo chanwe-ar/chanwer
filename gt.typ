@@ -2199,9 +2199,15 @@
   doc,
 )
 
+= Complex
+<complex>
+===== KPI
+<kpi>
+#box(image("gt_files/figure-typst/unnamed-chunk-1-1.svg", width: 100.0%))
+
 = kbl Tables
 <kbl-tables>
-=== Ivory background
+===== Ivory background
 <ivory-background>
 #block(inset: (x: 12.5pt, y: 0pt), fill: rgb("#FAF9F7"))[
 #{ set table(inset: (x: 2.5mm, y: 10pt), stroke: none, fill: rgb("#FAF9F7"))
@@ -2276,7 +2282,7 @@
   ]
 }
 ]
-== White background
+===== White background
 <white-background>
 #block(inset: (x: 12.5pt, y: 0pt), fill: white)[
 #{ set table(inset: (x: 2.5mm, y: 10pt), stroke: none, fill: white)
@@ -2351,7 +2357,7 @@
   ]
 }
 ]
-== Beige background
+===== Beige background
 <beige-background>
 #block(inset: (x: 12.5pt, y: 0pt), fill: rgb("#F5F1EB"))[
 #{ set table(inset: (x: 2.5mm, y: 10pt), stroke: none, fill: rgb("#F5F1EB"))
@@ -2426,9 +2432,7 @@
   ]
 }
 ]
-= New page
-<new-page>
-== Gray background
+===== Gray background
 <gray-background>
 #{ set table(inset: (x: 2.5mm, y: 10pt), stroke: none, fill: rgb("#F2F2F2"))
   [
@@ -2501,6 +2505,8 @@
   )
   ]
 }
+= Plots
+<plots>
 ===== Plot 1
 <plot-1>
 #inset-great-figure(
@@ -2519,23 +2525,19 @@ establece el piso de referencia para el analisis diferencial.
 )[
 #block[
 #block[
-#box(image("gt_files/figure-typst/unnamed-chunk-5-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-6-1.svg", width: 100.0%))
 
 ]
 ]
 ]
 ===== Plot 2
 <plot-2>
-#box(image("gt_files/figure-typst/unnamed-chunk-6-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-7-1.svg", width: 100.0%))
 
 ===== Plot 3
 <plot-3>
-#box(image("gt_files/figure-typst/unnamed-chunk-7-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-8-1.svg", width: 100.0%))
 
 ===== Plot 4
 <plot-4>
-#box(image("gt_files/figure-typst/unnamed-chunk-8-1.svg", width: 100.0%))
-
-= Complex
-<complex>
 #box(image("gt_files/figure-typst/unnamed-chunk-9-1.svg", width: 100.0%))

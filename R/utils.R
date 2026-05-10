@@ -7,6 +7,7 @@
 #' Registered families:
 #' - `"Satoshi"` — Regular / Bold / Italic / BoldItalic
 #' - `"Archivo"` — Regular / Bold / Italic / BoldItalic
+#' - `"Archivo Medium"` — plain face = Medium (500); italic face = MediumItalic; used by KPI hero value
 #' - `"Archivo SemiBold"` — plain face = SemiBold (600); used by [chanwe_title()]
 #' - `"Archivo ExtraBold"` — plain face = ExtraBold (800)
 #' - `".chanwe-subtitle"` — plain face = Archivo Light (300)
@@ -102,6 +103,20 @@ chanwe_load_fonts <- function(path = NULL) {
     italic     = "JetBrainsMono-ThinItalic.ttf",
     bolditalic = "JetBrainsMono-ExtraLightItalic.ttf"
   )
+
+  # Archivo Medium (500) — registered as its own family; used by the KPI hero value.
+  archivo_medium        <- file.path(path, "Archivo-Medium.ttf")
+  archivo_medium_italic <- file.path(path, "Archivo-MediumItalic.ttf")
+  if (file.exists(archivo_medium)) {
+    tryCatch(
+      systemfonts::register_font(
+        name       = "Archivo Medium",
+        plain      = archivo_medium,
+        italic     = if (file.exists(archivo_medium_italic)) archivo_medium_italic else NULL
+      ),
+      error = function(e) NULL
+    )
+  }
 
   # Archivo SemiBold (600) — registered as its own family so gridtext resolves it
   # via font-family lookup. Weight 600 alone won't work since systemfonts only

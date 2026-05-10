@@ -7,18 +7,25 @@
 .CW_KPI_SEP <- "\x1E"
 
 .cw_parse_kpi <- function(kpi_str) {
-  if (is.null(kpi_str) || !nzchar(kpi_str)) return(NULL)
+  if (is.null(kpi_str) || !nzchar(kpi_str)) {
+    return(NULL)
+  }
   parts <- strsplit(kpi_str, .CW_KPI_SEP, fixed = TRUE)[[1L]]
-  if (length(parts) < 3L) return(NULL)
+  if (length(parts) < 3L) {
+    return(NULL)
+  }
   metrics <- list()
   idx <- 4L
   while (idx + 2L <= length(parts)) {
     dir <- suppressWarnings(as.integer(parts[idx + 2L]))
-    metrics <- c(metrics, list(list(
-      label = parts[idx],
-      value = parts[idx + 1L],
-      dir   = if (is.na(dir)) 0L else dir
-    )))
+    metrics <- c(
+      metrics,
+      list(list(
+        label = parts[idx],
+        value = parts[idx + 1L],
+        dir = if (is.na(dir)) 0L else dir
+      ))
+    )
     idx <- idx + 3L
   }
   list(value = parts[1L], unit = parts[2L], date = parts[3L], metrics = metrics)
@@ -80,6 +87,7 @@ new_element_chanwe_subtitle <- function(
   vjust = 1,
   ink_colour = "#1A1A1A",
   mono_family = "JetBrains Mono",
+  mono_thin_family = "JetBrains Mono Thin",
   inherit.blank = FALSE
 ) {
   structure(
@@ -96,7 +104,8 @@ new_element_chanwe_subtitle <- function(
       debug = FALSE,
       inherit.blank = inherit.blank,
       ink_colour = ink_colour,
-      mono_family = mono_family
+      mono_family = mono_family,
+      mono_thin_family = mono_thin_family
     ),
     class = c("element_chanwe_subtitle", "element_text", "element")
   )
@@ -247,7 +256,8 @@ heightDetails.cw_title_tree <- function(x) {
   sep_gp,
   ink_col,
   kpi_data = NULL,
-  mono_family = "JetBrains Mono"
+  mono_family = "JetBrains Mono",
+  mono_thin_family = "JetBrains Mono Thin"
 ) {
   grid::gTree(
     sub_text = sub_text,
@@ -259,6 +269,7 @@ heightDetails.cw_title_tree <- function(x) {
     ink_col = ink_col,
     kpi_data = kpi_data,
     mono_family = mono_family,
+    mono_thin_family = mono_thin_family,
     cl = "cw_subtitle_tree"
   )
 }
@@ -269,16 +280,16 @@ heightDetails.cw_title_tree <- function(x) {
   # note is suppressed when KPI panel is present — the two don't stack
   has_n <- !is.null(x$note_text) && nzchar(x$note_text) && !has_kpi
   n_h <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
-  top    <- 5
+  top <- 5
   gap_ln <- if (x$draw_middle) 14 else 0
-  ln_h   <- if (x$draw_middle) 0.3 else 0
-  gap_n  <- if (has_n) 3 else 0
+  ln_h <- if (x$draw_middle) 0.3 else 0
+  gap_n <- if (has_n) 3 else 0
   # KPI panel section (sits in what would otherwise be the bottom padding)
-  kpi_panel_h  <- if (has_kpi) 50   else 0
-  kpi_top_pad  <- if (has_kpi) 12   else 0
-  kpi_bot_pad  <- if (has_kpi) 8    else 0
-  kpi_bot_ln_h <- if (has_kpi) 0.3  else 0
-  kpi_bot_sep  <- if (has_kpi) 14   else 0
+  kpi_panel_h <- if (has_kpi) 35 else 0
+  kpi_top_pad <- if (has_kpi) 4 else 0
+  kpi_bot_pad <- if (has_kpi) 2 else 0
+  kpi_bot_ln_h <- if (has_kpi) 0.3 else 0
+  kpi_bot_sep <- if (has_kpi) 16 else 0
   bot <- if (has_kpi) {
     kpi_top_pad + kpi_panel_h + kpi_bot_pad + kpi_bot_ln_h + kpi_bot_sep
   } else {
@@ -286,12 +297,20 @@ heightDetails.cw_title_tree <- function(x) {
   }
   total <- top + s_h + gap_ln + ln_h + gap_n + n_h + bot
   list(
-    s_h = s_h, n_h = n_h, has_n = has_n, has_kpi = has_kpi,
-    top = top, bot = bot,
-    gap_ln = gap_ln, ln_h = ln_h, gap_n = gap_n,
-    kpi_panel_h  = kpi_panel_h,  kpi_top_pad = kpi_top_pad,
-    kpi_bot_pad  = kpi_bot_pad,  kpi_bot_ln_h = kpi_bot_ln_h,
-    kpi_bot_sep  = kpi_bot_sep,
+    s_h = s_h,
+    n_h = n_h,
+    has_n = has_n,
+    has_kpi = has_kpi,
+    top = top,
+    bot = bot,
+    gap_ln = gap_ln,
+    ln_h = ln_h,
+    gap_n = gap_n,
+    kpi_panel_h = kpi_panel_h,
+    kpi_top_pad = kpi_top_pad,
+    kpi_bot_pad = kpi_bot_pad,
+    kpi_bot_ln_h = kpi_bot_ln_h,
+    kpi_bot_sep = kpi_bot_sep,
     total = total
   )
 }
@@ -304,7 +323,7 @@ makeContent.cw_subtitle_tree <- function(x) {
   # [KPI section | bot] | note | gap_n | line | gap_ln | subtitle | top_pad
   note_y <- d$bot + d$n_h / 2
   line_y <- d$bot + d$n_h + d$gap_n + d$ln_h / 2
-  sub_y  <- d$bot + d$n_h + d$gap_n + d$ln_h + d$gap_ln + d$s_h / 2
+  sub_y <- d$bot + d$n_h + d$gap_n + d$ln_h + d$gap_ln + d$s_h / 2
 
   ch <- grid::gList(
     grid::textGrob(
@@ -318,12 +337,10 @@ makeContent.cw_subtitle_tree <- function(x) {
   if (x$draw_middle) {
     ch <- grid::gList(
       ch,
-      grid::textGrob(
-        strrep("─", 400),
-        x = grid::unit(0, "npc"),
-        y = grid::unit(line_y, "pt"),
-        just = c("left", "center"),
-        gp = x$sep_gp
+      grid::linesGrob(
+        x = grid::unit(c(0, 1), "npc"),
+        y = grid::unit(c(line_y, line_y), "pt"),
+        gp = grid::gpar(col = x$ink_col, lwd = 0.4, lend = "square")
       )
     )
   }
@@ -341,108 +358,125 @@ makeContent.cw_subtitle_tree <- function(x) {
   }
 
   if (d$has_kpi) {
-    kpi      <- x$kpi_data
+    kpi <- x$kpi_data
     mono_fam <- x$mono_family %||_% "JetBrains Mono"
-    ink      <- x$ink_col
+    ink <- x$ink_col
     fg_muted <- "#656460"
-    green    <- "#2D7A4F"
-    red      <- "#B03A2E"
+    green <- "#2D7A4F"
+    red <- "#B03A2E"
 
     # y-coordinates from bottom of the whole grob
-    kpi_bot_ln_y  <- d$kpi_bot_sep + d$kpi_bot_ln_h / 2
-    kpi_center_y  <- d$kpi_bot_sep + d$kpi_bot_ln_h + d$kpi_bot_pad + d$kpi_panel_h / 2
+    kpi_bot_ln_y <- d$kpi_bot_sep + d$kpi_bot_ln_h / 2
+    kpi_center_y <- d$kpi_bot_sep +
+      d$kpi_bot_ln_h +
+      d$kpi_bot_pad +
+      d$kpi_panel_h / 2
 
     # Bottom separator line (between KPI panel and chart)
     ch <- grid::gList(
       ch,
-      grid::textGrob(
-        strrep("─", 400),
-        x    = grid::unit(0, "npc"),
-        y    = grid::unit(kpi_bot_ln_y, "pt"),
-        just = c("left", "center"),
-        gp   = x$sep_gp
+      grid::linesGrob(
+        x = grid::unit(c(0, 1), "npc"),
+        y = grid::unit(c(kpi_bot_ln_y, kpi_bot_ln_y), "pt"),
+        gp = grid::gpar(col = x$ink_col, lwd = 0.4, lend = "square")
       )
     )
 
-    # Hero value — large bold italic Archivo
+    # Hero value — Archivo Medium Italic (weight 500)
     val_gp <- grid::gpar(
-      fontfamily = "Archivo",
-      fontface   = "bold.italic",
-      fontsize   = 30,
+      fontfamily = "Archivo Medium",
+      fontface   = "italic",
+      fontsize   = 24,
       col        = ink
     )
     val_g <- grid::textGrob(
       kpi$value,
-      x    = grid::unit(0, "npc"),
-      y    = grid::unit(kpi_center_y, "pt"),
+      x = grid::unit(0, "npc"),
+      y = grid::unit(kpi_center_y, "pt"),
       just = c("left", "center"),
-      gp   = val_gp
+      gp = val_gp
     )
     ch <- grid::gList(ch, val_g)
 
     # Unit + AS OF + date block, positioned right of the hero value
-    side_x       <- grid::unit(1, "grobwidth", val_g) + grid::unit(8, "pt")
-    unit_gp      <- grid::gpar(fontfamily = mono_fam, fontsize = 6.5, col = fg_muted)
-    as_of_gp     <- grid::gpar(fontfamily = mono_fam, fontsize = 5.0, col = fg_muted)
-    date_gp      <- grid::gpar(fontfamily = mono_fam, fontsize = 6.5, col = ink)
+    side_x <- grid::unit(1, "grobwidth", val_g) + grid::unit(6, "pt")
+    unit_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 6.0, col = fg_muted)
+    as_of_gp <- grid::gpar(
+      fontfamily = mono_fam,
+      fontsize = 4.5,
+      col = fg_muted
+    )
+    date_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 6.0, col = fg_muted)
 
     if (nzchar(kpi$unit)) {
-      ch <- grid::gList(ch, grid::textGrob(
-        kpi$unit,
-        x    = side_x,
-        y    = grid::unit(kpi_center_y + 9, "pt"),
-        just = c("left", "center"),
-        gp   = unit_gp
-      ))
+      ch <- grid::gList(
+        ch,
+        grid::textGrob(
+          kpi$unit,
+          x = side_x,
+          y = grid::unit(kpi_center_y + 7, "pt"),
+          just = c("left", "center"),
+          gp = unit_gp
+        )
+      )
     }
     if (nzchar(kpi$date)) {
       ch <- grid::gList(
         ch,
         grid::textGrob(
-          "AS OF",
-          x    = side_x,
-          y    = grid::unit(kpi_center_y + 0, "pt"),
-          just = c("left", "center"),
-          gp   = as_of_gp
-        ),
-        grid::textGrob(
           kpi$date,
-          x    = side_x,
-          y    = grid::unit(kpi_center_y - 9, "pt"),
+          x = side_x,
+          y = grid::unit(kpi_center_y - 2, "pt"),
           just = c("left", "center"),
-          gp   = date_gp
+          gp = date_gp
         )
       )
     }
 
-    # Metric columns — spread across the right half of the plot width
+    # Metric columns — anchored to the right edge of the plot
+    mono_thin <- x$mono_thin_family %||_% mono_fam
     n_metrics <- length(kpi$metrics)
     if (n_metrics > 0L) {
-      col_start <- 0.46
-      col_end   <- 0.88
-      col_step  <- if (n_metrics > 1L) (col_end - col_start) / (n_metrics - 1L) else 0
-      lbl_gp    <- grid::gpar(fontfamily = mono_fam, fontsize = 5.5, col = fg_muted)
+      col_right <- 0.98  # right anchor (right-edge of rightmost column)
+      col_step  <- 0.18  # spacing between column right-edges
+      lbl_gp <- grid::gpar(
+        fontfamily = mono_thin,
+        fontsize = 6.0,
+        col = fg_muted
+      )
       for (i in seq_along(kpi$metrics)) {
-        m     <- kpi$metrics[[i]]
-        col_x <- col_start + (i - 1L) * col_step
-        m_col <- if (m$dir > 0L) green else if (m$dir < 0L) red else fg_muted
-        arrow <- if (m$dir > 0L) "▲ " else if (m$dir < 0L) "▼ " else ""
-        val_m_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 8, col = m_col)
+        m <- kpi$metrics[[i]]
+        col_x <- col_right - (n_metrics - i) * col_step
+        m_col <- if (m$dir > 0L) {
+          green
+        } else if (m$dir < 0L) {
+          red
+        } else {
+          fg_muted
+        }
+        arrow <- if (m$dir > 0L) {
+          "▲ "
+        } else if (m$dir < 0L) {
+          "▼ "
+        } else {
+          ""
+        }
+        val_m_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 8.5, col = m_col)
         ch <- grid::gList(
           ch,
           grid::textGrob(
             toupper(m$label),
-            x    = grid::unit(col_x, "npc"),
-            y    = grid::unit(kpi_center_y + 8, "pt"),
-            just = c("left", "center"),
-            gp   = lbl_gp
+            x = grid::unit(col_x, "npc"),
+            y = grid::unit(kpi_center_y + 5, "pt"),
+            just = c("right", "center"),
+            gp = lbl_gp
           ),
           grid::textGrob(
             paste0(arrow, m$value),
-            x    = grid::unit(col_x, "npc"),
-            y    = grid::unit(kpi_center_y - 7, "pt"),
-            just = c("left", "center"),
-            gp   = val_m_gp
+            x = grid::unit(col_x, "npc"),
+            y = grid::unit(kpi_center_y - 5, "pt"),
+            just = c("right", "center"),
+            gp = val_m_gp
           )
         )
       }
@@ -589,14 +623,15 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     return(grid::nullGrob())
   }
 
-  ink      <- element$ink_colour  %||_% "#1A1A1A"
+  ink <- element$ink_colour %||_% "#1A1A1A"
   mono_fam <- element$mono_family %||_% "JetBrains Mono"
+  mono_thin_fam <- element$mono_thin_family %||_% mono_fam
 
-  parts     <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
-  sub_text  <- parts[1L]
+  parts <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
+  sub_text <- parts[1L]
   note_text <- if (length(parts) >= 2L && nzchar(parts[2L])) parts[2L] else NULL
-  kpi_str   <- if (length(parts) >= 3L && nzchar(parts[3L])) parts[3L] else NULL
-  kpi_data  <- .cw_parse_kpi(kpi_str)
+  kpi_str <- if (length(parts) >= 3L && nzchar(parts[3L])) parts[3L] else NULL
+  kpi_data <- .cw_parse_kpi(kpi_str)
 
   sub_size <- element$size %||_% 9
   sub_gp <- grid::gpar(
@@ -624,8 +659,9 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     note_gp,
     sep_gp,
     ink,
-    kpi_data    = kpi_data,
-    mono_family = mono_fam
+    kpi_data = kpi_data,
+    mono_family = mono_fam,
+    mono_thin_family = mono_thin_fam
   )
 }
 

@@ -117,10 +117,10 @@ theme_chanwe <- function(
   outer_border_color <- colors[["typst-neutral-200"]]
   grid_color <- switch(
     bg_color,
-    "#FAF9F7" = "#ECEAE6",
-    "#FFFFFF" = "#E8E8E8",
-    "#F5F1EB" = "#D8D1C7",
-    "#E0E0E0"
+    "#FAF9F7" = "#E2E0DA",
+    "#FFFFFF" = "#DEDEDE",
+    "#F5F1EB" = "#CCC5BA",
+    "#D6D6D6"
   )
   grid_color_minor <- switch(
     bg_color,
@@ -181,7 +181,8 @@ theme_chanwe <- function(
     size = base_text_size * 1.0,
     colour = '#656460',
     ink_colour = colors[["typst-ink"]],
-    mono_family = mono_family
+    mono_family = mono_family,
+    mono_thin_family = mono_thin_family
   )
 
   theme_obj <- ggplot2::`%+replace%`(
