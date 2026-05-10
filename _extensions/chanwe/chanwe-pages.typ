@@ -499,7 +499,7 @@
       ],
     )
 
-    #v(1fr)
+    #v(4fr)
 
     // ---- BOTTOM META + PAGE NUM ----
     #line(length: 100%, stroke: 0.5pt + _t.border)

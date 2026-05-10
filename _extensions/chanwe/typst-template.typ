@@ -216,6 +216,9 @@ $chanwe-charts.typ()$
   back-cover-tagline-1: "Less template,",
   back-cover-tagline-2: "more report.",
   back-cover-cols: (),
+  // edge label (vertical text on right side of cover + back cover)
+  cover-edge: none,
+  cover-edge-color: none,
   // page
   page-bg: rgb("#FAFAFA"),
   // body
@@ -432,6 +435,8 @@ $chanwe-charts.typ()$
       hero-date: hero-date,
       meta-rows: meta-rows,
       date: date,
+      cover-edge: cover-edge,
+      cover-edge-color: cover-edge-color,
     )
   }
 
@@ -485,6 +490,7 @@ $chanwe-charts.typ()$
       tagline-1: back-cover-tagline-1,
       tagline-2: back-cover-tagline-2,
       back-cols: back-cover-cols,
+      cover-edge: cover-edge,
     )
   }
 }

@@ -111,6 +111,12 @@ $for(chanwe.back-cover-cols)$
 $endfor$
   ),
 $endif$
+$if(chanwe.cover-edge)$
+  cover-edge: "$chanwe.cover-edge$",
+$endif$
+$if(chanwe.cover-edge-color)$
+  cover-edge-color: rgb("#$chanwe.cover-edge-color$"),
+$endif$
 $if(chanwe.page-bg)$
   page-bg: rgb("#$chanwe.page-bg$"),
 $endif$

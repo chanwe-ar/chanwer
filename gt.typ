@@ -398,23 +398,36 @@
   hero-image: none,
   wordmark: none, // defaults to Logo_Negro.png below
   stamp: ("est.", "mdz", "2026"),
-  hero-caption-1: "N 32°53′ · W 68°50′",
+  hero-caption-1: "S 32°53′ · W 68°50′",
   hero-caption-2: "Cordón del Plata · ARG",
   hero-date: "17 · 04 · 2026",
   meta-rows: (),
   date: "",
   show-date-strip: false,
+  cover-edge: none,
+  cover-edge-color: none,
 ) = {
   let hero-image = _chanwe-clean-path(hero-image)
+  let _edge-color = if cover-edge-color != none { cover-edge-color } else { _t.primary }
   let wordmark   = if wordmark == none { _chanwe-assets + "Logo_Negro.png" } else { _chanwe-clean-path(wordmark) }
   set page(
     paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.paper,
-    foreground: place(top + left, dx: 50mm, dy: -50mm,
-      circle(radius: 110mm,
-        fill: gradient.radial(_t.primary.transparentize(78%), black.transparentize(100%)),
-        stroke: none,
+    foreground: {
+      place(top + left, dx: 50mm, dy: -50mm,
+        circle(radius: 110mm,
+          fill: gradient.radial(_t.primary.transparentize(78%), black.transparentize(100%)),
+          stroke: none,
+        )
       )
-    ),
+      if cover-edge != none {
+        place(right + top, dx: -3mm, dy: 14mm,
+          rotate(-90deg, origin: right + horizon,
+            text(font: _t.font-mono, size: 7pt, weight: 200, tracking: 0.5em,
+                 fill: _edge-color, upper(cover-edge))
+          )
+        )
+      }
+    },
   )
   set block(spacing: 0pt)
 
@@ -584,6 +597,7 @@
   tagline-1: "Less template,",
   tagline-2: "more report.",
   back-cols: (),
+  cover-edge: none,
 ) = {
   let wl = if wordmark-light != none { _chanwe-clean-path(wordmark-light) } else { _chanwe-assets + "Logo_Blanco.png" }
 
@@ -599,6 +613,14 @@
         stroke: none,
       )
     ),
+    foreground: if cover-edge != none {
+      place(right + top, dx: -3mm, dy: 14mm,
+        rotate(-90deg, origin: right + horizon,
+          text(font: _t.font-mono, size: 7pt, weight: 200, tracking: 0.5em,
+               fill: white.transparentize(25%), upper(cover-edge))
+        )
+      )
+    },
   )
   set block(spacing: 0pt)
 
@@ -1594,7 +1616,7 @@
       ],
     )
 
-    #v(1fr)
+    #v(4fr)
 
     // ---- BOTTOM META + PAGE NUM ----
     #line(length: 100%, stroke: 0.5pt + _t.border)
@@ -1868,6 +1890,9 @@
   back-cover-tagline-1: "Less template,",
   back-cover-tagline-2: "more report.",
   back-cover-cols: (),
+  // edge label (vertical text on right side of cover + back cover)
+  cover-edge: none,
+  cover-edge-color: none,
   // page
   page-bg: rgb("#FAFAFA"),
   // body
@@ -2084,6 +2109,8 @@
       hero-date: hero-date,
       meta-rows: meta-rows,
       date: date,
+      cover-edge: cover-edge,
+      cover-edge-color: cover-edge-color,
     )
   }
 
@@ -2137,6 +2164,7 @@
       tagline-1: back-cover-tagline-1,
       tagline-2: back-cover-tagline-2,
       back-cols: back-cover-cols,
+      cover-edge: cover-edge,
     )
   }
 }

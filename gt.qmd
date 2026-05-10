@@ -89,7 +89,7 @@ fmt_fleet <- list(
 
 ```{r}
 #| dev.args: !expr list(bg = "transparent")
-#| height: 10
+#| fig-height: 5
 # 1. Encode the KPI data
 kpi <- chanwe_kpi(
     num = "45,91",

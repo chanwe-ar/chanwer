@@ -1,0 +1,26 @@
+title: Chanwe Propuesta
+author: Chanwe Studio
+version: 1.0.0
+quarto-required: ">=1.9.37"
+contributes:
+  formats:
+    typst:
+      toc: false
+      number-sections: false
+      papersize: a4
+      margin:
+        x: 18mm
+        top: 14mm
+        bottom: 14mm
+      mainfont: "Inter"
+      monofont: "JetBrains Mono"
+      fontsize: 10.5pt
+      highlight-style: none
+      chanwe-assets: "_extensions/chanwe/assets/"
+      font-paths:
+        - fonts
+      filters:
+        - ../chanwe/chanwe-filters.lua
+      template-partials:
+        - typst-template.typ
+        - typst-show.typ
