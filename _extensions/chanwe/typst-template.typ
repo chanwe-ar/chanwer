@@ -188,6 +188,7 @@ $chanwe-charts.typ()$
   section: "",
   topic: "",
   rail-eyebrow: "Quarto · Style Guide",
+  cover-eyebrow: none,      // overrides rail-eyebrow on the cover page only
   // assets
   hero-image: none,
   wordmark: none,
@@ -428,7 +429,7 @@ $chanwe-charts.typ()$
       doc-id: doc-id,
       edition: edition,
       volume: volume,
-      rail-eyebrow: rail-eyebrow,
+      rail-eyebrow: if cover-eyebrow != none { cover-eyebrow } else { rail-eyebrow },
       hero-image: hero-image,
       wordmark: wordmark,
       stamp: stamp,

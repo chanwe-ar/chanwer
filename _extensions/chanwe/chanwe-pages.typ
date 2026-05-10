@@ -254,12 +254,14 @@
 //       p.lead   (Fraunces 12pt body, ::first-letter 56pt drop-cap)
 //       p · p · ... (Fraunces 12pt body)
 // =============================================================
-#let chanwe-side-row(label: "", value: "") = {
+#let chanwe-side-row(label: "", value: "", dark: false) = {
+  let lc = if dark { white.transparentize(45%) } else { _t.fg-subtle }
+  let vc = if dark { white                     } else { _t.fg        }
   stack(
     dir: ttb, spacing: 8pt,
     text(font: _t.font-mono, size: 7.5pt, weight: 500,
-         tracking: 0.18em, fill: _t.fg-subtle, upper(label)),
-    text(font: _t.font-sans, size: 10pt, weight: 500, fill: _t.fg, value),
+         tracking: 0.18em, fill: lc, upper(label)),
+    text(font: _t.font-sans, size: 10pt, weight: 500, fill: vc, value),
   )
 }
 
@@ -269,6 +271,7 @@
   title: none,
   meta: none,            // array of (label, value, sub) 3-tuples
   takeaway: none,
+  dark: false,           // true → inverted text colors for dark backgrounds
   // original verbose style kept for backward compat
   page-eyebrow: "01 · Abstract",
   page-title: "A reference, not a document.",
@@ -290,13 +293,19 @@
     ))
   } else { side-rows }
 
+  // color scheme shortcuts
+  let title-color  = if dark { white                     } else { _t.neutral-900 }
+  let rail-stroke  = if dark { white.transparentize(70%) } else { _t.neutral-900 }
+  let body-color   = if dark { white.transparentize(15%) } else { _t.fg-muted    }
+  let takwy-color  = if dark { white                     } else { _t.ink         }
+
   v(10mm)
   chanwe-section-eyebrow(resolved-eyebrow)
   v(7.5mm)
   block[
     #text(
       font: _t.font-display, size: 56pt, weight: 700,
-      tracking: -0.025em, fill: _t.neutral-900, resolved-title,
+      tracking: -0.025em, fill: title-color, resolved-title,
     )
     #box(width: 10pt, height: 10pt, baseline: 0pt,
       circle(fill: _t.primary, stroke: none))
@@ -311,26 +320,26 @@
       align: (left + top, left + top),
       // side rail: meta rows
       block(
-        stroke: (right: 0.5pt + _t.border),
+        stroke: (right: 0.5pt + rail-stroke),
         inset: (right: 10mm),
         width: 100%,
       )[
         #stack(
           dir: ttb, spacing: 9mm,
-          ..resolved-rows.map(r => chanwe-side-row(..r))
+          ..resolved-rows.map(r => chanwe-side-row(..r, dark: dark))
         )
       ],
       // body block
       block[
         #set par(leading: 0.65em, justify: true)
-        #set text(font: _t.font-sans, size: 10pt, weight: 400, fill: _t.fg-muted)
+        #set text(font: _t.font-sans, size: 10pt, weight: 400, fill: body-color)
         #if takeaway != none {
           let s = str(takeaway)
           let parts = s.split(" ")
           let first-word = parts.at(0)
           let rest = if parts.len() > 1 { " " + parts.slice(1).join(" ") } else { "" }
           block(below: 6mm)[
-            #text(font: _t.font-serif, size: 32pt, weight: 300, style: "italic", fill: _t.primary, first-word)#text(weight: 700, fill: _t.ink, rest)
+            #text(font: _t.font-serif, size: 32pt, weight: 300, style: "italic", fill: _t.primary, first-word)#text(weight: 700, fill: takwy-color, rest)
           ]
         }
         #body
@@ -392,6 +401,53 @@
       }
     ],
   )
+}
+
+// =============================================================
+// EXECUTIVE SUMMARY PAGE — same layout as the abstract page,
+// callable inline from ::: {.chanwe-executive-summary ...} divs.
+// Pulls meta-rows from doc state automatically.
+// =============================================================
+#let chanwe-exec-summary-page(
+  eyebrow: "Executive Summary",
+  title: none,
+  takeaway: none,
+  color: none,
+  body,
+) = {
+  let bg = if color == "beige"  { _t.beige       }
+      else if color == "gray"   { luma(244)       }
+      else if color == "dark"   { _t.ink          }
+      else if color == "white"  { white           }
+      else                      { none            }
+  pagebreak(weak: true)
+  if bg != none {
+    set page(fill: bg)
+    context {
+      let doc = _chanwe-doc.get()
+      chanwe-abstract(
+        eyebrow: eyebrow,
+        title: title,
+        meta: doc.meta-rows,
+        takeaway: takeaway,
+        dark: color == "dark",
+        body,
+      )
+    }
+  } else {
+    context {
+      let doc = _chanwe-doc.get()
+      chanwe-abstract(
+        eyebrow: eyebrow,
+        title: title,
+        meta: doc.meta-rows,
+        takeaway: takeaway,
+        dark: color == "dark",
+        body,
+      )
+    }
+  }
+  pagebreak(weak: true)
 }
 
 // =============================================================

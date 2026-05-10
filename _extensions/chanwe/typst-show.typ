@@ -40,6 +40,9 @@ $endif$
 $if(chanwe.rail-eyebrow)$
   rail-eyebrow: "$chanwe.rail-eyebrow$",
 $endif$
+$if(chanwe.cover-eyebrow)$
+  cover-eyebrow: "$chanwe.cover-eyebrow$",
+$endif$
 $if(chanwe.hero-image)$
   hero-image: "$chanwe.hero-image$",
 $endif$

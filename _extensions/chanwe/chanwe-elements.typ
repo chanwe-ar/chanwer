@@ -372,13 +372,12 @@
 ) = {
   let mc = if main-color == "ink" { _t.ink } else { _kpi-color(main-color) }
   let (dir-symbol, dir-color) = {
-    if direction == "up" { ("▲ ", "green") }
-    else if direction == "down" { ("▼ ", "red") }
-    else if direction == "neutral" { ("— ", "ink") }
+    if direction == "up" { ("▲", "green") }
+    else if direction == "down" { ("▼", "red") }
+    else if direction == "neutral" { ("—", "ink") }
     else { ("", secondary-color) }
   }
   let sc = _kpi-color(if direction == "none" { secondary-color } else { dir-color })
-  let secondary-text = if direction != "none" { dir-symbol + secondary } else { secondary }
 
   block(
     fill: luma(248),
@@ -388,31 +387,41 @@
     height: 42mm,
     inset: (x: 5mm, top: 5mm, bottom: 5mm),
   )[
-    #block(height: 8mm, width: 100%, clip: false)[
-      #set par(leading: 0.7em)
-      #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-subtle, "// " + upper(title))
-    ]
-    #v(1mm)
-    #block(below: 0.5mm)[
-      #if prefix != "" {
-        text(font: _t.font-display, size: 14pt, weight: 700, fill: _t.fg-muted, prefix)
-        h(0.5mm)
-      }
-      #text(font: _t.font-display, size: 20pt, weight: 800, fill: mc, main)
-      #if unit != "" {
-        h(1mm)
-        text(font: _t.font-display, size: 10pt, weight: 600, fill: _t.fg-muted, unit)
-      }
-    ]
-    #if secondary-text != "" {
-      place(bottom + left,
-        block(inset: (bottom: 5mm))[
-          #set text(font: _t.font-sans, size: 8pt, fill: sc)
-          #set par(leading: 0.7em)
-          #secondary-text
-        ]
+    // Direction arrow — top-right corner, outside normal flow
+    #if direction != "none" {
+      place(top + right,
+        text(font: _t.font-sans, size: 9pt, weight: 700, fill: sc, dir-symbol)
       )
     }
+    #stack(dir: ttb, spacing: 0pt,
+      // title
+      block(height: 8mm, width: 100%, clip: false)[
+        #set par(leading: 0.7em)
+        #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-subtle, "// " + upper(title))
+      ],
+      v(5mm),   // gap: title → main
+      // main number
+      block(below: 0pt)[
+        #if prefix != "" {
+          text(font: _t.font-display, size: 14pt, weight: 700, fill: _t.fg-muted, prefix)
+          h(0.5mm)
+        }
+        #text(font: _t.font-serif, size: 32pt, weight: 600, style: "italic", fill: mc, main)
+        #if unit != "" {
+          h(1mm)
+          text(font: _t.font-display, size: 10pt, weight: 600, fill: _t.fg-muted, unit)
+        }
+      ],
+      v(1fr),   // gap: main → secondary (flexible, secondary pinned to bottom)
+      // secondary
+      if secondary != "" {
+        block(below: 0pt)[
+          #set text(font: _t.font-sans, size: 8pt, fill: sc)
+          #set par(leading: 0.7em)
+          #secondary
+        ]
+      },
+    )
   ]
 }
 

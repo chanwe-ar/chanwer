@@ -286,6 +286,34 @@ local function Div(el)
   end
 
   -- -------------------------------------------------------
+  -- ::: {.chanwe-executive-summary eyebrow="..." title="..." takeaway="..."}
+  -- Renders a full standalone page identical to the abstract layout.
+  -- meta-rows are pulled automatically from doc state.
+  -- -------------------------------------------------------
+  if el.classes:includes("chanwe-executive-summary") then
+    local eyebrow  = attr(el, "eyebrow",  "Executive Summary")
+    local title    = attr(el, "title",    "")
+    local takeaway = attr(el, "takeaway", "")
+    local color    = attr(el, "color",    "")
+    local inner    = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+
+    local call = "#chanwe-exec-summary-page(\n"
+    call = call .. string.format('  eyebrow: "%s",\n', escape_typst_str(eyebrow))
+    if title ~= "" then
+      call = call .. string.format('  title: [%s],\n', escape_typst_str(title))
+    end
+    if takeaway ~= "" then
+      call = call .. string.format('  takeaway: "%s",\n', escape_typst_str(takeaway))
+    end
+    if color ~= "" then
+      call = call .. string.format('  color: "%s",\n', escape_typst_str(color))
+    end
+    call = call .. ")[\n" .. inner .. "\n]"
+
+    return pandoc.RawBlock("typst", call)
+  end
+
+  -- -------------------------------------------------------
   -- ::: {.fig-border}
   -- -------------------------------------------------------
   if el.classes:includes("fig-border") then
