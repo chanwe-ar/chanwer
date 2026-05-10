@@ -88,6 +88,7 @@ new_element_chanwe_subtitle <- function(
   ink_colour = "#1A1A1A",
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
+  kpi_label_colour = "#AEABA6",
   inherit.blank = FALSE
 ) {
   structure(
@@ -105,7 +106,8 @@ new_element_chanwe_subtitle <- function(
       inherit.blank = inherit.blank,
       ink_colour = ink_colour,
       mono_family = mono_family,
-      mono_thin_family = mono_thin_family
+      mono_thin_family = mono_thin_family,
+      kpi_label_colour = kpi_label_colour
     ),
     class = c("element_chanwe_subtitle", "element_text", "element")
   )
@@ -257,7 +259,8 @@ heightDetails.cw_title_tree <- function(x) {
   ink_col,
   kpi_data = NULL,
   mono_family = "JetBrains Mono",
-  mono_thin_family = "JetBrains Mono Thin"
+  mono_thin_family = "JetBrains Mono Thin",
+  kpi_label_colour = "#AEABA6"
 ) {
   grid::gTree(
     sub_text = sub_text,
@@ -270,6 +273,7 @@ heightDetails.cw_title_tree <- function(x) {
     kpi_data = kpi_data,
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
+    kpi_label_colour = kpi_label_colour,
     cl = "cw_subtitle_tree"
   )
 }
@@ -362,6 +366,7 @@ makeContent.cw_subtitle_tree <- function(x) {
     mono_fam <- x$mono_family %||_% "JetBrains Mono"
     ink <- x$ink_col
     fg_muted <- "#656460"
+    subtle <- x$kpi_label_colour %||_% "#AEABA6"
     green <- "#2D7A4F"
     red <- "#B03A2E"
 
@@ -382,10 +387,10 @@ makeContent.cw_subtitle_tree <- function(x) {
       )
     )
 
-    # Hero value — Archivo Medium Italic (weight 500)
+    # Hero value — Archivo SemiBold (weight 600), same as h1 heading
     val_gp <- grid::gpar(
-      fontfamily = "Archivo Medium",
-      fontface   = "italic",
+      fontfamily = "Archivo SemiBold",
+      fontface   = "plain",
       fontsize   = 24,
       col        = ink
     )
@@ -400,10 +405,14 @@ makeContent.cw_subtitle_tree <- function(x) {
 
     # Unit + AS OF + date block, positioned right of the hero value
     side_x <- grid::unit(1, "grobwidth", val_g) + grid::unit(6, "pt")
-    unit_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 6.0, col = fg_muted)
+    unit_gp <- grid::gpar(
+      fontfamily = mono_fam,
+      fontsize = 5.0,
+      col = fg_muted
+    )
     as_of_gp <- grid::gpar(
       fontfamily = mono_fam,
-      fontsize = 4.5,
+      fontsize = 5,
       col = fg_muted
     )
     date_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 6.0, col = fg_muted)
@@ -437,11 +446,11 @@ makeContent.cw_subtitle_tree <- function(x) {
     mono_thin <- x$mono_thin_family %||_% mono_fam
     n_metrics <- length(kpi$metrics)
     if (n_metrics > 0L) {
-      col_right <- 0.98  # right anchor (right-edge of rightmost column)
-      col_step  <- 0.18  # spacing between column right-edges
+      col_right <- 0.99 # right anchor (right-edge of rightmost column)
+      col_step <- 0.13 # spacing between column right-edges
       lbl_gp <- grid::gpar(
-        fontfamily = mono_thin,
-        fontsize = 6.0,
+        fontfamily = mono_fam,
+        fontsize = 5,
         col = fg_muted
       )
       for (i in seq_along(kpi$metrics)) {
@@ -461,7 +470,11 @@ makeContent.cw_subtitle_tree <- function(x) {
         } else {
           ""
         }
-        val_m_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 8.5, col = m_col)
+        val_m_gp <- grid::gpar(
+          fontfamily = mono_fam,
+          fontsize = 8,
+          col = m_col
+        )
         ch <- grid::gList(
           ch,
           grid::textGrob(
@@ -626,6 +639,7 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
   ink <- element$ink_colour %||_% "#1A1A1A"
   mono_fam <- element$mono_family %||_% "JetBrains Mono"
   mono_thin_fam <- element$mono_thin_family %||_% mono_fam
+  kpi_label_colour <- element$kpi_label_colour %||_% "#AEABA6"
 
   parts <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
   sub_text <- parts[1L]
@@ -661,7 +675,8 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     ink,
     kpi_data = kpi_data,
     mono_family = mono_fam,
-    mono_thin_family = mono_thin_fam
+    mono_thin_family = mono_thin_fam,
+    kpi_label_colour = kpi_label_colour
   )
 }
 

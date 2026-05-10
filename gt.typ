@@ -2217,7 +2217,7 @@
     align: (left, right, left, right, right,),
     table.header(
       table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · WHITE]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
-      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(8pt, weak: false)],
+      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 9.2pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MPG]],
@@ -2292,7 +2292,7 @@
     align: (left, right, left, right, right,),
     table.header(
       table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · WHITE]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
-      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(8pt, weak: false)],
+      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 9.2pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · white background]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MPG]],
@@ -2367,7 +2367,7 @@
     align: (left, right, left, right, right,),
     table.header(
       table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · BEIGE]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
-      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · beige background]#v(8pt, weak: false)],
+      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 9.2pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · beige background]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MPG]],
@@ -2441,7 +2441,7 @@
     align: (left, right, left, right, right,),
     table.header(
       table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · SPACIOUS · GRAY]#v(-10pt, weak: false)#text(font: "Archivo", size: 18pt, fill: _t.ink, weight: "semibold")[Simple fleet view]],
-      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 7.5pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · gray background]#v(8pt, weak: false)],
+      table.cell(align: left, colspan: 5, inset: (top: 4pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 9.2pt, fill: _t.fg-muted, weight: "regular")[Top 8 vehicles · mtcars · gray background]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.primary, weight: "thin", tracking: 0.05em)[MPG]],

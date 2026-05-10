@@ -60,7 +60,7 @@ chanwe_kbl <- function(
   row_padding = NULL,
   title_size = '18pt',
   eyebrow_size = '5pt',
-  subtitle_size = '7.5pt',
+  subtitle_size = '9.2pt',
   body_size = '7pt',
   header_size = '5.5pt',
   note_size = '7pt',

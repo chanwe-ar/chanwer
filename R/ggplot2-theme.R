@@ -176,13 +176,21 @@ theme_chanwe <- function(
     eyebrow_colour = colors[["typst-primary"]],
     ink_colour = colors[["typst-ink"]]
   )
+  kpi_label_colour <- switch(
+    bg_color,
+    "#FAF9F7" = "#AEABA6",
+    "#FFFFFF"  = "#AEABA6",
+    "#656460"
+  )
+
   subtitle_element <- new_element_chanwe_subtitle(
     family = subtitle_family,
-    size = base_text_size * 1.0,
+    size = base_text_size * 1.15,
     colour = '#656460',
     ink_colour = colors[["typst-ink"]],
     mono_family = mono_family,
-    mono_thin_family = mono_thin_family
+    mono_thin_family = mono_thin_family,
+    kpi_label_colour = kpi_label_colour
   )
 
   theme_obj <- ggplot2::`%+replace%`(
