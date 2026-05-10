@@ -4,34 +4,59 @@
 \alias{chanwe_subtitle}
 \title{ChanWe Subtitle Helper}
 \usage{
-chanwe_subtitle(text, note = NULL)
+chanwe_subtitle(text, note = NULL, kpi = NULL)
 }
 \arguments{
-\item{text}{Main subtitle string.}
+\item{text}{Main subtitle string (Satoshi, muted ink, below the title rule).}
 
-\item{note}{Optional smaller italic line below the subtitle, e.g. a
-methodological caveat or data note.}
+\item{note}{Optional smaller italic line rendered below the subtitle, e.g. a
+methodological caveat. Ignored when \code{kpi} is supplied.}
+
+\item{kpi}{KPI panel produced by \code{\link[=chanwe_kpi]{chanwe_kpi()}}. When provided, a scoreboard
+zone is inserted between the subtitle separator and the chart. \code{note} is
+silently ignored.}
 }
 \value{
-A character string for \code{labs(subtitle = ...)}.
+A character string ready for \code{labs(subtitle = ...)}.
 }
 \description{
-Produces a subtitle string for \code{labs(subtitle = ...)} styled by
-\code{\link[=theme_chanwe]{theme_chanwe()}}. Without a note you can pass plain text directly — this
-helper is only needed when you want a smaller italic note line below the
-main subtitle.
+Wraps a subtitle string for \code{labs(subtitle = ...)} when you need either a
+secondary note line or a KPI scoreboard panel. For plain text you do
+\strong{not} need this helper — pass the string directly to \code{labs(subtitle = )}.
 }
 \details{
-Requires the \code{ggtext} package for HTML rendering; falls back to
-\code{"text\\nnote"} when unavailable.
+\subsection{When to use}{\tabular{ll}{
+   Situation \tab What to write \cr
+   Plain subtitle \tab \code{labs(subtitle = "My subtitle")} — no helper \cr
+   Subtitle + methodological note \tab \code{chanwe_subtitle("My subtitle", note = "...")} \cr
+   Subtitle + KPI scoreboard \tab \code{chanwe_subtitle("My subtitle", kpi = chanwe_kpi(...))} \cr
+}
+
+
+Note: \code{note} is ignored when \code{kpi} is supplied — the two do not stack.
+}
 }
 \examples{
-## Plain subtitle — pass directly, no helper needed:
-# ggplot2::labs(subtitle = "Faceted by transmission type")
+## 1. Plain subtitle — no helper needed:
+# labs(subtitle = "Faceted by transmission type")
 
-## Subtitle with a note:
+## 2. Subtitle + note:
 chanwe_subtitle(
   "Faceted by transmission type",
-  note = "Max peel measured when foil breaks, otherwise average peel"
+  note = "Excludes outliers beyond 3 SD"
 )
+
+## 3. Subtitle + KPI scoreboard:
+chanwe_subtitle(
+  "Evolución de reservas internacionales brutas.",
+  kpi = chanwe_kpi(
+    num    = "45,91",  label  = "USD MM", period = "05·MAY·2026",
+    mtc1_num = "0,19\%",  mtc1_label = "WoW", mtc1_direction = "+",
+    mtc2_num = "3,29\%",  mtc2_label = "MoM", mtc2_direction = "+",
+    mtc3_num = "17,78\%", mtc3_label = "YoY", mtc3_direction = "+"
+  )
+)
+}
+\seealso{
+\code{\link[=chanwe_kpi]{chanwe_kpi()}}, \code{\link[=chanwe_title]{chanwe_title()}}, \code{\link[=theme_chanwe]{theme_chanwe()}}
 }

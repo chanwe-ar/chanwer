@@ -24,6 +24,7 @@ Registered families:
 \itemize{
 \item \code{"Satoshi"} — Regular / Bold / Italic / BoldItalic
 \item \code{"Archivo"} — Regular / Bold / Italic / BoldItalic
+\item \code{"Archivo Medium"} — plain face = Medium (500); italic face = MediumItalic; used by KPI hero value
 \item \code{"Archivo SemiBold"} — plain face = SemiBold (600); used by \code{\link[=chanwe_title]{chanwe_title()}}
 \item \code{"Archivo ExtraBold"} — plain face = ExtraBold (800)
 \item \code{".chanwe-subtitle"} — plain face = Archivo Light (300)
