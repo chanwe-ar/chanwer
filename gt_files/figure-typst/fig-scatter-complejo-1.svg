@@ -135,12 +135,12 @@
 <text x='9.96' y='91.10' style='font-size: 24.00px; font-style: italic;fill: #0F0F0F; font-family: "Fraunces 9pt";' textLength='57.61px' lengthAdjust='spacingAndGlyphs'>45,91</text>
 <text x='73.55' y='77.37' style='font-size: 4.50px;fill: #656460; font-family: "JetBrains Mono";' textLength='16.22px' lengthAdjust='spacingAndGlyphs'>USD MM</text>
 <text x='73.55' y='86.88' style='font-size: 6.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='39.53px' lengthAdjust='spacingAndGlyphs'>05·MAY·2026</text>
-<text x='284.50' y='82.17' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>WOW</text>
-<text x='284.50' y='89.06' text-anchor='end' style='font-size: 6.50px;fill: #2D7A4F; font-family: "JetBrains Mono";' textLength='27.34px' lengthAdjust='spacingAndGlyphs'>▲ 0,19%</text>
-<text x='333.39' y='82.17' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>MOM</text>
-<text x='333.39' y='89.06' text-anchor='end' style='font-size: 6.50px;fill: #B03A2E; font-family: "JetBrains Mono";' textLength='27.34px' lengthAdjust='spacingAndGlyphs'>▼ 3,17%</text>
-<text x='382.28' y='82.17' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>YOY</text>
-<text x='382.28' y='89.06' text-anchor='end' style='font-size: 6.50px;fill: #2D7A4F; font-family: "JetBrains Mono";' textLength='31.25px' lengthAdjust='spacingAndGlyphs'>▲ 17,78%</text>
+<text x='284.50' y='88.14' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>WOW</text>
+<text x='284.50' y='95.04' text-anchor='end' style='font-size: 6.50px;fill: #2D7A4F; font-family: "JetBrains Mono";' textLength='27.34px' lengthAdjust='spacingAndGlyphs'>▲ 0,19%</text>
+<text x='333.39' y='88.14' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>MOM</text>
+<text x='333.39' y='95.04' text-anchor='end' style='font-size: 6.50px;fill: #B03A2E; font-family: "JetBrains Mono";' textLength='27.34px' lengthAdjust='spacingAndGlyphs'>▼ 3,17%</text>
+<text x='382.28' y='88.14' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>YOY</text>
+<text x='382.28' y='95.04' text-anchor='end' style='font-size: 6.50px;fill: #2D7A4F; font-family: "JetBrains Mono";' textLength='31.25px' lengthAdjust='spacingAndGlyphs'>▲ 17,78%</text>
 <text x='9.96' y='35.70' style='font-size: 12.35px; font-weight: 600;fill: #0F0F0F; font-family: "Archivo";' textLength='144.19px' lengthAdjust='spacingAndGlyphs'>Reservas Internacionales</text>
 <text x='9.96' y='21.25' style='font-size: 4.55px;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='71.09px' lengthAdjust='spacingAndGlyphs'>──── BCRA · SECTOR EXTERNO</text>
 </g>

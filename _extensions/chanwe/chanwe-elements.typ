@@ -397,7 +397,7 @@
       // title
       block(height: 8mm, width: 100%, clip: false)[
         #set par(leading: 0.7em)
-        #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-subtle, "// " + upper(title))
+        #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.primary, "// ")#text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-subtle, upper(title))
       ],
       v(5mm),   // gap: title → main
       // main number

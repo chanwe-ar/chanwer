@@ -2664,8 +2664,8 @@ establece el piso de referencia para el analisis diferencial.
 <plot-4>
 #box(image("gt_files/figure-typst/unnamed-chunk-9-1.svg", width: 100.0%))
 
-= Highlight
-<highlight>
+= Highlightnt
+<highlightnt>
 #zone-highlight(color: "gray", above: -9mm)[
 #block[
 #block[
