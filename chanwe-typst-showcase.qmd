@@ -15,7 +15,7 @@ execute:
   message: false
   dev: ragg_png
   fig-format: png
-  fig-dpi: 320
+  fig-dpi: 600
 chanwe:
   document: "CHW · DEV"
   edition: "SHOWCASE / 2026"

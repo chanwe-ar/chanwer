@@ -205,6 +205,7 @@ chanwe_resolve_bg <- function(bg_color) {
     gray           = "#F2F2F2",
     grey           = "#F2F2F2",
     beige          = "#F5F1EB",
+    transparent    = "transparent",
     bg_color
   )
 }

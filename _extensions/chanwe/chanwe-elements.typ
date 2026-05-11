@@ -89,7 +89,7 @@
 
 #let _gq-scheme(color, inset: false) = if color == "light" {
   (
-    bg:     luma(244),
+    bg:     _t.neutral-100,
     eyebrow: _t.primary,
     quote:  _t.neutral-900,
     emph:   _t.primary,
@@ -339,7 +339,7 @@
 
 // wrapper that applies a unified background with dividers between items
 #let great-findings-grid(color: "white", body) = {
-  let bg = if color == "light" { _t.neutral-100 } else if color == "gray" { rgb("#F5F5F5") } else { none }
+  let bg = if color == "light" or color == "gray" { _t.neutral-100 } else { none }
   let stroke-top-bottom = if color == "white" { 0.5pt + _t.neutral-900 } else { none }
   block(width: 100%, fill: bg, radius: if bg == none { 0pt } else { 4pt },
     stroke: (top: stroke-top-bottom, bottom: stroke-top-bottom),
@@ -433,6 +433,34 @@
     row-gutter: 4mm,
     ..items,
   )
+}
+
+// =============================================================
+// ZONE HIGHLIGHT — full-bleed background color zone
+// =============================================================
+// color: "white" | "white-ivory" | "beige" | "dark" | "orange"
+#let zone-highlight(color: "white", margin: 5mm, above: none, below: none, body) = {
+  let bg = if color == "beige"           { _t.beige      }
+    else if color == "white-ivory"       { rgb("#FAFAFA") }
+    else if color == "gray"              { rgb("#EEEEEE")  }
+    else if color == "dark"              { _t.ink         }
+    else if color == "orange"            { _t.primary     }
+    else if color.starts-with("#")       { rgb(color)     }
+    else                                 { white          }
+  let on-dark = color == "dark" or color == "orange"
+
+  if above != none { v(above) }
+  move(dx: -18mm,
+    block(
+      width: 210mm,
+      fill: bg,
+      inset: (x: 22mm, top: margin, bottom: margin),
+    )[
+      #if on-dark { set text(fill: white) }
+      #body
+    ]
+  )
+  if below != none { v(below) }
 }
 
 #let fig-border(body) = {

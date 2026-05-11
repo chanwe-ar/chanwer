@@ -308,3 +308,71 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
 ```
 
 
+# Highlightnt
+
+
+:::: {.zone-highlight color="gray" above="-9"}
+
+```{r}
+#| label: fig-scatter-complejo
+#| fig-height: 5
+library(dplyr)
+
+mt <- tibble::as_tibble(mtcars, rownames = "model") |>
+    mutate(
+        cyl = factor(cyl),
+        gear = factor(gear),
+        am = factor(am, labels = c("Automatic", "Manual")),
+        hp_band = cut(
+            hp,
+            breaks = c(-Inf, 110, 180, Inf),
+            labels = c("Low", "Mid", "High")
+        )
+    )
+
+kpi <- chanwe_kpi(
+    num = "45,91",
+    label = "USD MM",
+    period = "05·MAY·2026",
+    mtc1_num = "0,19%",
+    mtc1_label = "WoW",
+    mtc1_direction = "+",
+    mtc2_num = "3,17%",
+    mtc2_label = "MoM",
+    mtc2_direction = "-",
+    mtc3_num = "17,78%",
+    mtc3_label = "YoY",
+    mtc3_direction = "+"
+)
+
+
+# 2. Use it in labs()
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(bg_color = "transparent", plot_borders = FALSE) +
+    labs(
+        title = chanwe_title(
+            "Simple fleet view",
+            eyebrow = "TLDR;"
+        ),
+        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band"
+    ) +
+    labs(
+        title = chanwe_title(
+            "Reservas Internacionales",
+            eyebrow = "BCRA · SECTOR EXTERNO"
+        ),
+        subtitle = chanwe_subtitle(
+            "Evolución de reservas internacionales brutas (USD MM).",
+            kpi = kpi
+        )
+    ) +
+    theme_chanwe()
+```
+
+::::

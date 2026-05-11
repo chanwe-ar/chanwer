@@ -175,7 +175,7 @@
             move(dx: -18mm,
               block(
                 width: 210mm,
-                fill: luma(244),
+                fill: _t.neutral-100,
                 inset: (x: 18mm, top: 10mm, bottom: 8mm),
               )[
                 #grid(
@@ -416,7 +416,7 @@
   body,
 ) = {
   let bg = if color == "beige"  { _t.beige       }
-      else if color == "gray"   { luma(244)       }
+      else if color == "gray"   { _t.neutral-100   }
       else if color == "dark"   { _t.ink          }
       else if color == "white"  { white           }
       else                      { none            }
@@ -473,13 +473,13 @@
   _chanwe-cur-part.update(_ => (number: number, title: title, eyebrow: eyebrow))
 
   set page(
-    paper: "a4", margin: 0pt, fill: luma(244),
+    paper: "a4", margin: 0pt, fill: _t.neutral-100,
     header: none, footer: none,
     background: place(top + left, dx: -50mm, dy: -50mm,
       circle(radius: 110mm,
         fill: gradient.radial(
           _t.primary.transparentize(93%),
-          luma(244).transparentize(100%),
+          _t.neutral-100.transparentize(100%),
         ),
         stroke: none,
       )

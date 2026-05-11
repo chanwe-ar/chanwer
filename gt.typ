@@ -770,7 +770,7 @@
 
 #let _gq-scheme(color, inset: false) = if color == "light" {
   (
-    bg:     luma(244),
+    bg:     _t.neutral-100,
     eyebrow: _t.primary,
     quote:  _t.neutral-900,
     emph:   _t.primary,
@@ -1020,7 +1020,7 @@
 
 // wrapper that applies a unified background with dividers between items
 #let great-findings-grid(color: "white", body) = {
-  let bg = if color == "light" { _t.neutral-100 } else if color == "gray" { rgb("#F5F5F5") } else { none }
+  let bg = if color == "light" or color == "gray" { _t.neutral-100 } else { none }
   let stroke-top-bottom = if color == "white" { 0.5pt + _t.neutral-900 } else { none }
   block(width: 100%, fill: bg, radius: if bg == none { 0pt } else { 4pt },
     stroke: (top: stroke-top-bottom, bottom: stroke-top-bottom),
@@ -1053,13 +1053,12 @@
 ) = {
   let mc = if main-color == "ink" { _t.ink } else { _kpi-color(main-color) }
   let (dir-symbol, dir-color) = {
-    if direction == "up" { ("▲ ", "green") }
-    else if direction == "down" { ("▼ ", "red") }
-    else if direction == "neutral" { ("— ", "ink") }
+    if direction == "up" { ("▲", "green") }
+    else if direction == "down" { ("▼", "red") }
+    else if direction == "neutral" { ("—", "ink") }
     else { ("", secondary-color) }
   }
   let sc = _kpi-color(if direction == "none" { secondary-color } else { dir-color })
-  let secondary-text = if direction != "none" { dir-symbol + secondary } else { secondary }
 
   block(
     fill: luma(248),
@@ -1069,31 +1068,41 @@
     height: 42mm,
     inset: (x: 5mm, top: 5mm, bottom: 5mm),
   )[
-    #block(height: 8mm, width: 100%, clip: false)[
-      #set par(leading: 0.7em)
-      #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-subtle, "// " + upper(title))
-    ]
-    #v(1mm)
-    #block(below: 0.5mm)[
-      #if prefix != "" {
-        text(font: _t.font-display, size: 14pt, weight: 700, fill: _t.fg-muted, prefix)
-        h(0.5mm)
-      }
-      #text(font: _t.font-display, size: 20pt, weight: 800, fill: mc, main)
-      #if unit != "" {
-        h(1mm)
-        text(font: _t.font-display, size: 10pt, weight: 600, fill: _t.fg-muted, unit)
-      }
-    ]
-    #if secondary-text != "" {
-      place(bottom + left,
-        block(inset: (bottom: 5mm))[
-          #set text(font: _t.font-sans, size: 8pt, fill: sc)
-          #set par(leading: 0.7em)
-          #secondary-text
-        ]
+    // Direction arrow — top-right corner, outside normal flow
+    #if direction != "none" {
+      place(top + right,
+        text(font: _t.font-sans, size: 9pt, weight: 700, fill: sc, dir-symbol)
       )
     }
+    #stack(dir: ttb, spacing: 0pt,
+      // title
+      block(height: 8mm, width: 100%, clip: false)[
+        #set par(leading: 0.7em)
+        #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-subtle, "// " + upper(title))
+      ],
+      v(5mm),   // gap: title → main
+      // main number
+      block(below: 0pt)[
+        #if prefix != "" {
+          text(font: _t.font-display, size: 14pt, weight: 700, fill: _t.fg-muted, prefix)
+          h(0.5mm)
+        }
+        #text(font: _t.font-serif, size: 32pt, weight: 600, style: "italic", fill: mc, main)
+        #if unit != "" {
+          h(1mm)
+          text(font: _t.font-display, size: 10pt, weight: 600, fill: _t.fg-muted, unit)
+        }
+      ],
+      v(1fr),   // gap: main → secondary (flexible, secondary pinned to bottom)
+      // secondary
+      if secondary != "" {
+        block(below: 0pt)[
+          #set text(font: _t.font-sans, size: 8pt, fill: sc)
+          #set par(leading: 0.7em)
+          #secondary
+        ]
+      },
+    )
   ]
 }
 
@@ -1105,6 +1114,34 @@
     row-gutter: 4mm,
     ..items,
   )
+}
+
+// =============================================================
+// ZONE HIGHLIGHT — full-bleed background color zone
+// =============================================================
+// color: "white" | "white-ivory" | "beige" | "dark" | "orange"
+#let zone-highlight(color: "white", margin: 5mm, above: none, below: none, body) = {
+  let bg = if color == "beige"           { _t.beige      }
+    else if color == "white-ivory"       { rgb("#FAFAFA") }
+    else if color == "gray"              { rgb("#EEEEEE")  }
+    else if color == "dark"              { _t.ink         }
+    else if color == "orange"            { _t.primary     }
+    else if color.starts-with("#")       { rgb(color)     }
+    else                                 { white          }
+  let on-dark = color == "dark" or color == "orange"
+
+  if above != none { v(above) }
+  move(dx: -18mm,
+    block(
+      width: 210mm,
+      fill: bg,
+      inset: (x: 22mm, top: margin, bottom: margin),
+    )[
+      #if on-dark { set text(fill: white) }
+      #body
+    ]
+  )
+  if below != none { v(below) }
 }
 
 #let fig-border(body) = {
@@ -1292,7 +1329,7 @@
             move(dx: -18mm,
               block(
                 width: 210mm,
-                fill: luma(244),
+                fill: _t.neutral-100,
                 inset: (x: 18mm, top: 10mm, bottom: 8mm),
               )[
                 #grid(
@@ -1371,12 +1408,14 @@
 //       p.lead   (Fraunces 12pt body, ::first-letter 56pt drop-cap)
 //       p · p · ... (Fraunces 12pt body)
 // =============================================================
-#let chanwe-side-row(label: "", value: "") = {
+#let chanwe-side-row(label: "", value: "", dark: false) = {
+  let lc = if dark { white.transparentize(45%) } else { _t.fg-subtle }
+  let vc = if dark { white                     } else { _t.fg        }
   stack(
     dir: ttb, spacing: 8pt,
     text(font: _t.font-mono, size: 7.5pt, weight: 500,
-         tracking: 0.18em, fill: _t.fg-subtle, upper(label)),
-    text(font: _t.font-sans, size: 10pt, weight: 500, fill: _t.fg, value),
+         tracking: 0.18em, fill: lc, upper(label)),
+    text(font: _t.font-sans, size: 10pt, weight: 500, fill: vc, value),
   )
 }
 
@@ -1386,6 +1425,7 @@
   title: none,
   meta: none,            // array of (label, value, sub) 3-tuples
   takeaway: none,
+  dark: false,           // true → inverted text colors for dark backgrounds
   // original verbose style kept for backward compat
   page-eyebrow: "01 · Abstract",
   page-title: "A reference, not a document.",
@@ -1407,13 +1447,19 @@
     ))
   } else { side-rows }
 
+  // color scheme shortcuts
+  let title-color  = if dark { white                     } else { _t.neutral-900 }
+  let rail-stroke  = if dark { white.transparentize(70%) } else { _t.neutral-900 }
+  let body-color   = if dark { white.transparentize(15%) } else { _t.fg-muted    }
+  let takwy-color  = if dark { white                     } else { _t.ink         }
+
   v(10mm)
   chanwe-section-eyebrow(resolved-eyebrow)
   v(7.5mm)
   block[
     #text(
       font: _t.font-display, size: 56pt, weight: 700,
-      tracking: -0.025em, fill: _t.neutral-900, resolved-title,
+      tracking: -0.025em, fill: title-color, resolved-title,
     )
     #box(width: 10pt, height: 10pt, baseline: 0pt,
       circle(fill: _t.primary, stroke: none))
@@ -1428,26 +1474,26 @@
       align: (left + top, left + top),
       // side rail: meta rows
       block(
-        stroke: (right: 0.5pt + _t.border),
+        stroke: (right: 0.5pt + rail-stroke),
         inset: (right: 10mm),
         width: 100%,
       )[
         #stack(
           dir: ttb, spacing: 9mm,
-          ..resolved-rows.map(r => chanwe-side-row(..r))
+          ..resolved-rows.map(r => chanwe-side-row(..r, dark: dark))
         )
       ],
       // body block
       block[
         #set par(leading: 0.65em, justify: true)
-        #set text(font: _t.font-sans, size: 10pt, weight: 400, fill: _t.fg-muted)
+        #set text(font: _t.font-sans, size: 10pt, weight: 400, fill: body-color)
         #if takeaway != none {
           let s = str(takeaway)
           let parts = s.split(" ")
           let first-word = parts.at(0)
           let rest = if parts.len() > 1 { " " + parts.slice(1).join(" ") } else { "" }
           block(below: 6mm)[
-            #text(font: _t.font-serif, size: 32pt, weight: 300, style: "italic", fill: _t.primary, first-word)#text(weight: 700, fill: _t.ink, rest)
+            #text(font: _t.font-serif, size: 32pt, weight: 300, style: "italic", fill: _t.primary, first-word)#text(weight: 700, fill: takwy-color, rest)
           ]
         }
         #body
@@ -1512,6 +1558,53 @@
 }
 
 // =============================================================
+// EXECUTIVE SUMMARY PAGE — same layout as the abstract page,
+// callable inline from ::: {.chanwe-executive-summary ...} divs.
+// Pulls meta-rows from doc state automatically.
+// =============================================================
+#let chanwe-exec-summary-page(
+  eyebrow: "Executive Summary",
+  title: none,
+  takeaway: none,
+  color: none,
+  body,
+) = {
+  let bg = if color == "beige"  { _t.beige       }
+      else if color == "gray"   { _t.neutral-100   }
+      else if color == "dark"   { _t.ink          }
+      else if color == "white"  { white           }
+      else                      { none            }
+  pagebreak(weak: true)
+  if bg != none {
+    set page(fill: bg)
+    context {
+      let doc = _chanwe-doc.get()
+      chanwe-abstract(
+        eyebrow: eyebrow,
+        title: title,
+        meta: doc.meta-rows,
+        takeaway: takeaway,
+        dark: color == "dark",
+        body,
+      )
+    }
+  } else {
+    context {
+      let doc = _chanwe-doc.get()
+      chanwe-abstract(
+        eyebrow: eyebrow,
+        title: title,
+        meta: doc.meta-rows,
+        takeaway: takeaway,
+        dark: color == "dark",
+        body,
+      )
+    }
+  }
+  pagebreak(weak: true)
+}
+
+// =============================================================
 // CHAPTER SEPARATOR (full-page divider)
 // =============================================================
 // HTML .chapter-cover layout:
@@ -1534,13 +1627,13 @@
   _chanwe-cur-part.update(_ => (number: number, title: title, eyebrow: eyebrow))
 
   set page(
-    paper: "a4", margin: 0pt, fill: luma(244),
+    paper: "a4", margin: 0pt, fill: _t.neutral-100,
     header: none, footer: none,
     background: place(top + left, dx: -50mm, dy: -50mm,
       circle(radius: 110mm,
         fill: gradient.radial(
           _t.primary.transparentize(93%),
-          luma(244).transparentize(100%),
+          _t.neutral-100.transparentize(100%),
         ),
         stroke: none,
       )
@@ -1862,6 +1955,7 @@
   section: "",
   topic: "",
   rail-eyebrow: "Quarto · Style Guide",
+  cover-eyebrow: none,      // overrides rail-eyebrow on the cover page only
   // assets
   hero-image: none,
   wordmark: none,
@@ -2102,7 +2196,7 @@
       doc-id: doc-id,
       edition: edition,
       volume: volume,
-      rail-eyebrow: rail-eyebrow,
+      rail-eyebrow: if cover-eyebrow != none { cover-eyebrow } else { rail-eyebrow },
       hero-image: hero-image,
       wordmark: wordmark,
       stamp: stamp,
@@ -2191,7 +2285,7 @@
   title: [Chanwe Showcase: ggplot2 + gt],
   subtitle: [Tables and plots aligned with chanwe-typst design tokens],
   author: "Alejandro Abraham",
-  date: "2026-05-10",
+  date: "2026-05-11",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",
@@ -2569,3 +2663,22 @@ establece el piso de referencia para el analisis diferencial.
 ===== Plot 4
 <plot-4>
 #box(image("gt_files/figure-typst/unnamed-chunk-9-1.svg", width: 100.0%))
+
+= Highlight
+<highlight>
+#zone-highlight(color: "gray", above: -9mm)[
+#block[
+#block[
+#block[
+#block[
+#box(image("gt_files/figure-typst/fig-scatter-complejo-1.svg", width: 100.0%))
+]
+#block[
+]
+]
+]
+]
+]
+
+
+

@@ -314,6 +314,29 @@ local function Div(el)
   end
 
   -- -------------------------------------------------------
+  -- :::: {.zone-highlight color="beige"}  ...  ::::
+  -- -------------------------------------------------------
+  if el.classes:includes("zone-highlight") then
+    local color  = attr(el, "color",  "white")
+    local margin = attr(el, "margin", "")
+    local above  = attr(el, "above",  "")
+    local below  = attr(el, "below",  "")
+    local inner  = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+    local call = string.format('#zone-highlight(color: "%s"', escape_typst_str(color))
+    if margin ~= "" then
+      call = call .. string.format(", margin: %smm", escape_typst_str(margin))
+    end
+    if above ~= "" then
+      call = call .. string.format(", above: %smm", escape_typst_str(above))
+    end
+    if below ~= "" then
+      call = call .. string.format(", below: %smm", escape_typst_str(below))
+    end
+    call = call .. ")[\n" .. inner .. "\n]"
+    return pandoc.RawBlock("typst", call)
+  end
+
+  -- -------------------------------------------------------
   -- ::: {.fig-border}
   -- -------------------------------------------------------
   if el.classes:includes("fig-border") then
