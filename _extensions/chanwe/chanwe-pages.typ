@@ -413,6 +413,7 @@
   title: none,
   takeaway: none,
   color: none,
+  meta: none,
   body,
 ) = {
   let bg = if color == "beige"  { _t.beige       }
@@ -428,7 +429,7 @@
       chanwe-abstract(
         eyebrow: eyebrow,
         title: title,
-        meta: doc.meta-rows,
+        meta: if meta != none { meta } else { doc.meta-rows },
         takeaway: takeaway,
         dark: color == "dark",
         body,
@@ -440,7 +441,7 @@
       chanwe-abstract(
         eyebrow: eyebrow,
         title: title,
-        meta: doc.meta-rows,
+        meta: if meta != none { meta } else { doc.meta-rows },
         takeaway: takeaway,
         dark: color == "dark",
         body,

@@ -70,7 +70,9 @@ chanwe_kbl <- function(
   top_border = TRUE,
   header_rule = TRUE,
   padding = 12.5,
-  fmt = list()
+  fmt = list(),
+  col_colors = list(),
+  n_total = 0
 ) {
   chanwe_require_package("knitr")
   density <- match.arg(density)
@@ -167,6 +169,13 @@ chanwe_kbl <- function(
     if (!is.na(idx)) fmt_data[[idx]] <- fmt[[nm]](data[[idx]])
   }
   fmt_data <- lapply(fmt_data, as.character)
+
+  # apply color functions (original numeric data → Typst color strings, not escaped)
+  color_data <- vector("list", n)
+  for (nm in names(col_colors)) {
+    idx <- match(nm, nms)
+    if (!is.na(idx)) color_data[[idx]] <- col_colors[[nm]](data[[idx]])
+  }
 
   # Typst escape: characters special in markup mode
   esc <- function(x) {
@@ -315,7 +324,7 @@ chanwe_kbl <- function(
         pt_v(col_label_top),
         '#text(font: "JetBrains Mono", size: ',
         label_pt,
-        ', fill: _t.primary, weight: "thin", tracking: 0.05em)[',
+        ', fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[',
         esc(toupper(labels[i])),
         ']],'
       )
@@ -327,15 +336,23 @@ chanwe_kbl <- function(
   p("    table.hline(stroke: 0.1pt + _t.ink),")
 
   nr <- nrow(data)
+  total_start <- if (n_total > 0) nr - n_total + 1L else nr + 1L
   for (i in seq_len(nr)) {
+    is_total <- i >= total_start
+    if (is_total && i == total_start) {
+      p("    table.hline(stroke: 0.7pt + _t.ink),")
+    }
     for (j in seq_len(n)) {
       val <- esc(fmt_data[[j]][i])
       is_first <- j == 1L
-      fill <- if (is_first) "_t.fg-subtle" else "_t.ink"
+      base_fill <- if (is_first) "_t.fg-subtle" else "_t.ink"
+      fill <- if (!is.null(color_data[[j]])) color_data[[j]][i] else base_fill
       weight <- if (is_first) '"light"' else '"light"'
+      cell_fill <- if (is_total) ', fill: rgb("#F3F3F3")' else ""
       p(
         "    table.cell(align: ",
         col_aligns[j],
+        cell_fill,
         ")[",
         '#text(font: "JetBrains Mono", size: ',
         body_pt,
@@ -348,7 +365,7 @@ chanwe_kbl <- function(
         "]],"
       )
     }
-    if (i < nr) p('    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),')
+    if (i < nr && !is_total) p('    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),')
   }
 
   p("    table.hline(stroke: 0.5pt + _t.ink),")

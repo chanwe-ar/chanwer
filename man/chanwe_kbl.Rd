@@ -29,7 +29,8 @@ chanwe_kbl(
   top_border = TRUE,
   header_rule = TRUE,
   padding = 12.5,
-  fmt = list()
+  fmt = list(),
+  col_colors = list()
 )
 }
 \arguments{

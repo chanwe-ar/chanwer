@@ -36,6 +36,14 @@
     (icon_color, lbl)
   } else if kind == "warn" or kind == "warning" {
     (rgb("#EB9113"), "WARNING")
+  } else if kind == "tip" {
+    (rgb("#00A047"), "TIP")
+  } else if kind == "caution" {
+    (rgb("#FC5300"), "CAUTION")
+  } else if kind == "important" {
+    (rgb("#CC1914"), "IMPORTANT")
+  } else if kind == "note" {
+    (rgb("#0758E5"), "NOTE")
   } else if kind == "do" {
     (rgb("#15803D"), "DO")
   } else if kind == "dont" {

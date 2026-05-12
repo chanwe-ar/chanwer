@@ -286,9 +286,11 @@ local function Div(el)
   end
 
   -- -------------------------------------------------------
-  -- ::: {.chanwe-executive-summary eyebrow="..." title="..." takeaway="..."}
+  -- ::: {.chanwe-executive-summary eyebrow="..." title="..." takeaway="..."
+  --       left-label-1="AREA" left-value-1="Research" left-sub-1="Economia & Finanzas"
+  --       left-label-2="AUTOR" left-value-2="..." left-sub-2="..."}
   -- Renders a full standalone page identical to the abstract layout.
-  -- meta-rows are pulled automatically from doc state.
+  -- meta-rows are pulled from doc state unless left-label-* attrs are set.
   -- -------------------------------------------------------
   if el.classes:includes("chanwe-executive-summary") then
     local eyebrow  = attr(el, "eyebrow",  "Executive Summary")
@@ -296,6 +298,23 @@ local function Div(el)
     local takeaway = attr(el, "takeaway", "")
     local color    = attr(el, "color",    "")
     local inner    = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+
+    -- build custom meta array if any left-label-N attrs are set
+    local meta_entries = {}
+    for i = 1, 3 do
+      local lbl = attr(el, "left-label-" .. i, "")
+      local val = attr(el, "left-value-" .. i, "")
+      local sub = attr(el, "left-sub-"   .. i, "")
+      if lbl ~= "" then
+        if sub ~= "" then
+          table.insert(meta_entries, string.format('("%s", "%s", "%s")',
+            escape_typst_str(lbl), escape_typst_str(val), escape_typst_str(sub)))
+        else
+          table.insert(meta_entries, string.format('("%s", "%s")',
+            escape_typst_str(lbl), escape_typst_str(val)))
+        end
+      end
+    end
 
     local call = "#chanwe-exec-summary-page(\n"
     call = call .. string.format('  eyebrow: "%s",\n', escape_typst_str(eyebrow))
@@ -307,6 +326,9 @@ local function Div(el)
     end
     if color ~= "" then
       call = call .. string.format('  color: "%s",\n', escape_typst_str(color))
+    end
+    if #meta_entries > 0 then
+      call = call .. "  meta: (" .. table.concat(meta_entries, ", ") .. ",),\n"
     end
     call = call .. ")[\n" .. inner .. "\n]"
 

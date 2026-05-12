@@ -206,8 +206,8 @@ theme_chanwe <- function(
       plot.title = title_element,
       plot.caption = new_element_chanwe_caption(
         family = mono_family,
-        size = base_text_size * 0.8,
-        colour = colors[["typst-fg-muted"]],
+        size = base_text_size * 0.70,
+        colour = colors[["typst-fg-subtle"]],
         primary_colour = colors[["typst-primary"]],
         ink_colour = colors[["typst-ink"]]
       ),

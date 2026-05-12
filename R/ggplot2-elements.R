@@ -691,16 +691,16 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
   draw_bottom <- pb %in% c("bottom", "top_bottom", "complete")
   ink <- element$ink_colour %||_% "#1A1A1A"
   primary <- element$primary_colour %||_% "#FB3D0E"
-  cap_size <- element$size %||_% 7
+  cap_size <- element$size %||_% 9
 
   cap_gp <- grid::gpar(
     fontfamily = element$family %||_% "JetBrains Mono",
     fontsize = cap_size,
-    col = element$colour %||_% "#555555"
+    col = element$colour %||_% "#808080"
   )
   pfx_gp <- grid::gpar(
     fontfamily = element$family %||_% "JetBrains Mono",
-    fontsize = cap_size,
+    fontsize = cap_size * 0.75,
     col = primary
   )
   sep_gp <- grid::gpar(
