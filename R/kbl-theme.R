@@ -372,7 +372,9 @@ chanwe_kbl <- function(
         "]],"
       )
     }
-    if (i < nr && !is_total) p('    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),')
+    if (i < nr && !is_total) {
+      p('    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),')
+    }
   }
 
   p("    table.hline(stroke: 0.5pt + _t.ink),")
@@ -403,14 +405,23 @@ chanwe_kbl <- function(
   p("  ]")
   p("}")
 
+  pad_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
+
   if (padding > 0) {
-    pad_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
     L <- c(
       paste0("#block(inset: (x: ", padding, "pt, y: 0pt)", pad_fill, ")["),
       L,
       "]"
     )
   }
+
+  # Wrap in a block with above/below spacing so the table gets the same
+  # breathing room as native Typst content blocks (raw {=typst} blocks skip it).
+  L <- c(
+    "#block(above: 2.5em, below: 2.5em)[",
+    L,
+    "]"
+  )
 
   knitr::asis_output(paste0(
     "\n```{=typst}\n",
