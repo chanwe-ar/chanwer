@@ -72,7 +72,8 @@ chanwe_kbl <- function(
   padding = 12.5,
   fmt = list(),
   col_colors = list(),
-  n_total = 0
+  n_total = 0,
+  vlines = NULL
 ) {
   chanwe_require_package("knitr")
   density <- match.arg(density)
@@ -238,7 +239,7 @@ chanwe_kbl <- function(
   p <- function(...) L <<- c(L, paste0(...))
 
   p(
-    "#{ set table(inset: (x: 2.5mm, y: ",
+    "#{ set text(size: 10pt, fill: _t.ink, weight: \"regular\", tracking: 0pt, style: \"normal\"); set table(inset: (x: 2.5mm, y: ",
     inset_y,
     "), stroke: none",
     bg_fill,
@@ -248,6 +249,12 @@ chanwe_kbl <- function(
   p("  #table(")
   p("    columns: (", paste(widths, collapse = ", "), "),")
   p("    align: (", paste(col_aligns, collapse = ", "), ",),")
+
+  if (!is.null(vlines)) {
+    for (vx in vlines) {
+      p('    table.vline(x: ', vx, ', stroke: 0.4pt + rgb("#DADADA")),')
+    }
+  }
 
   has_hdr <- !is.null(title) || !is.null(eyebrow) || !is.null(subtitle)
   if (has_hdr) {
