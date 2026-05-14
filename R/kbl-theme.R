@@ -73,7 +73,10 @@ chanwe_kbl <- function(
   fmt = list(),
   col_colors = list(),
   n_total = 0,
-  vlines = NULL
+  total_fill = TRUE,
+  vlines = NULL,
+  highlight_cols = NULL,
+  highlight_color = "#F5F1EB"
 ) {
   chanwe_require_package("knitr")
   density <- match.arg(density)
@@ -322,11 +325,13 @@ chanwe_kbl <- function(
     }
 
     for (i in seq_len(n)) {
+      hdr_fill <- if (!is.null(highlight_cols) && i %in% highlight_cols) paste0(', fill: rgb("', highlight_color, '")') else ""
       p(
         "      table.cell(align: ",
         col_aligns[i],
         ", inset: ",
         inset_colhdr,
+        hdr_fill,
         ")[",
         pt_v(col_label_top),
         '#text(font: "JetBrains Mono", size: ',
@@ -355,7 +360,13 @@ chanwe_kbl <- function(
       base_fill <- if (is_first) "_t.fg-subtle" else "_t.ink"
       fill <- if (!is.null(color_data[[j]])) color_data[[j]][i] else base_fill
       weight <- if (is_first) '"light"' else '"light"'
-      cell_fill <- if (is_total) ', fill: rgb("#F3F3F3")' else ""
+      cell_fill <- if (is_total && total_fill) {
+        ', fill: rgb("#F3F3F3")'
+      } else if (!is.null(highlight_cols) && j %in% highlight_cols) {
+        paste0(', fill: rgb("', highlight_color, '")')
+      } else {
+        ""
+      }
       p(
         "    table.cell(align: ",
         col_aligns[j],

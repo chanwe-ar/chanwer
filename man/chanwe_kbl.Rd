@@ -32,7 +32,9 @@ chanwe_kbl(
   fmt = list(),
   col_colors = list(),
   n_total = 0,
-  vlines = NULL
+  vlines = NULL,
+  highlight_cols = NULL,
+  highlight_color = "#F5F1EB"
 )
 }
 \arguments{

@@ -118,14 +118,14 @@ theme_chanwe <- function(
   grid_color <- switch(
     bg_color,
     "#FAF9F7" = "#D0CEC8",
-    "#FFFFFF" = "#CCCCCC",
+    "#FFFFFF" = "#E9E9E9",
     "#F5F1EB" = "#BAB3A8",
     "#C4C4C4"
   )
   grid_color_minor <- switch(
     bg_color,
     "#FAF9F7" = "#E2E0DA",
-    "#FFFFFF" = "#DEDEDE",
+    "#FFFFFF" = "#F7F7F7",
     "#F5F1EB" = "#CCC5BA",
     "#D6D6D6"
   )
@@ -241,14 +241,13 @@ theme_chanwe <- function(
         color = grid_color,
         linewidth = 0.07
       ),
-      panel.grid.major = ggplot2::element_line(
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.major.y = ggplot2::element_line(
         color = grid_color,
-        linewidth = 0.04
+        linewidth = 0.07
       ),
-      panel.grid.minor = ggplot2::element_line(
-        color = grid_color_minor,
-        linewidth = 0.02
-      ),
+      panel.grid.major.x = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
       plot.background = ggplot2::element_rect(fill = surface_fill, color = NA),
       panel.background = ggplot2::element_rect(
         fill = surface_fill,
