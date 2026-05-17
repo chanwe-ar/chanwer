@@ -45,6 +45,8 @@ chanwe_discrete_pal <- function() {
 #'   `theme(legend.position = )`. Default `"bottom"`.
 #' @param bg_color Background color for the plot surface. Accepts a hex string
 #'   or one of `"metallic"` (default), `"white-ivory"`, `"white"`, `"gray"`, `"beige"`.
+#' @param has_subtitle Set to `FALSE` when the plot has no subtitle. Increases
+#'   the title's bottom margin so the chart doesn't crowd the title.
 #' @param plot_padding Uniform outer margin in pts applied to all four sides of
 #'   the plot (title, caption, and panel included). Default `2`.
 #'   Pass a single number, e.g. `plot_padding = 18`.
@@ -107,7 +109,8 @@ theme_chanwe <- function(
   legend_position = "bottom",
   bg_color = "metallic",
   plot_padding = 10,
-  plot_borders = "none"
+  plot_borders = "none",
+  has_subtitle = TRUE
 ) {
   chanwe_load_fonts()
   options(chanwer.plot_borders = plot_borders)
@@ -177,6 +180,9 @@ theme_chanwe <- function(
     eyebrow_colour = colors[["typst-primary"]],
     ink_colour = colors[["typst-ink"]]
   )
+  if (!has_subtitle) {
+    title_element$margin <- ggplot2::margin(0, 0, 16, 0)
+  }
   kpi_label_colour <- switch(
     bg_color,
     "#FAF9F7" = "#AEABA6",

@@ -427,9 +427,12 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     geom_point(size = 2.2, alpha = 0.88) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     scale_color_chanwe_d() +
-    theme_chanwe() +
+    theme_chanwe(has_subtitle = FALSE) +
     labs(
-        title = chanwe_title("title only · no subtitle", eyebrow = "COMPACT HERO"),
+        title = chanwe_title(
+            "title only · no subtitle",
+            eyebrow = "COMPACT HERO"
+        ),
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "HP band",
@@ -447,9 +450,12 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     geom_point(size = 2.2, alpha = 0.88) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     scale_color_chanwe_d() +
-    theme_chanwe(bg_color = "transparent") +
+    theme_chanwe(bg_color = "transparent", has_subtitle = FALSE) +
     labs(
-        title = chanwe_title("title only · zone-highlight", eyebrow = "COMPACT HERO"),
+        title = chanwe_title(
+            "title only · zone-highlight",
+            eyebrow = "COMPACT HERO"
+        ),
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "HP band",
