@@ -157,7 +157,8 @@ new_element_chanwe_caption <- function(
   draw_top,
   title_gp,
   eyebrow_gp,
-  ink_col
+  ink_col,
+  margin_bottom = 2
 ) {
   grid::gTree(
     title_text = title_text,
@@ -166,6 +167,7 @@ new_element_chanwe_caption <- function(
     title_gp = title_gp,
     eyebrow_gp = eyebrow_gp,
     ink_col = ink_col,
+    margin_bottom = margin_bottom,
     cl = "cw_title_tree"
   )
 }
@@ -175,7 +177,7 @@ new_element_chanwe_caption <- function(
   has_ey <- !is.null(x$eyebrow_text) && nzchar(x$eyebrow_text)
   ey_h <- if (has_ey) .cw_str_h(x$eyebrow_text, x$eyebrow_gp) else 0
   top <- if (has_ey) 8 else 0 # top padding above eyebrow
-  bot <- 1 # bottom padding
+  bot <- (x$margin_bottom %||_% 2) # bottom padding — carries extra space when no subtitle
   gap1 <- if (has_ey) 6 else 0 # gap: title → eyebrow
   gap2 <- if (x$draw_top && has_ey) {
     5
@@ -627,16 +629,9 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
     col = element$eyebrow_colour %||_% "#FB3D0E"
   )
 
-  g <- .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink)
-
-  margin <- element$margin %||% ggplot2::margin(0, 0, 2, 0)
-  h <- grid::unit(1, "grobheight", g)
-  w <- grid::unit(1, "grobwidth", g)
-  tbl <- gtable::gtable(
-    widths  = grid::unit.c(margin[4L], w, margin[2L]),
-    heights = grid::unit.c(margin[1L], h, margin[3L])
-  )
-  gtable::gtable_add_grob(tbl, g, t = 2L, l = 2L, name = "title-inner")
+  margin_bottom <- as.numeric(element$margin[3L] %||_% 2)
+  .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink,
+                 margin_bottom = margin_bottom)
 }
 
 #' @method element_grob element_chanwe_subtitle
