@@ -203,7 +203,13 @@ chanwe_kbl <- function(
   # excessive gap between title, subtitle, and separator
   inset_title <- paste0("(top: ", inset_y, ", bottom: 5pt, x: 2.5mm)")
   inset_sub <- paste0("(top: 4pt, bottom: ", inset_y, ", x: 2.5mm)")
-  colhdr_top <- if (sp) "20pt" else "14pt"
+  colhdr_top <- if (!is.null(subtitle)) {
+    if (sp) "20pt" else "14pt"
+  } else if (!is.null(title) || !is.null(eyebrow)) {
+    if (sp) "12pt" else "8pt"
+  } else {
+    if (sp) "6pt" else "4pt"
+  }
   inset_colhdr <- paste0(
     "(top: ",
     colhdr_top,

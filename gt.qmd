@@ -416,3 +416,151 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
 ```
 
 ::::
+
+# No subtitle
+
+##### Plot · title only
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe() +
+    labs(
+        title = chanwe_title("title only · no subtitle", eyebrow = "COMPACT HERO"),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```
+
+##### Plot · title only · zone-highlight
+
+:::: {.zone-highlight color="metallic" above="-2"}
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(bg_color = "transparent") +
+    labs(
+        title = chanwe_title("title only · zone-highlight", eyebrow = "COMPACT HERO"),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```
+
+::::
+
+##### Plot · no title · no subtitle
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe() +
+    labs(
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```
+
+##### Plot · no title · no subtitle · zone-highlight
+
+:::: {.zone-highlight color="metallic" above="-2"}
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(bg_color = "transparent") +
+    labs(
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```
+
+::::
+
+##### Table · title only
+
+```{r}
+mt |>
+    select(model, mpg, cyl, hp, wt) |>
+    slice_head(n = 8) |>
+    chanwe_kbl(
+        title = "title only · no subtitle",
+        eyebrow = "TABLE · COMPACT HERO",
+        caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+        stub = "model",
+        bg = "metallic",
+        fmt = fmt_fleet
+    )
+```
+
+##### Table · title only · zone-highlight
+
+:::: {.zone-highlight color="metallic" above="-2"}
+
+```{r}
+mt |>
+    select(model, mpg, cyl, hp, wt) |>
+    slice_head(n = 8) |>
+    chanwe_kbl(
+        title = "title only · zone-highlight",
+        eyebrow = "TABLE · COMPACT HERO",
+        caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+        stub = "model",
+        bg = "transparent",
+        fmt = fmt_fleet
+    )
+```
+
+::::
+
+##### Table · no title · no subtitle
+
+```{r}
+mt |>
+    select(model, mpg, cyl, hp, wt) |>
+    slice_head(n = 8) |>
+    chanwe_kbl(
+        caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+        stub = "model",
+        bg = "metallic",
+        fmt = fmt_fleet
+    )
+```
+
+##### Table · no title · no subtitle · zone-highlight
+
+:::: {.zone-highlight color="metallic" above="-2"}
+
+```{r}
+mt |>
+    select(model, mpg, cyl, hp, wt) |>
+    slice_head(n = 8) |>
+    chanwe_kbl(
+        caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+        stub = "model",
+        bg = "transparent",
+        fmt = fmt_fleet
+    )
+```
+
+::::
