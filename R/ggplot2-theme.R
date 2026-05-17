@@ -181,7 +181,7 @@ theme_chanwe <- function(
     ink_colour = colors[["typst-ink"]]
   )
   if (!has_subtitle) {
-    title_element$margin <- ggplot2::margin(0, 0, 16, 0)
+    title_element$margin <- ggplot2::margin(0, 0, 28, 0)
   }
   kpi_label_colour <- switch(
     bg_color,
