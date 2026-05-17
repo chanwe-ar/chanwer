@@ -46,11 +46,17 @@ $endif$
 $if(chanwe.hero-image)$
   hero-image: "$chanwe.hero-image$",
 $endif$
+$if(chanwe.hero-img-position)$
+  hero-img-position: $chanwe.hero-img-position$,
+$endif$
 $if(chanwe.wordmark)$
   wordmark: "$chanwe.wordmark$",
 $endif$
 $if(chanwe.cover)$
   cover: $chanwe.cover$,
+$endif$
+$if(chanwe.no-abstract)$
+  abstract: false,
 $endif$
 $if(chanwe.toc)$
   toc: $chanwe.toc$,
@@ -122,6 +128,21 @@ $if(chanwe.cover-edge-color)$
 $endif$
 $if(chanwe.page-bg)$
   page-bg: rgb("#$chanwe.page-bg$"),
+$endif$
+$if(chanwe.body-size)$
+  body-size: $chanwe.body-size$,
+$endif$
+$if(chanwe.body-leading)$
+  body-leading: $chanwe.body-leading$,
+$endif$
+$if(chanwe.body-justify)$
+  body-justify: $chanwe.body-justify$,
+$endif$
+$if(chanwe.body-color)$
+  body-color: rgb("#$chanwe.body-color$"),
+$endif$
+$if(chanwe.body-spacing)$
+  body-spacing: $chanwe.body-spacing$,
 $endif$
   doc,
 )

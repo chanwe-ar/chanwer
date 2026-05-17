@@ -30,6 +30,7 @@ chanwe:
   toc-eyebrow: "Document map"
   toc-title: "Contents"
   toc-lede: "This document showcases all ggplot2 and gt table variants produced by the chanwer R package — 22 figures and 8 tables — styled with the chanwe-typst design tokens: Satoshi body, Archivo Black headings, primary orange #FB3D0E, and the 8-color editorial chart palette."
+  page-bg: "FBFBFB"  
   abstract-eyebrow: "TLDR;"
   abstract-title: "Visual Reference"
   abstract-takeaway: "chanwer themes are fully aligned with chanwe-typst: same tokens, same fonts, same 8-color editorial palette."
@@ -347,10 +348,10 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
 ```
 
 
-# Highlightnt
+# Highlight
 
 
-:::: {.zone-highlight color="gray" above="-9"}
+:::: {.zone-highlight color="metallic" above="-2"}
 
 ```{r}
 #| label: fig-scatter-complejo

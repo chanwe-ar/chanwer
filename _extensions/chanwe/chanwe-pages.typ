@@ -14,18 +14,18 @@
       column-gutter: 4mm,
       align: (left + bottom, left + bottom, left + bottom, right + bottom),
       [],
-      text(font: _t.font-mono, size: 6pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-mono, size: 6pt, weight: 100, fill: _t.fg-subtle, label),
-      text(font: _t.font-mono, size: 6pt, tracking: 0.14em, weight: 100, fill: _t.fg-subtle, page),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
+      text(font: _t.font-mono, size: 7.5pt, weight: 100, fill: _t.fg-subtle, label),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.14em, weight: 100, fill: _t.fg-subtle, page),
     )
   } else {
     grid(
       columns: (14mm, 1fr, 12mm),
       column-gutter: 4mm,
       align: (left + bottom, left + bottom, right + bottom),
-      text(font: _t.font-mono, size: 6pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-mono, size: 6pt, weight: 100, fill: _t.ink, label),
-      text(font: _t.font-mono, size: 6pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
+      text(font: _t.font-mono, size: 7.5pt, weight: 100, fill: _t.ink, label),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
     )
   }
 ]
@@ -452,6 +452,277 @@
 }
 
 // =============================================================
+// DOUBLE EXECUTIVE SUMMARY — two summary halves filling one page
+// =============================================================
+// Each half = 129.5mm (= (297 - 22 top - 16 bottom) / 2).
+// Internal helper returns a block (no move wrapper — caller stacks both).
+#let _chanwe-exec-half(
+  eyebrow:          "Executive Summary",
+  title:            none,
+  takeaway:         none,
+  meta:             (),
+  // Status section
+  status-label:     none,   // small eyebrow above hero word (e.g. "Convicción")
+  status-hero:      none,   // large italic serif word (e.g. "Alza")
+  status-kind:      none,   // "good" | "regular" | "bad" — determines color
+  status-value:     none,   // 1–5: fills that many scale segments
+  status-meta-label: "",    // single meta label shown right of hero word
+  status-meta-value: "",    // single meta value shown right of hero word
+  drivers:          (),     // max 3 × (dir, title, desc, tag, tag-color) tuples
+  drivers-label:    "Factores Clave",  // eyebrow above the driver list
+  color:            none,
+  content:          [],
+  divider:          false,
+) = {
+  let bg = if color == "beige"  { _t.beige       }
+      else if color == "gray"   { _t.neutral-100 }
+      else if color == "dark"   { _t.ink         }
+      else if color == "white"  { white          }
+      else                      { _t.paper       }
+  let dark        = color == "dark"
+  let title-color = if dark { white                      } else { _t.neutral-900 }
+  let rail-stroke = if dark { white.transparentize(60%)  } else { _t.neutral-300 }
+  let body-color  = if dark { white.transparentize(15%)  } else { _t.fg-muted    }
+  let takwy-color = if dark { white                      } else { _t.ink         }
+  let div-stroke  = if divider { (bottom: 0.5pt + _t.neutral-900) } else { none }
+  let lc          = if dark { white.transparentize(45%) } else { _t.fg-subtle }
+  let vc          = if dark { white                     } else { _t.neutral-900 }
+  let border-col  = if dark { white.transparentize(70%) } else { _t.neutral-300 }
+
+  // Status color from kind
+  let s-color = if status-kind == "good"    { rgb("#15803D") }
+    else if status-kind == "regular"         { rgb("#D97706") }
+    else if status-kind == "bad"             { rgb("#CC1914") }
+    else                                     { _t.primary     }
+
+  // 5-segment fill bar: first status-value segments colored, rest gray
+  let filled = if status-value != none { status-value } else { 0 }
+  let scale-bar = grid(
+    columns: range(5).map(_ => 1fr),
+    column-gutter: 1.5mm,
+    ..range(5).map(i => {
+      rect(width: 100%, height: 5pt, radius: 1.5pt,
+           fill: if i < filled { s-color } else { luma(222) })
+    })
+  )
+
+  // Meta cell shown to the right of the hero word
+  let meta-right = if status-meta-label != "" {
+    stack(
+      dir: ttb, spacing: 3pt,
+      align(right, text(font: _t.font-mono, size: 6pt, tracking: 0.18em, fill: lc,
+                        upper(status-meta-label))),
+      align(right, text(font: _t.font-display, size: 9pt, weight: 700, fill: vc,
+                        status-meta-value)),
+    )
+  } else { [] }
+
+  // Pre-compute left rail
+  let left-rail = if status-hero != none or drivers.len() > 0 {
+    [
+      #if status-hero != none {
+        if status-label != none {
+          text(font: _t.font-mono, size: 6.5pt, tracking: 0.18em, fill: lc,
+               "// " + upper(str(status-label)))
+          v(-1mm)
+        }
+        // Hero word + right meta in the same baseline row
+        grid(
+          columns: (1fr, auto),
+          column-gutter: 3mm,
+          align: (left + bottom, right + bottom),
+          text(font: _t.font-serif, size: 24pt, weight: 200,
+               style: "italic", fill: s-color, str(status-hero)),
+          meta-right,
+        )
+        v(0mm)
+        // Fill bar
+        scale-bar
+        if drivers.len() > 0 { v(5mm) }
+      }
+      #if drivers.len() > 0 {
+        block(spacing: 0pt)[
+          #text(font: _t.font-mono, size: 6.5pt, tracking: 0.18em, fill: lc, "// " + upper(str(drivers-label)))
+        ]
+        v(0.5mm)
+        for (i, drv) in drivers.slice(0, calc.min(drivers.len(), 3)).enumerate() {
+          let dir    = drv.at(0)
+          let dtitle = drv.at(1)
+          let ddesc  = drv.at(2)
+          let dtag   = drv.at(3)
+          let dtag-k = drv.at(4)
+          let dir-col = if dir == "up"   { rgb("#15803D") }
+            else if dir == "down"         { rgb("#CC1914") }
+            else                          { _t.fg-muted    }
+          let dir-sym = if dir == "up"   { "▲" }
+            else if dir == "down"         { "▼" }
+            else                          { "—" }
+          let t-col = if dtag-k == "green"   { rgb("#15803D") }
+            else if dtag-k == "red"           { rgb("#CC1914") }
+            else if dtag-k == "orange"        { _t.primary     }
+            else                              { dir-col        }
+          grid(
+            columns: (8pt, 1fr, auto),
+            column-gutter: 3pt,
+            align: (left + top, left + top, right + top),
+            text(font: _t.font-sans, size: 7pt, weight: 700, fill: dir-col, dir-sym),
+            {
+              block(spacing: 0pt)[
+                #text(font: _t.font-display, size: 7.5pt, weight: 700, fill: vc, dtitle)
+              ]
+              if ddesc != "" {
+                v(1mm)
+                block(spacing: 0pt)[
+                  #set par(leading: 0.3em)
+                  #text(font: _t.font-sans, size: 6.5pt, fill: lc, ddesc)
+                ]
+              }
+            },
+            text(font: _t.font-display, size: 7pt, weight: 700, fill: t-col, dtag),
+          )
+          if i < calc.min(drivers.len(), 3) - 1 { v(2mm) }
+        }
+      }
+    ]
+  } else {
+    [
+      #stack(
+        dir: ttb, spacing: 7mm,
+        ..meta.map(((lbl, val, ..rest)) => chanwe-side-row(
+          label: lbl,
+          value: if rest.len() > 0 { val + "\n" + rest.at(0) } else { val },
+          dark: dark,
+        ))
+      )
+    ]
+  }
+
+  block(
+    width: 210mm,
+    height: 133.5mm,
+    fill: bg,
+    stroke: div-stroke,
+    inset: (x: 18mm, top: 10mm, bottom: 10mm),
+    clip: true,
+  )[
+    #chanwe-section-eyebrow(eyebrow)
+    #v(3mm)
+    #if title != none {
+      block(below: 0pt)[
+        #set par(leading: 0.75em, justify: false)
+        #text(
+          font: _t.font-display, size: 36pt, weight: 700,
+          tracking: -0.025em, fill: title-color, title,
+        )#box(width: 8pt, height: 8pt, baseline: -1pt,
+          circle(fill: _t.primary, stroke: none))
+      ]
+      v(10mm)
+    }
+    #grid(
+      columns: (56mm, 1fr),
+      column-gutter: 14mm,
+      align: (left + top, left + top),
+      // left rail — status + drivers or meta rows
+      block(
+        stroke: (right: 0.5pt + rail-stroke),
+        inset: (right: 10mm),
+        width: 100%,
+      )[#left-rail],
+      // right body
+      block[
+        #set par(leading: 0.65em, justify: true)
+        #if takeaway != none {
+          let s     = str(takeaway)
+          let parts = s.split(" ")
+          let fw    = parts.at(0)
+          let rest  = if parts.len() > 1 { " " + parts.slice(1).join(" ") } else { "" }
+          block(below: 5mm)[
+            #text(font: _t.font-serif, size: 20pt, weight: 300,
+                  style: "italic", fill: _t.primary, fw
+            )#text(weight: 700, size: 10pt, fill: takwy-color, rest)
+          ]
+        }
+        #set text(font: _t.font-sans, size: 9.5pt, weight: 400, fill: body-color)
+        #content
+      ],
+    )
+  ]
+}
+
+// Public function — call with [top body][bottom body]
+#let chanwe-double-exec-summary(
+  // top half
+  top-eyebrow:           "Executive Summary",
+  top-title:             none,
+  top-takeaway:          none,
+  top-meta:              (),
+  top-status-label:      none,
+  top-status-hero:       none,
+  top-status-kind:       none,
+  top-status-value:      none,
+  top-status-meta-label: "",
+  top-status-meta-value: "",
+  top-drivers:           (),
+  top-drivers-label:     "Factores Clave",
+  top-color:             none,
+  // bottom half
+  bot-eyebrow:           "Executive Summary",
+  bot-title:             none,
+  bot-takeaway:          none,
+  bot-meta:              (),
+  bot-status-label:      none,
+  bot-status-hero:       none,
+  bot-status-kind:       none,
+  bot-status-value:      none,
+  bot-status-meta-label: "",
+  bot-status-meta-value: "",
+  bot-drivers:           (),
+  bot-drivers-label:     "Factores Clave",
+  bot-color:             none,
+  // two positional content blocks [top][bottom]
+  ..bodies,
+) = {
+  let top-content = bodies.pos().at(0, default: [])
+  let bot-content = bodies.pos().at(1, default: [])
+
+  pagebreak(weak: true)
+
+  // Narrow top margin to the header rule position (14mm) so blocks fill rule-to-rule.
+  set page(margin: (top: 14mm, bottom: 16mm, x: 18mm), header-ascent: 0pt, footer-descent: 0pt)
+
+  move(dx: -18mm,
+    stack(
+      dir: ttb,
+      spacing: 0pt,
+      _chanwe-exec-half(
+        eyebrow: top-eyebrow, title: top-title,
+        takeaway: top-takeaway, meta: top-meta,
+        status-label: top-status-label, status-hero: top-status-hero,
+        status-kind: top-status-kind, status-value: top-status-value,
+        status-meta-label: top-status-meta-label,
+        status-meta-value: top-status-meta-value,
+        drivers: top-drivers, drivers-label: top-drivers-label,
+        color: top-color, content: top-content,
+        divider: true,
+      ),
+      _chanwe-exec-half(
+        eyebrow: bot-eyebrow, title: bot-title,
+        takeaway: bot-takeaway, meta: bot-meta,
+        status-label: bot-status-label, status-hero: bot-status-hero,
+        status-kind: bot-status-kind, status-value: bot-status-value,
+        status-meta-label: bot-status-meta-label,
+        status-meta-value: bot-status-meta-value,
+        drivers: bot-drivers, drivers-label: bot-drivers-label,
+        color: bot-color, content: bot-content,
+        divider: false,
+      ),
+    )
+  )
+
+  pagebreak(weak: true)
+}
+
+// =============================================================
 // CHAPTER SEPARATOR (full-page divider)
 // =============================================================
 // HTML .chapter-cover layout:
@@ -503,22 +774,6 @@
     width: 100%, height: 100%,
     inset: (x: 18mm, top: 18mm, bottom: 18mm),
   )[
-    // ---- TOP META ROW ----
-    #grid(
-      columns: (1fr, auto),
-      align: (left + horizon, right + horizon),
-      {
-        set text(font: _t.font-mono, size: 6pt, tracking: 0.14em,
-                 fill: _t.fg-muted)
-        box(baseline: 30%, image(_chanwe-assets + "Estrategia_Color.png", height: 2.08mm, fit: "contain"))
-        h(6pt)
-        upper(_left)
-      },
-      image(_chanwe-assets + "Logo_Beige.png", height: 3.5mm, fit: "contain"),
-    )
-    #v(2mm)
-    #line(length: 100%, stroke: 0.5pt + _t.border)
-
     #v(1fr)
 
     // ---- MIDDLE: numeral + (eyebrow · title · blurb) ----
@@ -556,9 +811,12 @@
       ],
     )
 
+    #v(10mm)
+    #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
+
     #v(4fr)
 
-    // ---- BOTTOM META + PAGE NUM ----
+    // ---- BOTTOM: doc-id · edition ----
     #line(length: 100%, stroke: 0.5pt + _t.border)
     #v(3mm)
     #grid(
@@ -567,13 +825,11 @@
       {
         set text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
                  fill: _t.fg-subtle)
-        _meta.map(((l, v)) => upper[
-          #text(weight: 500, fill: _t.fg-subtle, l)
-          #if v != "" {
-            h(6pt)
-            text(weight: 600, fill: _t.neutral-900, v)
-          }
-        ]).join(h(14mm))
+        upper(doc.doc-id)
+        if doc.edition != "" {
+          h(14mm)
+          upper(doc.edition)
+        }
       },
       text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
            fill: _t.fg-subtle, upper(_pages)),

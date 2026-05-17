@@ -112,7 +112,7 @@
 // ---------- Running header / footer --------------------------
 #let chanwe-header(section, topic) = context {
   // header occupies 14mm; remaining margin space becomes gap before content
-  block(height: 14mm, width: 100%)[
+  block(height: 8mm, width: 100%)[
     #grid(
       rows: (1fr, auto),
       align(horizon, grid(
@@ -191,6 +191,7 @@ $chanwe-charts.typ()$
   cover-eyebrow: none,      // overrides rail-eyebrow on the cover page only
   // assets
   hero-image: none,
+  hero-img-position: none,  // 1–10 (left→right); none = fit:cover (centered)
   wordmark: none,
   stamp: ("VOL", "I", "2026"),
   hero-date: "",
@@ -205,6 +206,7 @@ $chanwe-charts.typ()$
   toc-lede: none,
   toc: true,
   // abstract
+  abstract: true,
   abstract-eyebrow: "Abstract",
   abstract-title: none,
   abstract-text: none,
@@ -221,7 +223,13 @@ $chanwe-charts.typ()$
   cover-edge: none,
   cover-edge-color: none,
   // page
-  page-bg: rgb("#FAFAFA"),
+  page-bg: rgb("#FBFBFB"),
+  // body text
+  body-size:    none,   // e.g. 10pt — overrides default 11pt
+  body-leading: none,   // e.g. 0.9em — overrides default 0.85em
+  body-justify: none,   // true / false — overrides default false
+  body-color:   none,   // rgb color — overrides default _t.fg
+  body-spacing: none,   // e.g. 1.8em — space between block elements
   // body
   body,
 ) = {
@@ -284,8 +292,8 @@ $chanwe-charts.typ()$
         stroke: none,
       )
     )
-    v(10mm)
-    block(below: 20mm)[
+    v(6mm)
+    block(below: 12mm)[
       #box(width: 50pt, height: 1.5pt, fill: _t.primary)
       #v(12mm)
       #grid(
@@ -305,7 +313,7 @@ $chanwe-charts.typ()$
       #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
     ]
   }
-  show heading.where(level: 2): it => block(above: 32mm, below: 12mm)[
+  show heading.where(level: 2): it => block(above: 12mm, below: 6mm)[
     #set par(leading: 0.2em)
     #grid(
       columns: (auto, 1fr),
@@ -315,12 +323,12 @@ $chanwe-charts.typ()$
            size: 15pt, fill: _t.primary,
            counter(heading).display("1.1")),
       text(font: _t.font-display, size: 19pt, weight: 600,
-           tracking: -0.01em, it.body),
+           tracking: -0.01em, fill: _t.neutral-900, it.body),
     )
     #v(0mm)
     #line(length: 100%, stroke: 0.5pt + _t.neutral-300)
   ]
-  show heading.where(level: 3): it => block(above: 22mm, below: 5.5mm)[
+  show heading.where(level: 3): it => block(above: 32mm, below: 5.5mm)[
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4mm,
@@ -329,10 +337,10 @@ $chanwe-charts.typ()$
            size: 12pt, fill: _t.primary,
            counter(heading).display("1.1.1")),
       text(font: _t.font-display, size: 15pt, weight: 600,
-           tracking: -0.01em, it.body),
+           tracking: -0.01em, fill: _t.neutral-900, it.body),
     )
   ]
-  show heading.where(level: 4): it => block(above: 18mm, below: 4mm)[
+  show heading.where(level: 4): it => block(above: 32mm, below: 4mm)[
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4mm,
@@ -341,10 +349,10 @@ $chanwe-charts.typ()$
            size: 10pt, fill: _t.primary,
            counter(heading).display("1.1.1.1")),
       text(font: _t.font-display, size: 13pt, weight: 700,
-           tracking: -0.01em, it.body),
+           tracking: -0.01em, fill: _t.neutral-900, it.body),
     )
   ]
-  show heading.where(level: 5): it => block(above: 8mm, below: 4mm)[
+  show heading.where(level: 5): it => block(above: 32mm, below: 4mm)[
     #stack(dir: ttb,
       {
         box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
@@ -356,7 +364,7 @@ $chanwe-charts.typ()$
       line(length: 100%, stroke: 0.5pt + _t.neutral-300),
     )
   ]
-  show heading.where(level: 6): it => block(above: 6mm, below: 5mm)[
+  show heading.where(level: 6): it => block(above: 32mm, below: 5mm)[
     #box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
     #h(6pt)
     #text(font: _t.font-mono, size: 8pt, weight: 500,
@@ -396,16 +404,16 @@ $chanwe-charts.typ()$
     tracking: 0pt, fill: _t.ink,
   )
   show figure.where(kind: table): it => {
-    v(15mm, weak: true)
+    v(12mm, weak: true)
     it.caption
     v(6mm)
     it.body
     v(-0.25pt)
     line(length: 100%, stroke: 0.5pt + _t.ink)
-    v(15mm, weak: true)
+    v(12mm, weak: true)
   }
   show figure.where(kind: image): it => {
-    v(15mm, weak: true)
+    v(14mm, weak: true)
     line(length: 100%, stroke: 0.3pt + _t.ink)
     v(4mm)
     it.body
@@ -413,9 +421,9 @@ $chanwe-charts.typ()$
     line(length: 100%, stroke: 0.3pt + _t.ink)
     v(2mm)
     it.caption
-    v(15mm, weak: true)
+    v(12mm, weak: true)
   }
-  show figure: set block(above: 15mm, below: 15mm)
+  show figure: set block(above: 12mm, below: 12mm)
   show figure.caption: it => align(left, text(
     font: _t.font-mono, size: 8pt, tracking: 0.14em,
     fill: _t.fg-subtle, upper(it.supplement) + " " + it.counter.display() + "  ·  " + upper(it.body),
@@ -431,6 +439,7 @@ $chanwe-charts.typ()$
       volume: volume,
       rail-eyebrow: if cover-eyebrow != none { cover-eyebrow } else { rail-eyebrow },
       hero-image: hero-image,
+      hero-img-position: hero-img-position,
       wordmark: wordmark,
       stamp: stamp,
       hero-date: hero-date,
@@ -444,7 +453,7 @@ $chanwe-charts.typ()$
   // ---- body pages -------------------------------------------
   set page(
     paper: "a4",
-    margin: (top: 22mm, bottom: 16mm, x: 18mm),
+    margin: (top: 12mm, bottom: 12mm, x: 18mm),
     header: chanwe-header(section, topic),
     footer: chanwe-footer(doc-id, edition),
   )
@@ -460,7 +469,7 @@ $chanwe-charts.typ()$
   }
 
   // ---- auto abstract (optional) ----------------------------
-  if abstract-text != none {
+  if abstract and abstract-text != none {
     let all-meta = (
       "document": ("Document", doc-id, none),
       "edition":  ("Edition",  edition, none),
@@ -483,7 +492,19 @@ $chanwe-charts.typ()$
     pagebreak()
   }
 
-  body
+  // ---- user body (paragraph overrides scoped here only) ----
+  {
+    set text(
+      size: if body-size  != none { body-size  } else { 11pt    },
+      fill: if body-color != none { body-color } else { _t.fg   },
+    )
+    set par(
+      leading: if body-leading != none { body-leading } else { 0.85em },
+      justify: if body-justify != none { body-justify } else { false  },
+    )
+    set block(spacing: if body-spacing != none { body-spacing } else { 1.2em })
+    body
+  }
 
   // ---- back cover (optional) --------------------------------
   if back-cover {

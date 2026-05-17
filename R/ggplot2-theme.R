@@ -35,7 +35,7 @@ chanwe_discrete_pal <- function() {
 #' | `"metallic"` | `#F7F7F7` | `#E4E4E4` | `#EFEFEF` |
 #' | `"white-ivory"` | `#FAF9F7` | `#ECEAE6` | `#F1F0ED` |
 #' | `"white"` | `#FFFFFF` | `#E8E8E8` | `#EEEEEE` |
-#' | `"gray"` | `#F2F2F2` | `#E0E0E0` | `#EAEAEA` |
+#' | `"gray"` | `#EDF0F1` | `#D4D9DB` | `#E3E7E9` |
 #' | `"beige"` | `#F5F1EB` | `#D8D1C7` | `#E3DDD5` |
 #'
 #' @param base_text_size Base text size in points. Default `6.5`.
@@ -121,6 +121,7 @@ theme_chanwe <- function(
     "#F7F7F7" = "#E4E4E4",
     "#FAF9F7" = "#D0CEC8",
     "#FFFFFF" = "#E9E9E9",
+    "#EDF0F1" = "#D4D9DB",
     "#F5F1EB" = "#BAB3A8",
     "#C4C4C4"
   )
@@ -129,6 +130,7 @@ theme_chanwe <- function(
     "#F7F7F7" = "#EFEFEF",
     "#FAF9F7" = "#E2E0DA",
     "#FFFFFF" = "#F7F7F7",
+    "#EDF0F1" = "#E3E7E9",
     "#F5F1EB" = "#CCC5BA",
     "#D6D6D6"
   )

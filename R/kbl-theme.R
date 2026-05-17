@@ -35,7 +35,7 @@
 #'   Default \code{0}.
 #' @param bg Table background colour. Named shorthand: \code{"white-ivory"}
 #'   (default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
-#'   \code{"gray"} (\code{#F2F2F2}), \code{"metallic"} (\code{#F7F7F7}).
+#'   \code{"gray"} (\code{#EDF0F1}), \code{"metallic"} (\code{#F7F7F7}).
 #'   Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.
 #' @param padding Uniform outer margin in pts applied around the entire table
 #'   block (equivalent to \code{plot_padding} in \code{theme_chanwe()}). Default \code{0}.
@@ -230,8 +230,8 @@ chanwe_kbl <- function(
       "white" = "white",
       "beige" = 'rgb("#F5F1EB")',
       "cream" = 'rgb("#F5F1EB")',
-      "gray" = 'rgb("#F2F2F2")',
-      "grey" = 'rgb("#F2F2F2")',
+      "gray" = 'rgb("#EDF0F1")',
+      "grey" = 'rgb("#EDF0F1")',
       "metallic" = 'rgb("#F7F7F7")',
       "silver" = 'rgb("#F7F7F7")',
       bg
@@ -364,9 +364,9 @@ chanwe_kbl <- function(
     for (j in seq_len(n)) {
       val <- esc(fmt_data[[j]][i])
       is_first <- j == 1L
-      base_fill <- if (is_first) "_t.fg-subtle" else "_t.ink"
+      base_fill <- if (is_first) "_t.ink" else "_t.ink"
       fill <- if (!is.null(color_data[[j]])) color_data[[j]][i] else base_fill
-      weight <- if (is_first) '"light"' else '"light"'
+      weight <- if (is_first) '"medium"' else '"light"'
       cell_fill <- if (is_total && total_fill) {
         ', fill: rgb("#F3F3F3")'
       } else if (!is.null(highlight_cols) && j %in% highlight_cols) {
