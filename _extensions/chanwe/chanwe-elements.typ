@@ -56,15 +56,17 @@
   let display-title = if title != none { title } else { type-label }
 
   block(
-    fill: luma(250),
+    fill: white,
     stroke: 0.5pt + _t.neutral-300,
     radius: 4pt,
     width: 100%,
     inset: 0pt,
+    above: 10mm,
+    below: 10mm,
     breakable: false,
     clip: true,
   )[
-    #block(inset: (x: 4.5mm, top: 4mm, bottom: 4mm), width: 100%, spacing: 0pt)[
+    #block(fill: rgb("#EDF0F1"), inset: (x: 4.5mm, top: 2.5mm, bottom: 2.5mm), width: 100%, spacing: 0pt)[
       #grid(
         columns: (auto, auto, auto, 1fr),
         column-gutter: 5pt,
@@ -75,8 +77,9 @@
         text(font: _t.font-display, size: 8pt, weight: 700, fill: _t.ink, display-title),
       )
     ]
-    #line(length: 100%, stroke: 0.5pt + _t.neutral-300)
-    #block(inset: (x: 4.5mm, y: 6mm), width: 100%, fill: white, spacing: 0pt)[
+    #block(spacing: 0pt)[#line(length: 100%, stroke: 0.5pt + _t.neutral-300)]
+    #block(inset: (x: 4.5mm, y: 5mm), width: 100%, spacing: 0pt)[
+      #set block(spacing: 0.85em)
       #set text(fill: _t.fg-muted, size: 9.5pt)
       #content
     ]
@@ -272,8 +275,8 @@
   color: "white",
   body,
 ) = {
-  let bg      = if color == "gray" or color == "light" { _t.neutral-100 } else { white }
-  let borders = color != "gray" and color != "light" and color != "white"
+  let bg      = if color == "gray" { rgb("#EDF0F1") } else if color == "light" { _t.neutral-100 } else if color == "beige" { _t.beige } else { white }
+  let borders = color != "gray" and color != "light" and color != "white" and color != "beige"
   move(dx: -18mm,
     block(
       width: 210mm,
@@ -332,7 +335,7 @@
 }
 
 #let great-findings(number: "01", title: "", color: "white", body) = {
-  let bg = if color == "light" or color == "gray" { _t.neutral-100 } else { none }
+  let bg = if color == "gray" { rgb("#EDF0F1") } else if color == "light" { _t.neutral-100 } else { none }
   block(width: 100%, fill: bg, radius: 4pt, inset: (top: 7mm, bottom: 7mm))[
     #_great-findings-row(number: number, title: title, body)
   ]
@@ -347,7 +350,7 @@
 
 // wrapper that applies a unified background with dividers between items
 #let great-findings-grid(color: "white", body) = {
-  let bg = if color == "light" or color == "gray" { _t.neutral-100 } else { none }
+  let bg = if color == "gray" { rgb("#EDF0F1") } else if color == "light" { _t.neutral-100 } else { none }
   let stroke-top-bottom = if color == "white" { 0.5pt + _t.neutral-900 } else { none }
   block(width: 100%, fill: bg, radius: if bg == none { 0pt } else { 4pt },
     stroke: (top: stroke-top-bottom, bottom: stroke-top-bottom),
@@ -446,11 +449,12 @@
 // =============================================================
 // ZONE HIGHLIGHT — full-bleed background color zone
 // =============================================================
-// color: "white" | "white-ivory" | "beige" | "dark" | "orange"
-#let zone-highlight(color: "white", margin: 5mm, above: none, below: none, body) = {
-  let bg = if color == "beige"           { _t.beige      }
+// color: "metallic" | "white" | "white-ivory" | "beige" | "gray" | "dark" | "orange"
+#let zone-highlight(color: "metallic", margin: 2mm, above: 2mm, below: 2mm, body) = {
+  let bg = if color == "metallic"        { rgb("#F7F7F7") }
+    else if color == "beige"             { _t.beige       }
     else if color == "white-ivory"       { rgb("#FAFAFA") }
-    else if color == "gray"              { rgb("#EEEEEE")  }
+    else if color == "gray"              { rgb("#EDF0F1") }
     else if color == "dark"              { _t.ink         }
     else if color == "orange"            { _t.primary     }
     else if color.starts-with("#")       { rgb(color)     }
@@ -463,6 +467,7 @@
       width: 210mm,
       fill: bg,
       inset: (x: 22mm, top: margin, bottom: margin),
+      spacing: 0pt,
     )[
       #if on-dark { set text(fill: white) }
       #body

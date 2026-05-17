@@ -1,5 +1,6 @@
 #' @importFrom ggplot2 element_grob
-#' @importFrom grid makeContent heightDetails widthDetails
+#' @importFrom grid makeContent heightDetails widthDetails unit.c
+#' @importFrom gtable gtable gtable_add_grob
 
 # Internal separator for structured label encoding — unlikely in normal text
 .CW_SEP <- "\x1F"
@@ -156,7 +157,8 @@ new_element_chanwe_caption <- function(
   draw_top,
   title_gp,
   eyebrow_gp,
-  ink_col
+  ink_col,
+  margin_bottom = 2
 ) {
   grid::gTree(
     title_text = title_text,
@@ -165,6 +167,7 @@ new_element_chanwe_caption <- function(
     title_gp = title_gp,
     eyebrow_gp = eyebrow_gp,
     ink_col = ink_col,
+    margin_bottom = margin_bottom,
     cl = "cw_title_tree"
   )
 }
@@ -174,7 +177,7 @@ new_element_chanwe_caption <- function(
   has_ey <- !is.null(x$eyebrow_text) && nzchar(x$eyebrow_text)
   ey_h <- if (has_ey) .cw_str_h(x$eyebrow_text, x$eyebrow_gp) else 0
   top <- if (has_ey) 8 else 0 # top padding above eyebrow
-  bot <- 1 # bottom padding
+  bot <- (x$margin_bottom %||_% 2) # bottom padding — carries extra space when no subtitle
   gap1 <- if (has_ey) 6 else 0 # gap: title → eyebrow
   gap2 <- if (x$draw_top && has_ey) {
     5
@@ -626,7 +629,9 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
     col = element$eyebrow_colour %||_% "#FB3D0E"
   )
 
-  .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink)
+  margin_bottom <- as.numeric(element$margin[3L] %||_% 2)
+  .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink,
+                 margin_bottom = margin_bottom)
 }
 
 #' @method element_grob element_chanwe_subtitle

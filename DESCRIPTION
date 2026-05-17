@@ -1,6 +1,6 @@
 Package: chanwer
 Title: ChanWe Visual Themes for Quarto Workflows
-Version: 0.3.0
+Version: 1.0.0
 Authors@R: 
     person(given = "Chanwe",
            family = "Team",
@@ -21,6 +21,7 @@ Depends:
     R (>= 4.2.0)
 Imports:
     ggplot2,
+    gtable,
     grDevices
 Suggests:
     ggtext,

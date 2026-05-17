@@ -359,6 +359,177 @@ local function Div(el)
   end
 
   -- -------------------------------------------------------
+  -- :::: {.chanwe-double-exec-summary}
+  --   ::: {.exec-top  eyebrow="…" title="…" takeaway="…" color="beige"
+  --         left-label-1="…" left-value-1="…" left-sub-1="…" (up to 3)}
+  --   ::: {.exec-bottom …}
+  -- ::::
+  -- -------------------------------------------------------
+  if el.classes:includes("chanwe-double-exec-summary") then
+    local top_div, bot_div = nil, nil
+    for _, block in ipairs(el.content) do
+      if block.t == "Div" then
+        if block.classes:includes("exec-top") then
+          top_div = block
+        elseif block.classes:includes("exec-bottom") then
+          bot_div = block
+        end
+      end
+    end
+
+    -- Returns { args = string, content = pandoc.Blocks }
+    -- Nested ::: {.driver dir="…" title="…" desc="…" tag="…" tag-color="…"} :::
+    -- divs are extracted from content and stripped from the body.
+    -- Falls back to flat driver-N-* attrs when no nested driver divs are found.
+    local function half_args(div, prefix)
+      if div == nil then return { args = "", content = pandoc.Blocks({}) } end
+      local args     = ""
+      local eyebrow  = attr(div, "eyebrow",  "Executive Summary")
+      local title    = attr(div, "title",    "")
+      local takeaway = attr(div, "takeaway", "")
+      local color    = attr(div, "color",    "")
+
+      args = args .. string.format('  %s-eyebrow: "%s",\n',
+        prefix, escape_typst_str(eyebrow))
+      if title ~= "" then
+        args = args .. string.format('  %s-title: [%s],\n',
+          prefix, escape_typst_str(title))
+      end
+      if takeaway ~= "" then
+        args = args .. string.format('  %s-takeaway: "%s",\n',
+          prefix, escape_typst_str(takeaway))
+      end
+      if color ~= "" then
+        args = args .. string.format('  %s-color: "%s",\n',
+          prefix, escape_typst_str(color))
+      end
+
+      local meta_entries = {}
+      for i = 1, 3 do
+        local lbl = attr(div, "left-label-" .. i, "")
+        local val = attr(div, "left-value-" .. i, "")
+        local sub = attr(div, "left-sub-"   .. i, "")
+        if lbl ~= "" then
+          if sub ~= "" then
+            table.insert(meta_entries, string.format('("%s", "%s", "%s")',
+              escape_typst_str(lbl), escape_typst_str(val), escape_typst_str(sub)))
+          else
+            table.insert(meta_entries, string.format('("%s", "%s", none)',
+              escape_typst_str(lbl), escape_typst_str(val)))
+          end
+        end
+      end
+      if #meta_entries > 0 then
+        args = args .. string.format('  %s-meta: (%s,),\n',
+          prefix, table.concat(meta_entries, ", "))
+      end
+
+      -- Status section (label, hero word, kind, value, single meta pair)
+      local status_label = attr(div, "status-label", "")
+      if status_label ~= "" then
+        args = args .. string.format('  %s-status-label: "%s",\n',
+          prefix, escape_typst_str(status_label))
+      end
+      local status_hero = attr(div, "status-hero", "")
+      if status_hero ~= "" then
+        args = args .. string.format('  %s-status-hero: "%s",\n',
+          prefix, escape_typst_str(status_hero))
+      end
+      local status_kind = attr(div, "status-kind", "")
+      if status_kind ~= "" then
+        args = args .. string.format('  %s-status-kind: "%s",\n',
+          prefix, escape_typst_str(status_kind))
+      end
+      local status_value = attr(div, "status-value", "")
+      if status_value ~= "" then
+        args = args .. string.format('  %s-status-value: %s,\n', prefix, status_value)
+      end
+      local sml = attr(div, "status-meta-label", "")
+      local smv = attr(div, "status-meta-value", "")
+      if sml ~= "" then
+        args = args .. string.format('  %s-status-meta-label: "%s",\n',
+          prefix, escape_typst_str(sml))
+        args = args .. string.format('  %s-status-meta-value: "%s",\n',
+          prefix, escape_typst_str(smv))
+      end
+
+      -- Driver list — collect nested ::: {.driver} ::: divs first,
+      -- fall back to flat driver-N-* attrs when none found.
+      local driver_entries = {}
+      local body_list = {}
+
+      for _, block in ipairs(div.content) do
+        if block.t == "Div" and block.classes:includes("driver")
+            and #driver_entries < 3 then
+          local dtitle = attr(block, "title", "")
+          if dtitle ~= "" then
+            local dir    = attr(block, "dir",       "neutral")
+            local ddesc  = attr(block, "desc",      "")
+            local dtag   = attr(block, "tag",       "")
+            local dtag_c = attr(block, "tag-color", "")
+            table.insert(driver_entries, string.format(
+              '    ("%s", "%s", "%s", "%s", "%s")',
+              escape_typst_str(dir),   escape_typst_str(dtitle),
+              escape_typst_str(ddesc), escape_typst_str(dtag),
+              escape_typst_str(dtag_c)))
+          end
+          -- driver divs are not added to body_list (stripped from body)
+        else
+          table.insert(body_list, block)
+        end
+      end
+
+      -- Fall back to flat driver-N-* attrs when no nested drivers found
+      if #driver_entries == 0 then
+        body_list = {}
+        for _, block in ipairs(div.content) do
+          table.insert(body_list, block)
+        end
+        for i = 1, 3 do
+          local dtitle = attr(div, "driver-" .. i .. "-title", "")
+          if dtitle ~= "" then
+            local dir    = attr(div, "driver-" .. i .. "-dir",       "neutral")
+            local ddesc  = attr(div, "driver-" .. i .. "-desc",      "")
+            local dtag   = attr(div, "driver-" .. i .. "-tag",       "")
+            local dtag_c = attr(div, "driver-" .. i .. "-tag-color", "")
+            table.insert(driver_entries, string.format(
+              '    ("%s", "%s", "%s", "%s", "%s")',
+              escape_typst_str(dir),   escape_typst_str(dtitle),
+              escape_typst_str(ddesc), escape_typst_str(dtag),
+              escape_typst_str(dtag_c)))
+          end
+        end
+      end
+
+      if #driver_entries > 0 then
+        args = args .. string.format('  %s-drivers: (\n%s,\n  ),\n',
+          prefix, table.concat(driver_entries, ",\n"))
+      end
+
+      local drivers_label = attr(div, "drivers-label", "")
+      if drivers_label ~= "" then
+        args = args .. string.format('  %s-drivers-label: "%s",\n',
+          prefix, escape_typst_str(drivers_label))
+      end
+
+      return { args = args, content = pandoc.Blocks(body_list) }
+    end
+
+    local top_result = half_args(top_div, "top")
+    local bot_result = half_args(bot_div, "bot")
+
+    local top_inner = pandoc.write(pandoc.Pandoc(top_result.content), "typst")
+    local bot_inner = pandoc.write(pandoc.Pandoc(bot_result.content), "typst")
+
+    local call = "#chanwe-double-exec-summary(\n"
+    call = call .. top_result.args
+    call = call .. bot_result.args
+    call = call .. ")[\n" .. top_inner .. "\n][\n" .. bot_inner .. "\n]"
+
+    return pandoc.RawBlock("typst", call)
+  end
+
+  -- -------------------------------------------------------
   -- ::: {.fig-border}
   -- -------------------------------------------------------
   if el.classes:includes("fig-border") then

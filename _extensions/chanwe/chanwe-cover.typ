@@ -17,6 +17,7 @@
   volume: "Vol. II",
   rail-eyebrow: "Quarto · Style Guide",
   hero-image: none,
+  hero-img-position: none,  // 1–10 (left→right); none = fit:cover (centered)
   wordmark: none, // defaults to Logo_Negro.png below
   stamp: ("est.", "mdz", "2026"),
   hero-caption-1: "S 32°53′ · W 68°50′",
@@ -28,7 +29,11 @@
   cover-edge: none,
   cover-edge-color: none,
 ) = {
-  let hero-image = _chanwe-clean-path(hero-image)
+  let hero-image = if hero-image == none {
+    _chanwe-assets + "hero-img.svg"
+  } else {
+    _chanwe-clean-path(hero-image)
+  }
   let _edge-color = if cover-edge-color != none { cover-edge-color } else { _t.primary }
   let wordmark   = if wordmark == none { _chanwe-assets + "Logo_Negro.png" } else { _chanwe-clean-path(wordmark) }
   set page(
@@ -135,18 +140,21 @@
         fill: _t.ink,
         clip: true,
       )[
-        // mountain photograph fills the panel
-        #if hero-image != none {
+        // hero image fills the panel
+        #if hero-img-position == none {
           place(top + left,
             image(hero-image, width: 100%, height: 237mm, fit: "cover"))
         } else {
-          place(top + left, rect(
-            width: 124mm, height: 237mm,
-            fill: gradient.linear(
-              (_t.ink, 0%), (rgb("#1a1a1a"), 50%), (rgb("#0a0a0a"), 100%),
-              angle: 165deg,
-            ),
-          ))
+          // place() must be in direct content flow; context{} computes the
+          // shift and returns move(dx, img) which gets placed at top+left
+          place(top + left,
+            context {
+              let pos-frac = calc.clamp((hero-img-position - 1) / 9, 0, 1)
+              let img = image(hero-image, height: 237mm)
+              let excess = calc.max(measure(img).width - 73.5mm, 0pt)
+              move(dx: -pos-frac * excess, img)
+            }
+          )
         }
 
 
@@ -185,7 +193,7 @@
   ]
 
   // ---- BLANK INTERSTITIAL PAGE ------------------------------
-  set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.neutral-200, foreground: none)
+  set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: rgb("#F7F7F7"), foreground: none)
   set block(spacing: 0pt)
 
   // centered icon
@@ -195,7 +203,7 @@
   block(width: 100%, height: 247mm)[]
   block(
     width: 100%, height: 50mm,
-    fill: _t.neutral-200,
+    fill: rgb("#F7F7F7"),
     inset: (x: 14mm, top: 0mm, bottom: 0mm),
   )[
     #set align(center + horizon)
@@ -207,7 +215,7 @@
 // BACK COVER — full-bleed black page
 // =============================================================
 #let _chanwe-blank-interstitial() = {
-  set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.neutral-200, foreground: none)
+  set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: rgb("#F7F7F7"), foreground: none)
   set block(spacing: 0pt)
   place(center + horizon, image(_chanwe-assets + "Iconos_Beige.png", width: 60mm, fit: "contain"))
   block(width: 100%, height: 297mm)[]

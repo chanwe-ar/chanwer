@@ -23,7 +23,7 @@
 #' @param row_padding Typst size string overriding the vertical cell inset for
 #'   data rows and column labels (e.g. \code{"6pt"}). Defaults to \code{"8pt"}
 #'   (spacious) or \code{"3pt"} (compact).
-#' @param title_size Typst size string for the title. Default \code{"19pt"} / \code{"13pt"}.
+#' @param title_size Typst size string for the title. Default \code{"16pt"}.
 #' @param eyebrow_size Typst size string for the eyebrow. Default \code{"8.5pt"}.
 #' @param subtitle_size Typst size string for the subtitle. Default \code{"11pt"} / \code{"9pt"}.
 #' @param body_size Typst size string for data cell text. Default \code{"10pt"} / \code{"8pt"}.
@@ -35,7 +35,7 @@
 #'   Default \code{0}.
 #' @param bg Table background colour. Named shorthand: \code{"white-ivory"}
 #'   (default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
-#'   \code{"gray"} (\code{#F2F2F2}).
+#'   \code{"gray"} (\code{#EDF0F1}), \code{"metallic"} (\code{#F7F7F7}).
 #'   Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.
 #' @param padding Uniform outer margin in pts applied around the entire table
 #'   block (equivalent to \code{plot_padding} in \code{theme_chanwe()}). Default \code{0}.
@@ -58,9 +58,9 @@ chanwe_kbl <- function(
   stub = NULL,
   density = c("spacious", "compact"),
   row_padding = NULL,
-  title_size = '18pt',
+  title_size = '16pt',
   eyebrow_size = '5pt',
-  subtitle_size = '9.2pt',
+  subtitle_size = '9pt',
   body_size = '7pt',
   header_size = '5.5pt',
   note_size = '7pt',
@@ -203,7 +203,13 @@ chanwe_kbl <- function(
   # excessive gap between title, subtitle, and separator
   inset_title <- paste0("(top: ", inset_y, ", bottom: 5pt, x: 2.5mm)")
   inset_sub <- paste0("(top: 4pt, bottom: ", inset_y, ", x: 2.5mm)")
-  colhdr_top <- if (sp) "20pt" else "14pt"
+  colhdr_top <- if (!is.null(subtitle)) {
+    if (sp) "20pt" else "14pt"
+  } else if (!is.null(title) || !is.null(eyebrow)) {
+    if (sp) "18pt" else "16pt"
+  } else {
+    if (sp) "6pt" else "4pt"
+  }
   inset_colhdr <- paste0(
     "(top: ",
     colhdr_top,
@@ -230,12 +236,20 @@ chanwe_kbl <- function(
       "white" = "white",
       "beige" = 'rgb("#F5F1EB")',
       "cream" = 'rgb("#F5F1EB")',
-      "gray" = 'rgb("#F2F2F2")',
-      "grey" = 'rgb("#F2F2F2")',
+      "gray" = 'rgb("#EDF0F1")',
+      "grey" = 'rgb("#EDF0F1")',
+      "metallic" = 'rgb("#F7F7F7")',
+      "silver" = 'rgb("#F7F7F7")',
+      "transparent" = "none",
       bg
     )
   }
   bg_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
+  row_divider_color <- if (!is.null(bg) && tolower(bg) %in% c("metallic", "silver")) {
+    "#D4D4D4"
+  } else {
+    "#E9E9E9"
+  }
 
   # code builder
   L <- character(0)
@@ -284,7 +298,7 @@ chanwe_kbl <- function(
           inner,
           '#text(font: "Archivo", size: ',
           title_pt,
-          ', fill: _t.ink, weight: "semibold")[',
+          ', fill: _t.ink, weight: "regular")[',
           esc(title),
           ']'
         )
@@ -357,9 +371,9 @@ chanwe_kbl <- function(
     for (j in seq_len(n)) {
       val <- esc(fmt_data[[j]][i])
       is_first <- j == 1L
-      base_fill <- if (is_first) "_t.fg-subtle" else "_t.ink"
+      base_fill <- if (is_first) "_t.ink" else "_t.ink"
       fill <- if (!is.null(color_data[[j]])) color_data[[j]][i] else base_fill
-      weight <- if (is_first) '"light"' else '"light"'
+      weight <- if (is_first) '"medium"' else '"thin"'
       cell_fill <- if (is_total && total_fill) {
         ', fill: rgb("#F3F3F3")'
       } else if (!is.null(highlight_cols) && j %in% highlight_cols) {
@@ -384,7 +398,7 @@ chanwe_kbl <- function(
       )
     }
     if (i < nr && !is_total) {
-      p('    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),')
+      p('    table.hline(stroke: 0.3pt + rgb("', row_divider_color, '")),')
     }
   }
 

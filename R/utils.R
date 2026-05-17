@@ -181,13 +181,17 @@ chanwe_load_fonts <- function(path = NULL) {
     )
   }
 
-  # .chanwe-subtitle: Archivo Light (300) — one step above ExtraLight (200),
+  # .chanwe-subtitle / "Archivo Light": Archivo Light (300) — one step above ExtraLight (200),
   # baked as the plain face for reliable weight rendering.
   archivo_light <- file.path(path, "Archivo-Light.ttf")
   archivo_subtitle <- if (file.exists(archivo_light)) archivo_light else file.path(path, "Archivo-ExtraLight.ttf")
   if (file.exists(archivo_subtitle)) {
     tryCatch(
       systemfonts::register_font(name = ".chanwe-subtitle", plain = archivo_subtitle),
+      error = function(e) NULL
+    )
+    tryCatch(
+      systemfonts::register_font(name = "Archivo Light", plain = archivo_subtitle),
       error = function(e) NULL
     )
   }
@@ -202,9 +206,11 @@ chanwe_resolve_bg <- function(bg_color) {
     white          = "#FFFFFF",
     "white-ivory"  = "#FAF9F7",
     ivory          = "#FAF9F7",
-    gray           = "#F2F2F2",
-    grey           = "#F2F2F2",
+    gray           = "#EDF0F1",
+    grey           = "#EDF0F1",
     beige          = "#F5F1EB",
+    metallic       = "#F7F7F7",
+    silver         = "#F7F7F7",
     transparent    = "transparent",
     bg_color
   )
