@@ -32,7 +32,7 @@ chanwe_discrete_pal <- function() {
 #' ## Background variants
 #' | Name | Hex | Major grid | Minor grid |
 #' |------|-----|------------|------------|
-#' | `"metallic"` | `#EBEBEB` | `#D0D0D0` | `#E0E0E0` |
+#' | `"metallic"` | `#F7F7F7` | `#E4E4E4` | `#EFEFEF` |
 #' | `"white-ivory"` | `#FAF9F7` | `#ECEAE6` | `#F1F0ED` |
 #' | `"white"` | `#FFFFFF` | `#E8E8E8` | `#EEEEEE` |
 #' | `"gray"` | `#F2F2F2` | `#E0E0E0` | `#EAEAEA` |
@@ -118,7 +118,7 @@ theme_chanwe <- function(
   outer_border_color <- colors[["typst-neutral-200"]]
   grid_color <- switch(
     bg_color,
-    "#EBEBEB" = "#D0D0D0",
+    "#F7F7F7" = "#E4E4E4",
     "#FAF9F7" = "#D0CEC8",
     "#FFFFFF" = "#E9E9E9",
     "#F5F1EB" = "#BAB3A8",
@@ -126,7 +126,7 @@ theme_chanwe <- function(
   )
   grid_color_minor <- switch(
     bg_color,
-    "#EBEBEB" = "#E0E0E0",
+    "#F7F7F7" = "#EFEFEF",
     "#FAF9F7" = "#E2E0DA",
     "#FFFFFF" = "#F7F7F7",
     "#F5F1EB" = "#CCC5BA",

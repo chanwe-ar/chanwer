@@ -35,7 +35,7 @@
 #'   Default \code{0}.
 #' @param bg Table background colour. Named shorthand: \code{"white-ivory"}
 #'   (default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
-#'   \code{"gray"} (\code{#F2F2F2}), \code{"metallic"} (\code{#EBEBEB}).
+#'   \code{"gray"} (\code{#F2F2F2}), \code{"metallic"} (\code{#F7F7F7}).
 #'   Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.
 #' @param padding Uniform outer margin in pts applied around the entire table
 #'   block (equivalent to \code{plot_padding} in \code{theme_chanwe()}). Default \code{0}.
@@ -232,12 +232,17 @@ chanwe_kbl <- function(
       "cream" = 'rgb("#F5F1EB")',
       "gray" = 'rgb("#F2F2F2")',
       "grey" = 'rgb("#F2F2F2")',
-      "metallic" = 'rgb("#EBEBEB")',
-      "silver" = 'rgb("#EBEBEB")',
+      "metallic" = 'rgb("#F7F7F7")',
+      "silver" = 'rgb("#F7F7F7")',
       bg
     )
   }
   bg_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
+  row_divider_color <- if (!is.null(bg) && tolower(bg) %in% c("metallic", "silver")) {
+    "#D4D4D4"
+  } else {
+    "#E9E9E9"
+  }
 
   # code builder
   L <- character(0)
@@ -386,7 +391,7 @@ chanwe_kbl <- function(
       )
     }
     if (i < nr && !is_total) {
-      p('    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),')
+      p('    table.hline(stroke: 0.3pt + rgb("', row_divider_color, '")),')
     }
   }
 
