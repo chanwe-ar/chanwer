@@ -1,5 +1,6 @@
 #' @importFrom ggplot2 element_grob
-#' @importFrom grid makeContent heightDetails widthDetails
+#' @importFrom grid makeContent heightDetails widthDetails unit.c
+#' @importFrom gtable gtable gtable_add_grob
 
 # Internal separator for structured label encoding — unlikely in normal text
 .CW_SEP <- "\x1F"
@@ -626,7 +627,16 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
     col = element$eyebrow_colour %||_% "#FB3D0E"
   )
 
-  .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink)
+  g <- .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink)
+
+  margin <- element$margin %||% ggplot2::margin(0, 0, 2, 0)
+  h <- grid::unit(1, "grobheight", g)
+  w <- grid::unit(1, "grobwidth", g)
+  tbl <- gtable::gtable(
+    widths  = grid::unit.c(margin[4L], w, margin[2L]),
+    heights = grid::unit.c(margin[1L], h, margin[3L])
+  )
+  gtable::gtable_add_grob(tbl, g, t = 2L, l = 2L, name = "title-inner")
 }
 
 #' @method element_grob element_chanwe_subtitle
