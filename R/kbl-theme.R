@@ -23,7 +23,7 @@
 #' @param row_padding Typst size string overriding the vertical cell inset for
 #'   data rows and column labels (e.g. \code{"6pt"}). Defaults to \code{"8pt"}
 #'   (spacious) or \code{"3pt"} (compact).
-#' @param title_size Typst size string for the title. Default \code{"19pt"} / \code{"13pt"}.
+#' @param title_size Typst size string for the title. Default \code{"16pt"}.
 #' @param eyebrow_size Typst size string for the eyebrow. Default \code{"8.5pt"}.
 #' @param subtitle_size Typst size string for the subtitle. Default \code{"11pt"} / \code{"9pt"}.
 #' @param body_size Typst size string for data cell text. Default \code{"10pt"} / \code{"8pt"}.
@@ -35,7 +35,7 @@
 #'   Default \code{0}.
 #' @param bg Table background colour. Named shorthand: \code{"white-ivory"}
 #'   (default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
-#'   \code{"gray"} (\code{#F2F2F2}).
+#'   \code{"gray"} (\code{#F2F2F2}), \code{"metallic"} (\code{#EBEBEB}).
 #'   Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.
 #' @param padding Uniform outer margin in pts applied around the entire table
 #'   block (equivalent to \code{plot_padding} in \code{theme_chanwe()}). Default \code{0}.
@@ -58,9 +58,9 @@ chanwe_kbl <- function(
   stub = NULL,
   density = c("spacious", "compact"),
   row_padding = NULL,
-  title_size = '18pt',
+  title_size = '16pt',
   eyebrow_size = '5pt',
-  subtitle_size = '9.2pt',
+  subtitle_size = '9pt',
   body_size = '7pt',
   header_size = '5.5pt',
   note_size = '7pt',
@@ -232,6 +232,8 @@ chanwe_kbl <- function(
       "cream" = 'rgb("#F5F1EB")',
       "gray" = 'rgb("#F2F2F2")',
       "grey" = 'rgb("#F2F2F2")',
+      "metallic" = 'rgb("#EBEBEB")',
+      "silver" = 'rgb("#EBEBEB")',
       bg
     )
   }
@@ -284,7 +286,7 @@ chanwe_kbl <- function(
           inner,
           '#text(font: "Archivo", size: ',
           title_pt,
-          ', fill: _t.ink, weight: "semibold")[',
+          ', fill: _t.ink, weight: "regular")[',
           esc(title),
           ']'
         )

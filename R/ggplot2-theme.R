@@ -18,7 +18,7 @@ chanwe_discrete_pal <- function() {
 #' ## Typography
 #' | Element | Font | Weight |
 #' |---------|------|--------|
-#' | Title (with eyebrow) | Archivo SemiBold | 600 |
+#' | Title (with eyebrow) | Archivo | 400 |
 #' | Subtitle | Satoshi | 400 |
 #' | Axis text | Satoshi | 400 |
 #' | Axis titles | JetBrains Mono Thin | 100 |
@@ -32,6 +32,7 @@ chanwe_discrete_pal <- function() {
 #' ## Background variants
 #' | Name | Hex | Major grid | Minor grid |
 #' |------|-----|------------|------------|
+#' | `"metallic"` | `#EBEBEB` | `#D0D0D0` | `#E0E0E0` |
 #' | `"white-ivory"` | `#FAF9F7` | `#ECEAE6` | `#F1F0ED` |
 #' | `"white"` | `#FFFFFF` | `#E8E8E8` | `#EEEEEE` |
 #' | `"gray"` | `#F2F2F2` | `#E0E0E0` | `#EAEAEA` |
@@ -43,7 +44,7 @@ chanwe_discrete_pal <- function() {
 #' @param legend_position Legend position string passed to
 #'   `theme(legend.position = )`. Default `"bottom"`.
 #' @param bg_color Background color for the plot surface. Accepts a hex string
-#'   or one of `"white-ivory"` (default), `"white"`, `"gray"`, `"beige"`.
+#'   or one of `"metallic"` (default), `"white-ivory"`, `"white"`, `"gray"`, `"beige"`.
 #' @param plot_padding Uniform outer margin in pts applied to all four sides of
 #'   the plot (title, caption, and panel included). Default `2`.
 #'   Pass a single number, e.g. `plot_padding = 18`.
@@ -104,7 +105,7 @@ theme_chanwe <- function(
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
-  bg_color = "white-ivory",
+  bg_color = "metallic",
   plot_padding = 10,
   plot_borders = "none"
 ) {
@@ -117,6 +118,7 @@ theme_chanwe <- function(
   outer_border_color <- colors[["typst-neutral-200"]]
   grid_color <- switch(
     bg_color,
+    "#EBEBEB" = "#D0D0D0",
     "#FAF9F7" = "#D0CEC8",
     "#FFFFFF" = "#E9E9E9",
     "#F5F1EB" = "#BAB3A8",
@@ -124,6 +126,7 @@ theme_chanwe <- function(
   )
   grid_color_minor <- switch(
     bg_color,
+    "#EBEBEB" = "#E0E0E0",
     "#FAF9F7" = "#E2E0DA",
     "#FFFFFF" = "#F7F7F7",
     "#F5F1EB" = "#CCC5BA",
@@ -136,12 +139,8 @@ theme_chanwe <- function(
   } else {
     character(0)
   }
-  title_family <- if ("Archivo SemiBold" %in% reg) {
-    "Archivo SemiBold"
-  } else {
-    "Archivo"
-  }
-  title_face <- if (title_family == "Archivo SemiBold") "plain" else "bold"
+  title_family <- "Archivo"
+  title_face <- "plain"
   subtitle_family <- "Satoshi"
   subtitle_face <- "plain"
 
@@ -186,7 +185,7 @@ theme_chanwe <- function(
   subtitle_element <- new_element_chanwe_subtitle(
     family = subtitle_family,
     size = base_text_size * 1.15,
-    colour = '#656460',
+    colour = '#888888',
     ink_colour = colors[["typst-ink"]],
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,

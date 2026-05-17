@@ -146,9 +146,9 @@ mt |>
     select(model, mpg, cyl, hp, wt) |>
     slice_head(n = 8) |>
     chanwe_kbl(
-        title = "Simple fleet view",
-        subtitle = "Top 8 vehicles · mtcars · white background",
-        eyebrow = "TABLE · SPACIOUS · WHITE",
+        title = "bg · white-ivory",
+        subtitle = "title_size · 16pt  ·  weight · regular  ·  density · spacious",
+        eyebrow = "TABLE · SPACIOUS · WHITE-IVORY",
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
         bg = "white-ivory",
@@ -164,8 +164,8 @@ mt |>
     select(model, mpg, cyl, hp, wt) |>
     slice_head(n = 8) |>
     chanwe_kbl(
-        title = "Simple fleet view",
-        subtitle = "Top 8 vehicles · mtcars · white background",
+        title = "bg · white",
+        subtitle = "title_size · 16pt  ·  weight · regular  ·  density · spacious",
         eyebrow = "TABLE · SPACIOUS · WHITE",
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
@@ -181,8 +181,8 @@ mt |>
     select(model, mpg, cyl, hp, wt) |>
     slice_head(n = 8) |>
     chanwe_kbl(
-        title = "Simple fleet view",
-        subtitle = "Top 8 vehicles · mtcars · beige background",
+        title = "bg · beige",
+        subtitle = "title_size · 16pt  ·  weight · regular  ·  density · spacious",
         eyebrow = "TABLE · SPACIOUS · BEIGE",
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
@@ -199,14 +199,31 @@ mt |>
     select(model, mpg, cyl, hp, wt) |>
     slice_head(n = 8) |>
     chanwe_kbl(
-        title = "Simple fleet view",
-        subtitle = "Top 8 vehicles · mtcars · gray background",
+        title = "bg · gray",
+        subtitle = "title_size · 16pt  ·  weight · regular  ·  density · spacious",
         eyebrow = "TABLE · SPACIOUS · GRAY",
         caption = "Source · Motor Trend, 1974 · mtcars dataset.",
         stub = "model",
         bg = "gray",
         padding = 0,
         top_border = FALSE,
+        fmt = fmt_fleet
+    )
+```
+
+##### Metallic background
+
+```{r}
+mt |>
+    select(model, mpg, cyl, hp, wt) |>
+    slice_head(n = 8) |>
+    chanwe_kbl(
+        title = "bg · metallic  ·  default",
+        subtitle = "title_size · 16pt  ·  weight · regular  ·  density · spacious",
+        eyebrow = "TABLE · SPACIOUS · METALLIC · DEFAULT",
+        caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+        stub = "model",
+        bg = "metallic",
         fmt = fmt_fleet
     )
 ```
@@ -230,10 +247,10 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     theme_chanwe(bg_color = "beige", plot_padding = 18) +
     labs(
         title = chanwe_title(
-            "Simple fleet view",
-            eyebrow = "TLDR;"
+            "bg_color · beige",
+            eyebrow = "PLOT · BACKGROUND VARIANTS"
         ),
-        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        subtitle = chanwe_subtitle("title · Archivo 400  ·  padding · 18pt"),
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "HP band",
@@ -254,10 +271,10 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     theme_chanwe(bg_color = "ivory") +
     labs(
         title = chanwe_title(
-            "Simple fleet view",
-            eyebrow = "TLDR;"
+            "bg_color · ivory",
+            eyebrow = "PLOT · BACKGROUND VARIANTS"
         ),
-        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        subtitle = chanwe_subtitle("title · Archivo 400"),
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "HP band"
@@ -275,10 +292,10 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     theme_chanwe(bg_color = "gray", plot_borders = TRUE) +
     labs(
         title = chanwe_title(
-            "Simple fleet view",
-            eyebrow = "TLDR;"
+            "bg_color · gray  ·  plot_borders · TRUE",
+            eyebrow = "PLOT · BACKGROUND VARIANTS"
         ),
-        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        subtitle = chanwe_subtitle("title · Archivo 400"),
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "HP band"
@@ -297,13 +314,35 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     theme_chanwe(bg_color = "white", plot_borders = TRUE) +
     labs(
         title = chanwe_title(
-            "Simple fleet view",
-            eyebrow = "TLDR;"
+            "bg_color · white  ·  plot_borders · TRUE",
+            eyebrow = "PLOT · BACKGROUND VARIANTS"
         ),
-        subtitle = chanwe_subtitle("Faceted by transmission type"),
+        subtitle = chanwe_subtitle("title · Archivo 400"),
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "HP band"
+    )
+```
+
+##### Plot 5 · Metallic
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(bg_color = "metallic") +
+    labs(
+        title = chanwe_title(
+            "bg_color · metallic  ·  default",
+            eyebrow = "PLOT · BACKGROUND VARIANTS"
+        ),
+        subtitle = chanwe_subtitle("title · Archivo 400  ·  bg default"),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
     )
 ```
 
