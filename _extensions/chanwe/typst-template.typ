@@ -224,6 +224,7 @@ $chanwe-charts.typ()$
   cover-edge-color: none,
   // page
   page-bg: rgb("#FBFBFB"),
+  second-page-bg: rgb("#F7F7F7"),   // fill for the TOC/abstract page (metallic default)
   // body text
   body-size:    none,   // e.g. 10pt — overrides default 11pt
   body-leading: none,   // e.g. 0.9em — overrides default 0.85em
@@ -247,7 +248,7 @@ $chanwe-charts.typ()$
   show strong: it => text(weight: 700, fill: _t.ink, it.body)
   show math.equation.where(block: true): it => block(
     width: 100%,
-    fill: _t.neutral-100,
+    fill: rgb("#EDF0F1"),
     stroke: 0.5pt + _t.neutral-300,
     radius: 4pt,
     inset: (x: 10mm, y: 8mm),
@@ -257,14 +258,14 @@ $chanwe-charts.typ()$
   ]
   show link: it => underline(stroke: 0.6pt + _t.primary, offset: 2pt, text(fill: _t.primary, it))
   show raw.where(block: false): it => box(
-    fill: _t.neutral-100,
+    fill: rgb("#EDF0F1"),
     stroke: 0.5pt + _t.neutral-300,
     inset: (x: 3pt, y: 2pt),
     radius: 2pt,
     text(font: _t.font-mono, size: 0.85em, fill: _t.neutral-700, it),
   )
   show raw.where(block: true): it => block(
-    fill: _t.neutral-100,
+    fill: rgb("#EDF0F1"),
     stroke: (left: 1pt + _t.primary),
     inset: (x: 4mm, y: 3mm),
     width: 100%,
@@ -460,12 +461,15 @@ $chanwe-charts.typ()$
 
   // ---- auto TOC (optional) ----------------------------------
   if toc {
-    chanwe-agenda(
-      eyebrow: toc-eyebrow,
-      title: toc-title,
-      lede: toc-lede,
-    )
-    pagebreak()
+    {
+      set page(fill: second-page-bg)
+      chanwe-agenda(
+        eyebrow: toc-eyebrow,
+        title: toc-title,
+        lede: toc-lede,
+      )
+      pagebreak()
+    }
   }
 
   // ---- auto abstract (optional) ----------------------------

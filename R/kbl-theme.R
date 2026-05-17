@@ -206,7 +206,7 @@ chanwe_kbl <- function(
   colhdr_top <- if (!is.null(subtitle)) {
     if (sp) "20pt" else "14pt"
   } else if (!is.null(title) || !is.null(eyebrow)) {
-    if (sp) "18pt" else "12pt"
+    if (sp) "18pt" else "16pt"
   } else {
     if (sp) "6pt" else "4pt"
   }

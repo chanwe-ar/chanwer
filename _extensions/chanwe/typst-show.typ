@@ -129,6 +129,9 @@ $endif$
 $if(chanwe.page-bg)$
   page-bg: rgb("#$chanwe.page-bg$"),
 $endif$
+$if(chanwe.second-page-bg)$
+  second-page-bg: rgb("#$chanwe.second-page-bg$"),
+$endif$
 $if(chanwe.body-size)$
   body-size: $chanwe.body-size$,
 $endif$

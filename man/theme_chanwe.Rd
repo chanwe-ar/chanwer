@@ -9,9 +9,10 @@ theme_chanwe(
   base_family = "Satoshi",
   base_lineheight = 1.6,
   legend_position = "bottom",
-  bg_color = "white-ivory",
+  bg_color = "metallic",
   plot_padding = 10,
-  plot_borders = "none"
+  plot_borders = "none",
+  has_subtitle = TRUE
 )
 }
 \arguments{
@@ -25,11 +26,14 @@ theme_chanwe(
 \code{theme(legend.position = )}. Default \code{"bottom"}.}
 
 \item{bg_color}{Background color for the plot surface. Accepts a hex string
-or one of \code{"white-ivory"} (default), \code{"white"}, \code{"gray"}, \code{"beige"}.}
+or one of \code{"metallic"} (default), \code{"white-ivory"}, \code{"white"}, \code{"gray"}, \code{"beige"}.}
 
 \item{plot_padding}{Uniform outer margin in pts applied to all four sides of
 the plot (title, caption, and panel included). Default \code{2}.
 Pass a single number, e.g. \code{plot_padding = 18}.}
+
+\item{has_subtitle}{Set to \code{FALSE} when the plot has no subtitle. Increases
+the title's bottom margin so the chart doesn't crowd the title.}
 }
 \value{
 A ggplot2 theme object. Add to any ggplot with \code{+ theme_chanwe()}.
@@ -44,7 +48,7 @@ brand-consistent color palettes.
 \details{
 \subsection{Typography}{\tabular{lll}{
    Element \tab Font \tab Weight \cr
-   Title (with eyebrow) \tab Archivo SemiBold \tab 600 \cr
+   Title (with eyebrow) \tab Archivo \tab 400 \cr
    Subtitle \tab Satoshi \tab 400 \cr
    Axis text \tab Satoshi \tab 400 \cr
    Axis titles \tab JetBrains Mono Thin \tab 100 \cr
@@ -60,9 +64,10 @@ families. \code{theme_chanwe()} calls it automatically.
 
 \subsection{Background variants}{\tabular{llll}{
    Name \tab Hex \tab Major grid \tab Minor grid \cr
+   \code{"metallic"} \tab \verb{#F7F7F7} \tab \verb{#E4E4E4} \tab \verb{#EFEFEF} \cr
    \code{"white-ivory"} \tab \verb{#FAF9F7} \tab \verb{#ECEAE6} \tab \verb{#F1F0ED} \cr
    \code{"white"} \tab \verb{#FFFFFF} \tab \verb{#E8E8E8} \tab \verb{#EEEEEE} \cr
-   \code{"gray"} \tab \verb{#F2F2F2} \tab \verb{#E0E0E0} \tab \verb{#EAEAEA} \cr
+   \code{"gray"} \tab \verb{#EDF0F1} \tab \verb{#D4D9DB} \tab \verb{#E3E7E9} \cr
    \code{"beige"} \tab \verb{#F5F1EB} \tab \verb{#D8D1C7} \tab \verb{#E3DDD5} \cr
 }
 

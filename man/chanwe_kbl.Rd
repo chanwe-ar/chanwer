@@ -17,9 +17,9 @@ chanwe_kbl(
   stub = NULL,
   density = c("spacious", "compact"),
   row_padding = NULL,
-  title_size = "18pt",
+  title_size = "16pt",
   eyebrow_size = "5pt",
-  subtitle_size = "9.2pt",
+  subtitle_size = "9pt",
   body_size = "7pt",
   header_size = "5.5pt",
   note_size = "7pt",
@@ -32,6 +32,7 @@ chanwe_kbl(
   fmt = list(),
   col_colors = list(),
   n_total = 0,
+  total_fill = TRUE,
   vlines = NULL,
   highlight_cols = NULL,
   highlight_color = "#F5F1EB"
@@ -69,7 +70,7 @@ in muted ink; excluded from auto numeric-alignment detection.}
 data rows and column labels (e.g. \code{"6pt"}). Defaults to \code{"8pt"}
 (spacious) or \code{"3pt"} (compact).}
 
-\item{title_size}{Typst size string for the title. Default \code{"19pt"} / \code{"13pt"}.}
+\item{title_size}{Typst size string for the title. Default \code{"16pt"}.}
 
 \item{eyebrow_size}{Typst size string for the eyebrow. Default \code{"8.5pt"}.}
 
@@ -89,7 +90,7 @@ Default \code{0}.}
 
 \item{bg}{Table background colour. Named shorthand: \code{"white-ivory"}
 (default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
-\code{"gray"} (\code{#F2F2F2}).
+\code{"gray"} (\code{#EDF0F1}), \code{"metallic"} (\code{#F7F7F7}).
 Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.}
 
 \item{padding}{Uniform outer margin in pts applied around the entire table

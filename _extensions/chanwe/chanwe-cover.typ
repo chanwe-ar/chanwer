@@ -193,7 +193,7 @@
   ]
 
   // ---- BLANK INTERSTITIAL PAGE ------------------------------
-  set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.neutral-100, foreground: none)
+  set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: rgb("#F7F7F7"), foreground: none)
   set block(spacing: 0pt)
 
   // centered icon
@@ -203,7 +203,7 @@
   block(width: 100%, height: 247mm)[]
   block(
     width: 100%, height: 50mm,
-    fill: _t.neutral-100,
+    fill: rgb("#F7F7F7"),
     inset: (x: 14mm, top: 0mm, bottom: 0mm),
   )[
     #set align(center + horizon)
@@ -215,7 +215,7 @@
 // BACK COVER — full-bleed black page
 // =============================================================
 #let _chanwe-blank-interstitial() = {
-  set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.neutral-100, foreground: none)
+  set page(paper: "a4", margin: 0pt, header: none, footer: none, fill: rgb("#F7F7F7"), foreground: none)
   set block(spacing: 0pt)
   place(center + horizon, image(_chanwe-assets + "Iconos_Beige.png", width: 60mm, fit: "contain"))
   block(width: 100%, height: 297mm)[]

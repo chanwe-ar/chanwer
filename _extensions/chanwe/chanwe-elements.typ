@@ -66,7 +66,7 @@
     breakable: false,
     clip: true,
   )[
-    #block(fill: luma(250), inset: (x: 4.5mm, top: 2.5mm, bottom: 2.5mm), width: 100%, spacing: 0pt)[
+    #block(fill: rgb("#EDF0F1"), inset: (x: 4.5mm, top: 2.5mm, bottom: 2.5mm), width: 100%, spacing: 0pt)[
       #grid(
         columns: (auto, auto, auto, 1fr),
         column-gutter: 5pt,
@@ -275,7 +275,7 @@
   color: "white",
   body,
 ) = {
-  let bg      = if color == "gray" or color == "light" { _t.neutral-100 } else if color == "beige" { _t.beige } else { white }
+  let bg      = if color == "gray" { rgb("#EDF0F1") } else if color == "light" { _t.neutral-100 } else if color == "beige" { _t.beige } else { white }
   let borders = color != "gray" and color != "light" and color != "white" and color != "beige"
   move(dx: -18mm,
     block(
@@ -335,7 +335,7 @@
 }
 
 #let great-findings(number: "01", title: "", color: "white", body) = {
-  let bg = if color == "light" or color == "gray" { _t.neutral-100 } else { none }
+  let bg = if color == "gray" { rgb("#EDF0F1") } else if color == "light" { _t.neutral-100 } else { none }
   block(width: 100%, fill: bg, radius: 4pt, inset: (top: 7mm, bottom: 7mm))[
     #_great-findings-row(number: number, title: title, body)
   ]
@@ -350,7 +350,7 @@
 
 // wrapper that applies a unified background with dividers between items
 #let great-findings-grid(color: "white", body) = {
-  let bg = if color == "light" or color == "gray" { _t.neutral-100 } else { none }
+  let bg = if color == "gray" { rgb("#EDF0F1") } else if color == "light" { _t.neutral-100 } else { none }
   let stroke-top-bottom = if color == "white" { 0.5pt + _t.neutral-900 } else { none }
   block(width: 100%, fill: bg, radius: if bg == none { 0pt } else { 4pt },
     stroke: (top: stroke-top-bottom, bottom: stroke-top-bottom),
@@ -454,7 +454,7 @@
   let bg = if color == "metallic"        { rgb("#F7F7F7") }
     else if color == "beige"             { _t.beige       }
     else if color == "white-ivory"       { rgb("#FAFAFA") }
-    else if color == "gray"              { rgb("#EEEEEE") }
+    else if color == "gray"              { rgb("#EDF0F1") }
     else if color == "dark"              { _t.ink         }
     else if color == "orange"            { _t.primary     }
     else if color.starts-with("#")       { rgb(color)     }
