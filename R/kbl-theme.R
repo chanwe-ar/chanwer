@@ -206,7 +206,7 @@ chanwe_kbl <- function(
   colhdr_top <- if (!is.null(subtitle)) {
     if (sp) "20pt" else "14pt"
   } else if (!is.null(title) || !is.null(eyebrow)) {
-    if (sp) "12pt" else "8pt"
+    if (sp) "18pt" else "12pt"
   } else {
     if (sp) "6pt" else "4pt"
   }
@@ -373,7 +373,7 @@ chanwe_kbl <- function(
       is_first <- j == 1L
       base_fill <- if (is_first) "_t.ink" else "_t.ink"
       fill <- if (!is.null(color_data[[j]])) color_data[[j]][i] else base_fill
-      weight <- if (is_first) '"medium"' else '"light"'
+      weight <- if (is_first) '"medium"' else '"thin"'
       cell_fill <- if (is_total && total_fill) {
         ', fill: rgb("#F3F3F3")'
       } else if (!is.null(highlight_cols) && j %in% highlight_cols) {
