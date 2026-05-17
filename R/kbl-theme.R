@@ -240,6 +240,7 @@ chanwe_kbl <- function(
       "grey" = 'rgb("#EDF0F1")',
       "metallic" = 'rgb("#F7F7F7")',
       "silver" = 'rgb("#F7F7F7")',
+      "transparent" = "none",
       bg
     )
   }
