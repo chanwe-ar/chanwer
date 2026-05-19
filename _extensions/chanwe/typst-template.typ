@@ -5,7 +5,7 @@
 
 // ---------- Design tokens ------------------------------------
 #let chanwe-tokens = (
-  paper:       white,
+  paper:       rgb("#F7F7F7"),
   ink:         rgb("#0F0F0F"),
   fg:          rgb("#211F1C"),
   fg-muted:    rgb("#71706C"),
@@ -244,7 +244,7 @@ $chanwe-charts.typ()$
   set heading(numbering: "1.1.1.")
 
   // ---- inline rules (apply to entire document) ---------------
-  show emph: it => text(fill: _t.primary, it.body)
+  show emph: it => text(style: "italic", it.body)
   show strong: it => text(weight: 700, fill: _t.ink, it.body)
   show math.equation.where(block: true): it => block(
     width: 100%,
@@ -329,7 +329,7 @@ $chanwe-charts.typ()$
     #v(0mm)
     #line(length: 100%, stroke: 0.5pt + _t.neutral-300)
   ]
-  show heading.where(level: 3): it => block(above: 32mm, below: 5.5mm)[
+  show heading.where(level: 3): it => block(above: 10mm, below: 5.5mm)[
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4mm,
@@ -341,7 +341,7 @@ $chanwe-charts.typ()$
            tracking: -0.01em, fill: _t.neutral-900, it.body),
     )
   ]
-  show heading.where(level: 4): it => block(above: 32mm, below: 4mm)[
+  show heading.where(level: 4): it => block(above: 8mm, below: 4mm)[
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4mm,
@@ -353,7 +353,19 @@ $chanwe-charts.typ()$
            tracking: -0.01em, fill: _t.neutral-900, it.body),
     )
   ]
-  show heading.where(level: 5): it => block(above: 32mm, below: 4mm)[
+  show heading.where(level: 5): it => block(above: 8mm, below: 4mm)[
+    #stack(dir: ttb,
+      {
+        box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
+        h(6pt)
+        text(font: _t.font-mono, size: 8pt, weight: 500,
+             tracking: 0.18em, fill: _t.neutral-900, upper(it.body))
+      },
+      3mm,
+      line(length: 100%, stroke: 0.5pt + _t.neutral-300),
+    )
+  ]
+  show heading.where(level: 6): it => block(above: 8mm, below: 4mm)[
     #stack(dir: ttb,
       {
         box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
@@ -364,12 +376,6 @@ $chanwe-charts.typ()$
       3mm,
       line(length: 100%, stroke: 0.5pt + _t.neutral-300),
     )
-  ]
-  show heading.where(level: 6): it => block(above: 32mm, below: 5mm)[
-    #box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
-    #h(6pt)
-    #text(font: _t.font-mono, size: 8pt, weight: 500,
-          tracking: 0.18em, fill: _t.fg-subtle, upper(it.body))
   ]
 
   // ---- lists -------------------------------------------------
@@ -454,7 +460,7 @@ $chanwe-charts.typ()$
   // ---- body pages -------------------------------------------
   set page(
     paper: "a4",
-    margin: (top: 12mm, bottom: 12mm, x: 18mm),
+    margin: (top: 18mm, bottom: 18mm, x: 18mm),
     header: chanwe-header(section, topic),
     footer: chanwe-footer(doc-id, edition),
   )

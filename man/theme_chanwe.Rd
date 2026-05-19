@@ -12,7 +12,8 @@ theme_chanwe(
   bg_color = "metallic",
   plot_padding = 10,
   plot_borders = "none",
-  has_subtitle = TRUE
+  has_subtitle = TRUE,
+  compact_title = TRUE
 )
 }
 \arguments{
@@ -26,14 +27,27 @@ theme_chanwe(
 \code{theme(legend.position = )}. Default \code{"bottom"}.}
 
 \item{bg_color}{Background color for the plot surface. Accepts a hex string
-or one of \code{"metallic"} (default), \code{"white-ivory"}, \code{"white"}, \code{"gray"}, \code{"beige"}.}
+or one of \code{"metallic"} (default), \code{"white-ivory"}, \code{"white"}, \code{"gray"},
+\code{"beige"}, or \code{"transparent"}.}
 
 \item{plot_padding}{Uniform outer margin in pts applied to all four sides of
-the plot (title, caption, and panel included). Default \code{2}.
+the plot (title, caption, and panel included). Default \code{10}.
 Pass a single number, e.g. \code{plot_padding = 18}.}
 
-\item{has_subtitle}{Set to \code{FALSE} when the plot has no subtitle. Increases
-the title's bottom margin so the chart doesn't crowd the title.}
+\item{plot_borders}{Controls decorative border lines on the plot frame.
+\code{"none"} (default) draws no borders. \code{"top"} adds a thin ink line above
+the title. \code{"bottom"} adds one below the caption. \code{"top_bottom"} adds
+both. \code{"complete"} adds all four sides. Pass \code{TRUE} as shorthand for
+\code{"top_bottom"}.}
+
+\item{has_subtitle}{Set to \code{FALSE} when the plot has no subtitle. Reduces
+the title's bottom margin and draws a separator line below the title text
+(matching the line that the subtitle grob normally draws).}
+
+\item{compact_title}{When \code{TRUE} (default) reduces the header block in three
+ways: top padding above the eyebrow 8 → 4 pt, gap between subtitle text
+and separator line 14 → 6 pt, and bottom padding below the separator line
+20 → 12 pt. Set to \code{FALSE} for the spacious layout.}
 }
 \value{
 A ggplot2 theme object. Add to any ggplot with \code{+ theme_chanwe()}.

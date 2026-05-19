@@ -450,7 +450,7 @@
 // ZONE HIGHLIGHT — full-bleed background color zone
 // =============================================================
 // color: "metallic" | "white" | "white-ivory" | "beige" | "gray" | "dark" | "orange"
-#let zone-highlight(color: "metallic", margin: 2mm, above: 2mm, below: 2mm, body) = {
+#let zone-highlight(color: "metallic", margin: 2mm, above: 8mm, below: 8mm, col-gutter: 14mm, ..bodies) = {
   let bg = if color == "metallic"        { rgb("#F7F7F7") }
     else if color == "beige"             { _t.beige       }
     else if color == "white-ivory"       { rgb("#FAFAFA") }
@@ -470,7 +470,17 @@
       spacing: 0pt,
     )[
       #if on-dark { set text(fill: white) }
-      #body
+      #let parts = bodies.pos()
+      #if parts.len() > 1 {
+        grid(
+          columns: range(parts.len()).map(_ => 1fr),
+          column-gutter: col-gutter,
+          align: left + top,
+          ..parts,
+        )
+      } else if parts.len() == 1 {
+        parts.first()
+      }
     ]
   )
   if below != none { v(below) }

@@ -56,6 +56,8 @@ new_element_chanwe_title <- function(
   eyebrow_size = 6,
   eyebrow_colour = "#FB3D0E",
   ink_colour = "#1A1A1A",
+  draw_bottom_line = FALSE,
+  top_pad = 8,
   inherit.blank = FALSE
 ) {
   structure(
@@ -74,7 +76,9 @@ new_element_chanwe_title <- function(
       eyebrow_family = eyebrow_family,
       eyebrow_size = eyebrow_size,
       eyebrow_colour = eyebrow_colour,
-      ink_colour = ink_colour
+      ink_colour = ink_colour,
+      draw_bottom_line = draw_bottom_line,
+      top_pad = top_pad
     ),
     class = c("element_chanwe_title", "element_text", "element")
   )
@@ -90,6 +94,8 @@ new_element_chanwe_subtitle <- function(
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
   kpi_label_colour = "#AEABA6",
+  gap_ln = 6,
+  sub_bot = 20,
   inherit.blank = FALSE
 ) {
   structure(
@@ -108,7 +114,9 @@ new_element_chanwe_subtitle <- function(
       ink_colour = ink_colour,
       mono_family = mono_family,
       mono_thin_family = mono_thin_family,
-      kpi_label_colour = kpi_label_colour
+      kpi_label_colour = kpi_label_colour,
+      gap_ln = gap_ln,
+      sub_bot = sub_bot
     ),
     class = c("element_chanwe_subtitle", "element_text", "element")
   )
@@ -158,7 +166,9 @@ new_element_chanwe_caption <- function(
   title_gp,
   eyebrow_gp,
   ink_col,
-  margin_bottom = 2
+  margin_bottom = 2,
+  draw_bottom_line = FALSE,
+  top_pad = 8
 ) {
   grid::gTree(
     title_text = title_text,
@@ -168,6 +178,8 @@ new_element_chanwe_caption <- function(
     eyebrow_gp = eyebrow_gp,
     ink_col = ink_col,
     margin_bottom = margin_bottom,
+    draw_bottom_line = draw_bottom_line,
+    top_pad = top_pad,
     cl = "cw_title_tree"
   )
 }
@@ -176,7 +188,7 @@ new_element_chanwe_caption <- function(
   t_h <- .cw_str_h(x$title_text, x$title_gp)
   has_ey <- !is.null(x$eyebrow_text) && nzchar(x$eyebrow_text)
   ey_h <- if (has_ey) .cw_str_h(x$eyebrow_text, x$eyebrow_gp) else 0
-  top <- if (has_ey) 8 else 0 # top padding above eyebrow
+  top <- if (has_ey) (x$top_pad %||_% 8) else 0 # top padding above eyebrow
   bot <- (x$margin_bottom %||_% 2) # bottom padding — carries extra space when no subtitle
   gap1 <- if (has_ey) 6 else 0 # gap: title → eyebrow
   gap2 <- if (x$draw_top && has_ey) {
@@ -187,6 +199,7 @@ new_element_chanwe_caption <- function(
     0
   } # gap: eyebrow/title → line
   ln_h <- if (x$draw_top) 0.3 else 0
+  bln_h <- if (isTRUE(x$draw_bottom_line)) 0.4 else 0
   total <- top + bot + t_h + gap1 + ey_h + gap2 + ln_h
   list(
     t_h = t_h,
@@ -197,6 +210,7 @@ new_element_chanwe_caption <- function(
     gap1 = gap1,
     gap2 = gap2,
     ln_h = ln_h,
+    bln_h = bln_h,
     total = total
   )
 }
@@ -209,6 +223,7 @@ makeContent.cw_title_tree <- function(x) {
   title_y <- d$bot + d$t_h / 2
   ey_y <- d$bot + d$t_h + d$gap1 + d$ey_h / 2
   line_y <- d$total - d$top - d$ln_h / 2
+  bln_y <- 4 + d$bln_h / 2 # 4pt gap from bottom edge
 
   ch <- grid::gList(
     grid::textGrob(
@@ -241,6 +256,16 @@ makeContent.cw_title_tree <- function(x) {
       )
     )
   }
+  if (isTRUE(x$draw_bottom_line)) {
+    ch <- grid::gList(
+      ch,
+      grid::linesGrob(
+        x = grid::unit(c(0, 1), "npc"),
+        y = grid::unit(c(bln_y, bln_y), "pt"),
+        gp = grid::gpar(col = x$ink_col, lwd = 0.4, lend = "square")
+      )
+    )
+  }
   grid::setChildren(x, ch)
 }
 
@@ -263,7 +288,9 @@ heightDetails.cw_title_tree <- function(x) {
   kpi_data = NULL,
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
-  kpi_label_colour = "#AEABA6"
+  kpi_label_colour = "#AEABA6",
+  gap_ln = 6,
+  sub_bot = 20
 ) {
   grid::gTree(
     sub_text = sub_text,
@@ -277,6 +304,8 @@ heightDetails.cw_title_tree <- function(x) {
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
     kpi_label_colour = kpi_label_colour,
+    gap_ln = gap_ln,
+    sub_bot = sub_bot,
     cl = "cw_subtitle_tree"
   )
 }
@@ -288,7 +317,7 @@ heightDetails.cw_title_tree <- function(x) {
   has_n <- !is.null(x$note_text) && nzchar(x$note_text) && !has_kpi
   n_h <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
   top <- 5
-  gap_ln <- if (x$draw_middle) 14 else 0
+  gap_ln <- if (x$draw_middle) (x$gap_ln %||_% 6) else 0
   ln_h <- if (x$draw_middle) 0.3 else 0
   gap_n <- if (has_n) 3 else 0
   # KPI panel section (sits in what would otherwise be the bottom padding)
@@ -300,7 +329,7 @@ heightDetails.cw_title_tree <- function(x) {
   bot <- if (has_kpi) {
     kpi_top_pad + kpi_panel_h + kpi_bot_pad + kpi_bot_ln_h + kpi_bot_sep
   } else {
-    20
+    x$sub_bot %||_% 20
   }
   total <- top + s_h + gap_ln + ln_h + gap_n + n_h + bot
   list(
@@ -631,7 +660,9 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
 
   margin_bottom <- as.numeric(element$margin[3L] %||_% 2)
   .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink,
-                 margin_bottom = margin_bottom)
+                 margin_bottom = margin_bottom,
+                 draw_bottom_line = isTRUE(element$draw_bottom_line),
+                 top_pad = element$top_pad %||_% 8)
 }
 
 #' @method element_grob element_chanwe_subtitle
@@ -681,7 +712,9 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     kpi_data = kpi_data,
     mono_family = mono_fam,
     mono_thin_family = mono_thin_fam,
-    kpi_label_colour = kpi_label_colour
+    kpi_label_colour = kpi_label_colour,
+    gap_ln = element$gap_ln %||_% 6,
+    sub_bot = element$sub_bot %||_% 20
   )
 }
 

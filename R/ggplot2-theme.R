@@ -44,12 +44,23 @@ chanwe_discrete_pal <- function() {
 #' @param legend_position Legend position string passed to
 #'   `theme(legend.position = )`. Default `"bottom"`.
 #' @param bg_color Background color for the plot surface. Accepts a hex string
-#'   or one of `"metallic"` (default), `"white-ivory"`, `"white"`, `"gray"`, `"beige"`.
-#' @param has_subtitle Set to `FALSE` when the plot has no subtitle. Increases
-#'   the title's bottom margin so the chart doesn't crowd the title.
+#'   or one of `"metallic"` (default), `"white-ivory"`, `"white"`, `"gray"`,
+#'   `"beige"`, or `"transparent"`.
 #' @param plot_padding Uniform outer margin in pts applied to all four sides of
-#'   the plot (title, caption, and panel included). Default `2`.
+#'   the plot (title, caption, and panel included). Default `10`.
 #'   Pass a single number, e.g. `plot_padding = 18`.
+#' @param plot_borders Controls decorative border lines on the plot frame.
+#'   `"none"` (default) draws no borders. `"top"` adds a thin ink line above
+#'   the title. `"bottom"` adds one below the caption. `"top_bottom"` adds
+#'   both. `"complete"` adds all four sides. Pass `TRUE` as shorthand for
+#'   `"top_bottom"`.
+#' @param has_subtitle Set to `FALSE` when the plot has no subtitle. Reduces
+#'   the title's bottom margin and draws a separator line below the title text
+#'   (matching the line that the subtitle grob normally draws).
+#' @param compact_title When `TRUE` (default) reduces the header block in three
+#'   ways: top padding above the eyebrow 8 → 4 pt, gap between subtitle text
+#'   and separator line 14 → 6 pt, and bottom padding below the separator line
+#'   20 → 12 pt. Set to `FALSE` for the spacious layout.
 #'
 #' @return A ggplot2 theme object. Add to any ggplot with `+ theme_chanwe()`.
 #' @export
@@ -110,7 +121,8 @@ theme_chanwe <- function(
   bg_color = "metallic",
   plot_padding = 10,
   plot_borders = "none",
-  has_subtitle = TRUE
+  has_subtitle = TRUE,
+  compact_title = TRUE
 ) {
   chanwe_load_fonts()
   options(chanwer.plot_borders = plot_borders)
@@ -178,10 +190,12 @@ theme_chanwe <- function(
     eyebrow_family = mono_family,
     eyebrow_size = base_text_size * 0.70,
     eyebrow_colour = colors[["typst-primary"]],
-    ink_colour = colors[["typst-ink"]]
+    ink_colour = colors[["typst-ink"]],
+    top_pad = if (compact_title) 4 else 8
   )
   if (!has_subtitle) {
-    title_element$margin <- ggplot2::margin(0, 0, 28, 0)
+    title_element$margin <- ggplot2::margin(0, 0, 12, 0)
+    title_element$draw_bottom_line <- TRUE
   }
   kpi_label_colour <- switch(
     bg_color,
@@ -197,7 +211,9 @@ theme_chanwe <- function(
     ink_colour = colors[["typst-ink"]],
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
-    kpi_label_colour = kpi_label_colour
+    kpi_label_colour = kpi_label_colour,
+    gap_ln = if (compact_title) 6 else 14,
+    sub_bot = if (compact_title) 12 else 20
   )
 
   theme_obj <- ggplot2::`%+replace%`(

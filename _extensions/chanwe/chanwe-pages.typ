@@ -175,7 +175,7 @@
             move(dx: -18mm,
               block(
                 width: 210mm,
-                fill: _t.neutral-100,
+                fill: rgb("#EDF0F1"),
                 inset: (x: 18mm, top: 10mm, bottom: 8mm),
               )[
                 #grid(
@@ -454,7 +454,8 @@
 // =============================================================
 // DOUBLE EXECUTIVE SUMMARY — two summary halves filling one page
 // =============================================================
-// Each half = 129.5mm (= (297 - 22 top - 16 bottom) / 2).
+// Each half = 140.5mm (= (297 - 8 top - 8 bottom) / 2).
+// margin.top=8mm = header height, margin.bottom=8mm ≈ footer height → rules flush with content.
 // Internal helper returns a block (no move wrapper — caller stacks both).
 #let _chanwe-exec-half(
   eyebrow:          "Executive Summary",
@@ -510,9 +511,9 @@
   let meta-right = if status-meta-label != "" {
     stack(
       dir: ttb, spacing: 3pt,
-      align(right, text(font: _t.font-mono, size: 6pt, tracking: 0.18em, fill: lc,
+      align(right, text(font: _t.font-mono, size: 4pt, tracking: 0.18em, fill: lc,
                         upper(status-meta-label))),
-      align(right, text(font: _t.font-display, size: 9pt, weight: 700, fill: vc,
+      align(right, text(font: _t.font-display, size: 7.65pt, weight: 700, fill: vc,
                         status-meta-value)),
     )
   } else { [] }
@@ -599,14 +600,14 @@
 
   block(
     width: 210mm,
-    height: 133.5mm,
+    height: 140.5mm,
     fill: bg,
     stroke: div-stroke,
     inset: (x: 18mm, top: 10mm, bottom: 10mm),
     clip: true,
   )[
     #chanwe-section-eyebrow(eyebrow)
-    #v(3mm)
+    #v(6mm)
     #if title != none {
       block(below: 0pt)[
         #set par(leading: 0.75em, justify: false)
@@ -687,10 +688,12 @@
 
   pagebreak(weak: true)
 
-  // Narrow top margin to the header rule position (14mm) so blocks fill rule-to-rule.
-  set page(margin: (top: 14mm, bottom: 16mm, x: 18mm), header-ascent: 0pt, footer-descent: 0pt)
+  // margin.top=8mm = header height, margin.bottom=8mm ≈ footer height → rules flush with content edges.
+  set page(margin: (top: 8mm, bottom: 8mm, x: 18mm), header-ascent: 0pt, footer-descent: 0pt)
 
-  move(dx: -18mm,
+  // block(above/below: 0pt) prevents global body-spacing from leaking around the stack
+  // without cascading into the exec-half content (unlike set block which would kill internal spacing).
+  block(above: 0pt, below: 0pt, move(dx: -18mm,
     stack(
       dir: ttb,
       spacing: 0pt,
@@ -717,7 +720,7 @@
         divider: false,
       ),
     )
-  )
+  ))
 
   pagebreak(weak: true)
 }
@@ -745,13 +748,13 @@
   _chanwe-cur-part.update(_ => (number: number, title: title, eyebrow: eyebrow))
 
   set page(
-    paper: "a4", margin: 0pt, fill: _t.neutral-100,
+    paper: "a4", margin: 0pt, fill: rgb("#EDF0F1"),
     header: none, footer: none,
     background: place(top + left, dx: -50mm, dy: -50mm,
       circle(radius: 110mm,
         fill: gradient.radial(
           _t.primary.transparentize(93%),
-          _t.neutral-100.transparentize(100%),
+          rgb("#EDF0F1").transparentize(100%),
         ),
         stroke: none,
       )

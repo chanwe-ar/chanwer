@@ -215,7 +215,7 @@
 
 // ---------- Design tokens ------------------------------------
 #let chanwe-tokens = (
-  paper:       white,
+  paper:       rgb("#F7F7F7"),
   ink:         rgb("#0F0F0F"),
   fg:          rgb("#211F1C"),
   fg-muted:    rgb("#71706C"),
@@ -1139,7 +1139,7 @@
 // ZONE HIGHLIGHT — full-bleed background color zone
 // =============================================================
 // color: "metallic" | "white" | "white-ivory" | "beige" | "gray" | "dark" | "orange"
-#let zone-highlight(color: "metallic", margin: 2mm, above: 2mm, below: 2mm, body) = {
+#let zone-highlight(color: "metallic", margin: 2mm, above: 8mm, below: 8mm, col-gutter: 14mm, ..bodies) = {
   let bg = if color == "metallic"        { rgb("#F7F7F7") }
     else if color == "beige"             { _t.beige       }
     else if color == "white-ivory"       { rgb("#FAFAFA") }
@@ -1159,7 +1159,17 @@
       spacing: 0pt,
     )[
       #if on-dark { set text(fill: white) }
-      #body
+      #let parts = bodies.pos()
+      #if parts.len() > 1 {
+        grid(
+          columns: range(parts.len()).map(_ => 1fr),
+          column-gutter: col-gutter,
+          align: left + top,
+          ..parts,
+        )
+      } else if parts.len() == 1 {
+        parts.first()
+      }
     ]
   )
   if below != none { v(below) }
@@ -1350,7 +1360,7 @@
             move(dx: -18mm,
               block(
                 width: 210mm,
-                fill: _t.neutral-100,
+                fill: rgb("#EDF0F1"),
                 inset: (x: 18mm, top: 10mm, bottom: 8mm),
               )[
                 #grid(
@@ -1629,7 +1639,8 @@
 // =============================================================
 // DOUBLE EXECUTIVE SUMMARY — two summary halves filling one page
 // =============================================================
-// Each half = 129.5mm (= (297 - 22 top - 16 bottom) / 2).
+// Each half = 140.5mm (= (297 - 8 top - 8 bottom) / 2).
+// margin.top=8mm = header height, margin.bottom=8mm ≈ footer height → rules flush with content.
 // Internal helper returns a block (no move wrapper — caller stacks both).
 #let _chanwe-exec-half(
   eyebrow:          "Executive Summary",
@@ -1685,9 +1696,9 @@
   let meta-right = if status-meta-label != "" {
     stack(
       dir: ttb, spacing: 3pt,
-      align(right, text(font: _t.font-mono, size: 6pt, tracking: 0.18em, fill: lc,
+      align(right, text(font: _t.font-mono, size: 4pt, tracking: 0.18em, fill: lc,
                         upper(status-meta-label))),
-      align(right, text(font: _t.font-display, size: 9pt, weight: 700, fill: vc,
+      align(right, text(font: _t.font-display, size: 7.65pt, weight: 700, fill: vc,
                         status-meta-value)),
     )
   } else { [] }
@@ -1774,14 +1785,14 @@
 
   block(
     width: 210mm,
-    height: 133.5mm,
+    height: 140.5mm,
     fill: bg,
     stroke: div-stroke,
     inset: (x: 18mm, top: 10mm, bottom: 10mm),
     clip: true,
   )[
     #chanwe-section-eyebrow(eyebrow)
-    #v(3mm)
+    #v(6mm)
     #if title != none {
       block(below: 0pt)[
         #set par(leading: 0.75em, justify: false)
@@ -1862,10 +1873,12 @@
 
   pagebreak(weak: true)
 
-  // Narrow top margin to the header rule position (14mm) so blocks fill rule-to-rule.
-  set page(margin: (top: 14mm, bottom: 16mm, x: 18mm), header-ascent: 0pt, footer-descent: 0pt)
+  // margin.top=8mm = header height, margin.bottom=8mm ≈ footer height → rules flush with content edges.
+  set page(margin: (top: 8mm, bottom: 8mm, x: 18mm), header-ascent: 0pt, footer-descent: 0pt)
 
-  move(dx: -18mm,
+  // block(above/below: 0pt) prevents global body-spacing from leaking around the stack
+  // without cascading into the exec-half content (unlike set block which would kill internal spacing).
+  block(above: 0pt, below: 0pt, move(dx: -18mm,
     stack(
       dir: ttb,
       spacing: 0pt,
@@ -1892,7 +1905,7 @@
         divider: false,
       ),
     )
-  )
+  ))
 
   pagebreak(weak: true)
 }
@@ -1920,13 +1933,13 @@
   _chanwe-cur-part.update(_ => (number: number, title: title, eyebrow: eyebrow))
 
   set page(
-    paper: "a4", margin: 0pt, fill: _t.neutral-100,
+    paper: "a4", margin: 0pt, fill: rgb("#EDF0F1"),
     header: none, footer: none,
     background: place(top + left, dx: -50mm, dy: -50mm,
       circle(radius: 110mm,
         fill: gradient.radial(
           _t.primary.transparentize(93%),
-          _t.neutral-100.transparentize(100%),
+          rgb("#EDF0F1").transparentize(100%),
         ),
         stroke: none,
       )
@@ -2289,7 +2302,7 @@
   set heading(numbering: "1.1.1.")
 
   // ---- inline rules (apply to entire document) ---------------
-  show emph: it => text(fill: _t.primary, it.body)
+  show emph: it => text(style: "italic", it.body)
   show strong: it => text(weight: 700, fill: _t.ink, it.body)
   show math.equation.where(block: true): it => block(
     width: 100%,
@@ -2374,7 +2387,7 @@
     #v(0mm)
     #line(length: 100%, stroke: 0.5pt + _t.neutral-300)
   ]
-  show heading.where(level: 3): it => block(above: 32mm, below: 5.5mm)[
+  show heading.where(level: 3): it => block(above: 10mm, below: 5.5mm)[
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4mm,
@@ -2386,7 +2399,7 @@
            tracking: -0.01em, fill: _t.neutral-900, it.body),
     )
   ]
-  show heading.where(level: 4): it => block(above: 32mm, below: 4mm)[
+  show heading.where(level: 4): it => block(above: 8mm, below: 4mm)[
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4mm,
@@ -2398,7 +2411,19 @@
            tracking: -0.01em, fill: _t.neutral-900, it.body),
     )
   ]
-  show heading.where(level: 5): it => block(above: 32mm, below: 4mm)[
+  show heading.where(level: 5): it => block(above: 8mm, below: 4mm)[
+    #stack(dir: ttb,
+      {
+        box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
+        h(6pt)
+        text(font: _t.font-mono, size: 8pt, weight: 500,
+             tracking: 0.18em, fill: _t.neutral-900, upper(it.body))
+      },
+      3mm,
+      line(length: 100%, stroke: 0.5pt + _t.neutral-300),
+    )
+  ]
+  show heading.where(level: 6): it => block(above: 8mm, below: 4mm)[
     #stack(dir: ttb,
       {
         box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
@@ -2409,12 +2434,6 @@
       3mm,
       line(length: 100%, stroke: 0.5pt + _t.neutral-300),
     )
-  ]
-  show heading.where(level: 6): it => block(above: 32mm, below: 5mm)[
-    #box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
-    #h(6pt)
-    #text(font: _t.font-mono, size: 8pt, weight: 500,
-          tracking: 0.18em, fill: _t.fg-subtle, upper(it.body))
   ]
 
   // ---- lists -------------------------------------------------
@@ -2499,7 +2518,7 @@
   // ---- body pages -------------------------------------------
   set page(
     paper: "a4",
-    margin: (top: 12mm, bottom: 12mm, x: 18mm),
+    margin: (top: 18mm, bottom: 18mm, x: 18mm),
     header: chanwe-header(section, topic),
     footer: chanwe-footer(doc-id, edition),
   )
@@ -2588,7 +2607,7 @@
   title: [Chanwe Showcase: ggplot2 + gt],
   subtitle: [Tables and plots aligned with chanwe-typst design tokens],
   author: "Alejandro Abraham",
-  date: "2026-05-17",
+  date: "2026-05-19",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",
@@ -3072,32 +3091,42 @@ establece el piso de referencia para el analisis diferencial.
 ]
 ]
 ]
+= Compact title
+<compact-title>
+===== Plot · compact\_title TRUE (default)
+<plot-compact_title-true-default>
+#box(image("gt_files/figure-typst/unnamed-chunk-12-1.svg", width: 100.0%))
+
+===== Plot · compact\_title FALSE
+<plot-compact_title-false>
+#box(image("gt_files/figure-typst/unnamed-chunk-13-1.svg", width: 100.0%))
+
 = No subtitle
 <no-subtitle>
 ===== Plot · title only
 <plot-title-only>
-#box(image("gt_files/figure-typst/unnamed-chunk-12-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-14-1.svg", width: 100.0%))
 
 ===== Plot · title only · zone-highlight
 <plot-title-only-zone-highlight>
 #zone-highlight(color: "metallic", above: -2mm)[
 #block[
 #block[
-#box(image("gt_files/figure-typst/unnamed-chunk-13-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-15-1.svg", width: 100.0%))
 
 ]
 ]
 ]
 ===== Plot · no title · no subtitle
 <plot-no-title-no-subtitle>
-#box(image("gt_files/figure-typst/unnamed-chunk-14-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-16-1.svg", width: 100.0%))
 
 ===== Plot · no title · no subtitle · zone-highlight
 <plot-no-title-no-subtitle-zone-highlight>
 #zone-highlight(color: "metallic", above: -2mm)[
 #block[
 #block[
-#box(image("gt_files/figure-typst/unnamed-chunk-15-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-17-1.svg", width: 100.0%))
 
 ]
 ]

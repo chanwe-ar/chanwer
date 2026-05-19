@@ -339,11 +339,11 @@ local function Div(el)
   -- :::: {.zone-highlight color="beige"}  ...  ::::
   -- -------------------------------------------------------
   if el.classes:includes("zone-highlight") then
-    local color  = attr(el, "color",  "white")
-    local margin = attr(el, "margin", "")
-    local above  = attr(el, "above",  "")
-    local below  = attr(el, "below",  "")
-    local inner  = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+    local color     = attr(el, "color",      "white")
+    local margin    = attr(el, "margin",     "")
+    local above     = attr(el, "above",      "")
+    local below     = attr(el, "below",      "")
+    local col_gutter = attr(el, "col-gutter", "")
     local call = string.format('#zone-highlight(color: "%s"', escape_typst_str(color))
     if margin ~= "" then
       call = call .. string.format(", margin: %smm", escape_typst_str(margin))
@@ -354,7 +354,25 @@ local function Div(el)
     if below ~= "" then
       call = call .. string.format(", below: %smm", escape_typst_str(below))
     end
-    call = call .. ")[\n" .. inner .. "\n]"
+    if col_gutter ~= "" then
+      call = call .. string.format(", col-gutter: %smm", escape_typst_str(col_gutter))
+    end
+    -- Detect ::: {.col} sub-divs → each becomes a separate content block [...]
+    local col_divs = {}
+    for _, block in ipairs(el.content) do
+      if block.t == "Div" and block.classes:includes("col") then
+        col_divs[#col_divs + 1] = pandoc.write(pandoc.Pandoc(pandoc.Blocks(block.content)), "typst")
+      end
+    end
+    if #col_divs > 1 then
+      call = call .. ")"
+      for _, col_inner in ipairs(col_divs) do
+        call = call .. "[\n" .. col_inner .. "\n]"
+      end
+    else
+      local inner = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+      call = call .. ")[\n" .. inner .. "\n]"
+    end
     return pandoc.RawBlock("typst", call)
   end
 
