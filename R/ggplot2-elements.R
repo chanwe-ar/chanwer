@@ -234,8 +234,8 @@ new_element_chanwe_caption <- function(
 
 .cw_title_heights <- function(x) {
   t_h <- .cw_str_h(x$title_text, x$title_gp)
-  has_ey <- !is.null(x$eyebrow_text) && nzchar(x$eyebrow_text)
-  ey_h <- if (has_ey) .cw_str_h(x$eyebrow_text, x$eyebrow_gp) else 0
+  has_ey <- !is.null(x$eyebrow_text) # TRUE even when eyebrow text is "" (draws "──── " line)
+  ey_h <- if (has_ey) .cw_str_h(paste0("──── ", toupper(x$eyebrow_text %||_% "")), x$eyebrow_gp) else 0
   top <- if (has_ey) (x$top_pad %||_% 8) else 0 # top padding above eyebrow
   bot <- (x$margin_bottom %||_% 2) # bottom padding — carries extra space when no subtitle
   gap1 <- if (has_ey) 6 else 0 # gap: title → eyebrow
@@ -615,7 +615,7 @@ heightDetails.cw_subtitle_tree <- function(x) {
 
 .cw_caption_heights <- function(x) {
   c_h <- .cw_str_h(x$cap_text, x$cap_gp)
-  top <- 5 # top padding: space between chart bottom and the separator line
+  top <- 8 # top padding: space between chart bottom and the separator line
   bot <- 4 # bottom padding
   tln_h <- 0.4 # top separator line (always drawn)
   gap1 <- 4 # gap between caption text and the separator line above

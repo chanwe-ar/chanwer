@@ -19,9 +19,9 @@ plot_gg <- ggplot(cars_tbl, aes(wt, mpg, color = factor(cyl))) +
   geom_point(size = 3, alpha = 0.9) +
   scale_color_chanwe_d() +
   labs(
-    title = chanwe_title("GGPlot Example"),
-    subtitle = chanwe_subtitle("ChanWe style", rule = "----"),
-    caption = "Source: mtcars"
+    title = chanwe_title("GGPlot Example", eyebrow = ''),
+    subtitle = chanwe_subtitle("ChanWe style"),
+    caption = chanwe_caption("Source: mtcars")
   ) +
   theme_chanwe()
 

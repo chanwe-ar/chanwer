@@ -3109,8 +3109,8 @@ establece el piso de referencia para el analisis diferencial.
 
 = No subtitle
 <no-subtitle>
-===== Plot · title only
-<plot-title-only>
+===== Plot · title only A
+<plot-title-only-a>
 #box(image("gt_files/figure-typst/unnamed-chunk-15-1.svg", width: 100.0%))
 
 ===== Plot · title only · zone-highlight

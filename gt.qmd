@@ -483,7 +483,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
 
 # No subtitle
 
-##### Plot · title only
+##### Plot · title only A
 
 ```{r}
 #| dev.args: !expr list(bg = "transparent")
@@ -495,7 +495,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     labs(
         title = chanwe_title(
             "title only · no subtitle",
-            eyebrow = "COMPACT HERO"
+            eyebrow = ""
         ),
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
