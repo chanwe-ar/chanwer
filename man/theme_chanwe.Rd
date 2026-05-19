@@ -87,6 +87,34 @@ families. \code{theme_chanwe()} calls it automatically.
 
 }
 }
+\section{Header layout modes}{
+
+
+The title + subtitle area is built from custom grobs rather than plain
+\code{element_text}, which allows the three-line structure (eyebrow / title /
+subtitle) and the KPI scoreboard to be positioned with pixel-level control.
+The \code{theme_chanwe()} params drive the spacing fields of those grobs:
+
+\describe{
+\item{Normal (title + subtitle)}{
+Use \code{labs(title = chanwe_title(...), subtitle = chanwe_subtitle(...))}.
+\code{compact_title} controls three paddings simultaneously (see param docs).
+}
+\item{KPI scoreboard}{
+Wrap with \code{chanwe_subtitle("text", kpi = chanwe_kpi(...))} or omit the
+text entirely with \code{chanwe_subtitle("", kpi = chanwe_kpi(...))}.
+When subtitle text is empty, the text row and its separator line are
+skipped and the KPI panel starts with just 2 pt of top padding.
+}
+\item{No subtitle (\code{has_subtitle = FALSE})}{
+Pass \code{has_subtitle = FALSE} to \code{theme_chanwe()}. The title grob draws
+its own 0.4 pt separator line 15 pt above the chart area (same visual
+weight as the subtitle separator). \code{compact_title} still controls the
+top padding above the eyebrow.
+}
+}
+}
+
 \examples{
 if (requireNamespace("ggplot2", quietly = TRUE)) {
 

@@ -62,6 +62,32 @@ chanwe_discrete_pal <- function() {
 #'   and separator line 14 → 6 pt, and bottom padding below the separator line
 #'   20 → 12 pt. Set to `FALSE` for the spacious layout.
 #'
+#' @section Header layout modes:
+#'
+#' The title + subtitle area is built from custom grobs rather than plain
+#' `element_text`, which allows the three-line structure (eyebrow / title /
+#' subtitle) and the KPI scoreboard to be positioned with pixel-level control.
+#' The `theme_chanwe()` params drive the spacing fields of those grobs:
+#'
+#' \describe{
+#'   \item{Normal (title + subtitle)}{
+#'     Use `labs(title = chanwe_title(...), subtitle = chanwe_subtitle(...))`.
+#'     `compact_title` controls three paddings simultaneously (see param docs).
+#'   }
+#'   \item{KPI scoreboard}{
+#'     Wrap with `chanwe_subtitle("text", kpi = chanwe_kpi(...))` or omit the
+#'     text entirely with `chanwe_subtitle("", kpi = chanwe_kpi(...))`.
+#'     When subtitle text is empty, the text row and its separator line are
+#'     skipped and the KPI panel starts with just 2 pt of top padding.
+#'   }
+#'   \item{No subtitle (`has_subtitle = FALSE`)}{
+#'     Pass `has_subtitle = FALSE` to `theme_chanwe()`. The title grob draws
+#'     its own 0.4 pt separator line 15 pt above the chart area (same visual
+#'     weight as the subtitle separator). `compact_title` still controls the
+#'     top padding above the eyebrow.
+#'   }
+#' }
+#'
 #' @return A ggplot2 theme object. Add to any ggplot with `+ theme_chanwe()`.
 #' @export
 #'
@@ -229,8 +255,9 @@ theme_chanwe <- function(
       plot.title = title_element,
       plot.caption = new_element_chanwe_caption(
         family = mono_family,
+        mono_thin_family = mono_thin_family,
         size = base_text_size * 0.70,
-        colour = colors[["typst-fg-subtle"]],
+        colour = "#888888",
         primary_colour = colors[["typst-primary"]],
         ink_colour = colors[["typst-ink"]]
       ),

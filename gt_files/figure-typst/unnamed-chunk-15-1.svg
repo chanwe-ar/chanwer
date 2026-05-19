@@ -115,11 +115,11 @@
 <text x='314.27' y='217.31' style='font-size: 5.20px;fill: #0F0F0F; font-family: "JetBrains Mono";' textLength='9.33px' lengthAdjust='spacingAndGlyphs'>Low</text>
 <text x='342.32' y='217.31' style='font-size: 5.20px;fill: #0F0F0F; font-family: "JetBrains Mono";' textLength='9.33px' lengthAdjust='spacingAndGlyphs'>Mid</text>
 <text x='370.36' y='217.31' style='font-size: 5.20px;fill: #0F0F0F; font-family: "JetBrains Mono";' textLength='12.44px' lengthAdjust='spacingAndGlyphs'>High</text>
-<text x='9.96' y='31.71' style='font-size: 12.35px;fill: #0F0F0F; font-family: "Archivo";' textLength='131.84px' lengthAdjust='spacingAndGlyphs'>title only · zone-highlight</text>
+<text x='9.96' y='31.71' style='font-size: 12.35px;fill: #0F0F0F; font-family: "Archivo";' textLength='110.97px' lengthAdjust='spacingAndGlyphs'>title only · no subtitle</text>
 <text x='9.96' y='17.27' style='font-size: 4.55px;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='46.48px' lengthAdjust='spacingAndGlyphs'>──── COMPACT HERO</text>
-<polyline points='9.96,39.48 386.04,39.48 ' style='stroke-width: 0.30; stroke: #0F0F0F;' />
-<text x='9.96' y='237.64' style='font-size: 3.41px;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='8.19px' lengthAdjust='spacingAndGlyphs'>//  </text>
-<text x='18.15' y='238.05' style='font-size: 4.55px;fill: #928D86; font-family: "JetBrains Mono";' textLength='68.36px' lengthAdjust='spacingAndGlyphs'>Source: Motor Trend, 1974</text>
+<polyline points='9.96,36.49 386.04,36.49 ' style='stroke-width: 0.30; stroke: #0F0F0F;' />
+<text x='9.96' y='237.64' style='font-size: 3.41px; font-weight: 100;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='8.19px' lengthAdjust='spacingAndGlyphs'>//  </text>
+<text x='21.14' y='238.05' style='font-size: 4.55px;fill: #888888; font-family: "JetBrains Mono";' textLength='68.36px' lengthAdjust='spacingAndGlyphs'>Source: Motor Trend, 1974</text>
 </g>
 </g>
 </svg>

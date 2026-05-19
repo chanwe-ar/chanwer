@@ -168,8 +168,8 @@
 <polyline points='17.93,58.14 378.07,58.14 ' style='stroke-width: 0.30; stroke: #0F0F0F;' />
 <text x='17.93' y='39.68' style='font-size: 12.35px;fill: #0F0F0F; font-family: "Archivo";' textLength='86.38px' lengthAdjust='spacingAndGlyphs'>bg_color · beige</text>
 <text x='17.93' y='25.24' style='font-size: 4.55px;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='84.77px' lengthAdjust='spacingAndGlyphs'>──── PLOT · BACKGROUND VARIANTS</text>
-<text x='17.93' y='229.67' style='font-size: 3.41px;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='8.19px' lengthAdjust='spacingAndGlyphs'>//  </text>
-<text x='26.12' y='230.08' style='font-size: 4.55px;fill: #928D86; font-family: "JetBrains Mono";' textLength='68.36px' lengthAdjust='spacingAndGlyphs'>Source: Motor Trend, 1974</text>
+<text x='17.93' y='229.67' style='font-size: 3.41px; font-weight: 100;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='8.19px' lengthAdjust='spacingAndGlyphs'>//  </text>
+<text x='29.11' y='230.08' style='font-size: 4.55px;fill: #888888; font-family: "JetBrains Mono";' textLength='68.36px' lengthAdjust='spacingAndGlyphs'>Source: Motor Trend, 1974</text>
 </g>
 </g>
 </svg>

@@ -457,6 +457,30 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     )
 ```
 
+# KPI only (no subtitle text)
+
+##### Plot · KPI scoreboard · no subtitle text
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe() +
+    labs(
+        title = chanwe_title(
+            "KPI only · no subtitle text",
+            eyebrow = "KPI · COMPACT"
+        ),
+        subtitle = chanwe_subtitle("", kpi = kpi),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```
+
 # No subtitle
 
 ##### Plot · title only

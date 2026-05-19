@@ -124,6 +124,7 @@ new_element_chanwe_subtitle <- function(
 
 new_element_chanwe_caption <- function(
   family = "JetBrains Mono",
+  mono_thin_family = "JetBrains Mono Thin",
   size = 7,
   colour = "#555555",
   hjust = 0,
@@ -135,6 +136,7 @@ new_element_chanwe_caption <- function(
   structure(
     list(
       family = family,
+      mono_thin_family = mono_thin_family,
       face = "plain",
       colour = colour,
       size = size,
@@ -153,11 +155,55 @@ new_element_chanwe_caption <- function(
 }
 
 # ─── gTree builders (called from element_grob methods) ───────────────────────
-
-# Builds a gTree whose makeContent positions everything with absolute pt coords.
-# y=0 is BOTTOM of grob, y=total_h is TOP (standard grid convention).
-# Since ggplot2 renders the title row with y=top at the visual top,
-# high y-values appear at the visual top of the allocated row.
+#
+# Coordinate system: y=0 is BOTTOM of the grob, y=total is TOP.
+# ggplot2 places each label row so its top edge aligns visually at the top,
+# so high y-values → top of the visible header area.
+#
+# Heights are computed once in .cw_*_heights() and reused by both
+# heightDetails() (so ggplot2 allocates the correct row height) and
+# makeContent() (so children are positioned correctly). Always keep them
+# in sync — never hard-code a position in makeContent that wasn't derived
+# from the heights list.
+#
+# ── Title grob layout (bottom → top) ─────────────────────────────────────────
+#
+#   bot          bottom padding; carries the gap to the chart (or subtitle).
+#                = margin[3] from element — 2pt normally, 20pt when no subtitle.
+#   [bottom line] optional 0.4pt separator (draw_bottom_line=TRUE, no-subtitle mode).
+#                 positioned at bot−5pt from bottom so 15pt of bot sits below it.
+#   t_h          title text (Archivo)
+#   gap1         space between title and eyebrow (6pt, only when has_ey)
+#   ey_h         eyebrow text (JetBrains Mono, only when has_ey)
+#   top          top padding above eyebrow: top_pad (4pt compact / 8pt spacious)
+#                or 0 when there is no eyebrow
+#   gap2         gap between eyebrow/title and the top border line (draw_top)
+#   [top line]   optional 0.1pt border (draw_top, from plot_borders option)
+#
+# ── Subtitle grob layout (bottom → top) ──────────────────────────────────────
+#
+# Three modes controlled by the presence of sub_text and kpi_data:
+#
+#   MODE A — text + optional note (no KPI):
+#     sub_bot      gap below separator line to chart  (12pt compact / 20pt spacious)
+#     [mid line]   0.4pt separator (always drawn, draw_middle=TRUE)
+#     gap_n        gap between note and separator (3pt, only when has_n)
+#     n_h          note text (italic Satoshi, only when has_n)
+#     gap_ln       gap between subtitle text and separator (6pt compact / 14pt spacious)
+#     s_h          subtitle text (Satoshi)
+#     top (5pt)
+#
+#   MODE B — text + KPI scoreboard:
+#     [KPI section occupies bot instead of sub_bot]:
+#       kpi_bot_sep (16pt) + kpi_bot_ln_h (0.3pt) + kpi_bot_pad (2pt) +
+#       kpi_panel_h (35pt) + kpi_top_pad (4pt)
+#     [mid line]
+#     gap_ln / s_h / top — same as MODE A
+#
+#   MODE C — KPI-only (sub_text is empty):
+#     Same KPI bot section as MODE B, but s_h=0, gap_ln=0, ln_h=0, top=2pt.
+#     The subtitle text row and its separator line are entirely skipped so the
+#     KPI panel starts just 2pt below the top of the allocated row.
 
 .cw_title_tree <- function(
   title_text,
@@ -311,14 +357,16 @@ heightDetails.cw_title_tree <- function(x) {
 }
 
 .cw_subtitle_heights <- function(x) {
-  s_h <- .cw_str_h(x$sub_text, x$sub_gp)
   has_kpi <- !is.null(x$kpi_data)
+  has_sub <- nzchar(trimws(x$sub_text))
+  # when KPI-only (no subtitle text), skip text row and separator line
+  s_h <- if (has_sub) .cw_str_h(x$sub_text, x$sub_gp) else 0
   # note is suppressed when KPI panel is present — the two don't stack
   has_n <- !is.null(x$note_text) && nzchar(x$note_text) && !has_kpi
   n_h <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
-  top <- 5
-  gap_ln <- if (x$draw_middle) (x$gap_ln %||_% 6) else 0
-  ln_h <- if (x$draw_middle) 0.3 else 0
+  top <- if (!has_sub && has_kpi) 2 else 5
+  gap_ln <- if (x$draw_middle && has_sub) (x$gap_ln %||_% 6) else 0
+  ln_h <- if (x$draw_middle && has_sub) 0.3 else 0
   gap_n <- if (has_n) 3 else 0
   # KPI panel section (sits in what would otherwise be the bottom padding)
   kpi_panel_h <- if (has_kpi) 35 else 0
@@ -347,6 +395,7 @@ heightDetails.cw_title_tree <- function(x) {
     kpi_bot_pad = kpi_bot_pad,
     kpi_bot_ln_h = kpi_bot_ln_h,
     kpi_bot_sep = kpi_bot_sep,
+    has_sub = has_sub,
     total = total
   )
 }
@@ -361,15 +410,19 @@ makeContent.cw_subtitle_tree <- function(x) {
   line_y <- d$bot + d$n_h + d$gap_n + d$ln_h / 2
   sub_y <- d$bot + d$n_h + d$gap_n + d$ln_h + d$gap_ln + d$s_h / 2
 
-  ch <- grid::gList(
-    grid::textGrob(
-      x$sub_text,
-      x = grid::unit(0, "npc"),
-      y = grid::unit(sub_y, "pt"),
-      just = c("left", "center"),
-      gp = x$sub_gp
+  ch <- if (d$has_sub) {
+    grid::gList(
+      grid::textGrob(
+        x$sub_text,
+        x = grid::unit(0, "npc"),
+        y = grid::unit(sub_y, "pt"),
+        just = c("left", "center"),
+        gp = x$sub_gp
+      )
     )
-  )
+  } else {
+    grid::gList()
+  }
   if (x$draw_middle) {
     ch <- grid::gList(
       ch,
@@ -600,7 +653,7 @@ makeContent.cw_caption_tree <- function(x) {
   )
   cap_g <- grid::textGrob(
     x$cap_text,
-    x = grid::unit(1, "grobwidth", pfx_g),
+    x = grid::unit(1, "grobwidth", pfx_g) + grid::unit(3, "pt"),
     y = grid::unit(cap_y, "pt"),
     just = c("left", "center"),
     gp = x$cap_gp
@@ -737,7 +790,7 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
     col = element$colour %||_% "#808080"
   )
   pfx_gp <- grid::gpar(
-    fontfamily = element$family %||_% "JetBrains Mono",
+    fontfamily = element$mono_thin_family %||_% "JetBrains Mono Thin",
     fontsize = cap_size * 0.75,
     col = primary
   )

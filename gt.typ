@@ -3101,32 +3101,38 @@ establece el piso de referencia para el analisis diferencial.
 <plot-compact_title-false>
 #box(image("gt_files/figure-typst/unnamed-chunk-13-1.svg", width: 100.0%))
 
+= KPI only (no subtitle text)
+<kpi-only-no-subtitle-text>
+===== Plot · KPI scoreboard · no subtitle text
+<plot-kpi-scoreboard-no-subtitle-text>
+#box(image("gt_files/figure-typst/unnamed-chunk-14-1.svg", width: 100.0%))
+
 = No subtitle
 <no-subtitle>
 ===== Plot · title only
 <plot-title-only>
-#box(image("gt_files/figure-typst/unnamed-chunk-14-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-15-1.svg", width: 100.0%))
 
 ===== Plot · title only · zone-highlight
 <plot-title-only-zone-highlight>
 #zone-highlight(color: "metallic", above: -2mm)[
 #block[
 #block[
-#box(image("gt_files/figure-typst/unnamed-chunk-15-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-16-1.svg", width: 100.0%))
 
 ]
 ]
 ]
 ===== Plot · no title · no subtitle
 <plot-no-title-no-subtitle>
-#box(image("gt_files/figure-typst/unnamed-chunk-16-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-17-1.svg", width: 100.0%))
 
 ===== Plot · no title · no subtitle · zone-highlight
 <plot-no-title-no-subtitle-zone-highlight>
 #zone-highlight(color: "metallic", above: -2mm)[
 #block[
 #block[
-#box(image("gt_files/figure-typst/unnamed-chunk-17-1.svg", width: 100.0%))
+#box(image("gt_files/figure-typst/unnamed-chunk-18-1.svg", width: 100.0%))
 
 ]
 ]
