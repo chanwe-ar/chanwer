@@ -615,10 +615,10 @@ heightDetails.cw_subtitle_tree <- function(x) {
 
 .cw_caption_heights <- function(x) {
   c_h <- .cw_str_h(x$cap_text, x$cap_gp)
-  top <- 5 # top padding (matches margin t=5)
+  top <- 5 # top padding: space between chart bottom and the separator line
   bot <- 4 # bottom padding
-  tln_h <- 0
-  gap1 <- 0
+  tln_h <- 0.4 # top separator line (always drawn)
+  gap1 <- 4 # gap between caption text and the separator line above
   gap2 <- if (x$draw_bottom) 4 else 0
   bln_h <- if (x$draw_bottom) 0.3 else 0
   total <- bot + bln_h + gap2 + c_h + gap1 + tln_h + top
@@ -661,7 +661,15 @@ makeContent.cw_caption_tree <- function(x) {
     gp = x$cap_gp
   )
 
-  ch <- grid::gList(pfx_g, cap_g)
+  ch <- grid::gList(
+    pfx_g,
+    cap_g,
+    grid::linesGrob(
+      x = grid::unit(c(0, 1), "npc"),
+      y = grid::unit(c(tln_y, tln_y), "pt"),
+      gp = grid::gpar(col = x$ink_col, lwd = 0.4, lend = "square")
+    )
+  )
   if (x$draw_bottom) {
     ch <- grid::gList(
       ch,
