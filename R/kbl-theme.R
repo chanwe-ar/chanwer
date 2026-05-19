@@ -417,7 +417,7 @@ chanwe_kbl <- function(
       pt_v(footer_top),
       '#text(font: "JetBrains Mono", size: ',
       note_pt,
-      ', fill: _t.fg-muted)[',
+      ', fill: _t.ink)[',
       '#text(fill: _t.primary)[/\\/]#h(4pt)',
       esc(caption),
       ']],'

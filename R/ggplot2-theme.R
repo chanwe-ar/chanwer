@@ -269,7 +269,7 @@ theme_chanwe <- function(
         family = mono_family,
         mono_thin_family = mono_thin_family,
         size = base_text_size * 0.70,
-        colour = "#888888",
+        colour = colors[["typst-ink"]],
         primary_colour = colors[["typst-primary"]],
         ink_colour = colors[["typst-ink"]]
       ),

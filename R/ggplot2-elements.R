@@ -146,7 +146,7 @@ new_element_chanwe_caption <- function(
       vjust = vjust,
       angle = 0,
       lineheight = 1.2,
-      margin = ggplot2::margin(10, 0, 0, 0),
+      margin = ggplot2::margin(5, 0, 0, 0),
       debug = FALSE,
       inherit.blank = inherit.blank,
       primary_colour = primary_colour,
@@ -615,7 +615,7 @@ heightDetails.cw_subtitle_tree <- function(x) {
 
 .cw_caption_heights <- function(x) {
   c_h <- .cw_str_h(x$cap_text, x$cap_gp)
-  top <- 10 # top padding (matches margin t=10)
+  top <- 5 # top padding (matches margin t=5)
   bot <- 4 # bottom padding
   tln_h <- 0
   gap1 <- 0
