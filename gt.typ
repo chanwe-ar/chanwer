@@ -2722,7 +2722,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -2799,7 +2799,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -2876,7 +2876,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -2952,7 +2952,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3028,7 +3028,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3147,7 +3147,7 @@ establece el piso de referencia para el analisis diferencial.
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · COMPACT HERO]#v(-10pt, weak: false)#text(font: "Archivo", size: 16pt, fill: _t.ink, weight: "regular")[title only · no subtitle]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · COMPACT HERO]#v(-10pt, weak: false)#text(font: "Archivo", size: 16pt, fill: _t.ink, weight: "regular")[title only · no subtitle]],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MPG]],
@@ -3206,7 +3206,7 @@ establece el piso de referencia para el analisis diferencial.
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3226,7 +3226,7 @@ establece el piso de referencia para el analisis diferencial.
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 5pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · COMPACT HERO]#v(-10pt, weak: false)#text(font: "Archivo", size: 16pt, fill: _t.ink, weight: "regular")[title only · zone-highlight]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(8pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 5pt)[TABLE · COMPACT HERO]#v(-10pt, weak: false)#text(font: "Archivo", size: 16pt, fill: _t.ink, weight: "regular")[title only · zone-highlight]],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MPG]],
@@ -3285,7 +3285,7 @@ establece el piso de referencia para el analisis diferencial.
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3355,7 +3355,7 @@ establece el piso de referencia para el analisis diferencial.
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3425,7 +3425,7 @@ establece el piso de referencia para el analisis diferencial.
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 7pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3435,6 +3435,20 @@ establece el piso de referencia para el analisis diferencial.
 ]
 ]
 ]
+= No header line
+<no-header-line>
+===== Plot · with subtitle · spacious · header\_line = FALSE
+<plot-with-subtitle-spacious-header_line-false>
+#box(image("gt_files/figure-typst/unnamed-chunk-23-1.svg", width: 100.0%))
 
+===== Plot · with subtitle · compact · header\_line = FALSE
+<plot-with-subtitle-compact-header_line-false>
+#box(image("gt_files/figure-typst/unnamed-chunk-24-1.svg", width: 100.0%))
 
+===== Plot · no subtitle · spacious · header\_line = FALSE
+<plot-no-subtitle-spacious-header_line-false>
+#box(image("gt_files/figure-typst/unnamed-chunk-25-1.svg", width: 100.0%))
 
+===== Plot · no subtitle · compact · header\_line = FALSE
+<plot-no-subtitle-compact-header_line-false>
+#box(image("gt_files/figure-typst/unnamed-chunk-26-1.svg", width: 100.0%))

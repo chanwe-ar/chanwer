@@ -13,7 +13,8 @@ theme_chanwe(
   plot_padding = 10,
   plot_borders = "none",
   has_subtitle = TRUE,
-  compact_title = TRUE
+  compact_title = FALSE,
+  header_line = TRUE
 )
 }
 \arguments{
@@ -48,6 +49,12 @@ the title's bottom margin and draws a separator line below the title text
 ways: top padding above the eyebrow 8 → 4 pt, gap between subtitle text
 and separator line 14 → 6 pt, and bottom padding below the separator line
 20 → 12 pt. Set to \code{FALSE} for the spacious layout.}
+
+\item{header_line}{When \code{TRUE} (default) draws the thin separator line that
+visually closes the header area: the subtitle grob draws it between the
+subtitle text and the chart, and when \code{has_subtitle = FALSE} the title grob
+draws it below the title text. Set to \code{FALSE} to suppress the line entirely
+(e.g. for minimal or embedded layouts).}
 }
 \value{
 A ggplot2 theme object. Add to any ggplot with \code{+ theme_chanwe()}.
@@ -111,6 +118,11 @@ Pass \code{has_subtitle = FALSE} to \code{theme_chanwe()}. The title grob draws
 its own 0.4 pt separator line 15 pt above the chart area (same visual
 weight as the subtitle separator). \code{compact_title} still controls the
 top padding above the eyebrow.
+}
+\item{No separator line (\code{header_line = FALSE})}{
+Pass \code{header_line = FALSE} to suppress the thin ink line that closes the
+header area. Works in both subtitle and no-subtitle modes. Useful for
+minimal or embedded layouts where the line adds visual noise.
 }
 }
 }

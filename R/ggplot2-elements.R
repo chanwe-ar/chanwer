@@ -96,6 +96,7 @@ new_element_chanwe_subtitle <- function(
   kpi_label_colour = "#AEABA6",
   gap_ln = 6,
   sub_bot = 20,
+  draw_middle = TRUE,
   inherit.blank = FALSE
 ) {
   structure(
@@ -116,7 +117,8 @@ new_element_chanwe_subtitle <- function(
       mono_thin_family = mono_thin_family,
       kpi_label_colour = kpi_label_colour,
       gap_ln = gap_ln,
-      sub_bot = sub_bot
+      sub_bot = sub_bot,
+      draw_middle = draw_middle
     ),
     class = c("element_chanwe_subtitle", "element_text", "element")
   )
@@ -269,7 +271,7 @@ makeContent.cw_title_tree <- function(x) {
   title_y <- d$bot + d$t_h / 2
   ey_y <- d$bot + d$t_h + d$gap1 + d$ey_h / 2
   line_y <- d$total - d$top - d$ln_h / 2
-  bln_y <- (d$bot - 5) + d$bln_h / 2 # 5pt above line to title text; rest is below line → chart gap
+  bln_y <- (d$bot - 10) + d$bln_h / 2 # 10pt above line to title text; rest is below line → chart gap
 
   ch <- grid::gList(
     grid::textGrob(
@@ -359,14 +361,14 @@ heightDetails.cw_title_tree <- function(x) {
 .cw_subtitle_heights <- function(x) {
   has_kpi <- !is.null(x$kpi_data)
   has_sub <- nzchar(trimws(x$sub_text))
-  # when KPI-only (no subtitle text), skip text row and separator line
+  # when KPI-only (no subtitle text), skip the text row — the separator line is kept
   s_h <- if (has_sub) .cw_str_h(x$sub_text, x$sub_gp) else 0
   # note is suppressed when KPI panel is present — the two don't stack
   has_n <- !is.null(x$note_text) && nzchar(x$note_text) && !has_kpi
   n_h <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
-  top <- if (!has_sub && has_kpi) 2 else 5
+  top <- if (!has_sub && has_kpi) 8 else 5
   gap_ln <- if (x$draw_middle && has_sub) (x$gap_ln %||_% 6) else 0
-  ln_h <- if (x$draw_middle && has_sub) 0.3 else 0
+  ln_h <- if (x$draw_middle && (has_sub || has_kpi)) 0.3 else 0
   gap_n <- if (has_n) 3 else 0
   # KPI panel section (sits in what would otherwise be the bottom padding)
   kpi_panel_h <- if (has_kpi) 35 else 0
@@ -757,7 +759,7 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
   .cw_subtitle_tree(
     sub_text,
     note_text,
-    draw_middle = TRUE,
+    draw_middle = isTRUE(element$draw_middle %||_% TRUE),
     sub_gp,
     note_gp,
     sep_gp,
@@ -785,7 +787,7 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
   cap_size <- element$size %||_% 9
 
   cap_gp <- grid::gpar(
-    fontfamily = element$family %||_% "JetBrains Mono",
+    fontfamily = element$mono_thin_family %||_% "JetBrains Mono Thin",
     fontsize = cap_size,
     col = element$colour %||_% "#808080"
   )

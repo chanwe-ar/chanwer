@@ -61,6 +61,11 @@ chanwe_discrete_pal <- function() {
 #'   ways: top padding above the eyebrow 8 → 4 pt, gap between subtitle text
 #'   and separator line 14 → 6 pt, and bottom padding below the separator line
 #'   20 → 12 pt. Set to `FALSE` for the spacious layout.
+#' @param header_line When `TRUE` (default) draws the thin separator line that
+#'   visually closes the header area: the subtitle grob draws it between the
+#'   subtitle text and the chart, and when `has_subtitle = FALSE` the title grob
+#'   draws it below the title text. Set to `FALSE` to suppress the line entirely
+#'   (e.g. for minimal or embedded layouts).
 #'
 #' @section Header layout modes:
 #'
@@ -85,6 +90,11 @@ chanwe_discrete_pal <- function() {
 #'     its own 0.4 pt separator line 15 pt above the chart area (same visual
 #'     weight as the subtitle separator). `compact_title` still controls the
 #'     top padding above the eyebrow.
+#'   }
+#'   \item{No separator line (`header_line = FALSE`)}{
+#'     Pass `header_line = FALSE` to suppress the thin ink line that closes the
+#'     header area. Works in both subtitle and no-subtitle modes. Useful for
+#'     minimal or embedded layouts where the line adds visual noise.
 #'   }
 #' }
 #'
@@ -148,7 +158,8 @@ theme_chanwe <- function(
   plot_padding = 10,
   plot_borders = "none",
   has_subtitle = TRUE,
-  compact_title = TRUE
+  compact_title = FALSE,
+  header_line = TRUE
 ) {
   chanwe_load_fonts()
   options(chanwer.plot_borders = plot_borders)
@@ -220,8 +231,8 @@ theme_chanwe <- function(
     top_pad = if (compact_title) 4 else 8
   )
   if (!has_subtitle) {
-    title_element$margin <- ggplot2::margin(0, 0, 20, 0)
-    title_element$draw_bottom_line <- TRUE
+    title_element$margin <- ggplot2::margin(0, 0, 25, 0)
+    title_element$draw_bottom_line <- isTRUE(header_line)
   }
   kpi_label_colour <- switch(
     bg_color,
@@ -238,8 +249,9 @@ theme_chanwe <- function(
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
     kpi_label_colour = kpi_label_colour,
-    gap_ln = if (compact_title) 6 else 14,
-    sub_bot = if (compact_title) 12 else 20
+    gap_ln = if (compact_title) 10 else 14,
+    sub_bot = if (compact_title) 16 else 20,
+    draw_middle = isTRUE(header_line)
   )
 
   theme_obj <- ggplot2::`%+replace%`(

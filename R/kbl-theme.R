@@ -63,7 +63,7 @@ chanwe_kbl <- function(
   subtitle_size = '9pt',
   body_size = '7pt',
   header_size = '5.5pt',
-  note_size = '7pt',
+  note_size = '5.5pt',
   col_label_top = 0,
   footer_top = 0,
   bg = "white-ivory",
@@ -201,7 +201,8 @@ chanwe_kbl <- function(
 
   # per-cell inset strings — header cells get tight bottom/top to avoid
   # excessive gap between title, subtitle, and separator
-  inset_title <- paste0("(top: ", inset_y, ", bottom: 5pt, x: 2.5mm)")
+  title_bot <- if (is.null(subtitle)) (if (sp) "14pt" else "10pt") else "5pt"
+  inset_title <- paste0("(top: ", inset_y, ", bottom: ", title_bot, ", x: 2.5mm)")
   inset_sub <- paste0("(top: 4pt, bottom: ", inset_y, ", x: 2.5mm)")
   colhdr_top <- if (!is.null(subtitle)) {
     if (sp) "20pt" else "14pt"
@@ -417,7 +418,7 @@ chanwe_kbl <- function(
       '#text(font: "JetBrains Mono", size: ',
       note_pt,
       ', fill: _t.fg-muted)[',
-      '#text(fill: _t.primary)[/\\/]',
+      '#text(fill: _t.primary)[/\\/]#h(4pt)',
       esc(caption),
       ']],'
     )

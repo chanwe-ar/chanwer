@@ -22,7 +22,7 @@ chanwe_kbl(
   subtitle_size = "9pt",
   body_size = "7pt",
   header_size = "5.5pt",
-  note_size = "7pt",
+  note_size = "5.5pt",
   col_label_top = 0,
   footer_top = 0,
   bg = "white-ivory",

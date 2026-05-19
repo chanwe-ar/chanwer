@@ -491,7 +491,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
     geom_point(size = 2.2, alpha = 0.88) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     scale_color_chanwe_d() +
-    theme_chanwe(has_subtitle = FALSE) +
+    theme_chanwe(has_subtitle = FALSE, compact_title = FALSE) +
     labs(
         title = chanwe_title(
             "title only · no subtitle",
@@ -634,3 +634,103 @@ mt |>
 ```
 
 ::::
+
+# No header line
+
+##### Plot · with subtitle · spacious · header_line = FALSE
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(compact_title = FALSE, header_line = FALSE) +
+    labs(
+        title = chanwe_title(
+            "With subtitle · spacious · no line",
+            eyebrow = "HEADER LINE · FALSE"
+        ),
+        subtitle = chanwe_subtitle(
+            "compact_title = FALSE  ·  header_line = FALSE"
+        ),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```
+
+##### Plot · with subtitle · compact · header_line = FALSE
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(compact_title = TRUE, header_line = FALSE) +
+    labs(
+        title = chanwe_title(
+            "With subtitle · compact · no line",
+            eyebrow = "HEADER LINE · FALSE"
+        ),
+        subtitle = chanwe_subtitle(
+            "compact_title = TRUE  ·  header_line = FALSE"
+        ),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```
+
+##### Plot · no subtitle · spacious · header_line = FALSE
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(
+        has_subtitle = FALSE,
+        compact_title = FALSE,
+        header_line = FALSE
+    ) +
+    labs(
+        title = chanwe_title(
+            "No subtitle · spacious · no line",
+            eyebrow = "HEADER LINE · FALSE"
+        ),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```
+
+##### Plot · no subtitle · compact · header_line = FALSE
+
+```{r}
+#| dev.args: !expr list(bg = "transparent")
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(
+        has_subtitle = FALSE,
+        compact_title = TRUE,
+        header_line = FALSE
+    ) +
+    labs(
+        title = chanwe_title(
+            "No subtitle · compact · no line",
+            eyebrow = "HEADER LINE · FALSE"
+        ),
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```

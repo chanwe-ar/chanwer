@@ -115,9 +115,8 @@
 <text x='314.27' y='217.30' style='font-size: 5.20px;fill: #0F0F0F; font-family: "JetBrains Mono";' textLength='9.33px' lengthAdjust='spacingAndGlyphs'>Low</text>
 <text x='342.32' y='217.30' style='font-size: 5.20px;fill: #0F0F0F; font-family: "JetBrains Mono";' textLength='9.33px' lengthAdjust='spacingAndGlyphs'>Mid</text>
 <text x='370.36' y='217.30' style='font-size: 5.20px;fill: #0F0F0F; font-family: "JetBrains Mono";' textLength='12.44px' lengthAdjust='spacingAndGlyphs'>High</text>
-<text x='9.96' y='35.70' style='font-size: 12.35px;fill: #0F0F0F; font-family: "Archivo";' textLength='110.97px' lengthAdjust='spacingAndGlyphs'>title only · no subtitle</text>
-<text x='9.96' y='21.25' style='font-size: 4.55px;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='46.48px' lengthAdjust='spacingAndGlyphs'>──── COMPACT HERO</text>
-<polyline points='9.96,45.46 386.04,45.46 ' style='stroke-width: 0.30; stroke: #0F0F0F;' />
+<text x='9.96' y='35.70' style='font-size: 12.35px;fill: #0F0F0F; font-family: "Archivo";' textLength='162.45px' lengthAdjust='spacingAndGlyphs'>No subtitle · spacious · no line</text>
+<text x='9.96' y='21.25' style='font-size: 4.55px;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='65.62px' lengthAdjust='spacingAndGlyphs'>──── HEADER LINE · FALSE</text>
 <text x='9.96' y='237.63' style='font-size: 3.41px; font-weight: 100;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='8.19px' lengthAdjust='spacingAndGlyphs'>//  </text>
 <text x='21.14' y='238.05' style='font-size: 4.55px; font-weight: 100;fill: #888888; font-family: "JetBrains Mono";' textLength='68.36px' lengthAdjust='spacingAndGlyphs'>Source: Motor Trend, 1974</text>
 </g>
