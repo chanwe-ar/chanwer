@@ -194,7 +194,7 @@ theme_chanwe <- function(
     top_pad = if (compact_title) 4 else 8
   )
   if (!has_subtitle) {
-    title_element$margin <- ggplot2::margin(0, 0, 12, 0)
+    title_element$margin <- ggplot2::margin(0, 0, 20, 0)
     title_element$draw_bottom_line <- TRUE
   }
   kpi_label_colour <- switch(

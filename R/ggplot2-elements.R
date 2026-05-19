@@ -223,7 +223,7 @@ makeContent.cw_title_tree <- function(x) {
   title_y <- d$bot + d$t_h / 2
   ey_y <- d$bot + d$t_h + d$gap1 + d$ey_h / 2
   line_y <- d$total - d$top - d$ln_h / 2
-  bln_y <- 4 + d$bln_h / 2 # 4pt gap from bottom edge
+  bln_y <- (d$bot - 5) + d$bln_h / 2 # 5pt above line to title text; rest is below line → chart gap
 
   ch <- grid::gList(
     grid::textGrob(
