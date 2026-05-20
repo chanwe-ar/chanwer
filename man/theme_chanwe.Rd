@@ -5,7 +5,7 @@
 \title{ChanWe ggplot2 Theme}
 \usage{
 theme_chanwe(
-  base_text_size = 6.5,
+  base_text_size = 6.75,
   base_family = "Satoshi",
   base_lineheight = 1.6,
   legend_position = "bottom",
@@ -13,12 +13,12 @@ theme_chanwe(
   plot_padding = 10,
   plot_borders = "none",
   has_subtitle = TRUE,
-  compact_title = FALSE,
+  compact_title = TRUE,
   header_line = TRUE
 )
 }
 \arguments{
-\item{base_text_size}{Base text size in points. Default \code{6.5}.}
+\item{base_text_size}{Base text size in points. Default \code{6.5}. Title scales at ×1.50, subtitle ×0.90, eyebrow ×0.55.}
 
 \item{base_family}{Base font family for body text. Default \code{"Satoshi"}.}
 

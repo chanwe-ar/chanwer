@@ -58,9 +58,9 @@ chanwe_kbl <- function(
   stub = NULL,
   density = c("spacious", "compact"),
   row_padding = NULL,
-  title_size = '16pt',
-  eyebrow_size = '5pt',
-  subtitle_size = '9pt',
+  title_size = '13pt',
+  eyebrow_size = '4pt',
+  subtitle_size = '8pt',
   body_size = '7pt',
   header_size = '5.5pt',
   note_size = '5.5pt',
@@ -127,7 +127,7 @@ chanwe_kbl <- function(
     "7pt"
   }
 
-  top_v <- if (sp) "8pt" else "4pt" # space inside title cell before eyebrow
+  top_v <- if (sp) "4pt" else "2pt" # space inside title cell before eyebrow
   bot_v <- if (sp) "8pt" else "4pt" # space inside subtitle cell before separator
 
   n <- ncol(data)
@@ -201,9 +201,9 @@ chanwe_kbl <- function(
 
   # per-cell inset strings — header cells get tight bottom/top to avoid
   # excessive gap between title, subtitle, and separator
-  title_bot <- if (is.null(subtitle)) (if (sp) "14pt" else "10pt") else "5pt"
+  title_bot <- if (is.null(subtitle)) (if (sp) "14pt" else "10pt") else "3pt"
   inset_title <- paste0("(top: ", inset_y, ", bottom: ", title_bot, ", x: 2.5mm)")
-  inset_sub <- paste0("(top: 4pt, bottom: ", inset_y, ", x: 2.5mm)")
+  inset_sub <- paste0("(top: 3pt, bottom: ", inset_y, ", x: 2.5mm)")
   colhdr_top <- if (!is.null(subtitle)) {
     if (sp) "20pt" else "14pt"
   } else if (!is.null(title) || !is.null(eyebrow)) {
@@ -291,7 +291,7 @@ chanwe_kbl <- function(
           ')[',
           esc(eyebrow),
           ']',
-          "#v(-10pt, weak: false)"
+          "#v(-6pt, weak: false)"
         )
       }
       if (!is.null(title)) {
@@ -299,7 +299,7 @@ chanwe_kbl <- function(
           inner,
           '#text(font: "Archivo", size: ',
           title_pt,
-          ', fill: _t.ink, weight: "regular")[',
+          ', fill: _t.ink, weight: "medium")[',
           esc(title),
           ']'
         )

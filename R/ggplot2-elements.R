@@ -96,6 +96,7 @@ new_element_chanwe_subtitle <- function(
   kpi_label_colour = "#AEABA6",
   gap_ln = 6,
   sub_bot = 20,
+  sub_top = 3,
   draw_middle = TRUE,
   inherit.blank = FALSE
 ) {
@@ -109,7 +110,7 @@ new_element_chanwe_subtitle <- function(
       vjust = vjust,
       angle = 0,
       lineheight = 1.3,
-      margin = ggplot2::margin(3, 0, 20, 0),
+      margin = ggplot2::margin(1, 0, 20, 0),
       debug = FALSE,
       inherit.blank = inherit.blank,
       ink_colour = ink_colour,
@@ -118,6 +119,7 @@ new_element_chanwe_subtitle <- function(
       kpi_label_colour = kpi_label_colour,
       gap_ln = gap_ln,
       sub_bot = sub_bot,
+      sub_top = sub_top,
       draw_middle = draw_middle
     ),
     class = c("element_chanwe_subtitle", "element_text", "element")
@@ -238,7 +240,7 @@ new_element_chanwe_caption <- function(
   ey_h <- if (has_ey) .cw_str_h(paste0("──── ", toupper(x$eyebrow_text %||_% "")), x$eyebrow_gp) else 0
   top <- if (has_ey) (x$top_pad %||_% 8) else 0 # top padding above eyebrow
   bot <- (x$margin_bottom %||_% 2) # bottom padding — carries extra space when no subtitle
-  gap1 <- if (has_ey) 6 else 0 # gap: title → eyebrow
+  gap1 <- if (has_ey) 8 else 0 # gap: title → eyebrow
   gap2 <- if (x$draw_top && has_ey) {
     5
   } else if (x$draw_top) {
@@ -338,7 +340,8 @@ heightDetails.cw_title_tree <- function(x) {
   mono_thin_family = "JetBrains Mono Thin",
   kpi_label_colour = "#AEABA6",
   gap_ln = 6,
-  sub_bot = 20
+  sub_bot = 20,
+  sub_top = 3
 ) {
   grid::gTree(
     sub_text = sub_text,
@@ -354,6 +357,7 @@ heightDetails.cw_title_tree <- function(x) {
     kpi_label_colour = kpi_label_colour,
     gap_ln = gap_ln,
     sub_bot = sub_bot,
+    sub_top = sub_top,
     cl = "cw_subtitle_tree"
   )
 }
@@ -366,7 +370,7 @@ heightDetails.cw_title_tree <- function(x) {
   # note is suppressed when KPI panel is present — the two don't stack
   has_n <- !is.null(x$note_text) && nzchar(x$note_text) && !has_kpi
   n_h <- if (has_n) .cw_str_h(x$note_text, x$note_gp) else 0
-  top <- if (!has_sub && has_kpi) 8 else 5
+  top <- if (!has_sub && has_kpi) 8 else (x$sub_top %||_% 3)
   gap_ln <- if (x$draw_middle && has_sub) (x$gap_ln %||_% 6) else 0
   ln_h <- if (x$draw_middle && (has_sub || has_kpi)) 0.3 else 0
   gap_n <- if (has_n) 3 else 0
@@ -777,7 +781,8 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     mono_thin_family = mono_thin_fam,
     kpi_label_colour = kpi_label_colour,
     gap_ln = element$gap_ln %||_% 6,
-    sub_bot = element$sub_bot %||_% 20
+    sub_bot = element$sub_bot %||_% 20,
+    sub_top = element$sub_top %||_% 3
   )
 }
 

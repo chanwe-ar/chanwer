@@ -38,7 +38,7 @@ chanwe_discrete_pal <- function() {
 #' | `"gray"` | `#EDF0F1` | `#D4D9DB` | `#E3E7E9` |
 #' | `"beige"` | `#F5F1EB` | `#D8D1C7` | `#E3DDD5` |
 #'
-#' @param base_text_size Base text size in points. Default `6.5`.
+#' @param base_text_size Base text size in points. Default `6.5`. Title scales at ×1.50, subtitle ×0.90, eyebrow ×0.55.
 #' @param base_family Base font family for body text. Default `"Satoshi"`.
 #' @param base_lineheight Base line-height multiplier. Default `1.60`.
 #' @param legend_position Legend position string passed to
@@ -150,7 +150,7 @@ chanwe_discrete_pal <- function() {
 #'     theme_chanwe(legend_position = "none")
 #' }
 theme_chanwe <- function(
-  base_text_size = 6.5,
+  base_text_size = 6.75,
   base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
@@ -158,7 +158,7 @@ theme_chanwe <- function(
   plot_padding = 10,
   plot_borders = "none",
   has_subtitle = TRUE,
-  compact_title = FALSE,
+  compact_title = TRUE,
   header_line = TRUE
 ) {
   chanwe_load_fonts()
@@ -222,10 +222,10 @@ theme_chanwe <- function(
   title_element <- new_element_chanwe_title(
     family = title_family,
     face = title_face,
-    size = base_text_size * 1.9,
+    size = base_text_size * 1.50,
     colour = colors[["typst-ink"]],
     eyebrow_family = mono_family,
-    eyebrow_size = base_text_size * 0.70,
+    eyebrow_size = base_text_size * 0.55,
     eyebrow_colour = colors[["typst-primary"]],
     ink_colour = colors[["typst-ink"]],
     top_pad = if (compact_title) 4 else 8
@@ -243,7 +243,7 @@ theme_chanwe <- function(
 
   subtitle_element <- new_element_chanwe_subtitle(
     family = subtitle_family,
-    size = base_text_size * 1.15,
+    size = base_text_size * 0.9,
     colour = '#888888',
     ink_colour = colors[["typst-ink"]],
     mono_family = mono_family,
@@ -251,6 +251,7 @@ theme_chanwe <- function(
     kpi_label_colour = kpi_label_colour,
     gap_ln = if (compact_title) 10 else 14,
     sub_bot = if (compact_title) 16 else 20,
+    sub_top = if (compact_title) 3 else 4,
     draw_middle = isTRUE(header_line)
   )
 
