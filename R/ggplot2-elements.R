@@ -480,9 +480,9 @@ makeContent.cw_subtitle_tree <- function(x) {
 
     # Hero value — Fraunces SemiBold Italic (weight 600), same weight as h1 heading
     val_gp <- grid::gpar(
-      fontfamily = "Fraunces 9pt Regular",
+      fontfamily = "Fraunces 9pt Light",
       fontface = "italic",
-      fontsize = 24,
+      fontsize = 18,
       col = ink
     )
     val_g <- grid::textGrob(
@@ -495,18 +495,18 @@ makeContent.cw_subtitle_tree <- function(x) {
     ch <- grid::gList(ch, val_g)
 
     # Unit + AS OF + date block, positioned right of the hero value
-    side_x <- grid::unit(1, "grobwidth", val_g) + grid::unit(6, "pt")
+    side_x <- grid::unit(1, "grobwidth", val_g) + grid::unit(11, "pt")
     unit_gp <- grid::gpar(
       fontfamily = mono_fam,
-      fontsize = 4.5,
+      fontsize = 3.5,
       col = fg_muted
     )
     as_of_gp <- grid::gpar(
       fontfamily = mono_fam,
-      fontsize = 4.5,
+      fontsize = 3.5,
       col = fg_muted
     )
-    date_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 6.0, col = fg_muted)
+    date_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 4.5, col = fg_muted)
 
     if (nzchar(kpi$unit)) {
       ch <- grid::gList(
@@ -514,7 +514,7 @@ makeContent.cw_subtitle_tree <- function(x) {
         grid::textGrob(
           kpi$unit,
           x = side_x,
-          y = grid::unit(kpi_center_y + 7, "pt"),
+          y = grid::unit(kpi_center_y + 5, "pt"),
           just = c("left", "center"),
           gp = unit_gp
         )
@@ -526,7 +526,7 @@ makeContent.cw_subtitle_tree <- function(x) {
         grid::textGrob(
           kpi$date,
           x = side_x,
-          y = grid::unit(kpi_center_y - 2, "pt"),
+          y = grid::unit(kpi_center_y - 1, "pt"),
           just = c("left", "center"),
           gp = date_gp
         )
@@ -541,7 +541,7 @@ makeContent.cw_subtitle_tree <- function(x) {
       col_step <- 0.13 # spacing between column right-edges
       lbl_gp <- grid::gpar(
         fontfamily = mono_fam,
-        fontsize = 4.,
+        fontsize = 3.0,
         col = fg_muted
       )
       for (i in seq_along(kpi$metrics)) {
@@ -563,7 +563,7 @@ makeContent.cw_subtitle_tree <- function(x) {
         }
         val_m_gp <- grid::gpar(
           fontfamily = mono_fam,
-          fontsize = 6.5,
+          fontsize = 5.0,
           col = m_col
         )
         ch <- grid::gList(
@@ -619,10 +619,10 @@ heightDetails.cw_subtitle_tree <- function(x) {
 
 .cw_caption_heights <- function(x) {
   c_h <- .cw_str_h(x$cap_text, x$cap_gp)
-  top <- 8 # top padding: space between chart bottom and the separator line
+  top <- 16 # top padding: space between chart bottom and the separator line
   bot <- 4 # bottom padding
   tln_h <- 0.4 # top separator line (always drawn)
-  gap1 <- 4 # gap between caption text and the separator line above
+  gap1 <- 5 # gap between caption text and the separator line above
   gap2 <- if (x$draw_bottom) 4 else 0
   bln_h <- if (x$draw_bottom) 0.3 else 0
   total <- bot + bln_h + gap2 + c_h + gap1 + tln_h + top

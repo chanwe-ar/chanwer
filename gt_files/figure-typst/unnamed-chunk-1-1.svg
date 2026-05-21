@@ -128,7 +128,8 @@
 <text x='382.28' y='78.03' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>YOY</text>
 <text x='382.28' y='84.92' text-anchor='end' style='font-size: 6.50px;fill: #2D7A4F; font-family: "JetBrains Mono";' textLength='31.25px' lengthAdjust='spacingAndGlyphs'>▲ 17,78%</text>
 <text x='9.96' y='31.57' style='font-size: 10.12px; font-weight: 600;fill: #0F0F0F; font-family: "Archivo";' textLength='118.38px' lengthAdjust='spacingAndGlyphs'>Reservas Internacionales</text>
-<text x='9.96' y='16.65' style='font-size: 3.71px;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='57.69px' lengthAdjust='spacingAndGlyphs'>──── BCRA · SECTOR EXTERNO</text>
+<text x='10.56' y='17.25' style='font-size: 3.71px;fill: #0F0F0F; fill-opacity: 0.20; font-family: "JetBrains Mono";' textLength='62.12px' lengthAdjust='spacingAndGlyphs'>────── BCRA · SECTOR EXTERNO</text>
+<text x='9.96' y='16.65' style='font-size: 3.71px;fill: #FD3810; font-family: "JetBrains Mono";' textLength='62.12px' lengthAdjust='spacingAndGlyphs'>────── BCRA · SECTOR EXTERNO</text>
 </g>
 </g>
 </svg>

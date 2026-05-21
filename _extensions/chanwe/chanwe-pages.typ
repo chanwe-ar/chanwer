@@ -183,13 +183,13 @@
                   column-gutter: 6mm,
                   align: (left + bottom, left + bottom),
                   text(font: _t.font-serif, style: "italic", weight: 200,
-                       size: 32pt, fill: _t.primary, cur-part.number),
+                       size: 28pt, fill: _t.primary, cur-part.number),
                   {
                     text(font: _t.font-serif, style: "italic", weight: 200,
-                         size: 26pt, tracking: -0.02em, fill: _t.neutral-900,
+                         size: 20pt, tracking: -0.02em, fill: _t.neutral-900,
                          cur-part.title)
                     text(font: _t.font-serif, style: "italic", weight: 200,
-                         size: 26pt, fill: _t.primary, ".")
+                         size: 20pt, fill: _t.primary, ".")
                   },
                 )
               ]

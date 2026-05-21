@@ -118,7 +118,8 @@
 <text x='9.96' y='40.90' style='font-size: 6.08px;fill: #888888; font-family: "Satoshi";' textLength='48.23px' lengthAdjust='spacingAndGlyphs'>title · Archivo 400</text>
 <polyline points='9.96,51.02 386.04,51.02 ' style='stroke-width: 0.30; stroke: #0F0F0F;' />
 <text x='9.96' y='31.57' style='font-size: 10.12px; font-weight: 600;fill: #0F0F0F; font-family: "Archivo";' textLength='71.23px' lengthAdjust='spacingAndGlyphs'>bg_color · ivory</text>
-<text x='9.96' y='16.65' style='font-size: 3.71px;fill: #FB3D0E; font-family: "JetBrains Mono";' textLength='68.78px' lengthAdjust='spacingAndGlyphs'>──── PLOT · BACKGROUND VARIANTS</text>
+<text x='10.56' y='17.25' style='font-size: 3.71px;fill: #0F0F0F; fill-opacity: 0.20; font-family: "JetBrains Mono";' textLength='73.22px' lengthAdjust='spacingAndGlyphs'>────── PLOT · BACKGROUND VARIANTS</text>
+<text x='9.96' y='16.65' style='font-size: 3.71px;fill: #FD3810; font-family: "JetBrains Mono";' textLength='73.22px' lengthAdjust='spacingAndGlyphs'>────── PLOT · BACKGROUND VARIANTS</text>
 </g>
 </g>
 </svg>
