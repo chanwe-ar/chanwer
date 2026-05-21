@@ -10,9 +10,9 @@
   fg:          rgb("#211F1C"),
   fg-muted:    rgb("#71706C"),
   fg-subtle:   rgb("#928D86"),
-  primary:     rgb("#FB3D0E"),
+  primary:     rgb("#FD3810"),
   primary-dark: rgb("#EE5524"),
-  primary-soft: rgb("#FB3D0E1A"),
+  primary-soft: rgb("#FD38101A"),
   beige:       rgb("#F5F1EB"),
   neutral-100: rgb("#F5F5F5"),
   neutral-200: rgb("#E8E8E8"),
@@ -111,24 +111,23 @@
 
 // ---------- Running header / footer --------------------------
 #let chanwe-header(section, topic) = context {
-  // header occupies 14mm; remaining margin space becomes gap before content
-  block(height: 8mm, width: 100%)[
+  block(height: 100%, width: 100%)[
     #grid(
       rows: (1fr, auto),
-      align(horizon, grid(
-        columns: (1fr, auto),
-        align: (left + horizon, right + horizon),
-        {
-          set text(font: _t.font-mono, size: 6pt, tracking: 0.14em)
-          text(weight: 700, fill: _t.primary, "//")
-          h(5pt)
-          text(fill: _t.fg-subtle, upper[#section])
-          if topic != "" {
-            text(fill: _t.fg-subtle, upper[ · #topic])
-          }
-        },
-        image(_chanwe-assets + "Logo_Negro.png", height: 3.5mm, fit: "contain"),
-      )),
+      align(horizon, {
+        set text(font: _t.font-mono, size: 6pt, tracking: 0.14em)
+        grid(
+          columns: (1fr, auto),
+          align: (left + horizon, right + horizon),
+          [
+            #text(weight: 700, fill: _t.primary, "//")
+            #h(5pt)
+            #text(fill: _t.fg-subtle, upper(section))
+            #if topic != "" [#text(fill: _t.fg-subtle, upper(" · " + topic))]
+          ],
+          image(_chanwe-assets + "Logo_Negro.png", height: 3.5mm, fit: "contain"),
+        )
+      }),
       pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + _t.border)),
     )
   ]
@@ -460,7 +459,7 @@ $chanwe-charts.typ()$
   // ---- body pages -------------------------------------------
   set page(
     paper: "a4",
-    margin: (top: 18mm, bottom: 18mm, x: 18mm),
+    margin: (top: 15mm, bottom: 15mm, x: 18mm),
     header: chanwe-header(section, topic),
     footer: chanwe-footer(doc-id, edition),
   )

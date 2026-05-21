@@ -186,7 +186,7 @@
                        size: 32pt, fill: _t.primary, cur-part.number),
                   {
                     text(font: _t.font-serif, style: "italic", weight: 200,
-                         size: 26pt, tracking: -0.02em, fill: luma(90),
+                         size: 26pt, tracking: -0.02em, fill: _t.neutral-900,
                          cur-part.title)
                     text(font: _t.font-serif, style: "italic", weight: 200,
                          size: 26pt, fill: _t.primary, ".")
