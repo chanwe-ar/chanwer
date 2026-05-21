@@ -99,7 +99,7 @@
   "mb-beige-300" = "#E2DBD0", "mb-beige-400" = "#D9D2C6",
   "mb-beige-500" = "#CFC8BD",
   # chanwe-typst report system tokens
-  "typst-primary"     = "#FB3D0E",
+  "typst-primary"     = "#FD3810",
   "typst-ink"         = "#0F0F0F",
   "typst-fg"          = "#211F1C",
   "typst-fg-muted"    = "#71706C",
