@@ -236,8 +236,8 @@ new_element_chanwe_caption <- function(
 
 .cw_title_heights <- function(x) {
   t_h <- .cw_str_h(x$title_text, x$title_gp)
-  has_ey <- !is.null(x$eyebrow_text) # TRUE even when eyebrow text is "" (draws "──── " line)
-  ey_h <- if (has_ey) .cw_str_h(paste0("──── ", toupper(x$eyebrow_text %||_% "")), x$eyebrow_gp) else 0
+  has_ey <- !is.null(x$eyebrow_text) # TRUE even when eyebrow text is "" (draws "────── " line)
+  ey_h <- if (has_ey) .cw_str_h(paste0("────── ", toupper(x$eyebrow_text %||_% "")), x$eyebrow_gp) else 0
   top <- if (has_ey) (x$top_pad %||_% 8) else 0 # top padding above eyebrow
   bot <- (x$margin_bottom %||_% 2) # bottom padding — carries extra space when no subtitle
   gap1 <- if (has_ey) 8 else 0 # gap: title → eyebrow
@@ -288,7 +288,7 @@ makeContent.cw_title_tree <- function(x) {
     ch <- grid::gList(
       ch,
       grid::textGrob(
-        paste0("──── ", toupper(x$eyebrow_text)),
+        paste0("────── ", toupper(x$eyebrow_text)),
         x = grid::unit(0, "npc"),
         y = grid::unit(ey_y, "pt"),
         just = c("left", "center"),
