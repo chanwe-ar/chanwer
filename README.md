@@ -11,7 +11,7 @@ helper quickly.
 
 ```r
 # install.packages("pak")
-pak::pak("chanwe/chanwer")
+pak::pak("chanwe-ar/chanwer")
 ```
 
 For local development:
@@ -209,3 +209,35 @@ str(tokens, max.level = 2)
 ## License
 
 MIT
+
+## Chanwe dependencies
+
+### Chanwe brand extension
+
+**Current use:** This repository is the source package for Chanwe-styled R output; it does not consume the Chanwe Quarto extension bundle. Downstream Quarto projects can install that bundle from a sibling checkout:
+
+```bash
+quarto add ../chanwe-brand
+```
+
+Update a clean downstream installation with:
+
+```bash
+git -C ../chanwe-brand pull --ff-only
+quarto add ../chanwe-brand
+```
+
+`quarto add` replaces files under `_extensions/chanwe-*`; preserve project-specific extension changes before updating.
+
+### `chanwer` R package
+
+**Current use:** This is the source repository for `chanwer`, which provides Chanwe plotting, table, and reporting helpers.
+
+Install or update the published GitHub package from R:
+
+```r
+if (!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
+pak::pak("chanwe-ar/chanwer")
+```
+
+For local development in this repository, run `devtools::install(".")`.
