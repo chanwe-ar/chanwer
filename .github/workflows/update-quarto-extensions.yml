@@ -1,0 +1,64 @@
+name: Sync Chanwe Quarto Extensions
+
+on:
+  schedule:
+    # Every Monday at 06:00 UTC.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: quarto-extension-updates
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync private extension bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out target repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          path: target
+
+      - name: Check out private Chanwe extension source
+        uses: actions/checkout@v6
+        with:
+          repository: chanwe-ar/chanwe-brand
+          token: ${{ secrets.CHANWE_BRAND_TOKEN }}
+          path: source/chanwe-brand
+          persist-credentials: false
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "release"
+
+      - name: Install and commit private extension updates
+        working-directory: target
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+
+          quarto add ../source/chanwe-brand --no-prompt
+
+          git add _extensions
+
+          if git diff --cached --quiet; then
+            echo "No extension changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          source_sha="$(git -C ../source/chanwe-brand rev-parse --short=12 HEAD)"
+          git commit \
+            -m "chore(deps): sync Chanwe Quarto extensions" \
+            -m "Source: chanwe-ar/chanwe-brand@${source_sha}"
+          git push origin "HEAD:${DEFAULT_BRANCH}"
