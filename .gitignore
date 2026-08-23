@@ -50,6 +50,9 @@ chanwe-report-typst-showcase.typ
 chanwe-typst-showcase.rmarkdown
 chanwe-report-typst-showcase.rmarkdown
 gt.rmarkdown
+chanwer-examples.rmarkdown
+chanwer-examples.typ
+chanwer-examples_files/
 
 # translation temp files
 po/*~

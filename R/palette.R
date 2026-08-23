@@ -391,6 +391,14 @@ chanwe_preview_palette <- function(palette = "all") {
   df$col <- (df$idx - 1L) %% ncol + 1L
   df$row <- ceiling(df$idx / ncol)
   df$label <- paste0(df$name, "\n", toupper(df$value))
+  # white labels on dark tiles, ink on light ones (perceived luminance)
+  rgb <- grDevices::col2rgb(df$value) / 255
+  luminance <- 0.299 * rgb[1, ] + 0.587 * rgb[2, ] + 0.114 * rgb[3, ]
+  df$label_col <- ifelse(
+    luminance < 0.45,
+    chanwe_get_colors()[["typst-white"]],
+    chanwe_get_colors()[["typst-ink"]]
+  )
 
   ggplot2::ggplot(df, ggplot2::aes(x = col, y = -row)) +
     ggplot2::geom_tile(
@@ -401,13 +409,13 @@ chanwe_preview_palette <- function(palette = "all") {
       height = 0.95
     ) +
     ggplot2::geom_text(
-      ggplot2::aes(label = label),
+      ggplot2::aes(label = label, color = label_col),
       family = "Satoshi",
       size = 3,
       lineheight = 1.1,
-      color = chanwe_get_colors()[["typst-ink"]],
       fontface = "bold"
     ) +
+    ggplot2::scale_color_identity() +
     ggplot2::scale_fill_identity() +
     ggplot2::coord_equal() +
     ggplot2::theme_void(base_family = "Satoshi") +

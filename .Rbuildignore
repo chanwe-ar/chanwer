@@ -11,6 +11,7 @@
 ^\.quarto$
 ^_quarto\.yml$
 ^chanwe-typst-showcase.*$
+^chanwer-examples.*$
 ^chanwe-report-typst-showcase.*$
 ^chanwe-report-typst-gt-ggplot-showcase.*$
 ^gt\.(qmd|typ|pdf|rmarkdown)$
