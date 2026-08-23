@@ -30,9 +30,12 @@ devtools::install(".")
 - `chanwe_title()`, `chanwe_subtitle()`, `chanwe_kpi()`,
   `chanwe_caption()` — label helpers for the full header treatment.
 - `scale_color_chanwe_d()` / `scale_fill_chanwe_d()` — discrete brand
-  scales; `scale_color_chanwe_c()` / `scale_fill_chanwe_c()` —
-  continuous orange gradients.
-- `chanwe_kbl()` — native Typst table generator for Quarto PDF reports.
+  scales (any palette group, `reverse` supported);
+  `scale_color_chanwe_c()` / `scale_fill_chanwe_c()` — named sequential
+  gradients; `scale_color_chanwe_div()` / `scale_fill_chanwe_div()` —
+  the diverging negative/neutral/positive scale.
+- `chanwe_kbl()` — native Typst table generator for Quarto PDF reports,
+  with `chanwe_col_signed()` for positive/negative value coloring.
 - `chanwe_load_fonts()` — registers the brand fonts with `systemfonts`.
 - `chanwe_reporting_css()` — bundled SCSS for Quarto HTML output.
 - `chanwe_brand_tokens()` and `chanwe_preview_palette()` — utilities.
@@ -110,6 +113,64 @@ labs(
 )
 ```
 
+### Color scales
+
+The brand manual assigns each color family a role (coral = house lead,
+green = positive, vermillion = alert, ink = neutral anchor…), and the
+scales are built on those roles:
+
+```r
+# Categorical — 8 brand hues in a fixed, CVD-validated slot order
+scale_color_chanwe_d()
+
+# Ordinal series (S/M/L, funnel stages): a one-hue ramp group
+scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE)
+
+# Sequential magnitude — named one-hue gradients, light → dark
+scale_fill_chanwe_c(palette = "teal")
+# available: orange (default), coral, blue, teal, green, vermillion,
+# magenta, violet, mustard, ink
+
+# Diverging polarity — vermillion (negative) → neutral → green (positive)
+m <- max(abs(df$delta))
+scale_fill_chanwe_div(limits = c(-m, m))
+```
+
+Notes from the palette validation (worth knowing when charting):
+
+- The categorical slot order (coral, blue, teal, green, violet, magenta,
+  mustard, ink) is CVD-validated — worst adjacent pair ΔE 17.5 under
+  protan/deutan simulation. Mustard and ink sit last deliberately;
+  charts with ≤ 6 series never reach them.
+- For scatter, bubble, and map charts keep to **≤ 3 series** (the first
+  three slots pass the stricter all-pairs check); fold the rest into
+  "Other" or facet.
+- Teal, green, and mustard sit below 3:1 mark contrast on the light
+  surfaces — pair them with direct labels or a table view.
+- Yellow and cyan are deliberately not offered as sequential ramps:
+  their entire family is too light to encode magnitude on light
+  surfaces. They remain available as raw tokens for accents.
+
+### Signed colors — one pair everywhere
+
+`chanwe_palette("signed")` carries the canonical positive / negative /
+neutral: hue-true darkenings of the brand's designated families
+(green = positive, vermillion = alert, ink = neutral), stepped until
+they pass WCAG 4.5:1 small-text contrast on **all five brand surfaces**
+(the raw ramp poles don't — bright green tops out at 2.7:1). The same
+three hexes drive:
+
+- the KPI scoreboard ▲/▼ arrows (`chanwe_kpi()`),
+- table delta coloring (`chanwe_col_signed()` for `chanwe_kbl()`),
+- the poles of `scale_*_chanwe_div()`,
+- `chanwe_palette("semantic")` as `positive` / `negative` / `neutral`.
+
+```r
+chanwe_palette("signed")
+#>  positive  negative   neutral
+#> "#147705" "#CC1914" "#666666"
+```
+
 ### Fonts
 
 `theme_chanwe()` calls `chanwe_load_fonts()` automatically. The fonts
@@ -153,7 +214,17 @@ Useful arguments:
 - `fmt` — named list of per-column formatting functions.
 - `col_colors` — per-cell Typst color expressions. Color functions
   receive the **raw (pre-`fmt`) values**, so you can color by numeric
-  sign while `fmt` renders the same column as text (e.g. red negatives).
+  sign while `fmt` renders the same column as text. For the standard
+  treatment use `chanwe_col_signed()` (supports `threshold`, `flip`
+  for smaller-is-better metrics, and NA → neutral):
+
+  ```r
+  chanwe_kbl(
+    df,
+    fmt = list(delta = function(x) sprintf("%+.1f%%", x)),
+    col_colors = list(delta = chanwe_col_signed())
+  )
+  ```
 - `n_total` / `total_fill` — trailing total rows with a heavier rule.
 - `highlight_cols` / `vlines` — column emphasis and vertical rules.
 

@@ -1,15 +1,29 @@
 # Brand color tokens -------------------------------------------------------
 
 .chanwe_colors <- c(
-  # Editorial 8-color chart palette — p15 family primaries (shade -01)
+  # Editorial 8-color chart palette — p15 family primaries (shade -01).
+  # Slot order is CVD-validated (worst adjacent pair ΔE 17.5 under
+  # protan/deutan simulation; ≥ 8 is the target): mustard and ink sit last
+  # because they break the categorical lightness/chroma gates, so charts
+  # with ≤ 6 series never reach them. Do not re-order without re-running
+  # the palette validator.
   "chart-coral"   = "#EE5524",
   "chart-blue"    = "#0C48ED",
-  "chart-green"   = "#1EB508",
-  "chart-mustard" = "#E8B400",
-  "chart-violet"  = "#9B2E8F",
   "chart-teal"    = "#14A4B8",
+  "chart-green"   = "#1EB508",
+  "chart-violet"  = "#9B2E8F",
   "chart-magenta" = "#EB03F2",
+  "chart-mustard" = "#E8B400",
   "chart-ink"     = "#141414",
+  # Signed tokens — the canonical positive/negative/neutral for KPI arrows,
+  # table deltas, and diverging-scale poles. Hue-true darkenings of the
+  # brand families the manual designates (GREEN·POSITIVE, VERMILLION·ALERT,
+  # INK·NEUTRAL ANCHOR), stepped down until they clear WCAG 4.5:1 small-text
+  # contrast on all five brand surfaces (white, white-ivory, metallic,
+  # gray, beige). The raw ramp poles do not: #1EB508 tops out at 2.7:1.
+  "signed-positive" = "#147705",
+  "signed-negative" = "#CC1914",
+  "signed-neutral"  = "#666666",
   "brand-orange" = "#E94B2B",
   "brand-black" = "#101010",
   "brand-white" = "#F7F7F7",
@@ -124,18 +138,22 @@
   success    = "typst-green",
   warning    = "typst-warning",
   danger     = "typst-red",
-  info       = "typst-info"
+  info       = "typst-info",
+  positive   = "signed-positive",
+  negative   = "signed-negative",
+  neutral    = "signed-neutral"
 )
 
-# Editorial 8-color chart palette — p15 family primaries (shade -01)
+# Editorial 8-color chart palette — p15 family primaries (shade -01).
+# Same CVD-validated slot order as the chart-* tokens above.
 .chanwe_chart_colors <- c(
   "chart-coral"    = "#EE5524",
   "chart-blue"     = "#0C48ED",
-  "chart-green"    = "#1EB508",
-  "chart-mustard"  = "#E8B400",
-  "chart-violet"   = "#9B2E8F",
   "chart-teal"     = "#14A4B8",
+  "chart-green"    = "#1EB508",
+  "chart-violet"   = "#9B2E8F",
   "chart-magenta"  = "#EB03F2",
+  "chart-mustard"  = "#E8B400",
   "chart-ink"      = "#141414"
 )
 
@@ -165,6 +183,7 @@
     mb_dark   = .chanwe_colors[grep("^mb-dark",   names(.chanwe_colors))],
     mb_beige  = .chanwe_colors[grep("^mb-beige",  names(.chanwe_colors))],
     semantic = chanwe_get_semantic(),
+    signed = chanwe_get_signed(),
     chart = .chanwe_chart_colors
   )
 }
@@ -184,6 +203,56 @@ chanwe_get_chart <- function() {
   .chanwe_chart_colors
 }
 
+chanwe_get_signed <- function() {
+  c(
+    positive = .chanwe_colors[["signed-positive"]],
+    negative = .chanwe_colors[["signed-negative"]],
+    neutral  = .chanwe_colors[["signed-neutral"]]
+  )
+}
+
+# Sequential ramps for the continuous scales — light → dark, one brand hue
+# each. Built from the p15 5-shade ramps; green and vermillion get their
+# dark pole extended with the matching signed token so the strong end
+# clears 3:1 mark contrast on the brand surfaces. The yellow and cyan
+# families are deliberately absent: their entire ramp is too light to
+# encode magnitude on light surfaces (dark end < 2:1). "orange" is the
+# historical default gradient anchored on the report primary.
+.chanwe_seq_ramps <- function() {
+  cols <- .chanwe_colors
+  ramp <- function(prefix) {
+    rev(unname(cols[grep(paste0("^", prefix), names(cols))]))
+  }
+  list(
+    orange     = unname(cols[c("p13-orange-10", "p13-orange-05", "typst-primary")]),
+    coral      = ramp("p15-coral"),
+    blue       = ramp("p15-blue"),
+    teal       = ramp("p15-teal"),
+    green      = c(ramp("p15-green"), cols[["signed-positive"]]),
+    vermillion = c(ramp("p15-vermillion"), cols[["signed-negative"]]),
+    magenta    = ramp("p15-magenta"),
+    violet     = ramp("p15-violet"),
+    mustard    = ramp("p15-mustard"),
+    ink        = ramp("p15-ink")
+  )
+}
+
+# Diverging ramp: negative (vermillion arm) → neutral midpoint → positive
+# (green arm), per the brand roles VERMILLION·ALERT / GREEN·POSITIVE.
+# Poles are the signed tokens; arm steps are p15 shades chosen so lightness
+# is monotone from the midpoint out to each pole (green-05 is lighter than
+# the midpoint and is skipped for that reason).
+.chanwe_div_ramp <- function() {
+  cols <- .chanwe_colors
+  unname(c(
+    cols[["signed-negative"]],
+    cols[c("p15-vermillion-01", "p15-vermillion-03", "p15-vermillion-05")],
+    cols[["typst-neutral-200"]],
+    cols[c("p15-green-04", "p15-green-03", "p15-green-01")],
+    cols[["signed-positive"]]
+  ))
+}
+
 #' ChanWe Color Palette Tokens
 #'
 #' Returns ChanWe brand colors as a single named vector, grouped vectors,
@@ -195,7 +264,17 @@ chanwe_get_chart <- function() {
 #'   `"p15_vermillion"`, `"p15_green"`, `"p15_magenta"`, `"p15_blue"`,
 #'   `"p15_yellow"`, `"p15_cyan"`, `"p15_mustard"`, `"p15_violet"`,
 #'   `"p15_teal"`, `"p15_ink"`, `"mb_orange"`, `"mb_dark"`, `"mb_beige"`,
-#'   `"semantic"`, and `"chart"`.
+#'   `"semantic"`, `"signed"`, and `"chart"`.
+#'
+#' @section Signed colors:
+#' The `"signed"` group carries the canonical positive / negative / neutral
+#' colors, derived from the brand families the manual designates for those
+#' roles (green = positive, vermillion = alert, ink = neutral) and darkened
+#' until they pass WCAG 4.5:1 small-text contrast on every brand surface.
+#' They are used by the KPI scoreboard arrows ([chanwe_kpi()]), the table
+#' helper [chanwe_col_signed()], and the poles of
+#' [scale_color_chanwe_div()]. Use them for any "went up / went down"
+#' encoding so the same pair appears in charts, tables, and reports.
 #'
 #' @return If `palette = NULL`, a list containing `all` and `groups`.
 #'   Otherwise, a named character vector of hex colors.

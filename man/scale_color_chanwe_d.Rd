@@ -5,11 +5,18 @@
 \alias{scale_fill_chanwe_d}
 \title{ChanWe Discrete Color Scales}
 \usage{
-scale_color_chanwe_d(...)
+scale_color_chanwe_d(palette = "chart", reverse = FALSE, ...)
 
-scale_fill_chanwe_d(...)
+scale_fill_chanwe_d(palette = "chart", reverse = FALSE, ...)
 }
 \arguments{
+\item{palette}{Palette to draw colors from. Either a group name accepted
+by \code{\link[=chanwe_palette]{chanwe_palette()}} (default \code{"chart"}; ramp groups like
+\code{"p15_blue"} or \code{"mb_orange"} work for ordinal series) or a character
+vector of colors to use directly.}
+
+\item{reverse}{Reverse the palette order. Default \code{FALSE}.}
+
 \item{...}{Additional arguments passed to \code{\link[ggplot2:discrete_scale]{ggplot2::discrete_scale()}},
 e.g. \code{name}, \code{labels}, \code{guide}, \code{drop}.}
 }
@@ -17,14 +24,25 @@ e.g. \code{name}, \code{labels}, \code{guide}, \code{drop}.}
 A ggplot2 scale object.
 }
 \description{
-Apply the ChanWe categorical palette to \code{color} or \code{fill} aesthetics.
-Colors cycle through the brand chart palette when there are more categories
+Apply a ChanWe categorical palette to \code{color} or \code{fill} aesthetics.
+Colors cycle through the chosen palette when there are more categories
 than palette entries.
 }
 \details{
 \code{scale_color_chanwe_d()} maps to the \code{colour} aesthetic (points, lines,
 text). \code{scale_fill_chanwe_d()} maps to the \code{fill} aesthetic (bars, areas,
 ribbons).
+\subsection{The default chart palette}{
+
+The default \code{"chart"} palette is the editorial 8-color set in a fixed,
+CVD-validated slot order (coral, blue, teal, green, violet, magenta,
+mustard, ink — worst adjacent pair \eqn{\Delta}E 17.5 under
+protanopia/deuteranopia simulation). Mustard and ink sit in the last two
+slots deliberately: charts with up to 6 series never reach them.
+For scatter, bubble, and map charts — where any two series can sit side
+by side — keep to at most 3 series (the first three slots are validated
+all-pairs); fold the rest into "Other" or facet.
+}
 }
 \examples{
 ## Points colored by group (assign; print to render with brand fonts)
@@ -33,10 +51,10 @@ p1 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
   scale_color_chanwe_d() +
   theme_chanwe()
 
-## Bars filled by group
+## Ordinal series (small → large): use a one-hue ramp group
 avg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
 p2 <- ggplot2::ggplot(avg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
   ggplot2::geom_col() +
-  scale_fill_chanwe_d() +
+  scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE) +
   theme_chanwe(legend_position = "none")
 }

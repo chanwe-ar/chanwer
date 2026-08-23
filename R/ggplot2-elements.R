@@ -463,8 +463,12 @@ makeContent.cw_subtitle_tree <- function(x) {
     ink <- x$ink_col
     fg_muted <- "#656460"
     subtle <- x$kpi_label_colour %||_% "#AEABA6"
-    green <- "#2D7A4F"
-    red <- "#B03A2E"
+    # canonical signed tokens — same pair as chanwe_col_signed() and the
+    # diverging scale poles
+    signed <- chanwe_get_signed()
+    green <- signed[["positive"]]
+    red <- signed[["negative"]]
+    neutral <- signed[["neutral"]]
 
     # y-coordinates from bottom of the whole grob
     kpi_bot_ln_y <- d$kpi_bot_sep + d$kpi_bot_ln_h / 2
@@ -557,7 +561,7 @@ makeContent.cw_subtitle_tree <- function(x) {
         } else if (m$dir < 0L) {
           red
         } else {
-          fg_muted
+          neutral
         }
         arrow <- if (m$dir > 0L) {
           "\u25B2 " # up triangle

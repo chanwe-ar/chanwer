@@ -58,6 +58,87 @@ test_that("discrete palette recycles beyond the 8 chart colors", {
   expect_identical(pal_fn(10), c(chart, chart[1:2]))
 })
 
+test_that("discrete palette accepts group names, raw vectors, and reverse", {
+  blue_ramp <- unname(chanwe_palette("p15_blue"))
+
+  expect_identical(chanwe_discrete_pal("p15_blue")(5), blue_ramp)
+  expect_identical(chanwe_discrete_pal("p15_blue", reverse = TRUE)(5), rev(blue_ramp))
+  expect_identical(chanwe_discrete_pal(c("#111111", "#222222"))(2), c("#111111", "#222222"))
+
+  sc <- scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE)
+  expect_s3_class(sc, "ScaleDiscrete")
+})
+
+test_that("sequential palettes are named, light-to-dark, and gated", {
+  ramps <- c(
+    "orange", "coral", "blue", "teal", "green",
+    "vermillion", "magenta", "violet", "mustard", "ink"
+  )
+  for (r in ramps) {
+    values <- chanwe_seq_pal(r)
+    expect_true(length(values) >= 3, info = r)
+  }
+
+  # green and vermillion end in the signed poles for a readable dark end
+  expect_identical(chanwe_seq_pal("green")[[6]], "#147705")
+  expect_identical(chanwe_seq_pal("vermillion")[[6]], "#CC1914")
+
+  # reverse flips, raw vectors pass through
+  expect_identical(chanwe_seq_pal("blue", reverse = TRUE), rev(chanwe_seq_pal("blue")))
+  expect_identical(chanwe_seq_pal(c("#111111", "#999999")), c("#111111", "#999999"))
+
+  # yellow and cyan are deliberately not sequential ramps
+  expect_error(chanwe_seq_pal("yellow"), "must be one of")
+  expect_error(chanwe_seq_pal("cyan"), "must be one of")
+
+  expect_s3_class(scale_color_chanwe_c(palette = "teal"), "ScaleContinuous")
+  expect_s3_class(scale_fill_chanwe_c(palette = "green"), "ScaleContinuous")
+})
+
+test_that("diverging scale runs vermillion -> neutral -> green with signed poles", {
+  ramp <- .chanwe_div_ramp()
+
+  expect_identical(ramp[[1]], "#CC1914")
+  expect_identical(ramp[[length(ramp)]], "#147705")
+  expect_true("#E8E8E8" %in% ramp)
+
+  expect_s3_class(scale_color_chanwe_div(), "ScaleContinuous")
+  expect_s3_class(scale_fill_chanwe_div(), "ScaleContinuous")
+  expect_s3_class(scale_fill_chanwe_div(reverse = TRUE), "ScaleContinuous")
+})
+
+test_that("chanwe_col_signed maps sign to the canonical tokens", {
+  fn <- chanwe_col_signed()
+  out <- fn(c(2.5, -1.25, 0, NA))
+
+  expect_identical(out, c(
+    'rgb("#147705")', 'rgb("#CC1914")', 'rgb("#666666")', 'rgb("#666666")'
+  ))
+
+  # flip = TRUE for smaller-is-better metrics
+  expect_identical(
+    chanwe_col_signed(flip = TRUE)(c(-3, 4)),
+    c('rgb("#147705")', 'rgb("#CC1914")')
+  )
+
+  # custom threshold
+  expect_identical(
+    chanwe_col_signed(threshold = 10)(c(15, 5)),
+    c('rgb("#147705")', 'rgb("#CC1914")')
+  )
+
+  # plugs into chanwe_kbl and colors by raw sign while fmt renders text
+  skip_if_not_installed("knitr")
+  df <- data.frame(m = c("a", "b"), delta = c(1.5, -2))
+  txt <- as.character(chanwe_kbl(
+    df,
+    fmt = list(delta = function(x) sprintf("%+.1f%%", x)),
+    col_colors = list(delta = chanwe_col_signed())
+  ))
+  expect_match(txt, 'rgb("#147705")', fixed = TRUE)
+  expect_match(txt, 'rgb("#CC1914")', fixed = TRUE)
+})
+
 test_that("title/subtitle/kpi encoders produce parseable strings", {
   sep <- .CW_SEP
 

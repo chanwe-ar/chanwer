@@ -117,10 +117,11 @@ Each function receives the column vector and must return a character vector.}
 \item{col_colors}{Named list of functions, keyed by column name. Each
 function receives the column's \emph{original} values — before \code{fmt}
 is applied — and must return a character vector of raw Typst color
-expressions (e.g. \code{"rgb(\\\"#B03A2E\\\")"}, not escaped) used as the
+expressions (e.g. \code{"rgb(\\\"#CC1914\\\")"}, not escaped) used as the
 text fill for each cell. This is deliberate: color logic can branch on
 raw numbers (e.g. the sign of a delta) even when \code{fmt} renders the
-same column as text. See the red-negatives pattern in the examples.}
+same column as text. For the standard positive/negative treatment use
+\code{\link{chanwe_col_signed}()} — see the examples.}
 
 \item{n_total}{Number of trailing rows to treat as total rows. Total rows
 get a heavier rule above them, no row dividers, and (optionally) a
@@ -154,15 +155,14 @@ df <- data.frame(
   delta = c(12.4, -3.1, 5.8)
 )
 
-## Red-negatives pattern: fmt renders the delta as text, while the
-## col_colors function still receives the raw numbers and colors by sign.
+## Signed-deltas pattern: fmt renders the delta as text, while the
+## col_colors function still receives the raw numbers and colors by sign
+## using the canonical ChanWe signed tokens.
 chanwe_kbl(
   df,
   title = "Quarterly deltas",
   fmt = list(delta = function(x) sprintf("\%+.1f\%\%", x)),
-  col_colors = list(delta = function(x) {
-    ifelse(x < 0, 'rgb("#B03A2E")', 'rgb("#2D7A4F")')
-  })
+  col_colors = list(delta = chanwe_col_signed())
 )
 \dontshow{\}) # examplesIf}
 }

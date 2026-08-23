@@ -57,10 +57,11 @@
 #' @param col_colors Named list of functions, keyed by column name. Each
 #'   function receives the column's \emph{original} values — before \code{fmt}
 #'   is applied — and must return a character vector of raw Typst color
-#'   expressions (e.g. \code{"rgb(\\\"#B03A2E\\\")"}, not escaped) used as the
+#'   expressions (e.g. \code{"rgb(\\\"#CC1914\\\")"}, not escaped) used as the
 #'   text fill for each cell. This is deliberate: color logic can branch on
 #'   raw numbers (e.g. the sign of a delta) even when \code{fmt} renders the
-#'   same column as text. See the red-negatives pattern in the examples.
+#'   same column as text. For the standard positive/negative treatment use
+#'   \code{\link{chanwe_col_signed}()} — see the examples.
 #' @param n_total Number of trailing rows to treat as total rows. Total rows
 #'   get a heavier rule above them, no row dividers, and (optionally) a
 #'   highlight fill. Default \code{0} (no total rows).
@@ -82,15 +83,14 @@
 #'   delta = c(12.4, -3.1, 5.8)
 #' )
 #'
-#' ## Red-negatives pattern: fmt renders the delta as text, while the
-#' ## col_colors function still receives the raw numbers and colors by sign.
+#' ## Signed-deltas pattern: fmt renders the delta as text, while the
+#' ## col_colors function still receives the raw numbers and colors by sign
+#' ## using the canonical ChanWe signed tokens.
 #' chanwe_kbl(
 #'   df,
 #'   title = "Quarterly deltas",
 #'   fmt = list(delta = function(x) sprintf("%+.1f%%", x)),
-#'   col_colors = list(delta = function(x) {
-#'     ifelse(x < 0, 'rgb("#B03A2E")', 'rgb("#2D7A4F")')
-#'   })
+#'   col_colors = list(delta = chanwe_col_signed())
 #' )
 #' @export
 chanwe_kbl <- function(
@@ -503,4 +503,62 @@ chanwe_kbl <- function(
     paste(L, collapse = "\n"),
     "\n```\n"
   ))
+}
+
+#' Signed Color Function for ChanWe Tables
+#'
+#' Returns a ready-made function for the \code{col_colors} argument of
+#' \code{\link{chanwe_kbl}()}: positive values in the canonical ChanWe
+#' positive green, negative values in the alert vermillion, values at the
+#' threshold (and \code{NA}) in neutral ink. The same three tokens drive the
+#' KPI scoreboard arrows and the poles of \code{\link{scale_color_chanwe_div}()},
+#' so "went up / went down" reads identically across tables, charts, and
+#' reports. All three pass WCAG 4.5:1 small-text contrast on every brand
+#' surface (see \code{chanwe_palette("signed")}).
+#'
+#' @param threshold Baseline that separates positive from negative.
+#'   Default \code{0}.
+#' @param positive,negative,neutral Optional hex overrides for the three
+#'   states. Defaults are the canonical signed tokens.
+#' @param flip Set \code{TRUE} when smaller is better (e.g. costs, churn):
+#'   values below the threshold get the positive color. Default \code{FALSE}.
+#'
+#' @return A function taking a numeric vector and returning raw Typst color
+#'   expressions, suitable for one entry of \code{col_colors}. Because
+#'   \code{col_colors} functions receive the column's original (pre-\code{fmt})
+#'   values, this works even when \code{fmt} renders the column as text.
+#' @seealso [chanwe_kbl()], [scale_color_chanwe_div()], [chanwe_palette()]
+#' @export
+#'
+#' @examples
+#' fn <- chanwe_col_signed()
+#' fn(c(2.5, -1.25, 0, NA))
+#'
+#' ## Smaller-is-better metric:
+#' chanwe_col_signed(flip = TRUE)(c(-3, 4))
+chanwe_col_signed <- function(
+  threshold = 0,
+  positive = NULL,
+  negative = NULL,
+  neutral = NULL,
+  flip = FALSE
+) {
+  signed <- chanwe_get_signed()
+  pos <- if (!is.null(positive)) positive else signed[["positive"]]
+  neg <- if (!is.null(negative)) negative else signed[["negative"]]
+  neu <- if (!is.null(neutral)) neutral else signed[["neutral"]]
+  if (isTRUE(flip)) {
+    tmp <- pos
+    pos <- neg
+    neg <- tmp
+  }
+  typst_rgb <- function(hex) paste0('rgb("', hex, '")')
+
+  function(x) {
+    x <- suppressWarnings(as.numeric(x))
+    out <- rep(typst_rgb(neu), length(x))
+    out[!is.na(x) & x > threshold] <- typst_rgb(pos)
+    out[!is.na(x) & x < threshold] <- typst_rgb(neg)
+    out
+  }
 }

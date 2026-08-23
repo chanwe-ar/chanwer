@@ -3,26 +3,46 @@
 \name{scale_color_chanwe_c}
 \alias{scale_color_chanwe_c}
 \alias{scale_fill_chanwe_c}
-\title{ChanWe Continuous Color Scale}
+\title{ChanWe Continuous Color Scales}
 \usage{
-scale_color_chanwe_c(
-  colours = chanwe_get_colors()[c("p13-orange-10", "p13-orange-05", "typst-primary")],
-  ...
-)
+scale_color_chanwe_c(palette = "orange", reverse = FALSE, colours = NULL, ...)
 
-scale_fill_chanwe_c(
-  colours = chanwe_get_colors()[c("p13-orange-10", "p13-orange-05", "typst-primary")],
-  ...
-)
+scale_fill_chanwe_c(palette = "orange", reverse = FALSE, colours = NULL, ...)
 }
 \arguments{
-\item{colours}{A character vector of colors used in the gradient.}
+\item{palette}{Name of a sequential ramp (see above), or a character
+vector of colors to interpolate directly.}
 
-\item{...}{Additional arguments passed to \code{\link[ggplot2:scale_gradient]{ggplot2::scale_color_gradientn()}}.}
+\item{reverse}{Reverse the ramp (dark \eqn{\to} light). Default \code{FALSE}.}
+
+\item{colours}{Deprecated in favor of \code{palette}; a character vector of
+colors that, when supplied, overrides \code{palette}.}
+
+\item{...}{Additional arguments passed to
+\code{\link[ggplot2:scale_gradient]{ggplot2::scale_color_gradientn()}} / \code{\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradientn()}}.}
 }
 \value{
 A ggplot2 scale object.
 }
 \description{
-Continuous ChanWe gradient scale for color aesthetics.
+Sequential (one hue, light \eqn{\to} dark) ChanWe gradient scales for
+magnitude encoding. Pick the hue with \code{palette}; every named ramp is a
+brand family from \code{\link[=chanwe_palette]{chanwe_palette()}}.
+}
+\details{
+Available palettes: \code{"orange"} (default — the report primary gradient),
+\code{"coral"}, \code{"blue"}, \code{"teal"}, \code{"green"}, \code{"vermillion"}, \code{"magenta"},
+\code{"violet"}, \code{"mustard"}, and \code{"ink"}. The green and vermillion ramps end
+in the signed positive/negative tokens so their dark pole stays readable;
+the brand's yellow and cyan families are deliberately not offered — their
+entire ramp is too light to encode magnitude on the brand surfaces.
+
+For polarity (values diverging around zero) use
+\code{\link[=scale_color_chanwe_div]{scale_color_chanwe_div()}} instead.
+}
+\examples{
+p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = disp)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_chanwe_c(palette = "teal") +
+  theme_chanwe()
 }

@@ -22,6 +22,9 @@ reference:
       - scale_fill_chanwe_d
       - scale_color_chanwe_c
       - scale_fill_chanwe_c
+      - scale_color_chanwe_div
+      - scale_fill_chanwe_div
   - title: Typst Tables
     contents:
       - chanwe_kbl
+      - chanwe_col_signed

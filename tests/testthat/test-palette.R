@@ -34,17 +34,34 @@ test_that("chanwe_palette(NULL) returns all colors plus grouped palettes", {
   expect_length(grouped$groups$mb_beige, 5L)
 })
 
-test_that("chart palette is the editorial 8-color set", {
+test_that("chart palette is the editorial 8-color set in CVD-validated order", {
   chart <- chanwe_palette("chart")
 
   expect_length(chart, 8L)
+  # Fixed slot order: coral, blue, teal, green, violet, magenta, mustard, ink.
+  # Validated for adjacent-pair CVD separation; mustard and ink deliberately
+  # last. Do not re-order without re-running the palette validator.
   expect_identical(
     unname(chart),
     c(
-      "#EE5524", "#0C48ED", "#1EB508", "#E8B400",
-      "#9B2E8F", "#14A4B8", "#EB03F2", "#141414"
+      "#EE5524", "#0C48ED", "#14A4B8", "#1EB508",
+      "#9B2E8F", "#EB03F2", "#E8B400", "#141414"
     )
   )
+})
+
+test_that("signed tokens are canonical and mapped into semantic", {
+  signed <- chanwe_palette("signed")
+
+  expect_named(signed, c("positive", "negative", "neutral"))
+  expect_identical(signed[["positive"]], "#147705")
+  expect_identical(signed[["negative"]], "#CC1914")
+  expect_identical(signed[["neutral"]], "#666666")
+
+  semantic <- chanwe_palette("semantic")
+  expect_identical(semantic[["positive"]], signed[["positive"]])
+  expect_identical(semantic[["negative"]], signed[["negative"]])
+  expect_identical(semantic[["neutral"]], signed[["neutral"]])
 })
 
 test_that("chanwe_palette rejects unknown palette names", {
@@ -58,7 +75,8 @@ test_that("chanwe_brand_tokens carries semantic mapping and structure", {
     tokens$semantic,
     c(
       "foreground", "background", "primary", "secondary",
-      "success", "warning", "danger", "info"
+      "success", "warning", "danger", "info",
+      "positive", "negative", "neutral"
     )
   )
   expect_identical(tokens$semantic[["primary"]], "#FD3810")

@@ -1,10 +1,37 @@
 # ggplot2 helpers -----------------------------------------------------------
 
-chanwe_discrete_pal <- function() {
-  values <- unname(chanwe_get_chart())
+chanwe_discrete_pal <- function(palette = "chart", reverse = FALSE) {
+  values <- if (length(palette) > 1L || grepl("^#", palette[[1L]])) {
+    as.character(palette) # raw color vector passed directly
+  } else {
+    unname(chanwe_palette(palette))
+  }
+  if (isTRUE(reverse)) {
+    values <- rev(values)
+  }
   function(n) {
     rep(values, length.out = n)
   }
+}
+
+chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
+  ramps <- .chanwe_seq_ramps()
+  if (length(palette) > 1L || grepl("^#", palette[[1L]])) {
+    values <- as.character(palette) # raw color vector passed directly
+  } else {
+    if (!palette %in% names(ramps)) {
+      stop(
+        "`palette` must be one of: ",
+        paste(sprintf("'%s'", names(ramps)), collapse = ", "),
+        " (yellow and cyan are excluded: their ramps are too light to encode",
+        " magnitude on the brand surfaces).",
+        call. = FALSE
+      )
+    }
+    values <- ramps[[palette]]
+  }
+  if (isTRUE(reverse)) values <- rev(values)
+  values
 }
 
 #' ChanWe ggplot2 Theme
@@ -575,14 +602,30 @@ chanwe_caption <- function(text) {
 
 #' ChanWe Discrete Color Scales
 #'
-#' Apply the ChanWe categorical palette to `color` or `fill` aesthetics.
-#' Colors cycle through the brand chart palette when there are more categories
+#' Apply a ChanWe categorical palette to `color` or `fill` aesthetics.
+#' Colors cycle through the chosen palette when there are more categories
 #' than palette entries.
 #'
 #' `scale_color_chanwe_d()` maps to the `colour` aesthetic (points, lines,
 #' text). `scale_fill_chanwe_d()` maps to the `fill` aesthetic (bars, areas,
 #' ribbons).
 #'
+#' ## The default chart palette
+#'
+#' The default `"chart"` palette is the editorial 8-color set in a fixed,
+#' CVD-validated slot order (coral, blue, teal, green, violet, magenta,
+#' mustard, ink — worst adjacent pair \eqn{\Delta}E 17.5 under
+#' protanopia/deuteranopia simulation). Mustard and ink sit in the last two
+#' slots deliberately: charts with up to 6 series never reach them.
+#' For scatter, bubble, and map charts — where any two series can sit side
+#' by side — keep to at most 3 series (the first three slots are validated
+#' all-pairs); fold the rest into "Other" or facet.
+#'
+#' @param palette Palette to draw colors from. Either a group name accepted
+#'   by [chanwe_palette()] (default `"chart"`; ramp groups like
+#'   `"p15_blue"` or `"mb_orange"` work for ordinal series) or a character
+#'   vector of colors to use directly.
+#' @param reverse Reverse the palette order. Default `FALSE`.
 #' @param ... Additional arguments passed to [ggplot2::discrete_scale()],
 #'   e.g. `name`, `labels`, `guide`, `drop`.
 #'
@@ -596,59 +639,125 @@ chanwe_caption <- function(text) {
 #'   scale_color_chanwe_d() +
 #'   theme_chanwe()
 #'
-#' ## Bars filled by group
+#' ## Ordinal series (small → large): use a one-hue ramp group
 #' avg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
 #' p2 <- ggplot2::ggplot(avg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
 #'   ggplot2::geom_col() +
-#'   scale_fill_chanwe_d() +
+#'   scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE) +
 #'   theme_chanwe(legend_position = "none")
-scale_color_chanwe_d <- function(...) {
+scale_color_chanwe_d <- function(palette = "chart", reverse = FALSE, ...) {
   ggplot2::discrete_scale(
     aesthetics = "colour",
-    palette = chanwe_discrete_pal(),
+    palette = chanwe_discrete_pal(palette, reverse),
     ...
   )
 }
 
 #' @rdname scale_color_chanwe_d
 #' @export
-scale_fill_chanwe_d <- function(...) {
+scale_fill_chanwe_d <- function(palette = "chart", reverse = FALSE, ...) {
   ggplot2::discrete_scale(
     aesthetics = "fill",
-    palette = chanwe_discrete_pal(),
+    palette = chanwe_discrete_pal(palette, reverse),
     ...
   )
 }
 
-#' ChanWe Continuous Color Scale
+#' ChanWe Continuous Color Scales
 #'
-#' Continuous ChanWe gradient scale for color aesthetics.
+#' Sequential (one hue, light \eqn{\to} dark) ChanWe gradient scales for
+#' magnitude encoding. Pick the hue with `palette`; every named ramp is a
+#' brand family from [chanwe_palette()].
 #'
-#' @param colours A character vector of colors used in the gradient.
-#' @param ... Additional arguments passed to [ggplot2::scale_color_gradientn()].
+#' Available palettes: `"orange"` (default — the report primary gradient),
+#' `"coral"`, `"blue"`, `"teal"`, `"green"`, `"vermillion"`, `"magenta"`,
+#' `"violet"`, `"mustard"`, and `"ink"`. The green and vermillion ramps end
+#' in the signed positive/negative tokens so their dark pole stays readable;
+#' the brand's yellow and cyan families are deliberately not offered — their
+#' entire ramp is too light to encode magnitude on the brand surfaces.
+#'
+#' For polarity (values diverging around zero) use
+#' [scale_color_chanwe_div()] instead.
+#'
+#' @param palette Name of a sequential ramp (see above), or a character
+#'   vector of colors to interpolate directly.
+#' @param reverse Reverse the ramp (dark \eqn{\to} light). Default `FALSE`.
+#' @param colours Deprecated in favor of `palette`; a character vector of
+#'   colors that, when supplied, overrides `palette`.
+#' @param ... Additional arguments passed to
+#'   [ggplot2::scale_color_gradientn()] / [ggplot2::scale_fill_gradientn()].
 #'
 #' @return A ggplot2 scale object.
 #' @export
+#'
+#' @examples
+#' p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = disp)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_chanwe_c(palette = "teal") +
+#'   theme_chanwe()
 scale_color_chanwe_c <- function(
-  colours = chanwe_get_colors()[c(
-    "p13-orange-10",
-    "p13-orange-05",
-    "typst-primary"
-  )],
+  palette = "orange",
+  reverse = FALSE,
+  colours = NULL,
   ...
 ) {
-  ggplot2::scale_color_gradientn(colours = colours, ...)
+  values <- if (!is.null(colours)) colours else chanwe_seq_pal(palette, reverse)
+  ggplot2::scale_color_gradientn(colours = values, ...)
 }
 
 #' @rdname scale_color_chanwe_c
 #' @export
 scale_fill_chanwe_c <- function(
-  colours = chanwe_get_colors()[c(
-    "p13-orange-10",
-    "p13-orange-05",
-    "typst-primary"
-  )],
+  palette = "orange",
+  reverse = FALSE,
+  colours = NULL,
   ...
 ) {
-  ggplot2::scale_fill_gradientn(colours = colours, ...)
+  values <- if (!is.null(colours)) colours else chanwe_seq_pal(palette, reverse)
+  ggplot2::scale_fill_gradientn(colours = values, ...)
+}
+
+#' ChanWe Diverging Color Scales
+#'
+#' Diverging gradient for values with a meaningful zero or baseline:
+#' negative pole in the brand vermillion (alert) family, positive pole in
+#' the brand green (positive) family, neutral gray midpoint. The poles are
+#' the canonical signed tokens (`chanwe_palette("signed")`), so charts,
+#' table deltas ([chanwe_col_signed()]), and KPI arrows all share one pair.
+#'
+#' The midpoint maps to the *middle of the data range*, so give the scale
+#' symmetric limits when zero is the baseline, e.g.
+#' `limits = c(-max(abs(x)), max(abs(x)))` — otherwise zero drifts off the
+#' neutral gray.
+#'
+#' @param reverse Flip the scale (positive pole on the low end).
+#'   Default `FALSE`.
+#' @param ... Additional arguments passed to
+#'   [ggplot2::scale_color_gradientn()] / [ggplot2::scale_fill_gradientn()],
+#'   e.g. `limits`, `name`, `na.value`.
+#'
+#' @return A ggplot2 scale object.
+#' @seealso [chanwe_col_signed()] for the same mapping in Typst tables,
+#'   [scale_color_chanwe_c()] for plain magnitude.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(x = 1:10, y = 1, delta = seq(-3, 3, length.out = 10))
+#' m <- max(abs(df$delta))
+#' p <- ggplot2::ggplot(df, ggplot2::aes(x, y, fill = delta)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_chanwe_div(limits = c(-m, m)) +
+#'   theme_chanwe()
+scale_color_chanwe_div <- function(reverse = FALSE, ...) {
+  values <- .chanwe_div_ramp()
+  if (isTRUE(reverse)) values <- rev(values)
+  ggplot2::scale_color_gradientn(colours = values, ...)
+}
+
+#' @rdname scale_color_chanwe_div
+#' @export
+scale_fill_chanwe_div <- function(reverse = FALSE, ...) {
+  values <- .chanwe_div_ramp()
+  if (isTRUE(reverse)) values <- rev(values)
+  ggplot2::scale_fill_gradientn(colours = values, ...)
 }

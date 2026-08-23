@@ -13,7 +13,7 @@ all colors and grouped palettes. Supported names are \code{"all"}, \code{"core"}
 \code{"p15_vermillion"}, \code{"p15_green"}, \code{"p15_magenta"}, \code{"p15_blue"},
 \code{"p15_yellow"}, \code{"p15_cyan"}, \code{"p15_mustard"}, \code{"p15_violet"},
 \code{"p15_teal"}, \code{"p15_ink"}, \code{"mb_orange"}, \code{"mb_dark"}, \code{"mb_beige"},
-\code{"semantic"}, and \code{"chart"}.}
+\code{"semantic"}, \code{"signed"}, and \code{"chart"}.}
 }
 \value{
 If \code{palette = NULL}, a list containing \code{all} and \code{groups}.
@@ -23,6 +23,18 @@ Otherwise, a named character vector of hex colors.
 Returns ChanWe brand colors as a single named vector, grouped vectors,
 or specific palette subsets used by plotting and reporting helpers.
 }
+\section{Signed colors}{
+
+The \code{"signed"} group carries the canonical positive / negative / neutral
+colors, derived from the brand families the manual designates for those
+roles (green = positive, vermillion = alert, ink = neutral) and darkened
+until they pass WCAG 4.5:1 small-text contrast on every brand surface.
+They are used by the KPI scoreboard arrows (\code{\link[=chanwe_kpi]{chanwe_kpi()}}), the table
+helper \code{\link[=chanwe_col_signed]{chanwe_col_signed()}}, and the poles of
+\code{\link[=scale_color_chanwe_div]{scale_color_chanwe_div()}}. Use them for any "went up / went down"
+encoding so the same pair appears in charts, tables, and reports.
+}
+
 \examples{
 chanwe_palette()
 chanwe_palette("chart")
