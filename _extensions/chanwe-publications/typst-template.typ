@@ -1,0 +1,549 @@
+// =============================================================
+// chanwe-studio/chanwe-publications - typst-template.typ
+// Page setup, design tokens, and global show rules.
+// =============================================================
+
+// ---------- Design tokens ------------------------------------
+#let chanwe-tokens = (
+  paper:       rgb("#F7F7F7"),
+  ink:         rgb("#0F0F0F"),
+  fg:          rgb("#211F1C"),
+  fg-muted:    rgb("#71706C"),
+  fg-subtle:   rgb("#928D86"),
+  primary:     rgb("#FD3810"),
+  primary-dark: rgb("#EE5524"),
+  primary-soft: rgb("#FD38101A"),
+  beige:       rgb("#F5F1EB"),
+  neutral-100: rgb("#F5F5F5"),
+  neutral-200: rgb("#E8E8E8"),
+  neutral-300: rgb("#D4D4D4"),
+  neutral-700: rgb("#525252"),
+  neutral-900: rgb("#1F1F1F"),
+  border:      rgb("#1F1F1F1A"),
+  font-display: ("Archivo", "Helvetica Neue", "Arial"),
+  font-serif:   ("Cormorant Garamond", "Georgia", "Times New Roman"),
+  font-sans:    ("Satoshi", "Inter", "Helvetica Neue", "Arial"),
+  font-mono:    ("JetBrains Mono", "Menlo", "Courier New"),
+)
+
+// expose tokens as a global so partials and user code can use them
+#let _t = chanwe-tokens
+
+// ---------- Brand palette ------------------------------------
+// Three brand color ramps (100 = lightest, 950 = darkest).
+#let main_brand = (
+  // Orange — primary brand color
+  orange-100: rgb("#f8ddd9"),
+  orange-200: rgb("#f6cfc7"),
+  orange-300: rgb("#f5c0b6"),
+  orange-400: rgb("#f2a393"),
+  orange-500: rgb("#f09482"),
+  orange-600: rgb("#ef8670"),
+  orange-700: rgb("#ed775f"),
+  orange-800: rgb("#ec684e"),
+  orange-900: rgb("#ea5a3c"),
+  orange-950: rgb("#e94b2b"),
+
+  // Dark — ink / neutral ramp
+  dark-100: rgb("#cacaca"),
+  dark-200: rgb("#b8b8b8"),
+  dark-300: rgb("#a5a5a5"),
+  dark-400: rgb("#929292"),
+  dark-500: rgb("#6d6d6d"),
+  dark-600: rgb("#5b5b5b"),
+  dark-700: rgb("#484848"),
+  dark-800: rgb("#353535"),
+  dark-900: rgb("#232323"),
+  dark-950: rgb("#101010"),
+
+  // Beige — paper / warm neutral ramp
+  beige-100: rgb("#F6F1EB"),
+  beige-200: rgb("#ECE5D9"),
+  beige-300: rgb("#E2DBD0"),
+  beige-400: rgb("#D9D2C6"),
+  beige-500: rgb("#CFC8BD"),
+)
+
+// assets path — override with chanwe-assets: in document YAML if the
+// extension installed to a different path (e.g. _extensions/chanwe-report/)
+#let _chanwe-assets = "$chanwe-assets$".replace("\\_", "_")
+
+// ---------- Small primitives ---------------------------------
+#let chanwe-glyph(size: 7pt, color: _t.primary) = box(
+  width: size, height: size, baseline: 1pt,
+)[
+  #place(center + horizon, rotate(45deg, square(size: size * 0.72, fill: color)))
+]
+
+#let chanwe-eyebrow(body, color: _t.primary, with-rule: false, size: 8.5pt) = {
+  if with-rule {
+    box(width: 22pt, height: 0.75pt, fill: color, baseline: -3pt)
+    h(8pt)
+  }
+  text(
+    font: _t.font-mono,
+    size: size,
+    weight: 500,
+    tracking: 0.18em,
+    fill: color,
+    upper(body),
+  )
+}
+
+#let chanwe-section-eyebrow(body) = chanwe-eyebrow(body, with-rule: true)
+
+#let chanwe-meta-row(label, value, sub: none) = {
+  grid(
+    columns: (18mm, 1fr),
+    column-gutter: 4mm,
+    align: (left + top, left + top),
+    text(font: _t.font-mono, size: 7pt, tracking: 0.20em, fill: _t.fg-subtle, upper(label)),
+    block(spacing: 0pt)[
+      #set par(spacing: 0pt, leading: 0.9em)
+      #text(font: _t.font-display, size: 10pt, weight: 600, fill: _t.fg, value)
+      #if sub != none {
+        linebreak()
+        text(font: _t.font-sans, size: 8.5pt, fill: _t.fg-muted, sub)
+      }
+    ],
+  )
+}
+
+// ---------- Running header / footer --------------------------
+#let chanwe-header(section, topic) = context {
+  block(height: 100%, width: 100%)[
+    #grid(
+      rows: (1fr, auto),
+      align(horizon, {
+        set text(font: _t.font-mono, size: 6pt, tracking: 0.14em)
+        grid(
+          columns: (1fr, auto),
+          align: (left + horizon, right + horizon),
+          [
+            #text(weight: 700, fill: _t.primary, "//")
+            #h(5pt)
+            #text(fill: _t.fg-subtle, upper(section))
+            #if topic != "" [#text(fill: _t.fg-subtle, upper(" · " + topic))]
+          ],
+          image(_chanwe-assets + "Logo_Negro.svg", height: 3.5mm, fit: "contain"),
+        )
+      }),
+      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + _t.border)),
+    )
+  ]
+}
+
+#let chanwe-footer(doc-id, edition) = context {
+  // line pins to top; text row grows to fill space → text centers
+  block(height: 100%, width: 100%)[
+    #grid(
+      rows: (auto, 1fr),
+      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + _t.border)),
+      align(horizon, {
+        set text(font: _t.font-mono, size: 6pt, tracking: 0.14em, fill: _t.fg-subtle)
+        grid(
+          columns: (1fr, auto),
+          align: (left + horizon, right + horizon),
+          [#upper[#doc-id #h(8pt) #text(fill: _t.neutral-300, edition)]],
+          [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-subtle, upper(" / " + str(counter(page).final().first())))],
+        )
+      }),
+    )
+  ]
+}
+
+// Global state - set by chanwe-report() and read by components
+#let _chanwe-doc = state("chanwe-doc", (
+  doc-id:    "CHW · DOC",
+  edition:   "",
+  meta-rows: (),
+))
+
+// Tracks the active chapter-divider section (set in chanwe-chapter-divider)
+#let _chanwe-cur-part = state("chanwe-cur-part", none)
+
+// =============================================================
+// PARTIAL INCLUDES (cover, elements, pages)
+// Each file uses _t which is defined above.
+// =============================================================
+$chanwe-cover.typ()$
+$chanwe-elements.typ()$
+$chanwe-pages.typ()$
+$chanwe-charts.typ()$
+
+// =============================================================
+// MAIN TEMPLATE FUNCTION (called by typst-show.typ)
+// =============================================================
+#let chanwe-report(
+  // metadata
+  title: "Untitled",
+  subtitle: none,
+  author: "Chanwe Studio",
+  date: "",
+  doc-id: "CHW · DOC · 2026 · 01",
+  edition: "Edition 01 / 2026",
+  volume: "Confidential",
+  chapter: "Chapter",
+  section: "",
+  topic: "",
+  rail-eyebrow: "Quarto · Style Guide",
+  cover-eyebrow: none,      // overrides rail-eyebrow on the cover page only
+  // assets
+  hero-image: none,
+  hero-img-position: none,  // 1–10 (left→right); none = fit:cover (centered)
+  wordmark: none,
+  stamp: ("VOL", "I", "2026"),
+  hero-date: "",
+  meta-rows: (
+    ("Author", "Chanwe Studio", "Estrategia Activa"),
+  ),
+  // toggles
+  cover: true,
+  // toc
+  toc-eyebrow: "Document map",
+  toc-title: "Agenda",
+  toc-lede: none,
+  toc: true,
+  // abstract
+  abstract: true,
+  abstract-eyebrow: "Abstract",
+  abstract-title: none,
+  abstract-text: none,
+  abstract-keywords: (),
+  abstract-status: none,
+  abstract-show: (),
+  abstract-takeaway: none,   // string — first letter gets drop-cap treatment
+  // back cover
+  back-cover: true,
+  back-cover-tagline-1: "Less template,",
+  back-cover-tagline-2: "more report.",
+  back-cover-cols: (),
+  // edge label (vertical text on right side of cover + back cover)
+  cover-edge: none,
+  cover-edge-color: none,
+  // publication cover
+  publication-period: none,
+  publication-edition: none,
+  publication-art: none,
+  publication-audience: "PÚBLICO",
+  publication-series: "CHANWE / RESEARCH",
+  publication-location: "MENDOZA / ARGENTINA",
+  publication-copyright: "PROHIBIDA SU REPRODUCCIÓN SIN AUTORIZACIÓN | TODOS LOS DERECHOS RESERVADOS",
+  // page
+  page-bg: rgb("#FBFBFB"),
+  second-page-bg: rgb("#F7F7F7"),   // fill for the TOC/abstract page (metallic default)
+  // body text
+  body-size:    none,   // e.g. 10pt — overrides default 11pt
+  body-leading: none,   // e.g. 0.9em — overrides default 0.85em
+  body-justify: none,   // true / false — overrides default false
+  body-color:   none,   // rgb color — overrides default _t.fg
+  body-spacing: none,   // e.g. 2.4em — space between body paragraphs
+  // body
+  body,
+) = {
+  // ---- store metadata in global state -----------------------
+  _chanwe-doc.update((doc-id: doc-id, edition: edition, meta-rows: meta-rows))
+
+  // ---- global text + page defaults ---------------------------
+  set page(fill: page-bg)
+  set text(font: _t.font-sans, size: 11pt, fill: _t.fg, lang: "en")
+  set par(leading: 0.85em, justify: false, spacing: 1.0em)
+  set heading(numbering: "1.1.1.")
+
+  // ---- inline rules (apply to entire document) ---------------
+  show emph: it => text(font: _t.font-serif, style: "italic", weight: 300, fill: rgb("#484848"), it.body)
+  show strong: it => text(weight: 600, fill: rgb("#484848"), it.body)
+  show math.equation.where(block: true): it => block(
+    width: 100%,
+    fill: rgb("#EDF0F1"),
+    stroke: 0.5pt + _t.neutral-300,
+    radius: 4pt,
+    inset: (x: 10mm, y: 8mm),
+  )[
+    #set text(fill: _t.fg-muted, weight: 200)
+    #align(center, it)
+  ]
+  show link: it => underline(stroke: 0.6pt + _t.primary, offset: 2pt, text(fill: _t.primary, it))
+  show raw.where(block: false): it => box(
+    fill: rgb("#EDF0F1"),
+    stroke: 0.5pt + _t.neutral-300,
+    inset: (x: 3pt, y: 2pt),
+    radius: 2pt,
+    text(font: _t.font-mono, size: 0.85em, fill: _t.neutral-700, it),
+  )
+  show raw.where(block: true): it => block(
+    fill: rgb("#EDF0F1"),
+    stroke: (left: 1pt + _t.primary),
+    inset: (x: 4mm, y: 3mm),
+    width: 100%,
+  )[
+    #set block(fill: none)
+    #if it.lang != none {
+      text(
+        font: _t.font-mono, size: 7.5pt, fill: _t.fg-subtle,
+        "# " + it.lang + " · " + str(it.lines.len()) + " lines",
+      )
+      v(2.5mm)
+    }
+    #text(font: _t.font-mono, size: 9pt, weight: 300, it)
+  ]
+
+  // ---- headings ----------------------------------------------
+  show heading.where(level: 1): it => {
+    pagebreak(weak: true)
+    place(left + top, dx: -55mm, dy: -75mm,
+      circle(radius: 90mm,
+        fill: gradient.radial(
+          _t.primary.transparentize(90%),
+          white.transparentize(100%),
+        ),
+        stroke: none,
+      )
+    )
+    v(6mm)
+    block(below: 12mm)[
+      #box(width: 50pt, height: 1.5pt, fill: _t.primary)
+      #v(12mm)
+      #grid(
+        columns: (auto, 1fr),
+        column-gutter: 8mm,
+        align: (left + bottom, left + bottom),
+        text(font: _t.font-serif, style: "italic", weight: 300,
+             size: 60pt, fill: _t.primary,
+             counter(heading).display("1")),
+        block()[
+          #set par(leading: 0.18em)
+          #text(font: _t.font-display, size: 30pt, weight: 600,
+               tracking: -0.025em, fill: _t.neutral-900, it.body)
+        ],
+      )
+      #v(1.5mm)
+      #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
+    ]
+  }
+  show heading.where(level: 2): it => block(above: 12mm, below: 6mm)[
+    #set par(leading: 0.2em)
+    #grid(
+      columns: (auto, 1fr),
+      column-gutter: 6mm,
+      align: (left + bottom, left + bottom),
+      text(font: _t.font-mono, weight: 100,
+           size: 15pt, fill: _t.primary,
+           counter(heading).display("1.1")),
+      text(font: _t.font-display, size: 19pt, weight: 600,
+           tracking: -0.01em, fill: _t.neutral-900, it.body),
+    )
+    #v(0mm)
+    #line(length: 100%, stroke: 0.5pt + _t.neutral-300)
+  ]
+  show heading.where(level: 3): it => block(above: 10mm, below: 5.5mm)[
+    #grid(
+      columns: (auto, 1fr),
+      column-gutter: 4mm,
+      align: (left + bottom, left + bottom),
+      text(font: _t.font-mono, weight: 100,
+           size: 12pt, fill: _t.primary,
+           counter(heading).display("1.1.1")),
+      text(font: _t.font-display, size: 15pt, weight: 600,
+           tracking: -0.01em, fill: _t.neutral-900, it.body),
+    )
+  ]
+  show heading.where(level: 4): it => block(above: 8mm, below: 4mm)[
+    #grid(
+      columns: (auto, 1fr),
+      column-gutter: 4mm,
+      align: (left + bottom, left + bottom),
+      text(font: _t.font-serif, style: "italic", weight: 300,
+           size: 10pt, fill: _t.primary,
+           counter(heading).display("1.1.1.1")),
+      text(font: _t.font-display, size: 13pt, weight: 700,
+           tracking: -0.01em, fill: _t.neutral-900, it.body),
+    )
+  ]
+  show heading.where(level: 5): it => block(above: 8mm, below: 4mm)[
+    #stack(dir: ttb,
+      {
+        box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
+        h(6pt)
+        text(font: _t.font-mono, size: 8pt, weight: 500,
+             tracking: 0.18em, fill: _t.neutral-900, upper(it.body))
+      },
+      3mm,
+      line(length: 100%, stroke: 0.5pt + _t.neutral-300),
+    )
+  ]
+  show heading.where(level: 6): it => block(above: 8mm, below: 4mm)[
+    #stack(dir: ttb,
+      {
+        box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
+        h(6pt)
+        text(font: _t.font-mono, size: 8pt, weight: 500,
+             tracking: 0.18em, fill: _t.fg-subtle, upper(it.body))
+      },
+      3mm,
+      line(length: 100%, stroke: 0.5pt + _t.neutral-300),
+    )
+  ]
+
+  // ---- lists -------------------------------------------------
+  set list(marker: ([•], [◦], [–]))
+
+  // ---- quote (Pandoc/Quarto blockquotes) ---------------------
+  show quote: it => block(
+    above: 6mm, below: 6mm,
+    inset: (left: 6mm),
+    stroke: (left: 2pt + _t.primary),
+  )[
+    #set par(leading: 0.425em)
+    #text(font: _t.font-serif, size: 11.2pt, weight: 300, style: "italic", fill: _t.fg-muted, it.body)
+    #if it.attribution != none {
+      v(1.5mm)
+      text(font: _t.font-serif, size: 7pt, weight: 300, style: "italic", fill: _t.fg-subtle, [— #it.attribution])
+    }
+  ]
+
+  // ---- tables -----------------------------------------------
+  set table(
+    fill: none,
+    stroke: (col, row) => (
+      top:    if row == 0 { 0.5pt + _t.neutral-900 } else { none },
+      bottom: if row == 0 { 0.5pt + _t.neutral-900 } else { 0.4pt + _t.border },
+    ),
+    inset: (x: 4mm, y: 3.5mm),
+  )
+  show table.cell: set text(
+    size: 8pt, weight: 200, fill: _t.fg,
+  )
+  show table.cell.where(y: 0): set text(
+    font: _t.font-display, size: 8pt, weight: 200,
+    tracking: 0pt, fill: _t.ink,
+  )
+  show figure.where(kind: table): it => {
+    v(12mm, weak: true)
+    it.body
+    v(-0.25pt)
+    line(length: 100%, stroke: 0.5pt + _t.ink)
+    v(2mm)
+    it.caption
+    v(12mm, weak: true)
+  }
+  show figure.where(kind: image): it => {
+    v(14mm, weak: true)
+    line(length: 100%, stroke: 0.3pt + _t.ink)
+    v(4mm)
+    it.body
+    v(3mm)
+    line(length: 100%, stroke: 0.3pt + _t.ink)
+    v(1.5mm)
+    it.caption
+    v(12mm, weak: true)
+  }
+  // Keep 3× more clear space after a figure or table footer before prose resumes.
+  show figure: set block(above: 11mm, below: 12mm)
+  show figure.caption: it => align(left, text(
+    font: _t.font-mono, size: 5.5pt, weight: 100, tracking: 0.10em,
+    fill: _t.ink, upper(it.supplement) + " " + it.counter.display() + "  ·  " + upper(it.body),
+  ))
+
+  // ---- COVER (optional) -------------------------------------
+  if cover {
+    chanwe-cover-page(
+      title: title,
+      subtitle: subtitle,
+      doc-id: doc-id,
+      edition: edition,
+      volume: volume,
+      rail-eyebrow: if cover-eyebrow != none { cover-eyebrow } else { rail-eyebrow },
+      hero-image: hero-image,
+      hero-img-position: hero-img-position,
+      wordmark: wordmark,
+      stamp: stamp,
+      hero-date: hero-date,
+      meta-rows: meta-rows,
+      date: date,
+      cover-edge: cover-edge,
+      cover-edge-color: cover-edge-color,
+      publication-period: publication-period,
+      publication-edition: publication-edition,
+      publication-art: publication-art,
+      publication-audience: publication-audience,
+      publication-series: publication-series,
+      publication-location: publication-location,
+      publication-copyright: publication-copyright,
+    )
+  }
+
+  // ---- body pages -------------------------------------------
+  set page(
+    paper: "us-letter",
+    margin: (top: 15mm, bottom: 15mm, x: 18mm),
+    header: chanwe-header(section, topic),
+    footer: chanwe-footer(doc-id, edition),
+  )
+
+  // ---- auto TOC (optional) ----------------------------------
+  if toc {
+    {
+      set page(fill: second-page-bg)
+      chanwe-agenda(
+        eyebrow: toc-eyebrow,
+        title: toc-title,
+        lede: toc-lede,
+      )
+      pagebreak()
+    }
+  }
+
+  // ---- auto abstract (optional) ----------------------------
+  if abstract and abstract-text != none {
+    let all-meta = (
+      "document": ("Document", doc-id, none),
+      "edition":  ("Edition",  edition, none),
+      "author":   ("Author",   author,  none),
+      "status":   ("Status",   if abstract-status != none { abstract-status } else { "" }, none),
+      "keywords": ("Keywords", abstract-keywords.join(" · "), none),
+    )
+    let fields = if abstract-show.len() > 0 { abstract-show } else { all-meta.keys() }
+    let meta-items = fields
+      .filter(k => all-meta.at(k, default: none) != none)
+      .map(k => all-meta.at(k))
+      .filter(((_, v, ..)) => v != "")
+    chanwe-abstract(
+      eyebrow: abstract-eyebrow,
+      title: abstract-title,
+      meta: meta-items,
+      takeaway: abstract-takeaway,
+      abstract-text,
+    )
+    pagebreak()
+  }
+
+  // ---- user body (paragraph overrides scoped here only) ----
+  {
+    set text(
+      size: if body-size  != none { body-size  } else { 10pt    },
+      fill: if body-color != none { body-color } else { _t.fg   },
+    )
+    set par(
+      leading: if body-leading != none { body-leading } else { 0.85em },
+      justify: if body-justify != none { body-justify } else { false  },
+      spacing: if body-spacing != none { body-spacing } else { 2.6em  },
+    )
+    body
+  }
+
+  // ---- back cover (optional) --------------------------------
+  if back-cover {
+    chanwe-back-cover-page(
+      tagline-1: back-cover-tagline-1,
+      tagline-2: back-cover-tagline-2,
+      back-cols: back-cover-cols,
+      cover-edge: cover-edge,
+    )
+  }
+}
+
+// Backward-compatible alias for raw Typst snippets written before the
+// extension format was cloned from chanwe-report.
+#let chanwe-publications = chanwe-report
+#let chanwe = chanwe-report

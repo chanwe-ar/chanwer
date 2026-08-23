@@ -4,7 +4,7 @@ subtitle: "Every palette, scale, theme variant, header treatment, and table patt
 author: "Alejandro Abraham"
 date: today
 format:
-  chanwe-report-typst:
+  chanwe-publications-typst:
     number-sections: true
     section-numbering: "1.1.1"
 execute:
@@ -15,16 +15,20 @@ execute:
   fig-format: png
   fig-dpi: 600
 chanwe:
-  document: "CHW · DEV"
+  document: "CHW · PUBLICATION"
   edition: "EXAMPLES / 2026"
-  volume: "MENDOZA · ARGENTINA"
+  volume: "INTERNO"
   chapter: "Design System"
   section: "R Package"
   topic: "chanwer v2.1"
   rail-eyebrow: "USAGE REFERENCE"
-  hero-image: "assets/bg_mountains.jpg"
-  wordmark: "assets/Logo_Negro.png"
   cover: true
+  publication-period: "Agosto 2026"
+  publication-edition: "EXAMPLES / 2026"
+  publication-art: "_extensions/chanwe-publications/assets/03-industry-insights.svg"
+  publication-series: "CHANWE / RESEARCH"
+  publication-location: "MENDOZA / ARGENTINA"
+  publication-copyright: "PROHIBIDA SU REPRODUCCIÓN SIN AUTORIZACIÓN | TODOS LOS DERECHOS RESERVADOS"
   toc: true
   toc-eyebrow: "Document map"
   toc-title: "Contents"
@@ -41,7 +45,7 @@ chanwe:
     - status
   meta-rows:
     - { label: "Package",  value: "chanwer v2.1",     sub: "R design system" }
-    - { label: "Format",   value: "chanwe-report-typst", sub: "Quarto extension" }
+    - { label: "Format",   value: "chanwe-publications-typst", sub: "Quarto extension" }
     - { label: "Author",   value: "Chanwe",           sub: "Alejandro Abraham" }
   back-cover: true
   back-cover-tagline-1: "Estrategia Activa,"
