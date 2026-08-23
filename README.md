@@ -255,14 +255,35 @@ execute:
   fig-format: png
 ```
 
-## Brand Tokens
+## Brand Tokens & Palette Groups
+
+Every color ships as a named token. `chanwe_palette()` with no argument
+returns everything; pass a group name for one subset, and
+`chanwe_preview_palette()` draws a swatch grid of any group:
 
 ```r
 tokens <- chanwe_brand_tokens()
 str(tokens, max.level = 2)
 
-chanwe_preview_palette("chart")   # swatch grid of any palette group
+chanwe_palette("signed")            # positive / negative / neutral
+chanwe_preview_palette("chart")     # swatch grid of any group below
 ```
+
+| Group | Contents |
+|---|---|
+| `chart` | the categorical 8, CVD-validated slot order |
+| `signed` | canonical positive / negative / neutral |
+| `semantic` | foreground, background, primary, success, danger, positive, … |
+| `core` | brand anchors (orange, black, white, beige, gray, silver) |
+| `p15_coral` … `p15_ink` | eleven 5-shade brand family ramps |
+| `p13_orange`, `p13_gray` | 10-step legacy ramps |
+| `p14_accents` | strong/soft accent pairs |
+| `mb_orange`, `mb_dark`, `mb_beige` | main-brand 100–950 ramps |
+
+Runnable end-to-end demos of every group and scale live in
+[inst/examples/display_color_palettes.R](inst/examples/display_color_palettes.R),
+and the core chart + KPI + table combo in
+[inst/examples/display_core_components.R](inst/examples/display_core_components.R).
 
 ## Development
 

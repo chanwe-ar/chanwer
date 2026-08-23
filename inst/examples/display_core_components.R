@@ -1,160 +1,72 @@
-# Display core examples for ggplot2, highcharter, gt, and reactable
+# Display core ChanWe components: ggplot2 chart, KPI scoreboard, Typst table
+#
+# Run interactively from the package root. Charts print to the active device;
+# the chanwe_kbl() output is a raw {=typst} block for Quarto PDF reports, so
+# here we just cat() it to inspect the generated Typst code.
 
 devtools::load_all(".")
 
-library(chanwer)
 library(ggplot2)
 
-mt <- tibble::as_tibble(mtcars, rownames = "model")
-mt <- mt |>
+mt <- tibble::as_tibble(mtcars, rownames = "model") |>
   dplyr::mutate(
     cyl = factor(cyl),
-    gear = factor(gear),
     am = factor(am, labels = c("Automatic", "Manual"))
   )
-cars_tbl <- mt
 
-# 1) ggplot2
-plot_gg <- ggplot(cars_tbl, aes(wt, mpg, color = factor(cyl))) +
+# 1) ggplot2 — categorical scale, full header treatment
+plot_gg <- ggplot(mt, aes(wt, mpg, color = cyl)) +
   geom_point(size = 3, alpha = 0.9) +
   scale_color_chanwe_d() +
   labs(
-    title = chanwe_title("GGPlot Example", eyebrow = ''),
-    subtitle = chanwe_subtitle("ChanWe style"),
-    caption = chanwe_caption("Source: mtcars")
+    title = chanwe_title("Fuel economy by weight", eyebrow = "SECTION - FLEET"),
+    subtitle = chanwe_subtitle("MPG versus weight by cylinder count"),
+    caption = chanwe_caption("Source: mtcars"),
+    color = "Cylinders"
   ) +
   theme_chanwe()
 
 print(plot_gg)
 
-# 2) highcharter
-plot_hc <- highcharter::hchart(
-  cars_tbl,
-  "scatter",
-  highcharter::hcaes(wt, mpg, group = cyl)
-) |>
-  highcharter::hc_title(
-    text = "Highcharter Example",
-    align = "left"
-  ) |>
-  highcharter::hc_subtitle(
-    text = "MPG versus weight by cylinder group",
-    align = "left"
-  ) |>
-  highcharter::hc_caption(
-    text = "Source: mtcars",
-    align = "right"
-  ) |>
-  highcharter::hc_add_theme(hc_theme_chanwe())
+# 2) KPI scoreboard — signed arrows use the canonical tokens
+plot_kpi <- ggplot(mt, aes(wt, mpg)) +
+  geom_line(stat = "smooth", method = "loess", formula = y ~ x) +
+  labs(
+    title = chanwe_title("Fleet overview", eyebrow = "MOTOR TREND"),
+    subtitle = chanwe_subtitle(
+      "Highway mpg vs vehicle weight",
+      kpi = chanwe_kpi(
+        num = "21,0", label = "MPG", period = "1974",
+        mtc1_num = "2,1%", mtc1_label = "WoW", mtc1_direction = "+",
+        mtc2_num = "0,5%", mtc2_label = "MoM", mtc2_direction = "-",
+        mtc3_num = "4,3%", mtc3_label = "YoY", mtc3_direction = "+"
+      )
+    ),
+    caption = chanwe_caption("Source: mtcars")
+  ) +
+  theme_chanwe()
 
-print(plot_hc)
+print(plot_kpi)
 
-# # 3) gt (rich + simple)
-cars_gt <- cars_tbl |>
-  dplyr::mutate(
-    cyl = factor(cyl),
-    transmission = ifelse(am == 1, "Manual", "Automatic")
-  ) |>
-  dplyr::arrange(cyl, dplyr::desc(mpg)) |>
-  dplyr::select(
-    model,
-    cyl,
-    mpg,
-    hp,
-    qsec,
-    wt,
-    disp,
-    transmission,
-    gear,
-    carb
-  )
+# 3) Typst table — signed delta coloring via chanwe_col_signed()
+deltas <- data.frame(
+  metric = c("Revenue", "EBITDA", "Net income", "Opex"),
+  actual = c(1240.5, 310.2, 185.7, -420.3),
+  delta = c(12.4, -3.1, 5.8, -1.9)
+)
 
-gt_base <- gt::gt(
-  cars_gt,
-  rowname_col = "model",
-  groupname_col = "cyl"
-) |>
-  gt::tab_header(
-    title = gt::md("Powertrain Comparison"),
-    subtitle = "Grouped by cylinder count with ChanWe styling"
-  ) |>
-  gt::tab_caption(
-    "Table 1. Core GT showcase with grouped rows and summaries."
-  ) |>
-  gt::cols_label(
-    mpg = "MPG",
-    hp = "HP",
-    qsec = "QSec",
-    wt = "Weight",
-    disp = "Displacement",
-    transmission = "Transmission",
-    gear = "Gears",
-    carb = "Carb"
-  ) |>
-  gt::tab_spanner(label = "Performance", columns = c(mpg, hp, qsec)) |>
-  gt::tab_spanner(label = "Engine & Mass", columns = c(wt, disp)) |>
-  gt::tab_spanner(
-    label = "Drivetrain",
-    columns = c(transmission, gear, carb)
-  ) |>
-  gt::fmt_number(columns = c(mpg, wt, disp, qsec), decimals = 1) |>
-  gt::fmt_number(columns = c(hp), decimals = 0) |>
-  gt::summary_rows(
-    groups = TRUE,
-    columns = c(mpg, hp, wt),
-    fns = list(
-      Avg = ~ mean(.x, na.rm = TRUE),
-      Max = ~ max(.x, na.rm = TRUE)
-    )
-  ) |>
-  gt::grand_summary_rows(
-    columns = c(mpg, hp, wt),
-    fns = list(Overall = ~ mean(.x, na.rm = TRUE))
-  ) |>
-  gt::tab_source_note("Source: mtcars dataset") |>
-  gt::tab_source_note(
-    "Notes: grouped by `cyl`; values rounded for display"
-  ) |>
-  gt::tab_footnote(
-    footnote = "Miles per gallon",
-    locations = gt::cells_column_labels(columns = mpg)
-  ) |>
-  gt::tab_footnote(
-    footnote = "Quarter-mile time in seconds",
-    locations = gt::cells_column_labels(columns = qsec)
-  )
+tbl <- chanwe_kbl(
+  deltas,
+  title = "Quarterly performance",
+  subtitle = "Deltas vs previous quarter",
+  eyebrow = "SECTION - FINANCE",
+  caption = "Source: finance close, Q1",
+  col_labels = c(metric = "Metric", actual = "USD K", delta = "QoQ"),
+  fmt = list(
+    actual = function(x) formatC(x, format = "f", digits = 1, big.mark = ","),
+    delta = function(x) sprintf("%+.1f%%", x)
+  ),
+  col_colors = list(delta = chanwe_col_signed())
+)
 
-gt_spacious <- gt_base |>
-  gt_theme_chanwe_spacious()
-
-gt_simple <- cars_tbl |>
-  dplyr::select(model, mpg, cyl, hp, wt) |>
-  head(8) |>
-  gt::gt() |>
-  gt::tab_header(
-    title = "Simple GT Example",
-    subtitle = "Minimal ChanWe table"
-  ) |>
-  gt::tab_caption("Table 2. Simple table.") |>
-  gt_theme_chanwe_compact() |>
-  gt::tab_style(
-    style = gt::cell_text(color = "black", align = "center"),
-    locations = gt::cells_title(groups = "title")
-  ) |>
-  gt::tab_style(
-    style = gt::cell_text(color = "black"),
-    locations = gt::cells_body(columns = model)
-  )
-
-print(gt_simple)
-
-# # 4) reactable
-# if (requireNamespace("reactable", quietly = TRUE)) {
-#   react_tbl <- reactable::reactable(
-#     head(cars_tbl, 10),
-#     theme = reactable_theme_chanwe(),
-#     defaultPageSize = 5
-#   )
-
-#   print(react_tbl)
-# }
+cat(as.character(tbl))
