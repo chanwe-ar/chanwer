@@ -199,6 +199,7 @@ $chanwe-charts.typ()$
   ),
   // toggles
   cover: true,
+  cover-dark: false,        // dark wordmark slab: bottom band goes ink with the white wordmark
   // toc
   toc-eyebrow: "Document map",
   toc-title: "Agenda",
@@ -455,6 +456,7 @@ $chanwe-charts.typ()$
       date: date,
       cover-edge: cover-edge,
       cover-edge-color: cover-edge-color,
+      dark: cover-dark,
     )
   }
 

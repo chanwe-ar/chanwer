@@ -55,6 +55,9 @@ $endif$
 $if(chanwe.cover)$
   cover: $chanwe.cover$,
 $endif$
+$if(chanwe.cover-dark)$
+  cover-dark: $chanwe.cover-dark$,
+$endif$
 $if(chanwe.no-abstract)$
   abstract: false,
 $endif$

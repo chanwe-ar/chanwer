@@ -28,6 +28,7 @@
   show-date-strip: false,
   cover-edge: none,
   cover-edge-color: none,
+  dark: false,  // dark wordmark slab: the bottom band goes ink with the white wordmark
 ) = {
   let hero-image = if hero-image == none {
     _chanwe-assets + "hero-img.svg"
@@ -35,7 +36,12 @@
     _chanwe-clean-path(hero-image)
   }
   let _edge-color = if cover-edge-color != none { cover-edge-color } else { _t.primary }
-  let wordmark   = if wordmark == none { _chanwe-assets + "Logo_Negro.svg" } else { _chanwe-clean-path(wordmark) }
+  let wordmark = if wordmark == none {
+    _chanwe-assets + (if dark { "Logo_Blanco.svg" } else { "Logo_Negro.svg" })
+  } else {
+    _chanwe-clean-path(wordmark)
+  }
+  let _slab-bg = if dark { _t.ink } else { _t.paper }
   set page(
     paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.paper,
     foreground: {
@@ -188,7 +194,7 @@
   // ---- 3. BOTTOM SLAB (50mm) - huge wordmark ----------------
   block(
     width: 100%, height: 50mm,
-    fill: _t.paper,
+    fill: _slab-bg,
     stroke: (top: 0.5pt + _t.neutral-900),
     inset: (x: 14mm, top: 0mm, bottom: 0mm),
   )[
