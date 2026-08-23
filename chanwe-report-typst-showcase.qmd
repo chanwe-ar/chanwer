@@ -24,7 +24,8 @@ chanwe:
   section: "R Package"
   topic: "chanwer"
   rail-eyebrow: "VISUAL REFERENCE"
-  hero-image: "assets/bg_mountains.jpg"
+  hero-image: "_extensions/chanwe-report/assets/bg_mountains.jpg"
+  hero-img-position: 10
   wordmark: "assets/Logo_Negro.png"
   cover: true
   toc: true

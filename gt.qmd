@@ -25,6 +25,7 @@ chanwe:
   topic: "chanwer"
   rail-eyebrow: "VISUAL REFERENCE"
   hero-image: "_extensions/chanwe-report/assets/bg_mountains.jpg"
+  hero-img-position: 10
   cover: true
   toc: true
   toc-eyebrow: "Document map"

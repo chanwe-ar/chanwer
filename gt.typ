@@ -523,14 +523,18 @@
           place(top + left,
             image(hero-image, width: 100%, height: 237mm, fit: "cover"))
         } else {
-          // place() must be in direct content flow; context{} computes the
-          // shift and returns move(dx, img) which gets placed at top+left
+          // An image with only `height:` set resolves its width to the
+          // available 73.5mm and center-crops (fit: "cover"), so the pan
+          // must draw at the true scaled width: measure the natural size
+          // in context, scale to 237mm tall, then shift by the excess.
           place(top + left,
             context {
               let pos-frac = calc.clamp((hero-img-position - 1) / 9, 0, 1)
-              let img = image(hero-image, height: 237mm)
-              let excess = calc.max(measure(img).width - 73.5mm, 0pt)
-              move(dx: -pos-frac * excess, img)
+              let nat = measure(image(hero-image))
+              let w = 237mm * (nat.width / nat.height)
+              let excess = calc.max(w - 73.5mm, 0pt)
+              move(dx: -pos-frac * excess,
+                image(hero-image, width: w, height: 237mm))
             }
           )
         }
@@ -2726,6 +2730,7 @@
   topic: "chanwer",
   rail-eyebrow: "VISUAL REFERENCE",
   hero-image: "\_extensions/chanwe-report/assets/bg\_mountains.jpg",
+  hero-img-position: 10,
   cover: true,
   toc: true,
   toc-eyebrow: "Document map",
