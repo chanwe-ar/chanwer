@@ -20,6 +20,7 @@ chanwe_discrete_pal <- function() {
 #' |---------|------|--------|
 #' | Title (with eyebrow) | Archivo | 400 |
 #' | Subtitle | Satoshi | 400 |
+#' | Subtitle note / KPI hero | Cormorant Garamond | italic |
 #' | Axis text | Satoshi | 400 |
 #' | Axis titles | JetBrains Mono Thin | 100 |
 #' | Facet strip labels | JetBrains Mono Thin | 100 |
@@ -38,7 +39,7 @@ chanwe_discrete_pal <- function() {
 #' | `"gray"` | `#EDF0F1` | `#D4D9DB` | `#E3E7E9` |
 #' | `"beige"` | `#F5F1EB` | `#D8D1C7` | `#E3DDD5` |
 #'
-#' @param base_text_size Base text size in points. Default `6.5`. Title scales at ×1.50, subtitle ×0.90, eyebrow ×0.55.
+#' @param base_text_size Base text size in points. Default `6.75`. Title scales at ×1.50, subtitle ×0.90, eyebrow ×0.55.
 #' @param base_family Base font family for body text. Default `"Satoshi"`.
 #' @param base_lineheight Base line-height multiplier. Default `1.60`.
 #' @param legend_position Legend position string passed to
@@ -102,53 +103,42 @@ chanwe_discrete_pal <- function() {
 #' @export
 #'
 #' @examples
-#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#' # Plots are assigned; print them to render (requires the brand fonts,
+#' # see chanwe_load_fonts()).
 #'
-#'   ## Basic scatter — white background, bottom legend
-#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
-#'     ggplot2::geom_point(size = 3) +
-#'     scale_color_chanwe_d() +
-#'     ggplot2::labs(
-#'       title = chanwe_title("Fuel efficiency by weight"),
-#'       subtitle = "Highway mpg vs vehicle weight",
-#'       caption = chanwe_caption("Source: Motor Trend, 1974")
-#'     ) +
-#'     theme_chanwe()
+#' ## Basic scatter — metallic background, bottom legend
+#' p1 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_chanwe_d() +
+#'   ggplot2::labs(
+#'     title = chanwe_title("Fuel efficiency by weight"),
+#'     subtitle = "Highway mpg vs vehicle weight",
+#'     caption = chanwe_caption("Source: Motor Trend, 1974")
+#'   ) +
+#'   theme_chanwe()
 #'
-#'   ## With eyebrow, beige background, no legend
-#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
-#'     ggplot2::geom_point(size = 3) +
-#'     scale_color_chanwe_d() +
-#'     ggplot2::labs(
-#'       title = chanwe_title("Fuel efficiency", eyebrow = "SECTION · FLEET"),
-#'       subtitle = "Highway mpg vs vehicle weight",
-#'       caption = chanwe_caption("Source: Motor Trend, 1974")
-#'     ) +
-#'     theme_chanwe(bg_color = "beige", legend_position = "none")
+#' ## With eyebrow, beige background, no legend
+#' p2 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_chanwe_d() +
+#'   ggplot2::labs(
+#'     title = chanwe_title("Fuel efficiency", eyebrow = "SECTION - FLEET"),
+#'     subtitle = "Highway mpg vs vehicle weight",
+#'     caption = chanwe_caption("Source: Motor Trend, 1974")
+#'   ) +
+#'   theme_chanwe(bg_color = "beige", legend_position = "none")
 #'
-#'   ## Bar chart — gray background, fill scale
-#'   avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
-#'   ggplot2::ggplot(avg_mpg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
-#'     ggplot2::geom_col(width = 0.6) +
-#'     scale_fill_chanwe_d() +
-#'     ggplot2::labs(
-#'       title = chanwe_title("Average MPG by cylinder count"),
-#'       caption = chanwe_caption("Source: mtcars")
-#'     ) +
-#'     theme_chanwe(bg_color = "gray", legend_position = "none")
-#'
-#'   ## Faceted line chart
-#'   ggplot2::ggplot(ggplot2::economics_long,
-#'     ggplot2::aes(date, value01, color = variable)) +
-#'     ggplot2::geom_line(linewidth = 0.6) +
-#'     ggplot2::facet_wrap(~variable, scales = "free_y", ncol = 2) +
-#'     scale_color_chanwe_d() +
-#'     ggplot2::labs(
-#'       title = chanwe_title("US economic indicators", eyebrow = "MACRO"),
-#'       caption = chanwe_caption("Source: ggplot2::economics_long")
-#'     ) +
-#'     theme_chanwe(legend_position = "none")
-#' }
+#' ## Bar chart — gray background, fill scale
+#' avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+#' p3 <- ggplot2::ggplot(avg_mpg,
+#'   ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
+#'   ggplot2::geom_col(width = 0.6) +
+#'   scale_fill_chanwe_d() +
+#'   ggplot2::labs(
+#'     title = chanwe_title("Average MPG by cylinder count"),
+#'     caption = chanwe_caption("Source: mtcars")
+#'   ) +
+#'   theme_chanwe(bg_color = "gray", legend_position = "none")
 theme_chanwe <- function(
   base_text_size = 6.75,
   base_family = "Satoshi",
@@ -167,7 +157,6 @@ theme_chanwe <- function(
   bg_color <- chanwe_resolve_bg(bg_color)
   colors <- chanwe_get_colors()
   surface_fill <- bg_color
-  outer_border_color <- colors[["typst-neutral-200"]]
   grid_color <- switch(
     bg_color,
     "#F7F7F7" = "#E4E4E4",
@@ -188,32 +177,23 @@ theme_chanwe <- function(
   )
   panel_border_element <- ggplot2::element_blank()
 
-  reg <- if (requireNamespace("systemfonts", quietly = TRUE)) {
-    systemfonts::registry_fonts()$family
-  } else {
-    character(0)
-  }
+  has_systemfonts <- requireNamespace("systemfonts", quietly = TRUE)
+  reg <- if (has_systemfonts) systemfonts::registry_fonts()$family else character(0)
+  sys <- if (has_systemfonts) systemfonts::system_fonts()$family else character(0)
   title_family <- "Archivo"
   title_face <- "plain"
   subtitle_family <- "Satoshi"
-  subtitle_face <- "plain"
-
-  mono_family <- if (
-    requireNamespace("systemfonts", quietly = TRUE) &&
-      "JetBrains Mono" %in%
-        c(
-          systemfonts::registry_fonts()$family,
-          systemfonts::system_fonts()$family
-        )
-  ) {
+  italic_family <- if ("Cormorant Garamond" %in% reg) {
+    "Cormorant Garamond"
+  } else {
+    "serif"
+  }
+  mono_family <- if ("JetBrains Mono" %in% c(reg, sys)) {
     "JetBrains Mono"
   } else {
     "mono"
   }
-  mono_thin_family <- if (
-    requireNamespace("systemfonts", quietly = TRUE) &&
-      "JetBrains Mono Thin" %in% systemfonts::registry_fonts()$family
-  ) {
+  mono_thin_family <- if ("JetBrains Mono Thin" %in% reg) {
     "JetBrains Mono Thin"
   } else {
     mono_family
@@ -243,6 +223,7 @@ theme_chanwe <- function(
 
   subtitle_element <- new_element_chanwe_subtitle(
     family = subtitle_family,
+    italic_family = italic_family,
     size = base_text_size * 0.9,
     colour = '#888888',
     ink_colour = colors[["typst-ink"]],
@@ -376,9 +357,9 @@ theme_chanwe <- function(
 #' Without an eyebrow you can pass plain text directly — this helper is only
 #' needed when you want the orange mono-caps eyebrow line above the title.
 #'
-#' The eyebrow renders as a small-caps JetBrains Mono label in the brand orange
-#' (`#FB3D0E`), prefixed by `──`. Requires the `ggtext` package for HTML
-#' rendering; falls back to plain `──  EYEBROW\nTitle` when unavailable.
+#' The eyebrow renders as a small-caps JetBrains Mono label in the brand
+#' orange, prefixed by `──────`. Rendering is handled by the custom title
+#' element installed by [theme_chanwe()] — no extra packages are required.
 #'
 #' @param text Main title string. Rendered in Archivo Black by [theme_chanwe()].
 #' @param eyebrow Optional short label above the title, e.g.
@@ -394,13 +375,11 @@ theme_chanwe <- function(
 #' ## Title with section eyebrow:
 #' chanwe_title("Revenue vs EBITDA margin", eyebrow = "SECTION · PROFITABILITY")
 #'
-#' ## Use in a full plot:
-#' if (requireNamespace("ggplot2", quietly = TRUE)) {
-#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
-#'     ggplot2::geom_point() +
-#'     ggplot2::labs(title = chanwe_title("Fleet overview", eyebrow = "TLDR;")) +
-#'     theme_chanwe()
-#' }
+#' ## Use in a full plot (assign; print to render with brand fonts):
+#' p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+#'   ggplot2::geom_point() +
+#'   ggplot2::labs(title = chanwe_title("Fleet overview", eyebrow = "TLDR;")) +
+#'   theme_chanwe()
 chanwe_title <- function(text, eyebrow = NULL) {
   if (is.null(eyebrow)) {
     return(text)
@@ -441,8 +420,6 @@ chanwe_title <- function(text, eyebrow = NULL) {
 #' )
 #' ```
 #'
-#' ## Arguments
-#'
 #' @param num Hero value shown in large italic type. **Must be a pre-formatted
 #'   string** — formatting (decimal separator, rounding) is your responsibility,
 #'   e.g. `"45,91"` not `45.91`.
@@ -476,25 +453,23 @@ chanwe_title <- function(text, eyebrow = NULL) {
 #'   mtc3_num = "17,78%", mtc3_label = "YoY", mtc3_direction = "-"
 #' )
 #'
-#' ## Full plot — the typical usage:
-#' if (requireNamespace("ggplot2", quietly = TRUE)) {
-#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
-#'     ggplot2::geom_line() +
-#'     ggplot2::labs(
-#'       title    = chanwe_title("Fleet overview", eyebrow = "MOTOR TREND"),
-#'       subtitle = chanwe_subtitle(
-#'         "Highway mpg vs vehicle weight",
-#'         kpi = chanwe_kpi(
-#'           num    = "21,0",   label  = "MPG",  period = "1974",
-#'           mtc1_num = "2,1%", mtc1_label = "WoW", mtc1_direction = "+",
-#'           mtc2_num = "0,5%", mtc2_label = "MoM", mtc2_direction = "-",
-#'           mtc3_num = "4,3%", mtc3_label = "YoY", mtc3_direction = "+"
-#'         )
-#'       ),
-#'       caption = chanwe_caption("Source: mtcars")
-#'     ) +
-#'     theme_chanwe()
-#' }
+#' ## Full plot — the typical usage (assign; print to render with brand fonts):
+#' p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+#'   ggplot2::geom_line() +
+#'   ggplot2::labs(
+#'     title    = chanwe_title("Fleet overview", eyebrow = "MOTOR TREND"),
+#'     subtitle = chanwe_subtitle(
+#'       "Highway mpg vs vehicle weight",
+#'       kpi = chanwe_kpi(
+#'         num    = "21,0",   label  = "MPG",  period = "1974",
+#'         mtc1_num = "2,1%", mtc1_label = "WoW", mtc1_direction = "+",
+#'         mtc2_num = "0,5%", mtc2_label = "MoM", mtc2_direction = "-",
+#'         mtc3_num = "4,3%", mtc3_label = "YoY", mtc3_direction = "+"
+#'       )
+#'     ),
+#'     caption = chanwe_caption("Source: mtcars")
+#'   ) +
+#'   theme_chanwe()
 chanwe_kpi <- function(
   num,
   label     = "",
@@ -574,11 +549,11 @@ chanwe_subtitle <- function(text, note = NULL, kpi = NULL) {
 
 #' ChanWe Caption Helper
 #'
-#' Prepends an orange `//` marker to the caption text, rendered in JetBrains
-#' Mono by [theme_chanwe()]. Use inside `labs(caption = ...)`.
-#'
-#' Requires the `ggtext` package for HTML rendering; falls back to plain
-#' `"// text"` when unavailable.
+#' Marks a string for the ChanWe caption treatment: [theme_chanwe()] renders
+#' captions in JetBrains Mono with an orange `//` prefix and a thin separator
+#' line above. Use inside `labs(caption = ...)`. Plain strings passed directly
+#' to `labs(caption = )` receive the same treatment; this helper exists to
+#' keep call sites explicit and future-proof.
 #'
 #' @param text Caption text, e.g. source line or data note.
 #'
@@ -589,12 +564,11 @@ chanwe_subtitle <- function(text, note = NULL, kpi = NULL) {
 #' chanwe_caption("Q1 2026 · USD M and %.")
 #' chanwe_caption("Source: Motor Trend, 1974 · mtcars dataset")
 #'
-#' if (requireNamespace("ggplot2", quietly = TRUE)) {
-#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
-#'     ggplot2::geom_point() +
-#'     ggplot2::labs(caption = chanwe_caption("Source: mtcars")) +
-#'     theme_chanwe()
-#' }
+#' ## In a plot (assign; print to render with brand fonts):
+#' p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+#'   ggplot2::geom_point() +
+#'   ggplot2::labs(caption = chanwe_caption("Source: mtcars")) +
+#'   theme_chanwe()
 chanwe_caption <- function(text) {
   as.character(text)
 }
@@ -616,21 +590,18 @@ chanwe_caption <- function(text) {
 #' @export
 #'
 #' @examples
-#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#' ## Points colored by group (assign; print to render with brand fonts)
+#' p1 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_chanwe_d() +
+#'   theme_chanwe()
 #'
-#'   ## Points colored by group
-#'   ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
-#'     ggplot2::geom_point(size = 3) +
-#'     scale_color_chanwe_d() +
-#'     theme_chanwe()
-#'
-#'   ## Bars filled by group
-#'   avg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
-#'   ggplot2::ggplot(avg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
-#'     ggplot2::geom_col() +
-#'     scale_fill_chanwe_d() +
-#'     theme_chanwe(legend_position = "none")
-#' }
+#' ## Bars filled by group
+#' avg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+#' p2 <- ggplot2::ggplot(avg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_chanwe_d() +
+#'   theme_chanwe(legend_position = "none")
 scale_color_chanwe_d <- function(...) {
   ggplot2::discrete_scale(
     aesthetics = "colour",

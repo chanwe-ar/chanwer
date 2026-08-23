@@ -3,7 +3,7 @@
 # PDF-accurate preview: renders at the same dimensions Quarto uses (fig-width / fig-height)
 # and opens the PNG so you see exactly what will appear in the PDF.
 #
-# w / h: match your chunk's fig-width / fig-height (inches). Defaults mirror chanwe-typst.
+# w / h: match your chunk's fig-width / fig-height (inches). Defaults mirror chanwe-report-typst.
 # res:   200 dpi gives sharp preview without being huge.
 pdf_preview <- function(p, w = 6.3, h = 3.9, res = 200) {
   tmp <- tempfile(fileext = ".png")

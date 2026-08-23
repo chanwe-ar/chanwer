@@ -7,14 +7,14 @@
 \title{chanwer: ChanWe Visual Themes for Reporting}
 \description{
 The \code{chanwer} package provides ChanWe-branded palettes and themes for
-ggplot2, gt, reactable, and highcharter, plus Quarto reporting styles.
+ggplot2, a native Typst table generator for Quarto PDF reports, font
+registration helpers, and Quarto reporting styles.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://chanwe.github.io/chanwer}
-  \item \url{https://github.com/chanwe/chanwer}
-  \item Report bugs at \url{https://github.com/chanwe/chanwer/issues}
+  \item \url{https://github.com/chanwe-ar/chanwer}
+  \item Report bugs at \url{https://github.com/chanwe-ar/chanwer/issues}
 }
 
 }

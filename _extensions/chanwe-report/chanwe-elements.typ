@@ -68,12 +68,11 @@
   )[
     #block(fill: rgb("#EDF0F1"), inset: (x: 4.5mm, top: 2.5mm, bottom: 2.5mm), width: 100%, spacing: 0pt)[
       #grid(
-        columns: (auto, auto, auto, 1fr),
+        columns: (auto, auto, 1fr),
         column-gutter: 5pt,
         align: left + horizon,
         circle(radius: 3pt, fill: dot-color),
         text(font: _t.font-mono, size: 7pt, fill: _t.fg-subtle, "//"),
-        text(font: _t.font-mono, size: 7pt, tracking: 0.14em, fill: _t.fg-subtle, type-label),
         text(font: _t.font-display, size: 8pt, weight: 700, fill: _t.ink, display-title),
       )
     ]
@@ -91,7 +90,7 @@
   inset: (left: 6mm),
   stroke: (left: 2pt + _t.primary),
 )[
-  #text(font: _t.font-serif, size: 16pt, weight: 300, style: "italic", fill: _t.neutral-900, body)
+  #text(font: _t.font-italic, size: 16pt, weight: 300, style: "italic", fill: _t.neutral-900, body)
   #if attribution != none {
     v(3mm)
     text(font: _t.font-mono, size: 8pt, tracking: 0.18em, fill: _t.fg-subtle, upper[— #attribution])
@@ -148,12 +147,12 @@
     inset: (x: 22mm, top: 40mm, bottom: 30mm),
     fill: s.bg,
   )[
-    #show emph: it => text(fill: s.emph, style: "italic", it.body)
+    #show emph: it => text(font: _t.font-italic, fill: s.emph, style: "italic", it.body)
     #chanwe-eyebrow("Verbatim", color: s.eyebrow, with-rule: true, size: 12pt)
     #v(6mm)
     #set par(leading: 0.64em)
     #text(
-      font: _t.font-serif, size: 40pt, style: "italic", weight: 100,
+      font: _t.font-italic, size: 40pt, style: "italic", weight: 100,
       tracking: -0.01em, fill: s.quote,
     )[\u{201C}#body\u{201D}]
     #v(1fr)
@@ -177,12 +176,12 @@
       fill: s.bg,
       inset: (x: 22mm, top: 12mm, bottom: 14mm),
     )[
-      #show emph: it => text(fill: s.emph, style: "italic", it.body)
+      #show emph: it => text(font: _t.font-italic, fill: s.emph, style: "italic", it.body)
       #set par(leading: 0.64em)
       #chanwe-eyebrow("Verbatim", color: s.eyebrow, with-rule: true)
       #v(3mm)
       #text(
-        font: _t.font-serif, size: 22pt, style: "italic", weight: 100,
+        font: _t.font-italic, size: 22pt, style: "italic", weight: 100,
         tracking: -0.01em, fill: s.quote,
       )[\u{201C}#body\u{201D}]
       #if caption != none {
@@ -257,7 +256,7 @@
       fill: s.bg,
       inset: (x: 22mm, top: 14mm, bottom: 14mm),
     )[
-      #show emph: it => text(fill: s.emph, style: "italic", it.body)
+      #show emph: it => text(font: _t.font-italic, fill: s.emph, style: "italic", it.body)
       #grid(
         columns: col-widths,
         column-gutter: 14mm,
@@ -320,7 +319,7 @@
     column-gutter: 6mm,
     align: (left + top, left + top),
     text(
-      font: _t.font-serif, size: 38pt, weight: 100, style: "italic",
+      font: _t.font-italic, size: 38pt, weight: 100, style: "italic",
       fill: _t.primary, number,
     ),
     block(width: 100%)[
@@ -417,7 +416,7 @@
           text(font: _t.font-display, size: 14pt, weight: 700, fill: _t.fg-muted, prefix)
           h(0.5mm)
         }
-        #text(font: _t.font-serif, size: 32pt, weight: 600, style: "italic", fill: mc, main)
+        #text(font: _t.font-italic, size: 32pt, weight: 600, style: "italic", fill: mc, main)
         #if unit != "" {
           h(1mm)
           text(font: _t.font-display, size: 10pt, weight: 600, fill: _t.fg-muted, unit)
@@ -450,7 +449,7 @@
 // ZONE HIGHLIGHT — full-bleed background color zone
 // =============================================================
 // color: "metallic" | "white" | "white-ivory" | "beige" | "gray" | "dark" | "orange"
-#let zone-highlight(color: "metallic", margin: 2mm, above: 8mm, below: 8mm, col-gutter: 14mm, ..bodies) = {
+#let zone-highlight(color: "metallic", margin: 2mm, above: 3mm, below: 3mm, col-gutter: 14mm, ..bodies) = {
   let bg = if color == "metallic"        { rgb("#F7F7F7") }
     else if color == "beige"             { _t.beige       }
     else if color == "white-ivory"       { rgb("#FAFAFA") }

@@ -1,4 +1,4 @@
-title: Chanwe
+title: Chanwe Report
 author: Chanwe Studio
 version: 1.1.0
 quarto-required: ">=1.9.37"
@@ -15,7 +15,7 @@ contributes:
       monofont: "JetBrains Mono"
       fontsize: 10.5pt
       highlight-style: none
-      chanwe-assets: "_extensions/chanwe/assets/"
+      chanwe-assets: "_extensions/chanwe-report/assets/"
       font-paths:
         - fonts
       filters:

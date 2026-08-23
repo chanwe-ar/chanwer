@@ -21,14 +21,22 @@
 #'   in muted ink; excluded from auto numeric-alignment detection.
 #' @param density \code{"spacious"} (default) or \code{"compact"}.
 #' @param row_padding Typst size string overriding the vertical cell inset for
-#'   data rows and column labels (e.g. \code{"6pt"}). Defaults to \code{"8pt"}
-#'   (spacious) or \code{"3pt"} (compact).
-#' @param title_size Typst size string for the title. Default \code{"16pt"}.
-#' @param eyebrow_size Typst size string for the eyebrow. Default \code{"8.5pt"}.
-#' @param subtitle_size Typst size string for the subtitle. Default \code{"11pt"} / \code{"9pt"}.
-#' @param body_size Typst size string for data cell text. Default \code{"10pt"} / \code{"8pt"}.
-#' @param header_size Typst size string for column label text. Default \code{"8pt"} / \code{"7pt"}.
-#' @param note_size Typst size string for the footer note. Default \code{"8pt"} / \code{"7pt"}.
+#'   data rows and column labels (e.g. \code{"6pt"}). Defaults to \code{"10pt"}
+#'   (spacious) or \code{"5pt"} (compact).
+#' @param title_size Typst size string for the title. Default \code{"13pt"};
+#'   pass \code{NULL} for the density-based default (\code{"19pt"} spacious /
+#'   \code{"16pt"} compact).
+#' @param eyebrow_size Typst size string for the eyebrow. Default \code{"4pt"}.
+#' @param subtitle_size Typst size string for the subtitle. Default \code{"8pt"};
+#'   \code{NULL} for the density-based default (\code{"10pt"} / \code{"9pt"}).
+#' @param body_size Typst size string for data cell text. Default \code{"7pt"};
+#'   \code{NULL} for the density-based default (\code{"10pt"} / \code{"7pt"}).
+#' @param header_size Typst size string for column label text. Default
+#'   \code{"5.5pt"}; \code{NULL} for the density-based default
+#'   (\code{"8pt"} / \code{"7pt"}).
+#' @param note_size Typst size string for the footer note. Default
+#'   \code{"5.5pt"}; \code{NULL} for the density-based default
+#'   (\code{"8pt"} / \code{"7pt"}).
 #' @param col_label_top Extra vertical space in pt above column label text
 #'   (between the separator line and the labels). Default \code{0}.
 #' @param footer_top Extra vertical space in pt above the footer note text.
@@ -37,13 +45,33 @@
 #'   (default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
 #'   \code{"gray"} (\code{#EDF0F1}), \code{"metallic"} (\code{#F7F7F7}).
 #'   Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.
+#' @param top_border Logical. Draw a thin ink line above the title cell.
+#'   Default \code{TRUE}.
+#' @param header_rule Logical. Draw the heavier rule between the title block
+#'   and the column labels. Default \code{TRUE}.
 #' @param padding Uniform outer margin in pts applied around the entire table
-#'   block (equivalent to \code{plot_padding} in \code{theme_chanwe()}). Default \code{0}.
+#'   block (equivalent to \code{plot_padding} in \code{theme_chanwe()}).
+#'   Default \code{12.5}.
 #' @param fmt Named list of formatting functions, keyed by column name.
 #'   Each function receives the column vector and must return a character vector.
+#' @param col_colors Named list of functions, keyed by column name. Each
+#'   function receives the original (unformatted) column vector and must return
+#'   a character vector of raw Typst color expressions (e.g.
+#'   \code{"rgb(\\\"#B03A2E\\\")"}) used as the text fill for each cell.
+#' @param n_total Number of trailing rows to treat as total rows. Total rows
+#'   get a heavier rule above them, no row dividers, and (optionally) a
+#'   highlight fill. Default \code{0} (no total rows).
+#' @param total_fill Logical. Fill total rows with a light gray background.
+#'   Only used when \code{n_total > 0}. Default \code{TRUE}.
+#' @param vlines Optional integer vector of column indices at which to draw
+#'   vertical divider lines (Typst \code{table.vline} x positions).
+#' @param highlight_cols Optional integer vector of column indices whose header
+#'   and data cells get a highlight background fill.
+#' @param highlight_color Hex color for \code{highlight_cols} fill.
+#'   Default \code{"#F5F1EB"}.
 #'
 #' @return A \code{\link[knitr]{asis_output}} containing a raw \code{{=typst}} block.
-#'   Works in Quarto documents rendered with \code{format: chanwe-typst}.
+#'   Works in Quarto documents rendered with \code{format: chanwe-report-typst}.
 #' @export
 chanwe_kbl <- function(
   data,
@@ -372,8 +400,7 @@ chanwe_kbl <- function(
     for (j in seq_len(n)) {
       val <- esc(fmt_data[[j]][i])
       is_first <- j == 1L
-      base_fill <- if (is_first) "_t.ink" else "_t.ink"
-      fill <- if (!is.null(color_data[[j]])) color_data[[j]][i] else base_fill
+      fill <- if (!is.null(color_data[[j]])) color_data[[j]][i] else "_t.ink"
       weight <- if (is_first) '"medium"' else '"thin"'
       cell_fill <- if (is_total && total_fill) {
         ', fill: rgb("#F3F3F3")'

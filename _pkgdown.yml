@@ -1,4 +1,4 @@
-url: https://chanwe.github.io/chanwer
+url: https://chanwe-ar.github.io/chanwer
 
 template:
   bootstrap: 5
@@ -15,14 +15,13 @@ reference:
       - theme_chanwe
       - chanwe_title
       - chanwe_subtitle
+      - chanwe_caption
+      - chanwe_kpi
+      - chanwe_load_fonts
       - scale_color_chanwe_d
       - scale_fill_chanwe_d
       - scale_color_chanwe_c
       - scale_fill_chanwe_c
-  - title: Tables and Charts
+  - title: Typst Tables
     contents:
-      - gt_theme_chanwe
-      - gt_theme_chanwe_spacious
-      - gt_theme_chanwe_compact
-      - reactable_theme_chanwe
-      - hc_theme_chanwe
+      - chanwe_kbl

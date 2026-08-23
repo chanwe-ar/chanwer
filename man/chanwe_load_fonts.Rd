@@ -8,8 +8,8 @@ chanwe_load_fonts(path = NULL)
 }
 \arguments{
 \item{path}{Directory containing the TTF files. Defaults to
-\verb{_extensions/chanwe/fonts} relative to the working directory (i.e. the
-fonts bundled with the chanwe-typst Quarto extension).}
+\verb{_extensions/chanwe-report/fonts} relative to the working directory (i.e. the
+fonts bundled with the chanwe-report-typst Quarto extension).}
 }
 \value{
 Invisibly, the resolved fonts directory path.
@@ -24,11 +24,12 @@ Registered families:
 \itemize{
 \item \code{"Satoshi"} — Regular / Bold / Italic / BoldItalic
 \item \code{"Archivo"} — Regular / Bold / Italic / BoldItalic
-\item \code{"Archivo Medium"} — plain face = Medium (500); italic face = MediumItalic; used by KPI hero value
+\item \code{"Archivo Medium"} — plain face = Medium (500); italic face = MediumItalic
 \item \code{"Archivo SemiBold"} — plain face = SemiBold (600); used by \code{\link[=chanwe_title]{chanwe_title()}}
 \item \code{"Archivo ExtraBold"} — plain face = ExtraBold (800)
 \item \code{".chanwe-subtitle"} — plain face = Archivo Light (300)
 \item \code{"Fraunces 9pt"} — Regular / Bold / Italic / BoldItalic
+\item \code{"Cormorant Garamond"} — variable font; used by the KPI hero value and subtitle notes
 \item \code{"JetBrains Mono"} — Regular / Bold / Italic / BoldItalic
 \item \code{"JetBrains Mono Thin"} — plain face = Thin (100); used by axis titles / facet labels
 }

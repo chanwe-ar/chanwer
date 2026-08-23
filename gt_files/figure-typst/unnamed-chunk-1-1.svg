@@ -118,17 +118,16 @@
 <text x='9.96' y='40.90' style='font-size: 6.08px;fill: #888888; font-family: "Satoshi";' textLength='147.56px' lengthAdjust='spacingAndGlyphs'>Evolución de reservas internacionales brutas (USD MM).</text>
 <polyline points='9.96,51.02 386.04,51.02 ' style='stroke-width: 0.30; stroke: #0F0F0F;' />
 <polyline points='9.96,92.16 386.04,92.16 ' style='stroke-width: 0.30; stroke: #0F0F0F;' />
-<text x='9.96' y='80.99' style='font-size: 24.00px; font-style: italic;fill: #0F0F0F; font-family: "Fraunces 9pt";' textLength='57.61px' lengthAdjust='spacingAndGlyphs'>45,91</text>
-<text x='73.55' y='67.26' style='font-size: 4.50px;fill: #656460; font-family: "JetBrains Mono";' textLength='16.22px' lengthAdjust='spacingAndGlyphs'>USD MM</text>
-<text x='73.55' y='76.77' style='font-size: 6.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='39.53px' lengthAdjust='spacingAndGlyphs'>05·MAY·2026</text>
-<text x='284.50' y='78.03' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>WOW</text>
-<text x='284.50' y='84.92' text-anchor='end' style='font-size: 6.50px;fill: #2D7A4F; font-family: "JetBrains Mono";' textLength='27.34px' lengthAdjust='spacingAndGlyphs'>▲ 0,19%</text>
-<text x='333.39' y='78.03' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>MOM</text>
-<text x='333.39' y='84.92' text-anchor='end' style='font-size: 6.50px;fill: #B03A2E; font-family: "JetBrains Mono";' textLength='27.34px' lengthAdjust='spacingAndGlyphs'>▼ 3,17%</text>
-<text x='382.28' y='78.03' text-anchor='end' style='font-size: 4.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='7.22px' lengthAdjust='spacingAndGlyphs'>YOY</text>
-<text x='382.28' y='84.92' text-anchor='end' style='font-size: 6.50px;fill: #2D7A4F; font-family: "JetBrains Mono";' textLength='31.25px' lengthAdjust='spacingAndGlyphs'>▲ 17,78%</text>
+<text x='9.96' y='78.21' style='font-size: 18.00px; font-weight: 300; font-style: italic;fill: #0F0F0F; font-family: "Cormorant Garamond";' textLength='31.09px' lengthAdjust='spacingAndGlyphs'>45,91</text>
+<text x='52.02' y='68.88' style='font-size: 3.50px;fill: #656460; font-family: "JetBrains Mono";' textLength='12.56px' lengthAdjust='spacingAndGlyphs'>USD MM</text>
+<text x='52.02' y='75.23' style='font-size: 4.50px;fill: #656460; font-family: "JetBrains Mono";' textLength='29.73px' lengthAdjust='spacingAndGlyphs'>05·MAY·2026</text>
+<text x='284.50' y='77.67' text-anchor='end' style='font-size: 3.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='5.39px' lengthAdjust='spacingAndGlyphs'>WOW</text>
+<text x='284.50' y='84.37' text-anchor='end' style='font-size: 5.00px;fill: #2D7A4F; font-family: "JetBrains Mono";' textLength='21.00px' lengthAdjust='spacingAndGlyphs'>▲ 0,19%</text>
+<text x='333.39' y='77.67' text-anchor='end' style='font-size: 3.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='5.39px' lengthAdjust='spacingAndGlyphs'>MOM</text>
+<text x='333.39' y='84.37' text-anchor='end' style='font-size: 5.00px;fill: #B03A2E; font-family: "JetBrains Mono";' textLength='21.00px' lengthAdjust='spacingAndGlyphs'>▼ 3,17%</text>
+<text x='382.28' y='77.67' text-anchor='end' style='font-size: 3.00px;fill: #656460; font-family: "JetBrains Mono";' textLength='5.39px' lengthAdjust='spacingAndGlyphs'>YOY</text>
+<text x='382.28' y='84.37' text-anchor='end' style='font-size: 5.00px;fill: #2D7A4F; font-family: "JetBrains Mono";' textLength='24.00px' lengthAdjust='spacingAndGlyphs'>▲ 17,78%</text>
 <text x='9.96' y='31.57' style='font-size: 10.12px; font-weight: 600;fill: #0F0F0F; font-family: "Archivo";' textLength='118.38px' lengthAdjust='spacingAndGlyphs'>Reservas Internacionales</text>
-<text x='10.56' y='17.25' style='font-size: 3.71px;fill: #0F0F0F; fill-opacity: 0.20; font-family: "JetBrains Mono";' textLength='62.12px' lengthAdjust='spacingAndGlyphs'>────── BCRA · SECTOR EXTERNO</text>
 <text x='9.96' y='16.65' style='font-size: 3.71px;fill: #FD3810; font-family: "JetBrains Mono";' textLength='62.12px' lengthAdjust='spacingAndGlyphs'>────── BCRA · SECTOR EXTERNO</text>
 </g>
 </g>

@@ -1,11 +1,12 @@
 #' @importFrom ggplot2 element_grob
-#' @importFrom grid makeContent heightDetails widthDetails unit.c
-#' @importFrom gtable gtable gtable_add_grob
+#' @importFrom grid makeContent heightDetails
 
 # Internal separator for structured label encoding — unlikely in normal text
 .CW_SEP <- "\x1F"
 # Secondary separator for KPI field encoding (unit separator)
 .CW_KPI_SEP <- "\x1E"
+# Eyebrow rule prefix: six box-drawing dashes (─) plus a space
+.CW_EYEBROW_RULE <- paste0(strrep("\u2500", 6), " ")
 
 .cw_parse_kpi <- function(kpi_str) {
   if (is.null(kpi_str) || !nzchar(kpi_str)) {
@@ -86,6 +87,7 @@ new_element_chanwe_title <- function(
 
 new_element_chanwe_subtitle <- function(
   family = "Satoshi",
+  italic_family = "Cormorant Garamond",
   size = 9,
   colour = "#555555",
   hjust = 0,
@@ -114,6 +116,7 @@ new_element_chanwe_subtitle <- function(
       debug = FALSE,
       inherit.blank = inherit.blank,
       ink_colour = ink_colour,
+      italic_family = italic_family,
       mono_family = mono_family,
       mono_thin_family = mono_thin_family,
       kpi_label_colour = kpi_label_colour,
@@ -192,7 +195,7 @@ new_element_chanwe_caption <- function(
 #     sub_bot      gap below separator line to chart  (12pt compact / 20pt spacious)
 #     [mid line]   0.4pt separator (always drawn, draw_middle=TRUE)
 #     gap_n        gap between note and separator (3pt, only when has_n)
-#     n_h          note text (italic Satoshi, only when has_n)
+#     n_h          note text (italic Cormorant Garamond, only when has_n)
 #     gap_ln       gap between subtitle text and separator (6pt compact / 14pt spacious)
 #     s_h          subtitle text (Satoshi)
 #     top (5pt)
@@ -236,8 +239,8 @@ new_element_chanwe_caption <- function(
 
 .cw_title_heights <- function(x) {
   t_h <- .cw_str_h(x$title_text, x$title_gp)
-  has_ey <- !is.null(x$eyebrow_text) # TRUE even when eyebrow text is "" (draws "────── " line)
-  ey_h <- if (has_ey) .cw_str_h(paste0("────── ", toupper(x$eyebrow_text %||_% "")), x$eyebrow_gp) else 0
+  has_ey <- !is.null(x$eyebrow_text) # TRUE even when eyebrow text is "" (draws rule-only line)
+  ey_h <- if (has_ey) .cw_str_h(paste0(.CW_EYEBROW_RULE, toupper(x$eyebrow_text %||_% "")), x$eyebrow_gp) else 0
   top <- if (has_ey) (x$top_pad %||_% 8) else 0 # top padding above eyebrow
   bot <- (x$margin_bottom %||_% 2) # bottom padding — carries extra space when no subtitle
   gap1 <- if (has_ey) 8 else 0 # gap: title → eyebrow
@@ -288,7 +291,7 @@ makeContent.cw_title_tree <- function(x) {
     ch <- grid::gList(
       ch,
       grid::textGrob(
-        paste0("────── ", toupper(x$eyebrow_text)),
+        paste0(.CW_EYEBROW_RULE, toupper(x$eyebrow_text)),
         x = grid::unit(0, "npc"),
         y = grid::unit(ey_y, "pt"),
         just = c("left", "center"),
@@ -336,6 +339,7 @@ heightDetails.cw_title_tree <- function(x) {
   sep_gp,
   ink_col,
   kpi_data = NULL,
+  italic_family = "Cormorant Garamond",
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
   kpi_label_colour = "#AEABA6",
@@ -352,6 +356,7 @@ heightDetails.cw_title_tree <- function(x) {
     sep_gp = sep_gp,
     ink_col = ink_col,
     kpi_data = kpi_data,
+    italic_family = italic_family,
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
     kpi_label_colour = kpi_label_colour,
@@ -478,9 +483,9 @@ makeContent.cw_subtitle_tree <- function(x) {
       )
     )
 
-    # Hero value — Fraunces SemiBold Italic (weight 600), same weight as h1 heading
+    # Hero value — Cormorant Garamond italic, shared with report italics.
     val_gp <- grid::gpar(
-      fontfamily = "Fraunces 9pt Light",
+      fontfamily = x$italic_family %||_% "Cormorant Garamond",
       fontface = "italic",
       fontsize = 18,
       col = ink
@@ -555,9 +560,9 @@ makeContent.cw_subtitle_tree <- function(x) {
           fg_muted
         }
         arrow <- if (m$dir > 0L) {
-          "▲ "
+          "\u25B2 " # up triangle
         } else if (m$dir < 0L) {
-          "▼ "
+          "\u25BC " # down triangle
         } else {
           ""
         }
@@ -678,7 +683,7 @@ makeContent.cw_caption_tree <- function(x) {
     ch <- grid::gList(
       ch,
       grid::textGrob(
-        strrep("─", 400),
+        strrep("\u2500", 400),
         x = grid::unit(0, "npc"),
         y = grid::unit(bln_y, "pt"),
         just = c("left", "center"),
@@ -742,6 +747,7 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
   ink <- element$ink_colour %||_% "#1A1A1A"
   mono_fam <- element$mono_family %||_% "JetBrains Mono"
   mono_thin_fam <- element$mono_thin_family %||_% mono_fam
+  italic_fam <- element$italic_family %||_% "Cormorant Garamond"
   kpi_label_colour <- element$kpi_label_colour %||_% "#AEABA6"
 
   parts <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
@@ -757,7 +763,7 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     col = element$colour %||_% "#555555"
   )
   note_gp <- grid::gpar(
-    fontfamily = element$family %||_% "Satoshi",
+    fontfamily = italic_fam,
     fontsize = sub_size * 0.85,
     fontface = "italic",
     col = element$colour %||_% "#555555"
@@ -777,6 +783,7 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     sep_gp,
     ink,
     kpi_data = kpi_data,
+    italic_family = italic_fam,
     mono_family = mono_fam,
     mono_thin_family = mono_thin_fam,
     kpi_label_colour = kpi_label_colour,

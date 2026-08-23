@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400;1,500;1,600&family=DM+Sans:wght@400;600;700;900&display=swap");
 
 :root {
   --chanwe-primary: #E94B2B;
@@ -10,6 +10,7 @@
   --chanwe-beige-soft: #EEEEEE;
   --chanwe-radius: 0.22rem;
   --chanwe-radius-sm: 0.16rem;
+  --chanwe-italic-font: "Cormorant Garamond", Georgia, serif;
 
   --chanwe-info: #11F7E6;
   --chanwe-success: #1EB508;
@@ -39,6 +40,13 @@ blockquote {
 a {
   color: var(--chanwe-primary);
   font-weight: 600;
+}
+
+em,
+i {
+  font-family: var(--chanwe-italic-font);
+  font-style: italic;
+  font-weight: 500;
 }
 
 h1,

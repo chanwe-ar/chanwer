@@ -1,4 +1,7 @@
 ^\.agents$
+^\.claude$
+^\.gitattributes$
+^\.luarc\.json$
 ^skills-lock\.json$
 ^assets$
 ^\.DS_Store$
@@ -7,7 +10,11 @@
 ^\.quarto$
 ^_quarto\.yml$
 ^chanwe-typst-showcase.*$
-^chanwe-typst-gt-ggplot-showcase.*$
+^chanwe-report-typst-showcase.*$
+^chanwe-report-typst-gt-ggplot-showcase.*$
+^gt\.(qmd|typ|pdf|rmarkdown)$
+^gt_files$
+^Rplots\.pdf$
 ^references\.bib$
 ^figure$
 ^lib$

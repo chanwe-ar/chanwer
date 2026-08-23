@@ -38,7 +38,7 @@
   let wm         = if wordmark != none { wordmark } else { _p-assets + "Logo_Negro.png" }
 
   let fd = ("Archivo", "Helvetica Neue", "Arial")
-  let fs = ("Fraunces 9pt", "Georgia", "Times New Roman")
+  let fs = ("Cormorant Garamond", "Georgia", "Times New Roman")
   let fm = ("JetBrains Mono", "Menlo", "Courier New")
 
   // ─── Page ─────────────────────────────────────────────────────

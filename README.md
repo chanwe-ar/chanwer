@@ -1,7 +1,7 @@
 # chanwer
 
-`chanwer` provides ChanWe brand themes for plotting, tables, and
-reporting components used in Quarto workflows.
+`chanwer` provides ChanWe brand themes for ggplot2 charts, native Typst
+tables, and Quarto reporting workflows.
 
 The package is built around a small set of entry points. If you know
 which output you are producing, you should be able to choose the right
@@ -22,44 +22,36 @@ devtools::install(".")
 
 ## What is included
 
-- `chanwe_palette()` for exact named color tokens and grouped palettes.
-- `theme_chanwe()` plus ChanWe scales for ggplot2.
-- `gt_theme_chanwe()` for `gt` table styling.
-- `reactable_theme_chanwe()` for `reactable`.
-- `hc_theme_chanwe()` for `highcharter`.
-- `chanwe_reporting_css()` for Quarto reporting components.
-- `chanwe_brand_tokens()` and `chanwe_preview_palette()` utilities.
-
-## Recommended Entry Points
-
-Use these helpers as the default choices.
-
-- `theme_chanwe()` for `ggplot2` charts.
-- `chanwe_title()` for a ggplot title with the bundled
-  `Estrategia_Color1.png` marker.
-- `chanwe_subtitle()` for the ChanWe subtitle rule.
-- `scale_color_chanwe_d()` and `scale_fill_chanwe_d()` for discrete
-  ChanWe palettes.
-- `gt_theme_chanwe()` for `gt` tables when you want to control both
-  density and background.
-- `gt_theme_chanwe_spacious()` and `gt_theme_chanwe_compact()` for the
-  two canonical `gt` table densities.
-- `chanwe_reporting_css()` for Quarto document styling.
+- `chanwe_palette()` — exact named color tokens and grouped palettes
+  (core brand, `p13`/`p14`/`p15` ramps, `mb` main-brand scale, semantic,
+  and the editorial 8-color chart palette).
+- `theme_chanwe()` — the editorial ggplot2 theme with custom title,
+  subtitle, KPI-scoreboard, and caption elements.
+- `chanwe_title()`, `chanwe_subtitle()`, `chanwe_kpi()`,
+  `chanwe_caption()` — label helpers for the full header treatment.
+- `scale_color_chanwe_d()` / `scale_fill_chanwe_d()` — discrete brand
+  scales; `scale_color_chanwe_c()` / `scale_fill_chanwe_c()` —
+  continuous orange gradients.
+- `chanwe_kbl()` — native Typst table generator for Quarto PDF reports.
+- `chanwe_load_fonts()` — registers the brand fonts with `systemfonts`.
+- `chanwe_reporting_css()` — bundled SCSS for Quarto HTML output.
+- `chanwe_brand_tokens()` and `chanwe_preview_palette()` — utilities.
 
 ## Quick Start
 
 ```r
 library(chanwer)
+library(ggplot2)
 
 chanwe_palette("chart")
 
-library(ggplot2)
 ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
   geom_point(size = 3) +
   scale_color_chanwe_d() +
   labs(
     title = chanwe_title("Fuel economy vs weight"),
-    subtitle = chanwe_subtitle("ChanWe scatter")
+    subtitle = "ChanWe scatter",
+    caption = chanwe_caption("Source: mtcars")
   ) +
   theme_chanwe()
 ```
@@ -76,54 +68,94 @@ ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
   geom_point(size = 3, alpha = 0.9) +
   scale_color_chanwe_d() +
   labs(
-    title = chanwe_title("Fuel economy vs weight"),
-    subtitle = chanwe_subtitle("Editorial scatter"),
+    title = chanwe_title("Fuel economy vs weight", eyebrow = "SECTION - FLEET"),
+    subtitle = "Editorial scatter",
     x = "Weight",
     y = "MPG",
-    color = "Cylinders"
+    color = "Cylinders",
+    caption = chanwe_caption("Source: Motor Trend, 1974")
   ) +
-  theme_chanwe(background = "beige")
+  theme_chanwe(bg_color = "beige")
 ```
 
-For `ggplot2`, the main decisions are:
+The main decisions:
 
-- Use `background = "beige"` for the soft ChanWe surface.
-- Use `background = "white"` for a cleaner paper-white surface.
-- Use `chanwe_title()` when you want the bundled title marker.
-- Use `chanwe_subtitle()` when you want the ChanWe separator rule.
+- `bg_color` picks the surface: `"metallic"` (default, `#F7F7F7`),
+  `"white"`, `"white-ivory"`, `"gray"`, `"beige"`, `"transparent"`, or
+  any hex string. Grid line colors adapt automatically.
+- `chanwe_title(text, eyebrow = "...")` adds the orange mono-caps
+  eyebrow line above the title. Plain titles need no helper.
+- `has_subtitle = FALSE` tightens the header when there is no subtitle.
+- `compact_title` / `header_line` / `plot_borders` fine-tune the header
+  spacing, separator rule, and decorative frame lines.
 
-The title marker depends on `ggtext`. If `ggtext` is not installed,
-titles fall back to plain text behavior.
+### KPI scoreboard
 
-## gt Pattern
-
-This is the canonical pattern for ChanWe `gt` tables.
+`chanwe_kpi()` builds a scoreboard panel that sits between the subtitle
+and the chart — a hero value with unit and date on the left, up to three
+period metrics (WoW / MoM / YoY with ▲/▼ direction) on the right. Always
+wrap it in `chanwe_subtitle()`:
 
 ```r
-library(chanwer)
-library(gt)
-
-gt(head(mtcars)) |>
-  tab_header(
-    title = "Fleet summary",
-    subtitle = "Spacious beige table"
-  ) |>
-  gt_theme_chanwe(variant = "spacious", background = "beige")
+labs(
+  subtitle = chanwe_subtitle(
+    "Evolución de reservas internacionales brutas.",
+    kpi = chanwe_kpi(
+      num = "45,91", label = "USD MM", period = "05·MAY·2026",
+      mtc1_num = "0,19%",  mtc1_label = "WoW", mtc1_direction = "+",
+      mtc2_num = "3,29%",  mtc2_label = "MoM", mtc2_direction = "+",
+      mtc3_num = "17,78%", mtc3_label = "YoY", mtc3_direction = "-"
+    )
+  )
+)
 ```
 
-For `gt`, the main decisions are:
+### Fonts
 
-- Use `variant = "spacious"` for presentation output.
-- Use `variant = "compact"` for denser reporting tables.
-- Use `background = "beige"` or `background = "white"` to match the
-  report surface.
-- Use `gt_theme_chanwe_spacious()` or `gt_theme_chanwe_compact()` when
-  you want the standard density without repeating the `variant`
-  argument.
+`theme_chanwe()` calls `chanwe_load_fonts()` automatically. The fonts
+are bundled with the `chanwe-report` Quarto extension
+(`_extensions/chanwe-report/fonts`); pass `path =` to point somewhere
+else. Registered families include Satoshi, Archivo (plus Medium /
+SemiBold / ExtraBold / Light), Fraunces 9pt (all weights), Cormorant
+Garamond, and JetBrains Mono (plus Thin).
 
-## Quarto usage (HTML, Typst PDF, PPTX)
+For crisp output use a systemfonts-aware device:
 
-Use ChanWe reporting CSS and theme functions in your document.
+```r
+knitr::opts_chunk$set(dev = "ragg_png")
+```
+
+## Typst Tables
+
+`chanwe_kbl()` renders a data frame as a native Typst table — Archivo
+title, Satoshi subtitle, JetBrains Mono column headers and cells, thin
+ink divider rules. It emits a raw `{=typst}` block, so it works in
+Quarto documents rendered with the `chanwe-report-typst` format.
+
+````markdown
+```{r}
+chanwe_kbl(
+  head(mtcars[, 1:5]),
+  title = "Fleet summary",
+  subtitle = "First six vehicles",
+  eyebrow = "SECTION - FLEET",
+  caption = "Source: mtcars",
+  density = "spacious",
+  bg = "white-ivory"
+)
+```
+````
+
+Useful arguments:
+
+- `density = "spacious"` (presentations) or `"compact"` (dense reports).
+- `col_labels`, `col_aligns`, `col_widths`, `stub` for column control.
+- `fmt` — named list of per-column formatting functions.
+- `col_colors` — per-cell Typst color expressions (e.g. red negatives).
+- `n_total` / `total_fill` — trailing total rows with a heavier rule.
+- `highlight_cols` / `vlines` — column emphasis and vertical rules.
+
+## Quarto usage (HTML)
 
 ```yaml
 ---
@@ -132,36 +164,17 @@ format:
   html:
     css:
       - !expr chanwer::chanwe_reporting_css()
-  typst: default
-  pptx: default
 execute:
   echo: false
 ---
 ```
 
-```{r}
-library(chanwer)
-library(ggplot2)
+The stylesheet enforces code blocks with a light background and orange
+left rule, semantic callout headers, smaller muted captions, and orange
+ToC/section-number accents.
 
-ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-  geom_point(size = 3) +
-  scale_color_chanwe_d() +
-  labs(
-    title = chanwe_title("Fuel economy vs weight"),
-    subtitle = chanwe_subtitle("ChanWe scatter")
-  ) +
-  theme_chanwe()
-```
-
-The stylesheet enforces:
-
-- code blocks with `#F7F7F7` background, orange left rule, no shadow,
-- semantic callout headers/borders,
-- smaller muted captions,
-- orange ToC and section-number accents with an `Estrategia_Color1` marker.
-
-For Typst/PDF output, use PNG-backed plot rendering for consistent title
-markers and font handling:
+For Typst/PDF output, use PNG-backed plot rendering for consistent font
+handling:
 
 ```yaml
 execute:
@@ -169,41 +182,21 @@ execute:
   fig-format: png
 ```
 
-## Tables
-
-```r
-library(gt)
-
-gt(head(mtcars)) |>
-  tab_header(title = "Fleet summary") |>
-  gt_theme_chanwe()
-```
-
-```r
-gt(head(mtcars)) |>
-  tab_header(title = "Compact fleet summary") |>
-  gt_theme_chanwe_compact(background = "white")
-```
-
-```r
-library(reactable)
-reactable(head(mtcars), theme = reactable_theme_chanwe())
-```
-
-## Charts
-
-```r
-library(highcharter)
-
-hchart(mtcars, "scatter", hcaes(wt, mpg, group = cyl)) |>
-  hc_add_theme(hc_theme_chanwe())
-```
-
 ## Brand Tokens
 
 ```r
 tokens <- chanwe_brand_tokens()
 str(tokens, max.level = 2)
+
+chanwe_preview_palette("chart")   # swatch grid of any palette group
+```
+
+## Development
+
+```r
+devtools::document()   # regenerate man/ and NAMESPACE
+devtools::test()       # run the test suite
+devtools::check()      # full R CMD check
 ```
 
 ## License

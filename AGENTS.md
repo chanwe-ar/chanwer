@@ -1,8 +1,7 @@
 # chanwer Agent Guide
 
-This repository is an R package that provides ChanWe visual themes and
-reporting helpers for `ggplot2`, `gt`, `reactable`, `highcharter`, and
-Quarto workflows.
+This repository is an R package that provides ChanWe visual themes for
+`ggplot2`, a native Typst table generator, and Quarto reporting helpers.
 
 Use this file as the fast path when deciding what to call and where to
 look.
@@ -16,55 +15,59 @@ look.
 ## Canonical Entry Points
 
 - Use `theme_chanwe()` for `ggplot2` themes.
-- Use `chanwe_title()` for a ggplot title with the bundled
-  `Estrategia_Color1.png` marker.
-- Use `chanwe_subtitle()` for the ChanWe subtitle separator rule.
+- Use `chanwe_title()` when a title needs the orange mono-caps eyebrow.
+- Use `chanwe_subtitle()` when a subtitle needs a note line or a KPI
+  scoreboard (`chanwe_kpi()`); plain subtitles need no helper.
+- Use `chanwe_caption()` for the `//`-prefixed source line.
 - Use `scale_color_chanwe_d()` and `scale_fill_chanwe_d()` for discrete
-  ChanWe palettes.
-- Use `gt_theme_chanwe()` for `gt` tables when you need explicit control
-  over density and background.
-- Use `gt_theme_chanwe_spacious()` for presentation-style tables.
-- Use `gt_theme_chanwe_compact()` for denser report tables.
-- Use `reactable_theme_chanwe()` for `reactable`.
-- Use `hc_theme_chanwe()` for `highcharter`.
-- Use `chanwe_reporting_css()` for Quarto report styling.
+  ChanWe palettes; `_c` variants for continuous orange gradients.
+- Use `chanwe_kbl()` for tables in Quarto Typst PDF reports.
+- Use `chanwe_load_fonts()` once per session to register brand fonts
+  (called automatically by `theme_chanwe()`).
+- Use `chanwe_reporting_css()` for Quarto HTML report styling.
 
 ## Decision Rules
 
 - If the user is styling a `ggplot2` chart, start in `R/ggplot2-theme.R`.
-- If the user is styling a `gt` table, start in `R/gt-theme.R`.
+- If the header layout (title/subtitle/KPI/caption grobs) is involved,
+  start in `R/ggplot2-elements.R` — the layout maps live in its comments.
+- If the user is styling a table, start in `R/kbl-theme.R`.
 - If the user needs colors or reporting tokens, start in `R/palette.R`.
 - If the user is rendering a Quarto or Typst example, inspect
-  `chanwe-typst-gt-ggplot-showcase.qmd`.
+  `chanwe-report-typst-showcase.qmd` and `_extensions/chanwe-report/`.
 
 ## ggplot2 Notes
 
-- `theme_chanwe()` supports `background = "beige"` and
-  `background = "white"`.
-- The title marker only appears when the plot title uses
-  `chanwe_title(...)`.
-- The subtitle rule only appears when the subtitle uses
-  `chanwe_subtitle(...)`.
-- The title marker path resolves through the bundled asset
-  `inst/assets/Estrategia_Color1.png`.
-- `chanwe_title()` depends on `ggtext` support in the theme. If `ggtext`
-  is unavailable, expect plain-text fallback behavior.
+- `theme_chanwe()` takes `bg_color` (not `background`): `"metallic"`
+  (default), `"white"`, `"white-ivory"`, `"gray"`, `"beige"`,
+  `"transparent"`, or any hex string.
+- The eyebrow only appears when the title uses
+  `chanwe_title(text, eyebrow = ...)`.
+- The header separator rule is drawn by the custom subtitle/title grobs;
+  control it with `header_line` and `has_subtitle`.
+- Labels are encoded with ASCII unit separators (`\x1F`, `\x1E`) and
+  decoded by the custom elements — never construct those strings by hand.
+- Fonts resolve through `systemfonts`; render with `ragg` devices
+  (`dev = "ragg_png"`).
 
-## gt Notes
+## Typst Table Notes
 
-- `gt_theme_chanwe()` is the main function.
-- Prefer `variant = "spacious"` for presentation output.
-- Prefer `variant = "compact"` for dense report output.
-- `background` should usually match the surrounding report surface.
-- Current table font is `DM Sans 9pt` for Typst compatibility.
+- `chanwe_kbl()` emits a raw `{=typst}` block via `knitr::asis_output()`.
+  It requires the document to be rendered with the `chanwe-report-typst`
+  format (the `_t` token dictionary comes from the template).
+- `density = "spacious"` for presentation output; `"compact"` for dense
+  report output.
+- Cell text is escaped for Typst markup; `col_colors` values are raw
+  Typst expressions and are NOT escaped.
 
 ## Quarto And Typst Notes
 
 - For Typst/PDF output, prefer PNG-backed plot rendering:
   - `dev: ragg_png`
   - `fig-format: png`
-- The main reference example is `chanwe-typst-gt-ggplot-showcase.qmd`.
-- Brand configuration lives under `_extensions/chanwe-brand/`.
+- The main reference example is `chanwe-report-typst-showcase.qmd`.
+- The Quarto extension lives under `_extensions/chanwe-report/`
+  (template, filters, fonts, assets).
 
 ## Development Workflow
 
@@ -72,13 +75,19 @@ look.
   `Rscript -e "devtools::document()"`
 - Run tests:
   `Rscript -e "devtools::test()"`
-- Run targeted tests:
-  `Rscript -e "devtools::test(filter = '^(utilities|theme-objects)$')"`
+- Full check (must stay at 0 errors / 0 warnings / 0 notes):
+  `Rscript -e "devtools::check()"`
+- Build + install locally:
+  `R CMD build . && R CMD INSTALL chanwer_<version>.tar.gz`
 
 ## Documentation Expectations
 
 - Keep README examples canonical and copy-pasteable.
 - Keep roxygen examples aligned with the recommended public usage.
+  Examples must not print plots (custom fonts are unavailable on check
+  devices) — assign them to variables instead.
 - If you add a public helper, add it to `_pkgdown.yml`.
 - If you change ggplot title behavior, verify both plain R plots and
   Typst/Quarto rendering paths.
+- Keep R code strings ASCII-only (use `\uXXXX` escapes); non-ASCII is
+  fine in comments.

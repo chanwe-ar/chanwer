@@ -21,9 +21,9 @@ Without an eyebrow you can pass plain text directly — this helper is only
 needed when you want the orange mono-caps eyebrow line above the title.
 }
 \details{
-The eyebrow renders as a small-caps JetBrains Mono label in the brand orange
-(\verb{#FB3D0E}), prefixed by \verb{──}. Requires the \code{ggtext} package for HTML
-rendering; falls back to plain \verb{──  EYEBROW\\nTitle} when unavailable.
+The eyebrow renders as a small-caps JetBrains Mono label in the brand
+orange, prefixed by \verb{──────}. Rendering is handled by the custom title
+element installed by \code{\link[=theme_chanwe]{theme_chanwe()}} — no extra packages are required.
 }
 \examples{
 ## Plain title — pass directly, no helper needed:
@@ -32,11 +32,9 @@ rendering; falls back to plain \verb{──  EYEBROW\\nTitle} when unavailable.
 ## Title with section eyebrow:
 chanwe_title("Revenue vs EBITDA margin", eyebrow = "SECTION · PROFITABILITY")
 
-## Use in a full plot:
-if (requireNamespace("ggplot2", quietly = TRUE)) {
-  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
-    ggplot2::geom_point() +
-    ggplot2::labs(title = chanwe_title("Fleet overview", eyebrow = "TLDR;")) +
-    theme_chanwe()
-}
+## Use in a full plot (assign; print to render with brand fonts):
+p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+  ggplot2::geom_point() +
+  ggplot2::labs(title = chanwe_title("Fleet overview", eyebrow = "TLDR;")) +
+  theme_chanwe()
 }

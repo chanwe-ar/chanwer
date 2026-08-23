@@ -1,5 +1,5 @@
 // =============================================================
-// chanwe-studio/chanwe — typst-template.typ
+// chanwe-studio/chanwe-report - typst-template.typ
 // Page setup, design tokens, and global show rules.
 // =============================================================
 
@@ -22,6 +22,7 @@
   border:      rgb("#1F1F1F1A"),
   font-display: ("Archivo", "Helvetica Neue", "Arial"),
   font-serif:   ("Fraunces 9pt", "Georgia", "Times New Roman"),
+  font-italic:  ("Cormorant Garamond", "Georgia", "Times New Roman"),
   font-sans:    ("Satoshi", "Inter", "Helvetica Neue", "Arial"),
   font-mono:    ("JetBrains Mono", "Menlo", "Courier New"),
 )
@@ -65,7 +66,7 @@
 )
 
 // assets path — override with chanwe-assets: in document YAML if the
-// extension installed to a different path (e.g. _extensions/chanwe/)
+// extension installed to a different path (e.g. _extensions/chanwe-report/)
 #let _chanwe-assets = "$chanwe-assets$".replace("\\_", "_")
 
 // ---------- Small primitives ---------------------------------
@@ -152,7 +153,7 @@
   ]
 }
 
-// Global state — set by chanwe() and read by components
+// Global state - set by chanwe-report() and read by components
 #let _chanwe-doc = state("chanwe-doc", (
   doc-id:    "CHW · DOC",
   edition:   "",
@@ -174,7 +175,7 @@ $chanwe-charts.typ()$
 // =============================================================
 // MAIN TEMPLATE FUNCTION (called by typst-show.typ)
 // =============================================================
-#let chanwe(
+#let chanwe-report(
   // metadata
   title: "Untitled",
   subtitle: none,
@@ -243,8 +244,8 @@ $chanwe-charts.typ()$
   set heading(numbering: "1.1.1.")
 
   // ---- inline rules (apply to entire document) ---------------
-  show emph: it => text(style: "italic", it.body)
-  show strong: it => text(weight: 700, fill: _t.ink, it.body)
+  show emph: it => text(font: _t.font-italic, style: "italic", weight: 500, fill: rgb("#484848"), it.body)
+  show strong: it => text(weight: 600, fill: rgb("#484848"), it.body)
   show math.equation.where(block: true): it => block(
     width: 100%,
     fill: rgb("#EDF0F1"),
@@ -300,7 +301,7 @@ $chanwe-charts.typ()$
         columns: (auto, 1fr),
         column-gutter: 8mm,
         align: (left + bottom, left + bottom),
-        text(font: _t.font-serif, style: "italic", weight: 300,
+        text(font: _t.font-italic, style: "italic", weight: 300,
              size: 60pt, fill: _t.primary,
              counter(heading).display("1")),
         block()[
@@ -345,7 +346,7 @@ $chanwe-charts.typ()$
       columns: (auto, 1fr),
       column-gutter: 4mm,
       align: (left + bottom, left + bottom),
-      text(font: _t.font-serif, style: "italic", weight: 100,
+      text(font: _t.font-italic, style: "italic", weight: 100,
            size: 10pt, fill: _t.primary,
            counter(heading).display("1.1.1.1")),
       text(font: _t.font-display, size: 13pt, weight: 700,
@@ -386,10 +387,10 @@ $chanwe-charts.typ()$
     inset: (left: 6mm),
     stroke: (left: 2pt + _t.primary),
   )[
-    #text(font: _t.font-serif, size: 16pt, weight: 300, style: "italic", fill: _t.fg-muted, it.body)
+    #text(font: _t.font-italic, size: 16pt, weight: 300, style: "italic", fill: _t.fg-muted, it.body)
     #if it.attribution != none {
       v(3mm)
-      text(font: _t.font-serif, size: 10pt, weight: 300, style: "italic", fill: _t.fg-subtle, [— #it.attribution])
+      text(font: _t.font-italic, size: 10pt, weight: 300, style: "italic", fill: _t.fg-subtle, [— #it.attribution])
     }
   ]
 
@@ -429,7 +430,7 @@ $chanwe-charts.typ()$
     it.caption
     v(12mm, weak: true)
   }
-  show figure: set block(above: 12mm, below: 12mm)
+  show figure: set block(above: 11mm, below: 4mm)
   show figure.caption: it => align(left, text(
     font: _t.font-mono, size: 8pt, tracking: 0.14em,
     fill: _t.fg-subtle, upper(it.supplement) + " " + it.counter.display() + "  ·  " + upper(it.body),
@@ -504,14 +505,14 @@ $chanwe-charts.typ()$
   // ---- user body (paragraph overrides scoped here only) ----
   {
     set text(
-      size: if body-size  != none { body-size  } else { 11pt    },
+      size: if body-size  != none { body-size  } else { 10pt    },
       fill: if body-color != none { body-color } else { _t.fg   },
     )
     set par(
       leading: if body-leading != none { body-leading } else { 0.85em },
       justify: if body-justify != none { body-justify } else { false  },
+      spacing: if body-spacing != none { body-spacing } else { 2em    },
     )
-    set block(spacing: if body-spacing != none { body-spacing } else { 1.2em })
     body
   }
 
@@ -525,3 +526,7 @@ $chanwe-charts.typ()$
     )
   }
 }
+
+// Backward-compatible alias for raw Typst snippets written before the
+// extension format was renamed to chanwe-report.
+#let chanwe = chanwe-report

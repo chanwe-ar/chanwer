@@ -7,17 +7,18 @@
 #' Registered families:
 #' - `"Satoshi"` — Regular / Bold / Italic / BoldItalic
 #' - `"Archivo"` — Regular / Bold / Italic / BoldItalic
-#' - `"Archivo Medium"` — plain face = Medium (500); italic face = MediumItalic; used by KPI hero value
+#' - `"Archivo Medium"` — plain face = Medium (500); italic face = MediumItalic
 #' - `"Archivo SemiBold"` — plain face = SemiBold (600); used by [chanwe_title()]
 #' - `"Archivo ExtraBold"` — plain face = ExtraBold (800)
 #' - `".chanwe-subtitle"` — plain face = Archivo Light (300)
 #' - `"Fraunces 9pt"` — Regular / Bold / Italic / BoldItalic
+#' - `"Cormorant Garamond"` — variable font; used by the KPI hero value and subtitle notes
 #' - `"JetBrains Mono"` — Regular / Bold / Italic / BoldItalic
 #' - `"JetBrains Mono Thin"` — plain face = Thin (100); used by axis titles / facet labels
 #'
 #' @param path Directory containing the TTF files. Defaults to
-#'   `_extensions/chanwe/fonts` relative to the working directory (i.e. the
-#'   fonts bundled with the chanwe-typst Quarto extension).
+#'   `_extensions/chanwe-report/fonts` relative to the working directory (i.e. the
+#'   fonts bundled with the chanwe-report-typst Quarto extension).
 #'
 #' @return Invisibly, the resolved fonts directory path.
 #' @export
@@ -41,9 +42,9 @@ chanwe_load_fonts <- function(path = NULL) {
     pkg_inst <- tryCatch(system.file(package = "chanwer"), error = function(e) "")
     pkg_root <- if (nzchar(pkg_inst)) dirname(pkg_inst) else ""
     candidates <- c(
-      if (nzchar(pkg_root)) file.path(pkg_root, "_extensions/chanwe/fonts"),
-      "_extensions/chanwe/fonts",
-      file.path(getwd(), "_extensions/chanwe/fonts"),
+      if (nzchar(pkg_root)) file.path(pkg_root, "_extensions/chanwe-report/fonts"),
+      "_extensions/chanwe-report/fonts",
+      file.path(getwd(), "_extensions/chanwe-report/fonts"),
       system.file("fonts", package = "chanwer")
     )
     path <- Find(function(p) nzchar(p) && dir.exists(p), candidates)
@@ -52,7 +53,7 @@ chanwe_load_fonts <- function(path = NULL) {
   if (is.null(path) || !dir.exists(path)) {
     warning(
       "chanwe_load_fonts(): fonts directory not found. ",
-      "Pass `path` explicitly or install the chanwe-typst Quarto extension."
+      "Pass `path` explicitly or install the chanwe-report-typst Quarto extension."
     )
     return(invisible(NULL))
   }
@@ -90,6 +91,12 @@ chanwe_load_fonts <- function(path = NULL) {
     bold       = "Fraunces9pt-Bold.ttf",
     italic     = "Fraunces9pt-Italic.ttf",
     bolditalic = "Fraunces9pt-BoldItalic.ttf"
+  )
+  .reg("Cormorant Garamond",
+    plain      = "CormorantGaramond[wght].ttf",
+    bold       = "CormorantGaramond[wght].ttf",
+    italic     = "CormorantGaramond-Italic[wght].ttf",
+    bolditalic = "CormorantGaramond-Italic[wght].ttf"
   )
 
   # Fraunces 9pt weight variants — each as its own family so they can be

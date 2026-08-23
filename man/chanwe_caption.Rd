@@ -13,21 +13,19 @@ chanwe_caption(text)
 A character string for \code{labs(caption = ...)}.
 }
 \description{
-Prepends an orange \verb{//} marker to the caption text, rendered in JetBrains
-Mono by \code{\link[=theme_chanwe]{theme_chanwe()}}. Use inside \code{labs(caption = ...)}.
-}
-\details{
-Requires the \code{ggtext} package for HTML rendering; falls back to plain
-\code{"// text"} when unavailable.
+Marks a string for the ChanWe caption treatment: \code{\link[=theme_chanwe]{theme_chanwe()}} renders
+captions in JetBrains Mono with an orange \verb{//} prefix and a thin separator
+line above. Use inside \code{labs(caption = ...)}. Plain strings passed directly
+to \code{labs(caption = )} receive the same treatment; this helper exists to
+keep call sites explicit and future-proof.
 }
 \examples{
 chanwe_caption("Q1 2026 · USD M and \%.")
 chanwe_caption("Source: Motor Trend, 1974 · mtcars dataset")
 
-if (requireNamespace("ggplot2", quietly = TRUE)) {
-  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
-    ggplot2::geom_point() +
-    ggplot2::labs(caption = chanwe_caption("Source: mtcars")) +
-    theme_chanwe()
-}
+## In a plot (assign; print to render with brand fonts):
+p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+  ggplot2::geom_point() +
+  ggplot2::labs(caption = chanwe_caption("Source: mtcars")) +
+  theme_chanwe()
 }

@@ -18,7 +18,7 @@ theme_chanwe(
 )
 }
 \arguments{
-\item{base_text_size}{Base text size in points. Default \code{6.5}. Title scales at ×1.50, subtitle ×0.90, eyebrow ×0.55.}
+\item{base_text_size}{Base text size in points. Default \code{6.75}. Title scales at ×1.50, subtitle ×0.90, eyebrow ×0.55.}
 
 \item{base_family}{Base font family for body text. Default \code{"Satoshi"}.}
 
@@ -71,6 +71,7 @@ brand-consistent color palettes.
    Element \tab Font \tab Weight \cr
    Title (with eyebrow) \tab Archivo \tab 400 \cr
    Subtitle \tab Satoshi \tab 400 \cr
+   Subtitle note / KPI hero \tab Cormorant Garamond \tab italic \cr
    Axis text \tab Satoshi \tab 400 \cr
    Axis titles \tab JetBrains Mono Thin \tab 100 \cr
    Facet strip labels \tab JetBrains Mono Thin \tab 100 \cr
@@ -128,51 +129,40 @@ minimal or embedded layouts where the line adds visual noise.
 }
 
 \examples{
-if (requireNamespace("ggplot2", quietly = TRUE)) {
+# Plots are assigned; print them to render (requires the brand fonts,
+# see chanwe_load_fonts()).
 
-  ## Basic scatter — white background, bottom legend
-  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
-    ggplot2::geom_point(size = 3) +
-    scale_color_chanwe_d() +
-    ggplot2::labs(
-      title = chanwe_title("Fuel efficiency by weight"),
-      subtitle = "Highway mpg vs vehicle weight",
-      caption = chanwe_caption("Source: Motor Trend, 1974")
-    ) +
-    theme_chanwe()
+## Basic scatter — metallic background, bottom legend
+p1 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_chanwe_d() +
+  ggplot2::labs(
+    title = chanwe_title("Fuel efficiency by weight"),
+    subtitle = "Highway mpg vs vehicle weight",
+    caption = chanwe_caption("Source: Motor Trend, 1974")
+  ) +
+  theme_chanwe()
 
-  ## With eyebrow, beige background, no legend
-  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
-    ggplot2::geom_point(size = 3) +
-    scale_color_chanwe_d() +
-    ggplot2::labs(
-      title = chanwe_title("Fuel efficiency", eyebrow = "SECTION · FLEET"),
-      subtitle = "Highway mpg vs vehicle weight",
-      caption = chanwe_caption("Source: Motor Trend, 1974")
-    ) +
-    theme_chanwe(bg_color = "beige", legend_position = "none")
+## With eyebrow, beige background, no legend
+p2 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_chanwe_d() +
+  ggplot2::labs(
+    title = chanwe_title("Fuel efficiency", eyebrow = "SECTION - FLEET"),
+    subtitle = "Highway mpg vs vehicle weight",
+    caption = chanwe_caption("Source: Motor Trend, 1974")
+  ) +
+  theme_chanwe(bg_color = "beige", legend_position = "none")
 
-  ## Bar chart — gray background, fill scale
-  avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
-  ggplot2::ggplot(avg_mpg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
-    ggplot2::geom_col(width = 0.6) +
-    scale_fill_chanwe_d() +
-    ggplot2::labs(
-      title = chanwe_title("Average MPG by cylinder count"),
-      caption = chanwe_caption("Source: mtcars")
-    ) +
-    theme_chanwe(bg_color = "gray", legend_position = "none")
-
-  ## Faceted line chart
-  ggplot2::ggplot(ggplot2::economics_long,
-    ggplot2::aes(date, value01, color = variable)) +
-    ggplot2::geom_line(linewidth = 0.6) +
-    ggplot2::facet_wrap(~variable, scales = "free_y", ncol = 2) +
-    scale_color_chanwe_d() +
-    ggplot2::labs(
-      title = chanwe_title("US economic indicators", eyebrow = "MACRO"),
-      caption = chanwe_caption("Source: ggplot2::economics_long")
-    ) +
-    theme_chanwe(legend_position = "none")
-}
+## Bar chart — gray background, fill scale
+avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
+p3 <- ggplot2::ggplot(avg_mpg,
+  ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
+  ggplot2::geom_col(width = 0.6) +
+  scale_fill_chanwe_d() +
+  ggplot2::labs(
+    title = chanwe_title("Average MPG by cylinder count"),
+    caption = chanwe_caption("Source: mtcars")
+  ) +
+  theme_chanwe(bg_color = "gray", legend_position = "none")
 }

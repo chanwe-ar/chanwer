@@ -209,7 +209,7 @@
 
 
 // =============================================================
-// chanwe-studio/chanwe — typst-template.typ
+// chanwe-studio/chanwe-report - typst-template.typ
 // Page setup, design tokens, and global show rules.
 // =============================================================
 
@@ -232,6 +232,7 @@
   border:      rgb("#1F1F1F1A"),
   font-display: ("Archivo", "Helvetica Neue", "Arial"),
   font-serif:   ("Fraunces 9pt", "Georgia", "Times New Roman"),
+  font-italic:  ("Cormorant Garamond", "Georgia", "Times New Roman"),
   font-sans:    ("Satoshi", "Inter", "Helvetica Neue", "Arial"),
   font-mono:    ("JetBrains Mono", "Menlo", "Courier New"),
 )
@@ -275,8 +276,8 @@
 )
 
 // assets path — override with chanwe-assets: in document YAML if the
-// extension installed to a different path (e.g. _extensions/chanwe/)
-#let _chanwe-assets = "\_extensions/chanwe/assets/".replace("\\_", "_")
+// extension installed to a different path (e.g. _extensions/chanwe-report/)
+#let _chanwe-assets = "\_extensions/chanwe-report/assets/".replace("\\_", "_")
 
 // ---------- Small primitives ---------------------------------
 #let chanwe-glyph(size: 7pt, color: _t.primary) = box(
@@ -362,7 +363,7 @@
   ]
 }
 
-// Global state — set by chanwe() and read by components
+// Global state - set by chanwe-report() and read by components
 #let _chanwe-doc = state("chanwe-doc", (
   doc-id:    "CHW · DOC",
   edition:   "",
@@ -482,9 +483,9 @@
 
         #v(8mm)
 
-        // big display title — emph parts render in Fraunces italic
+        // big display title — emph parts render in Cormorant Garamond italic
         #set par(leading: 0.8em, justify: false)
-        #show emph: it => text(font: _t.font-serif, size: 44pt, weight: 200, style: "italic", fill: _t.primary, it.body)
+        #show emph: it => text(font: _t.font-italic, size: 44pt, weight: 200, style: "italic", fill: _t.primary, it.body)
         #block[
           #text(
             font: _t.font-display, size: 36pt, weight: 600,
@@ -497,7 +498,7 @@
         #if subtitle != none {
           v(8mm)
           set par(leading: 0.55em)
-          set text(font: _t.font-serif, size: 14pt, weight: 200, style: "italic", fill: _t.fg-subtle)
+          set text(font: _t.font-italic, size: 14pt, weight: 200, style: "italic", fill: rgb("#484848"))
           subtitle
         }
 
@@ -657,10 +658,10 @@
         #image(_chanwe-assets + "Estrategia_Color.png", height: 10mm, fit: "contain")
         #v(12mm)
         #set par(leading: 0.8em, justify: false)
-        #text(font: _t.font-serif, style: "italic", size: 40pt,
+        #text(font: _t.font-italic, style: "italic", size: 40pt,
               weight: 200, fill: white, tagline-1)
         #linebreak()
-        #text(font: _t.font-serif, style: "italic", size: 40pt,
+        #text(font: _t.font-italic, style: "italic", size: 40pt,
               weight: 200, fill: _t.primary, tagline-2)
         #v(8mm)
         #line(length: 100%, stroke: 0.5pt + white.transparentize(75%))
@@ -756,12 +757,11 @@
   )[
     #block(fill: rgb("#EDF0F1"), inset: (x: 4.5mm, top: 2.5mm, bottom: 2.5mm), width: 100%, spacing: 0pt)[
       #grid(
-        columns: (auto, auto, auto, 1fr),
+        columns: (auto, auto, 1fr),
         column-gutter: 5pt,
         align: left + horizon,
         circle(radius: 3pt, fill: dot-color),
         text(font: _t.font-mono, size: 7pt, fill: _t.fg-subtle, "//"),
-        text(font: _t.font-mono, size: 7pt, tracking: 0.14em, fill: _t.fg-subtle, type-label),
         text(font: _t.font-display, size: 8pt, weight: 700, fill: _t.ink, display-title),
       )
     ]
@@ -779,7 +779,7 @@
   inset: (left: 6mm),
   stroke: (left: 2pt + _t.primary),
 )[
-  #text(font: _t.font-serif, size: 16pt, weight: 300, style: "italic", fill: _t.neutral-900, body)
+  #text(font: _t.font-italic, size: 16pt, weight: 300, style: "italic", fill: _t.neutral-900, body)
   #if attribution != none {
     v(3mm)
     text(font: _t.font-mono, size: 8pt, tracking: 0.18em, fill: _t.fg-subtle, upper[— #attribution])
@@ -836,12 +836,12 @@
     inset: (x: 22mm, top: 40mm, bottom: 30mm),
     fill: s.bg,
   )[
-    #show emph: it => text(fill: s.emph, style: "italic", it.body)
+    #show emph: it => text(font: _t.font-italic, fill: s.emph, style: "italic", it.body)
     #chanwe-eyebrow("Verbatim", color: s.eyebrow, with-rule: true, size: 12pt)
     #v(6mm)
     #set par(leading: 0.64em)
     #text(
-      font: _t.font-serif, size: 40pt, style: "italic", weight: 100,
+      font: _t.font-italic, size: 40pt, style: "italic", weight: 100,
       tracking: -0.01em, fill: s.quote,
     )[\u{201C}#body\u{201D}]
     #v(1fr)
@@ -865,12 +865,12 @@
       fill: s.bg,
       inset: (x: 22mm, top: 12mm, bottom: 14mm),
     )[
-      #show emph: it => text(fill: s.emph, style: "italic", it.body)
+      #show emph: it => text(font: _t.font-italic, fill: s.emph, style: "italic", it.body)
       #set par(leading: 0.64em)
       #chanwe-eyebrow("Verbatim", color: s.eyebrow, with-rule: true)
       #v(3mm)
       #text(
-        font: _t.font-serif, size: 22pt, style: "italic", weight: 100,
+        font: _t.font-italic, size: 22pt, style: "italic", weight: 100,
         tracking: -0.01em, fill: s.quote,
       )[\u{201C}#body\u{201D}]
       #if caption != none {
@@ -945,7 +945,7 @@
       fill: s.bg,
       inset: (x: 22mm, top: 14mm, bottom: 14mm),
     )[
-      #show emph: it => text(fill: s.emph, style: "italic", it.body)
+      #show emph: it => text(font: _t.font-italic, fill: s.emph, style: "italic", it.body)
       #grid(
         columns: col-widths,
         column-gutter: 14mm,
@@ -1008,7 +1008,7 @@
     column-gutter: 6mm,
     align: (left + top, left + top),
     text(
-      font: _t.font-serif, size: 38pt, weight: 100, style: "italic",
+      font: _t.font-italic, size: 38pt, weight: 100, style: "italic",
       fill: _t.primary, number,
     ),
     block(width: 100%)[
@@ -1105,7 +1105,7 @@
           text(font: _t.font-display, size: 14pt, weight: 700, fill: _t.fg-muted, prefix)
           h(0.5mm)
         }
-        #text(font: _t.font-serif, size: 32pt, weight: 600, style: "italic", fill: mc, main)
+        #text(font: _t.font-italic, size: 32pt, weight: 600, style: "italic", fill: mc, main)
         #if unit != "" {
           h(1mm)
           text(font: _t.font-display, size: 10pt, weight: 600, fill: _t.fg-muted, unit)
@@ -1138,7 +1138,7 @@
 // ZONE HIGHLIGHT — full-bleed background color zone
 // =============================================================
 // color: "metallic" | "white" | "white-ivory" | "beige" | "gray" | "dark" | "orange"
-#let zone-highlight(color: "metallic", margin: 2mm, above: 8mm, below: 8mm, col-gutter: 14mm, ..bodies) = {
+#let zone-highlight(color: "metallic", margin: 2mm, above: 3mm, below: 3mm, col-gutter: 14mm, ..bodies) = {
   let bg = if color == "metallic"        { rgb("#F7F7F7") }
     else if color == "beige"             { _t.beige       }
     else if color == "white-ivory"       { rgb("#FAFAFA") }
@@ -1222,7 +1222,7 @@
       column-gutter: 4mm,
       align: (left + bottom, left + bottom, right + bottom),
       text(
-        font: _t.font-serif, style: "italic", weight: 300,
+        font: _t.font-italic, style: "italic", weight: 300,
         size: 28pt, tracking: -0.01em, fill: _t.primary,
         numeral,
       ),
@@ -1293,7 +1293,7 @@
         columns: (16mm, 1fr, 20mm),
         column-gutter: 5mm,
         align: (right + top, left + top, right + top),
-        text(font: _t.font-serif, style: "italic", weight: 300, size: 24pt, fill: _t.primary, num),
+        text(font: _t.font-italic, style: "italic", weight: 300, size: 24pt, fill: _t.primary, num),
         {
           text(font: _t.font-display, size: 13pt, weight: 700, tracking: -0.005em, fill: _t.neutral-900, ptitle)
           linebreak()
@@ -1366,13 +1366,13 @@
                   columns: (auto, auto),
                   column-gutter: 6mm,
                   align: (left + bottom, left + bottom),
-                  text(font: _t.font-serif, style: "italic", weight: 200,
+                  text(font: _t.font-italic, style: "italic", weight: 200,
                        size: 28pt, fill: _t.primary, cur-part.number),
                   {
-                    text(font: _t.font-serif, style: "italic", weight: 200,
+                    text(font: _t.font-italic, style: "italic", weight: 200,
                          size: 20pt, tracking: -0.02em, fill: _t.neutral-900,
                          cur-part.title)
-                    text(font: _t.font-serif, style: "italic", weight: 200,
+                    text(font: _t.font-italic, style: "italic", weight: 200,
                          size: 20pt, fill: _t.primary, ".")
                   },
                 )
@@ -1387,7 +1387,7 @@
               columns: (18mm, 1fr, 34mm),
               column-gutter: 0mm,
               align: (left + bottom, left + bottom, right + bottom),
-              text(font: _t.font-serif, style: "italic", weight: 300,
+              text(font: _t.font-italic, style: "italic", weight: 300,
                    size: 24pt, fill: _t.primary, _pad2(n)),
               text(font: _t.font-display, size: 16pt, weight: 600,
                    fill: _t.neutral-900, it.body()),
@@ -1523,7 +1523,7 @@
           let first-word = parts.at(0)
           let rest = if parts.len() > 1 { " " + parts.slice(1).join(" ") } else { "" }
           block(below: 6mm)[
-            #text(font: _t.font-serif, size: 32pt, weight: 300, style: "italic", fill: _t.primary, first-word)#text(weight: 700, fill: takwy-color, rest)
+            #text(font: _t.font-italic, size: 32pt, weight: 300, style: "italic", fill: _t.primary, first-word)#text(weight: 700, fill: takwy-color, rest)
           ]
         }
         #body
@@ -1716,7 +1716,7 @@
           columns: (1fr, auto),
           column-gutter: 3mm,
           align: (left + bottom, right + bottom),
-          text(font: _t.font-serif, size: 24pt, weight: 200,
+          text(font: _t.font-italic, size: 24pt, weight: 200,
                style: "italic", fill: s-color, str(status-hero)),
           meta-right,
         )
@@ -1729,7 +1729,7 @@
         block(spacing: 0pt)[
           #text(font: _t.font-mono, size: 6.5pt, tracking: 0.18em, fill: lc, "// " + upper(str(drivers-label)))
         ]
-        v(0.5mm)
+        v(3mm)
         for (i, drv) in drivers.slice(0, calc.min(drivers.len(), 3)).enumerate() {
           let dir    = drv.at(0)
           let dtitle = drv.at(1)
@@ -1822,7 +1822,7 @@
           let fw    = parts.at(0)
           let rest  = if parts.len() > 1 { " " + parts.slice(1).join(" ") } else { "" }
           block(below: 5mm)[
-            #text(font: _t.font-serif, size: 20pt, weight: 300,
+            #text(font: _t.font-italic, size: 20pt, weight: 300,
                   style: "italic", fill: _t.primary, fw
             )#text(weight: 700, size: 10pt, fill: takwy-color, rest)
           ]
@@ -1973,7 +1973,7 @@
           align: (left + bottom, left + bottom),
           // GIANT italic numeral
           text(
-            font: _t.font-serif, style: "italic", weight: 100,
+            font: _t.font-italic, style: "italic", weight: 100,
             size: 220pt, tracking: -0.04em,
             fill: _t.primary,
             number,
@@ -1983,14 +1983,14 @@
             dir: ttb, spacing: 7mm,
             chanwe-eyebrow(eyebrow, color: _t.primary, with-rule: true),
             text(
-              font: _t.font-serif, style: "italic", weight: 300,
+              font: _t.font-italic, style: "italic", weight: 300,
               size: 36pt, tracking: -0.02em, fill: _t.neutral-900,
               title,
             ),
             box(width: 18mm, height: 1.5pt, fill: none),
             text(
               font: _t.font-sans, size: 14pt, weight: 300,
-              fill: _t.fg-muted,
+              fill: rgb("#484848"),
               blurb,
             ),
           ),
@@ -2083,13 +2083,13 @@
     #block[
       #set par(leading: 0.45em)
       #text(
-        font: _t.font-serif, style: "italic", weight: 300,
+        font: _t.font-italic, style: "italic", weight: 300,
         size: 36pt, tracking: -0.01em, fill: white,
         tagline-line1,
       )
       \
       #text(
-        font: _t.font-serif, style: "italic", weight: 300,
+        font: _t.font-italic, style: "italic", weight: 300,
         size: 36pt, tracking: -0.01em, fill: _t.primary,
         tagline-line2,
       )
@@ -2232,7 +2232,7 @@
 // =============================================================
 // MAIN TEMPLATE FUNCTION (called by typst-show.typ)
 // =============================================================
-#let chanwe(
+#let chanwe-report(
   // metadata
   title: "Untitled",
   subtitle: none,
@@ -2301,8 +2301,8 @@
   set heading(numbering: "1.1.1.")
 
   // ---- inline rules (apply to entire document) ---------------
-  show emph: it => text(style: "italic", it.body)
-  show strong: it => text(weight: 700, fill: _t.ink, it.body)
+  show emph: it => text(font: _t.font-italic, style: "italic", weight: 500, fill: rgb("#484848"), it.body)
+  show strong: it => text(weight: 600, fill: rgb("#484848"), it.body)
   show math.equation.where(block: true): it => block(
     width: 100%,
     fill: rgb("#EDF0F1"),
@@ -2358,7 +2358,7 @@
         columns: (auto, 1fr),
         column-gutter: 8mm,
         align: (left + bottom, left + bottom),
-        text(font: _t.font-serif, style: "italic", weight: 300,
+        text(font: _t.font-italic, style: "italic", weight: 300,
              size: 60pt, fill: _t.primary,
              counter(heading).display("1")),
         block()[
@@ -2403,7 +2403,7 @@
       columns: (auto, 1fr),
       column-gutter: 4mm,
       align: (left + bottom, left + bottom),
-      text(font: _t.font-serif, style: "italic", weight: 100,
+      text(font: _t.font-italic, style: "italic", weight: 100,
            size: 10pt, fill: _t.primary,
            counter(heading).display("1.1.1.1")),
       text(font: _t.font-display, size: 13pt, weight: 700,
@@ -2444,10 +2444,10 @@
     inset: (left: 6mm),
     stroke: (left: 2pt + _t.primary),
   )[
-    #text(font: _t.font-serif, size: 16pt, weight: 300, style: "italic", fill: _t.fg-muted, it.body)
+    #text(font: _t.font-italic, size: 16pt, weight: 300, style: "italic", fill: _t.fg-muted, it.body)
     #if it.attribution != none {
       v(3mm)
-      text(font: _t.font-serif, size: 10pt, weight: 300, style: "italic", fill: _t.fg-subtle, [— #it.attribution])
+      text(font: _t.font-italic, size: 10pt, weight: 300, style: "italic", fill: _t.fg-subtle, [— #it.attribution])
     }
   ]
 
@@ -2487,7 +2487,7 @@
     it.caption
     v(12mm, weak: true)
   }
-  show figure: set block(above: 12mm, below: 12mm)
+  show figure: set block(above: 11mm, below: 4mm)
   show figure.caption: it => align(left, text(
     font: _t.font-mono, size: 8pt, tracking: 0.14em,
     fill: _t.fg-subtle, upper(it.supplement) + " " + it.counter.display() + "  ·  " + upper(it.body),
@@ -2562,14 +2562,14 @@
   // ---- user body (paragraph overrides scoped here only) ----
   {
     set text(
-      size: if body-size  != none { body-size  } else { 11pt    },
+      size: if body-size  != none { body-size  } else { 10pt    },
       fill: if body-color != none { body-color } else { _t.fg   },
     )
     set par(
       leading: if body-leading != none { body-leading } else { 0.85em },
       justify: if body-justify != none { body-justify } else { false  },
+      spacing: if body-spacing != none { body-spacing } else { 2em    },
     )
-    set block(spacing: if body-spacing != none { body-spacing } else { 1.2em })
     body
   }
 
@@ -2583,6 +2583,10 @@
     )
   }
 }
+
+// Backward-compatible alias for raw Typst snippets written before the
+// extension format was renamed to chanwe-report.
+#let chanwe = chanwe-report
 #let brand-color = (:)
 #let brand-color-background = (:)
 #let brand-logo = (:)
@@ -2595,18 +2599,18 @@
 )
 
 // =============================================================
-// typst-show.typ — Quarto metadata → chanwe() template call
+// typst-show.typ - Quarto metadata -> chanwe-report() template call
 // =============================================================
-// This is the bridge: Quarto fills Chanwe Showcase: ggplot2 + gt, Tables and plots aligned with chanwe-typst design tokens, etc. from
+// This is the bridge: Quarto fills Chanwe Showcase: ggplot2 + gt, Tables and plots aligned with chanwe-report-typst design tokens, etc. from
 // the YAML front-matter of the .qmd file. Custom keys live under
 // `chanwe:` and are mapped here.
 // =============================================================
 
-#show: doc => chanwe(
+#show: doc => chanwe-report(
   title: [Chanwe Showcase: ggplot2 + gt],
-  subtitle: [Tables and plots aligned with chanwe-typst design tokens],
+  subtitle: [Tables and plots aligned with chanwe-report-typst design tokens],
   author: "Alejandro Abraham",
-  date: "2026-05-21",
+  date: "2026-07-02",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",
@@ -2614,21 +2618,21 @@
   section: "R Package",
   topic: "chanwer",
   rail-eyebrow: "VISUAL REFERENCE",
-  hero-image: "\_extensions/chanwe/assets/bg\_mountains.jpg",
+  hero-image: "\_extensions/chanwe-report/assets/bg\_mountains.jpg",
   cover: true,
   toc: true,
   toc-eyebrow: "Document map",
   toc-title: "Contents",
-  toc-lede: [This document showcases all ggplot2 and gt table variants produced by the chanwer R package --- 22 figures and 8 tables --- styled with the chanwe-typst design tokens: Satoshi body, Archivo Black headings, primary orange \#FB3D0E, and the 8-color editorial chart palette.],
+  toc-lede: [This document showcases all ggplot2 and gt table variants produced by the chanwer R package --- 22 figures and 8 tables --- styled with the chanwe-report-typst design tokens: Satoshi body, Archivo Black headings, primary orange \#FB3D0E, and the 8-color editorial chart palette.],
   abstract-eyebrow: "TLDR;",
   abstract-title: [Visual Reference],
   abstract-text: [This showcase covers every theme variant in the chanwer package --- scatter, bar, line, area, distribution, heatmap, faceted, and error-bar figures; gt tables in spacious and compact densities across both background options. All outputs use the typst design tokens directly, ensuring visual consistency between R-generated figures and the surrounding Typst document.],
   abstract-status: "Stable · Internal",
   abstract-show: ("document", "edition", "author", "status"),
-  abstract-takeaway: "chanwer themes are fully aligned with chanwe-typst: same tokens, same fonts, same 8-color editorial palette.",
+  abstract-takeaway: "chanwer themes are fully aligned with chanwe-report-typst: same tokens, same fonts, same 8-color editorial palette.",
   meta-rows: (
     ("Package", "chanwer", "R design system"),
-    ("Section", "Design Tokens", "chanwe-typst aligned"),
+    ("Section", "Design Tokens", "chanwe-report-typst aligned"),
     ("Author", "Chanwe", "Alejandro Abraham"),
   ),
   back-cover: true,

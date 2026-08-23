@@ -1,11 +1,11 @@
 ---
 title: "Chanwe Showcase: ggplot2 + gt"
-subtitle: "Tables and plots aligned with chanwe-typst design tokens"
+subtitle: "Tables and plots aligned with chanwe-report-typst design tokens"
 author: "Alejandro Abraham"
 date: today
 bibliography: references.bib
 format:
-  chanwe-typst:
+  chanwe-report-typst:
     keep-typ: true
     number-sections: true
     section-numbering: "1.1.1"
@@ -30,10 +30,10 @@ chanwe:
   toc: true
   toc-eyebrow: "Document map"
   toc-title: "Contents"
-  toc-lede: "This document showcases all ggplot2 and gt table variants produced by the chanwer R package — 22 figures and 8 tables — styled with the chanwe-typst design tokens: Satoshi body, Archivo Black headings, primary orange #FB3D0E, and the 8-color editorial chart palette."
+  toc-lede: "This document showcases all ggplot2 and gt table variants produced by the chanwer R package — 22 figures and 8 tables — styled with the chanwe-report-typst design tokens: Satoshi body, Archivo Black headings, primary orange #FB3D0E, and the 8-color editorial chart palette."
   abstract-eyebrow: "TLDR;"
   abstract-title: "Visual Reference"
-  abstract-takeaway: "chanwer themes are fully aligned with chanwe-typst: same tokens, same fonts, same 8-color editorial palette."
+  abstract-takeaway: "chanwer themes are fully aligned with chanwe-report-typst: same tokens, same fonts, same 8-color editorial palette."
   abstract-text: "This showcase covers every theme variant in the chanwer package — scatter, bar, line, area, distribution, heatmap, faceted, and error-bar figures; gt tables in spacious and compact densities across both background options. All outputs use the typst design tokens directly, ensuring visual consistency between R-generated figures and the surrounding Typst document."
   abstract-status: "Stable · Internal"
   abstract-show:
@@ -43,7 +43,7 @@ chanwe:
     - status
   meta-rows:
     - { label: "Package",  value: "chanwer",          sub: "R design system" }
-    - { label: "Section",  value: "Design Tokens",    sub: "chanwe-typst aligned" }
+    - { label: "Section",  value: "Design Tokens",    sub: "chanwe-report-typst aligned" }
     - { label: "Author",   value: "Chanwe",            sub: "Alejandro Abraham" }
   back-cover: true
   back-cover-tagline-1: "Estrategia Activa,"
@@ -158,7 +158,7 @@ cor_mat <- cor(mtcars[, cor_vars]) |>
 ```
 
 This document showcases `chanwer` theme functions for `ggplot2` and `gt`,
-aligned with chanwe-typst design tokens: Satoshi body, Archivo Black headings,
+aligned with chanwe-report-typst design tokens: Satoshi body, Archivo Black headings,
 primary orange `#FB3D0E`, and the 8-color editorial chart palette.
 
 # Brand Color System

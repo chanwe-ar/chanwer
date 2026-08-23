@@ -16,11 +16,12 @@ contributes:
       monofont: "JetBrains Mono"
       fontsize: 10.5pt
       highlight-style: none
-      chanwe-assets: "_extensions/chanwe/assets/"
+      chanwe-assets: "_extensions/chanwe-report/assets/"
       font-paths:
         - fonts
+        - ../chanwe-report/fonts
       filters:
-        - ../chanwe/chanwe-filters.lua
+        - ../chanwe-report/chanwe-filters.lua
       template-partials:
         - typst-template.typ
         - typst-show.typ

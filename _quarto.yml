@@ -2,4 +2,4 @@ project:
   type: default
 format:
   typst:
-    chanwe-assets: "_extensions/chanwe/assets/"
+    chanwe-assets: "_extensions/chanwe-report/assets/"

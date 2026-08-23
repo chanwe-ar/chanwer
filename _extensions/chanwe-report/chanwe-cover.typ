@@ -104,9 +104,9 @@
 
         #v(8mm)
 
-        // big display title — emph parts render in Fraunces italic
+        // big display title — emph parts render in Cormorant Garamond italic
         #set par(leading: 0.8em, justify: false)
-        #show emph: it => text(font: _t.font-serif, size: 44pt, weight: 200, style: "italic", fill: _t.primary, it.body)
+        #show emph: it => text(font: _t.font-italic, size: 44pt, weight: 200, style: "italic", fill: _t.primary, it.body)
         #block[
           #text(
             font: _t.font-display, size: 36pt, weight: 600,
@@ -119,7 +119,7 @@
         #if subtitle != none {
           v(8mm)
           set par(leading: 0.55em)
-          set text(font: _t.font-serif, size: 14pt, weight: 200, style: "italic", fill: _t.fg-subtle)
+          set text(font: _t.font-italic, size: 14pt, weight: 200, style: "italic", fill: rgb("#484848"))
           subtitle
         }
 
@@ -279,10 +279,10 @@
         #image(_chanwe-assets + "Estrategia_Color.png", height: 10mm, fit: "contain")
         #v(12mm)
         #set par(leading: 0.8em, justify: false)
-        #text(font: _t.font-serif, style: "italic", size: 40pt,
+        #text(font: _t.font-italic, style: "italic", size: 40pt,
               weight: 200, fill: white, tagline-1)
         #linebreak()
-        #text(font: _t.font-serif, style: "italic", size: 40pt,
+        #text(font: _t.font-italic, style: "italic", size: 40pt,
               weight: 200, fill: _t.primary, tagline-2)
         #v(8mm)
         #line(length: 100%, stroke: 0.5pt + white.transparentize(75%))

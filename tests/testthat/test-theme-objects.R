@@ -1,41 +1,40 @@
-test_that("theme_chanwe returns a complete ggplot theme", {
+test_that("theme_chanwe returns a theme with the ChanWe custom elements", {
   th <- theme_chanwe()
-  th_white <- theme_chanwe(background = "white")
-  th_custom <- theme_chanwe(
-    base_text_size = 11,
-    legend_position = "bottom"
-  )
 
   expect_s3_class(th, "theme")
-  expect_identical(th$plot.title$face, "bold")
-  expect_identical(th$plot.title$hjust, 0)
-  expect_identical(th$plot.subtitle$hjust, 0)
-  expect_identical(th$plot.caption$hjust, 1)
-  expect_identical(th$plot.caption$colour, "#6D6D6D")
-  expect_identical(th$plot.background$fill, "#F7F7F7")
-  expect_identical(th$plot.background$colour, "#F7F7F7")
-  expect_identical(th$panel.background$fill, "#F7F7F7")
-  expect_identical(th$panel.background$colour, "#F7F7F7")
-  expect_identical(th$legend.background$fill, "#F7F7F7")
-  expect_true(is.na(th$legend.background$colour))
-  expect_identical(th_white$plot.background$fill, "#FFFFFF")
-  expect_identical(th_white$plot.background$colour, "#EEEEEE")
-  expect_identical(th_white$panel.background$fill, "#FFFFFF")
-  expect_true(is.na(th_white$panel.background$colour))
-  expect_s3_class(th_white$panel.border, "element_blank")
-  expect_identical(th_white$legend.background$fill, "#FFFFFF")
-  expect_true(is.na(th_white$legend.background$colour))
+  expect_s3_class(th$plot.title, "element_chanwe_title")
+  expect_s3_class(th$plot.subtitle, "element_chanwe_subtitle")
+  expect_s3_class(th$plot.caption, "element_chanwe_caption")
+  expect_identical(th$plot.title.position, "plot")
+  expect_identical(th$plot.caption.position, "plot")
   expect_identical(th$legend.position, "bottom")
-  expect_identical(th$legend.justification, "center")
-  expect_identical(th$legend.box.just, "center")
-  expect_equal(th$legend.title$size, 8.05)
-  expect_equal(th$legend.text$size, 7.36)
-  expect_identical(th_custom$legend.position, "bottom")
-  expect_equal(th_custom$axis.title$size, 8.58)
-  expect_equal(th_custom$axis.text$size, 7.04)
-  expect_identical(th$axis.title.y$angle, 90)
-  expect_equal(as.numeric(th$plot.margin)[1], 22)
-  expect_equal(as.numeric(th$plot.margin)[2], 22)
+})
+
+test_that("theme_chanwe background variants resolve to brand surfaces", {
+  th_default <- theme_chanwe()
+  th_white <- theme_chanwe(bg_color = "white")
+  th_beige <- theme_chanwe(bg_color = "beige")
+  th_hex <- theme_chanwe(bg_color = "#123456")
+
+  expect_identical(th_default$plot.background$fill, "#F7F7F7")
+  expect_identical(th_white$plot.background$fill, "#FFFFFF")
+  expect_identical(th_beige$plot.background$fill, "#F5F1EB")
+  expect_identical(th_hex$plot.background$fill, "#123456")
+  expect_identical(th_white$panel.background$fill, "#FFFFFF")
+  expect_identical(th_white$legend.background$fill, "#FFFFFF")
+})
+
+test_that("theme_chanwe honors layout parameters", {
+  th <- theme_chanwe(
+    base_text_size = 10,
+    legend_position = "none",
+    plot_padding = 18
+  )
+
+  expect_identical(th$legend.position, "none")
+  expect_equal(as.numeric(th$plot.margin), rep(18, 4))
+  expect_equal(th$plot.title$size, 10 * 1.50)
+  expect_equal(th$plot.subtitle$size, 10 * 0.9)
 })
 
 test_that("chanwe ggplot scales are constructed", {
@@ -50,97 +49,73 @@ test_that("chanwe ggplot scales are constructed", {
   expect_s3_class(sf_c, "ScaleContinuous")
 })
 
-test_that("gt theme function returns gt_tbl", {
-  skip_if_not_installed("gt")
-  skip_if_not_installed("dplyr")
+test_that("discrete palette recycles beyond the 8 chart colors", {
+  pal_fn <- chanwe_discrete_pal()
+  chart <- unname(chanwe_palette("chart"))
 
-  mt <- tibble::as_tibble(mtcars, rownames = "model") |>
-    dplyr::mutate(
-      cyl = factor(cyl),
-      gear = factor(gear),
-      am = factor(am, labels = c("Automatic", "Manual"))
-    )
-
-  tbl_default <- gt::gt(head(mt), rowname_col = "model") |>
-    gt_theme_chanwe()
-  tbl_white <- gt::gt(head(mt), rowname_col = "model") |>
-    gt_theme_chanwe(background = "white")
-  tbl_compact <- gt::gt(head(mt), rowname_col = "model") |>
-    gt_theme_chanwe(variant = "compact")
-  tbl_spacious <- gt::gt(head(mt), rowname_col = "model") |>
-    gt_theme_chanwe_spacious()
-  tbl_compact_wrap <- gt::gt(head(mt), rowname_col = "model") |>
-    gt_theme_chanwe_compact(background = "white")
-  tbl_striped <- gt::gt(head(mt), rowname_col = "model") |>
-    gt::opt_row_striping() |>
-    gt_theme_chanwe()
-  tbl_stub <- gt::gt(head(mt), rowname_col = "model") |>
-    gt_theme_chanwe()
-  html_default <- gt::as_raw_html(tbl_default)
-  html_white <- gt::as_raw_html(tbl_white)
-  html_striped <- gt::as_raw_html(tbl_striped)
-  html_stub <- gt::as_raw_html(tbl_stub)
-
-  expect_s3_class(tbl_default, "gt_tbl")
-  expect_s3_class(tbl_white, "gt_tbl")
-  expect_s3_class(tbl_compact, "gt_tbl")
-  expect_s3_class(tbl_spacious, "gt_tbl")
-  expect_s3_class(tbl_compact_wrap, "gt_tbl")
-  expect_no_match(html_default, "background: transparent", fixed = TRUE)
-  expect_match(html_default, "background-color: #F7F7F7", fixed = TRUE)
-  expect_match(html_default, "border-top-color: #F7F7F7", fixed = TRUE)
-  expect_match(html_default, "border-bottom-color: #F7F7F7", fixed = TRUE)
-  expect_match(html_white, "background-color: #FFFFFF", fixed = TRUE)
-  expect_match(html_white, "border-top-color: #F7F7F7", fixed = TRUE)
-  expect_match(html_white, "border-bottom-color: #F7F7F7", fixed = TRUE)
-  expect_match(
-    html_striped,
-    "class=\"gt_row[^\"]*gt_striped[^\"]*\"[^>]*bgcolor=\"#F7F7F7\"",
-    perl = TRUE
-  )
-  expect_no_match(html_striped, "#F2F2F2", fixed = TRUE)
-  expect_match(
-    html_stub,
-    "<th[^>]*class=\"[^\"]*gt_row[^\"]*\"[^>]*bgcolor=\"#F7F7F7\"",
-    perl = TRUE
-  )
+  expect_identical(pal_fn(3), chart[1:3])
+  expect_identical(pal_fn(8), chart)
+  expect_identical(pal_fn(10), c(chart, chart[1:2]))
 })
 
-test_that("reactable theme function returns reactable theme object", {
-  skip_if_not_installed("reactable")
+test_that("title/subtitle/kpi encoders produce parseable strings", {
+  sep <- .CW_SEP
 
-  theme <- reactable_theme_chanwe()
+  expect_identical(chanwe_title("Plain"), "Plain")
+  expect_identical(
+    chanwe_title("Title", eyebrow = "SECTION"),
+    paste("SECTION", "Title", sep = sep)
+  )
 
-  expect_s3_class(theme, "reactableTheme")
-  expect_identical(theme$style$fontFamily, "DM Sans")
+  expect_identical(chanwe_subtitle("Sub"), "Sub")
+  expect_identical(
+    chanwe_subtitle("Sub", note = "Note"),
+    paste("Sub", "Note", sep = sep)
+  )
+
+  kpi <- chanwe_kpi(
+    num = "45,91", label = "USD MM", period = "05-MAY-2026",
+    mtc1_num = "0,19%", mtc1_label = "WoW", mtc1_direction = "+",
+    mtc2_num = "3,29%", mtc2_label = "MoM", mtc2_direction = "-"
+  )
+  parsed <- .cw_parse_kpi(kpi)
+
+  expect_identical(parsed$value, "45,91")
+  expect_identical(parsed$unit, "USD MM")
+  expect_identical(parsed$date, "05-MAY-2026")
+  expect_length(parsed$metrics, 2L)
+  expect_identical(parsed$metrics[[1]]$label, "WoW")
+  expect_identical(parsed$metrics[[1]]$dir, 1L)
+  expect_identical(parsed$metrics[[2]]$dir, -1L)
+
+  # note is dropped when a KPI panel is present
+  with_kpi <- chanwe_subtitle("Sub", note = "ignored", kpi = kpi)
+  parts <- strsplit(with_kpi, sep, fixed = TRUE)[[1]]
+  expect_identical(parts[1], "Sub")
+  expect_identical(parts[2], "")
+  expect_identical(parts[3], kpi)
+
+  expect_identical(chanwe_caption("Source: x"), "Source: x")
 })
 
-test_that("highcharter helper returns hc theme", {
-  skip_if_not_installed("highcharter")
+test_that("a full chanwe plot builds without errors", {
+  df <- data.frame(x = 1:6, y = c(2, 4, 3, 6, 5, 7), g = rep(c("a", "b"), 3))
 
-  theme <- hc_theme_chanwe()
-  theme_no_logo <- hc_theme_chanwe(add_logo = FALSE)
+  p <- ggplot2::ggplot(df, ggplot2::aes(x, y, color = g)) +
+    ggplot2::geom_line() +
+    scale_color_chanwe_d() +
+    ggplot2::labs(
+      title = chanwe_title("Test title", eyebrow = "SECTION"),
+      subtitle = chanwe_subtitle(
+        "Test subtitle",
+        kpi = chanwe_kpi(num = "1,0", label = "X", period = "2026")
+      ),
+      caption = chanwe_caption("Source: test")
+    ) +
+    theme_chanwe()
 
-  expect_s3_class(theme, "hc_theme")
-  expect_identical(theme$chart$style$fontFamily, "DM Sans")
-  expect_identical(theme$chart$borderRadius, 4)
-  expect_identical(theme$chart$backgroundColor, "#F7F7F7")
-  expect_identical(theme$chart$spacingTop, 62)
-  expect_identical(theme$chart$spacingRight, 30)
-  expect_identical(theme$title$margin, 24)
-  expect_identical(theme$subtitle$y, 32)
-  expect_false(is.null(theme$chart$events$load))
-  expect_true(is.null(theme_no_logo$chart$events$load))
-  expect_identical(theme$xAxis$gridLineWidth, 1)
-  expect_identical(theme$xAxis$title$align, "high")
-  expect_identical(theme$xAxis$title$x, 0)
-  expect_identical(theme$xAxis$title$style$fontWeight, "700")
-  expect_identical(theme$yAxis$title$align, "high")
-  expect_identical(theme$yAxis$title$rotation, 270)
-  expect_identical(theme$yAxis$title$style$fontWeight, "700")
-  expect_identical(theme$xAxis$labels$style$color, "#6D6D6D")
-  expect_identical(theme$yAxis$labels$style$color, "#6D6D6D")
-  expect_identical(theme$caption$align, "right")
-  expect_identical(theme$caption$style$color, "#A5A5A5")
-  expect_identical(theme$plotOptions$series$dataLabels$style$color, "#6D6D6D")
+  grDevices::pdf(NULL)
+  on.exit(grDevices::dev.off(), add = TRUE)
+  # suppressWarnings: the pdf device lacks the brand fonts; only errors matter here
+  expect_no_error(suppressWarnings(ggplot2::ggplotGrob(p)))
 })

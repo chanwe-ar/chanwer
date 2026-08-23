@@ -77,9 +77,6 @@ short label row (e.g. WOW) and a value row with ▲/▼ direction indicator
 )
 }\if{html}{\out{</div>}}
 }
-
-\subsection{Arguments}{
-}
 }
 \examples{
 ## Minimal — hero value only, no period metrics:
@@ -93,25 +90,23 @@ chanwe_kpi(
   mtc3_num = "17,78\%", mtc3_label = "YoY", mtc3_direction = "-"
 )
 
-## Full plot — the typical usage:
-if (requireNamespace("ggplot2", quietly = TRUE)) {
-  ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
-    ggplot2::geom_line() +
-    ggplot2::labs(
-      title    = chanwe_title("Fleet overview", eyebrow = "MOTOR TREND"),
-      subtitle = chanwe_subtitle(
-        "Highway mpg vs vehicle weight",
-        kpi = chanwe_kpi(
-          num    = "21,0",   label  = "MPG",  period = "1974",
-          mtc1_num = "2,1\%", mtc1_label = "WoW", mtc1_direction = "+",
-          mtc2_num = "0,5\%", mtc2_label = "MoM", mtc2_direction = "-",
-          mtc3_num = "4,3\%", mtc3_label = "YoY", mtc3_direction = "+"
-        )
-      ),
-      caption = chanwe_caption("Source: mtcars")
-    ) +
-    theme_chanwe()
-}
+## Full plot — the typical usage (assign; print to render with brand fonts):
+p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg)) +
+  ggplot2::geom_line() +
+  ggplot2::labs(
+    title    = chanwe_title("Fleet overview", eyebrow = "MOTOR TREND"),
+    subtitle = chanwe_subtitle(
+      "Highway mpg vs vehicle weight",
+      kpi = chanwe_kpi(
+        num    = "21,0",   label  = "MPG",  period = "1974",
+        mtc1_num = "2,1\%", mtc1_label = "WoW", mtc1_direction = "+",
+        mtc2_num = "0,5\%", mtc2_label = "MoM", mtc2_direction = "-",
+        mtc3_num = "4,3\%", mtc3_label = "YoY", mtc3_direction = "+"
+      )
+    ),
+    caption = chanwe_caption("Source: mtcars")
+  ) +
+  theme_chanwe()
 }
 \seealso{
 \code{\link[=chanwe_subtitle]{chanwe_subtitle()}}, \code{\link[=chanwe_title]{chanwe_title()}}, \code{\link[=theme_chanwe]{theme_chanwe()}}

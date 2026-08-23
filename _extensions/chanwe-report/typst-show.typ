@@ -1,12 +1,12 @@
 // =============================================================
-// typst-show.typ — Quarto metadata → chanwe() template call
+// typst-show.typ - Quarto metadata -> chanwe-report() template call
 // =============================================================
 // This is the bridge: Quarto fills $title$, $subtitle$, etc. from
 // the YAML front-matter of the .qmd file. Custom keys live under
 // `chanwe:` and are mapped here.
 // =============================================================
 
-#show: doc => chanwe(
+#show: doc => chanwe-report(
 $if(title)$
   title: [$title$],
 $endif$

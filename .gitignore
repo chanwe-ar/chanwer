@@ -14,6 +14,7 @@
 
 # Output files from R CMD build
 /*.tar.gz
+Rplots.pdf
 
 # Output files from R CMD check
 /*.Rcheck/
@@ -43,8 +44,12 @@ vignettes/*.pdf
 docs/
 figure/
 chanwe-typst-showcase_files/
+chanwe-report-typst-showcase_files/
 chanwe-typst-showcase.typ
+chanwe-report-typst-showcase.typ
 chanwe-typst-showcase.rmarkdown
+chanwe-report-typst-showcase.rmarkdown
+gt.rmarkdown
 
 # translation temp files
 po/*~
