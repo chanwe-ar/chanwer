@@ -77,6 +77,30 @@ test_that("chanwe_kbl escapes typst markup characters in cells", {
   expect_match(txt, "value\\_with \\[brackets\\] \\#hash \\*stars\\*", fixed = TRUE)
 })
 
+test_that("col_colors receives pre-format values even when fmt renders text", {
+  skip_if_not_installed("knitr")
+
+  df <- data.frame(metric = c("Revenue", "EBITDA"), delta = c(2.5, -1.25))
+  seen <- NULL
+
+  txt <- as.character(chanwe_kbl(
+    df,
+    fmt = list(delta = function(x) sprintf("%+.2f%%", x)),
+    col_colors = list(delta = function(x) {
+      seen <<- x
+      ifelse(x < 0, 'rgb("#B03A2E")', 'rgb("#2D7A4F")')
+    })
+  ))
+
+  # the color function saw the raw numeric column, not fmt's strings
+  expect_identical(seen, df$delta)
+  # each sign got its color, and fmt's text rendering still applies
+  expect_match(txt, 'rgb("#2D7A4F")', fixed = TRUE)
+  expect_match(txt, 'rgb("#B03A2E")', fixed = TRUE)
+  expect_match(txt, "+2.50%", fixed = TRUE)
+  expect_match(txt, "-1.25%", fixed = TRUE)
+})
+
 test_that("chanwe_kbl auto-aligns numeric columns right", {
   skip_if_not_installed("knitr")
 

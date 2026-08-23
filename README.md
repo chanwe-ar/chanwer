@@ -151,7 +151,9 @@ Useful arguments:
 - `density = "spacious"` (presentations) or `"compact"` (dense reports).
 - `col_labels`, `col_aligns`, `col_widths`, `stub` for column control.
 - `fmt` — named list of per-column formatting functions.
-- `col_colors` — per-cell Typst color expressions (e.g. red negatives).
+- `col_colors` — per-cell Typst color expressions. Color functions
+  receive the **raw (pre-`fmt`) values**, so you can color by numeric
+  sign while `fmt` renders the same column as text (e.g. red negatives).
 - `n_total` / `total_fill` — trailing total rows with a heavier rule.
 - `highlight_cols` / `vlines` — column emphasis and vertical rules.
 

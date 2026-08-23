@@ -115,9 +115,12 @@ Default \code{12.5}.}
 Each function receives the column vector and must return a character vector.}
 
 \item{col_colors}{Named list of functions, keyed by column name. Each
-function receives the original (unformatted) column vector and must return
-a character vector of raw Typst color expressions (e.g.
-\code{"rgb(\\\"#B03A2E\\\")"}) used as the text fill for each cell.}
+function receives the column's \emph{original} values — before \code{fmt}
+is applied — and must return a character vector of raw Typst color
+expressions (e.g. \code{"rgb(\\\"#B03A2E\\\")"}, not escaped) used as the
+text fill for each cell. This is deliberate: color logic can branch on
+raw numbers (e.g. the sign of a delta) even when \code{fmt} renders the
+same column as text. See the red-negatives pattern in the examples.}
 
 \item{n_total}{Number of trailing rows to treat as total rows. Total rows
 get a heavier rule above them, no row dividers, and (optionally) a
@@ -143,4 +146,23 @@ Works in Quarto documents rendered with \code{format: chanwe-report-typst}.
 Generates a styled Typst table directly from a data frame, bypassing the
 HTML→Pandoc→Typst pipeline. Archivo title, Satoshi body, JetBrains Mono
 column headers, thin ink divider lines. No CSS translation losses.
+}
+\examples{
+\dontshow{if (requireNamespace("knitr", quietly = TRUE)) withAutoprint(\{ # examplesIf}
+df <- data.frame(
+  metric = c("Revenue", "EBITDA", "Net income"),
+  delta = c(12.4, -3.1, 5.8)
+)
+
+## Red-negatives pattern: fmt renders the delta as text, while the
+## col_colors function still receives the raw numbers and colors by sign.
+chanwe_kbl(
+  df,
+  title = "Quarterly deltas",
+  fmt = list(delta = function(x) sprintf("\%+.1f\%\%", x)),
+  col_colors = list(delta = function(x) {
+    ifelse(x < 0, 'rgb("#B03A2E")', 'rgb("#2D7A4F")')
+  })
+)
+\dontshow{\}) # examplesIf}
 }
