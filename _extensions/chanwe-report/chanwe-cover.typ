@@ -18,7 +18,7 @@
   rail-eyebrow: "Quarto · Style Guide",
   hero-image: none,
   hero-img-position: none,  // 1–10 (left→right); none = fit:cover (centered)
-  wordmark: none, // defaults to Logo_Negro.png below
+  wordmark: none, // defaults to wordmark-only logo below
   stamp: ("est.", "mdz", "2026"),
   hero-caption-1: "S 32°53′ · W 68°50′",
   hero-caption-2: "Cordón del Plata · ARG",
@@ -35,7 +35,7 @@
     _chanwe-clean-path(hero-image)
   }
   let _edge-color = if cover-edge-color != none { cover-edge-color } else { _t.primary }
-  let wordmark   = if wordmark == none { _chanwe-assets + "Logo_Negro.png" } else { _chanwe-clean-path(wordmark) }
+  let wordmark   = if wordmark == none { _chanwe-assets + "Logo_Negro.svg" } else { _chanwe-clean-path(wordmark) }
   set page(
     paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.paper,
     foreground: {
@@ -104,9 +104,9 @@
 
         #v(8mm)
 
-        // big display title — emph parts render in Cormorant Garamond italic
+        // big display title — emph parts keep title type, only turning orange
         #set par(leading: 0.8em, justify: false)
-        #show emph: it => text(font: _t.font-italic, size: 44pt, weight: 200, style: "italic", fill: _t.primary, it.body)
+        #show emph: it => text(fill: _t.primary, it.body)
         #block[
           #text(
             font: _t.font-display, size: 36pt, weight: 600,
@@ -119,7 +119,7 @@
         #if subtitle != none {
           v(8mm)
           set par(leading: 0.55em)
-          set text(font: _t.font-italic, size: 14pt, weight: 200, style: "italic", fill: rgb("#484848"))
+          set text(font: _t.font-serif, size: 14pt, weight: 300, style: "italic", fill: rgb("#484848"))
           subtitle
         }
 
@@ -207,7 +207,7 @@
     inset: (x: 14mm, top: 0mm, bottom: 0mm),
   )[
     #set align(center + horizon)
-    #align(center + horizon, image(_chanwe-assets + "Logo_Beige.png", height: 45mm, fit: "contain"))
+    #align(center + horizon, image(_chanwe-assets + "Logo_Beige.svg", height: 45mm, fit: "contain"))
   ]
 }
 
@@ -228,7 +228,7 @@
   back-cols: (),
   cover-edge: none,
 ) = {
-  let wl = if wordmark-light != none { _chanwe-clean-path(wordmark-light) } else { _chanwe-assets + "Logo_Blanco.png" }
+  let wl = if wordmark-light != none { _chanwe-clean-path(wordmark-light) } else { _chanwe-assets + "Logo_Blanco.svg" }
 
   // ---- blank interstitial before back cover -----------------
   _chanwe-blank-interstitial()
@@ -279,11 +279,11 @@
         #image(_chanwe-assets + "Estrategia_Color.png", height: 10mm, fit: "contain")
         #v(12mm)
         #set par(leading: 0.8em, justify: false)
-        #text(font: _t.font-italic, style: "italic", size: 40pt,
-              weight: 200, fill: white, tagline-1)
+        #text(font: _t.font-serif, style: "italic", size: 40pt,
+              weight: 300, fill: white, tagline-1)
         #linebreak()
-        #text(font: _t.font-italic, style: "italic", size: 40pt,
-              weight: 200, fill: _t.primary, tagline-2)
+        #text(font: _t.font-serif, style: "italic", size: 40pt,
+              weight: 300, fill: _t.primary, tagline-2)
         #v(8mm)
         #line(length: 100%, stroke: 0.5pt + white.transparentize(75%))
         #v(8mm)

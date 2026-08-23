@@ -14,6 +14,11 @@ $endif$
   to:            "$if(propuesta.to)$$propuesta.to$$endif$",
   proyecto:      "$if(propuesta.proyecto)$$propuesta.proyecto$$endif$",
   proyecto-desc: "$if(propuesta.proyecto-desc)$$propuesta.proyecto-desc$$endif$",
+$if(propuesta.lede)$
+  lede: [
+$propuesta.lede$
+  ],
+$endif$
 $if(propuesta.wordmark)$
   wordmark:      "$propuesta.wordmark$",
 $endif$
@@ -22,7 +27,7 @@ $if(propuesta.page-bg)$
 $endif$
   scope: (
 $for(propuesta.scope)$
-    (n: "$it.n$", title: "$it.title$", desc: "$it.desc$"),
+    (n: "$it.n$", title: "$it.title$", desc: "$it.desc$", optional: $if(it.optional)$true$else$$if(it.optiona)$true$else$false$endif$$endif$),
 $endfor$
   ),
   fees: (

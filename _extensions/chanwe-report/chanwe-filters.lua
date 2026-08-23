@@ -9,6 +9,48 @@ local function escape_typst_str(s)
   return s:gsub('"', '\\"')
 end
 
+local function slot_attr(el, primary, alias)
+  local value = attr(el, primary, "")
+  if value == "" and alias ~= nil then
+    value = attr(el, alias, "")
+  end
+  return value
+end
+
+local function markdown_to_typst(value)
+  local parsed = pandoc.read(value, "markdown")
+  local rendered = pandoc.write(parsed, "typst")
+  return rendered:gsub("%s+$", "")
+end
+
+local function unwrap_figure_blocks(blocks)
+  local body_blocks = pandoc.Blocks({})
+  local identifier = ""
+
+  for _, block in ipairs(blocks) do
+    local custom = quarto._quarto.ast.resolve_custom_data(block)
+    if custom ~= nil and custom.t == "FloatRefTarget" then
+      if identifier == "" then
+        identifier = custom.identifier or ""
+      end
+      for _, content_block in ipairs(quarto.utils.as_blocks(custom.content)) do
+        table.insert(body_blocks, content_block)
+      end
+    elseif block.t == "Figure" then
+      if identifier == "" then
+        identifier = block.identifier or ""
+      end
+      for _, content_block in ipairs(block.content) do
+        table.insert(body_blocks, content_block)
+      end
+    else
+      table.insert(body_blocks, block)
+    end
+  end
+
+  return body_blocks, identifier
+end
+
 local function Div(el)
 
   -- -------------------------------------------------------
@@ -109,6 +151,39 @@ local function Div(el)
       call = call .. string.format(',\n  source: "%s"', escape_typst_str(source))
     end
     call = call .. "\n)[\n" .. inner .. "\n]"
+
+    return pandoc.RawBlock("typst", call)
+  end
+
+  -- -------------------------------------------------------
+  -- ::: {.chanwe-figure-frame top-left="..." top-right="..."
+  --      bottom-left="..." bottom-right="..."}
+  -- -------------------------------------------------------
+  if el.classes:includes("chanwe-figure-frame") then
+    local top_left = slot_attr(el, "top-left", "footer-left")
+    local top_right = slot_attr(el, "top-right", "footer-right")
+    local bottom_left = slot_attr(el, "bottom-left", "alt-footer-left")
+    local bottom_right = slot_attr(el, "bottom-right", "alt-footer-right")
+    local body_blocks, identifier = unwrap_figure_blocks(el.content)
+    local inner = pandoc.write(pandoc.Pandoc(body_blocks), "typst")
+
+    local call = "#chanwe-figure-frame(\n"
+    if top_left ~= "" then
+      call = call .. "  top-left: [" .. markdown_to_typst(top_left) .. "],\n"
+    end
+    if top_right ~= "" then
+      call = call .. "  top-right: [" .. markdown_to_typst(top_right) .. "],\n"
+    end
+    if bottom_left ~= "" then
+      call = call .. "  bottom-left: [" .. markdown_to_typst(bottom_left) .. "],\n"
+    end
+    if bottom_right ~= "" then
+      call = call .. "  bottom-right: [" .. markdown_to_typst(bottom_right) .. "],\n"
+    end
+    call = call .. ")[\n" .. inner .. "\n]"
+    if identifier:match("^[%w][%w%._:%-]*$") then
+      call = call .. " <" .. identifier .. ">"
+    end
 
     return pandoc.RawBlock("typst", call)
   end

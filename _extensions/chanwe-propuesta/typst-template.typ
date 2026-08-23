@@ -15,6 +15,7 @@
   to:            "",
   proyecto:      "",
   proyecto-desc: "",
+  lede:          none,
   scope:         (),
   fees:          (),
   terms:         (),
@@ -26,16 +27,16 @@
   ..rest,
 ) = {
 
-  let body = rest.pos().at(0, default: [])
+  let panel-lede = lede
 
-  let primary    = rgb("#FB3D0E")
+  let primary    = rgb("#FD3810")
   let ink        = rgb("#141414")
   let fg-muted   = rgb("#5a5a5a")
   let fg-subtle  = rgb("#8e8e8e")
   let hair       = rgb("#14141419")
   let border     = rgb("#1F1F1F1A")
   let beige-pill = rgb("#E8DDC4")
-  let wm         = if wordmark != none { wordmark } else { _p-assets + "Logo_Negro.png" }
+  let wm         = if wordmark != none { wordmark } else { _p-assets + "Logo_Negro.svg" }
 
   let fd = ("Archivo", "Helvetica Neue", "Arial")
   let fs = ("Cormorant Garamond", "Georgia", "Times New Roman")
@@ -86,7 +87,7 @@
   set par(leading: 0.5em, spacing: 0pt)
 
   place(center + bottom, dy: -7mm,
-    image(_p-assets + "Logo_Beige.png", width: 100%, fit: "contain")
+    image(_p-assets + "Logo_Beige.svg", width: 100%, fit: "contain")
   )
 
   // ─── Edge label ───────────────────────────────────────────────
@@ -118,48 +119,48 @@
   }
   v(11mm)
 
-  // Subject grid + Lede — wrapped in white callout
+  // Subject grid + optional lede — wrapped in compact callout
   line(length: 100%, stroke: 0.5pt + ink)
   v(5mm)
   block(
     width: 100%,
     fill: luma(245),
-    inset: (x: 6mm, y: 6mm),
+    inset: (x: 5mm, y: 5mm),
   )[
     #grid(
-      columns: (22mm, 1fr),
-      row-gutter: 4.5mm,
-      column-gutter: 8mm,
+      columns: (20mm, 1fr),
+      row-gutter: 3.5mm,
+      column-gutter: 7mm,
       align: (left + top, left + top),
-      pad(top: 6pt,
-        text(font: fm, size: 8.5pt, weight: 500, tracking: 0.28em, fill: fg-subtle, upper("Para"))
+      pad(top: 5pt,
+        text(font: fm, size: 7.4pt, weight: 500, tracking: 0.26em, fill: fg-subtle, upper("Para"))
       ),
-      text(font: fd, size: 19pt, weight: 400, tracking: -0.014em, fill: ink, to),
-      pad(top: 4pt,
-        text(font: fm, size: 8.5pt, weight: 500, tracking: 0.28em, fill: fg-subtle, upper("Proyecto"))
+      text(font: fd, size: 16.8pt, weight: 400, tracking: -0.014em, fill: ink, to),
+      pad(top: 3pt,
+        text(font: fm, size: 7.4pt, weight: 500, tracking: 0.26em, fill: fg-subtle, upper("Proyecto"))
       ),
       {
-        set par(leading: 0.55em, spacing: 0pt)
-        text(font: fs, size: 22pt, weight: 300, style: "italic", tracking: -0.01em, fill: primary, proyecto)
-        v(4mm)
-        text(font: ("Inter", "Helvetica Neue"), size: 10pt, weight: 400, fill: fg-muted, proyecto-desc)
-        v(3mm)
+        set par(leading: 0.5em, spacing: 0pt)
+        text(font: fs, size: 18.6pt, weight: 300, style: "italic", tracking: -0.01em, fill: primary, proyecto)
+        v(2.8mm)
+        text(font: ("Inter", "Helvetica Neue"), size: 8.7pt, weight: 400, fill: fg-muted, proyecto-desc)
+        v(2mm)
       },
     )
-    #if body != [] {
-      v(5mm)
-      line(length: 100%, stroke: 0.5pt + hair)
+    #if panel-lede != [] and panel-lede != none {
       v(4mm)
-      set text(font: ("Inter", "Helvetica Neue"), size: 10.5pt, weight: 400, fill: fg-muted)
-      set par(leading: 0.62em, spacing: 0pt)
-      body
+      line(length: 100%, stroke: 0.5pt + hair)
+      v(3mm)
+      set text(font: ("Inter", "Helvetica Neue"), size: 9pt, weight: 400, fill: fg-muted)
+      set par(leading: 0.34em, spacing: 0.6em)
+      panel-lede
     }
     #if terms.len() > 0 {
-      v(5mm)
-      line(length: 100%, stroke: 0.5pt + hair)
       v(4mm)
-      set text(font: fm, size: 7pt, weight: 200, tracking: 0.12em)
-      stack(dir: ltr, spacing: 10mm,
+      line(length: 100%, stroke: 0.5pt + hair)
+      v(3mm)
+      set text(font: fm, size: 6.2pt, weight: 200, tracking: 0.1em)
+      stack(dir: ltr, spacing: 8mm,
         ..terms.map(t =>
           [#text(fill: ink, upper(t.label))#h(3pt)·#h(3pt)#text(fill: fg-subtle, t.value)]
         )
@@ -180,12 +181,19 @@
       {
         line(length: 100%, stroke: 0.5pt + hair)
         for item in scope {
+          let is-optional = item.at("optional", default: false)
+          let number-fill = if is-optional { fg-subtle } else { primary }
           grid(
             columns: (10mm, 1fr),
             column-gutter: 6mm,
             align: (right + horizon, left + top),
             pad(top: 8pt, bottom: 8pt,
-              text(font: fs, size: 15pt, weight: 300, style: "italic", fill: primary, item.n)
+              stack(dir: ttb, spacing: 0.8mm,
+                text(font: fs, size: 15pt, weight: 300, style: "italic", fill: number-fill, item.n),
+                ..if is-optional { (
+                  text(font: fs, size: 5.4pt, weight: 300, style: "italic", fill: number-fill, "(next)"),
+                ) } else { () },
+              )
             ),
             pad(top: 15pt, bottom: 15pt,
               {
@@ -213,33 +221,38 @@
         let hl  = fee.at("highlight", default: false)
         let per = fee.at("per", default: none)
         let cur = fee.at("currency", default: "USD")
-        block(above: 0pt, width: 100%, fill: none, stroke: if hl { 0.5pt + ink } else { 0.5pt + luma(210) }, inset: (x: 5mm, y: 5mm))[
+        let desc = fee.at("desc", default: none)
+        block(above: 0pt, width: 100%, fill: none, stroke: if hl { 0.5pt + ink } else { 0.5pt + luma(210) }, inset: (x: 5mm, y: 2.1mm))[
           #grid(
             columns: (auto, 1fr),
             column-gutter: 3mm,
             align: (left + horizon, left + bottom),
-            box(inset: (x: 2.5mm, y: 1.5mm),
+            box(inset: (x: 2.5mm, y: 1.3mm),
               fill: if hl { primary } else { luma(180) },
-              text(font: fm, size: 8pt, weight: 500, tracking: 0.18em,
+              text(font: fm, size: 5.2pt, weight: 500, tracking: 0.18em,
                 fill: if hl { white } else { ink },
                 upper(fee.kind))
             ),
-            stack(dir: ttb, spacing: 5pt,
-              text(font: fm, size: 8pt, weight: 500, tracking: 0.28em, fill: fg-subtle, upper(fee.label)),
+            stack(dir: ttb, spacing: 3.25pt,
+              text(font: fm, size: 5.2pt, weight: 500, tracking: 0.28em, fill: fg-subtle, upper(fee.label)),
               line(length: 100%, stroke: 0.5pt + if hl { ink } else { luma(210) }),
             ),
           )
-          #v(6mm)
+          #v(1.7mm)
           #grid(
             columns: (auto, auto) + if per != none { (auto,) } else { () },
             column-gutter: 2.5mm,
-            align: (top, bottom) + if per != none { (bottom,) } else { () },
-            text(font: fm, size: 9pt, weight: 500, tracking: 0.18em, fill: fg-subtle, cur),
-            text(font: fd, size: 42pt, weight: 300, tracking: -0.03em, fill: ink, fee.amount),
+            align: (top, top) + if per != none { (top,) } else { () },
+            text(font: fm, size: 4.9pt, weight: 500, tracking: 0.18em, fill: fg-subtle, cur),
+            pad(top: 0.9mm, text(font: fd, size: 20.8pt, weight: 300, tracking: -0.03em, fill: ink, fee.amount)),
             ..if per != none { (
-              text(font: fs, size: 13pt, weight: 300, style: "italic", fill: fg-muted, per),
+              pad(top: 0.9mm, text(font: fs, size: 6.8pt, weight: 300, style: "italic", fill: fg-muted, per)),
             ) } else { () },
           )
+          #if desc != none and desc != "" [
+            #v(1.5mm)
+            #text(font: ("Inter", "Helvetica Neue"), size: 7pt, weight: 400, fill: fg-muted, desc)
+          ]
         ]
       })
     )

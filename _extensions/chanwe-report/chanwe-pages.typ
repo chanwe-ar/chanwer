@@ -38,7 +38,7 @@
       column-gutter: 4mm,
       align: (left + bottom, left + bottom, right + bottom),
       text(
-        font: _t.font-italic, style: "italic", weight: 300,
+        font: _t.font-serif, style: "italic", weight: 300,
         size: 28pt, tracking: -0.01em, fill: _t.primary,
         numeral,
       ),
@@ -109,7 +109,7 @@
         columns: (16mm, 1fr, 20mm),
         column-gutter: 5mm,
         align: (right + top, left + top, right + top),
-        text(font: _t.font-italic, style: "italic", weight: 300, size: 24pt, fill: _t.primary, num),
+        text(font: _t.font-serif, style: "italic", weight: 300, size: 24pt, fill: _t.primary, num),
         {
           text(font: _t.font-display, size: 13pt, weight: 700, tracking: -0.005em, fill: _t.neutral-900, ptitle)
           linebreak()
@@ -182,13 +182,13 @@
                   columns: (auto, auto),
                   column-gutter: 6mm,
                   align: (left + bottom, left + bottom),
-                  text(font: _t.font-italic, style: "italic", weight: 200,
+                  text(font: _t.font-serif, style: "italic", weight: 300,
                        size: 28pt, fill: _t.primary, cur-part.number),
                   {
-                    text(font: _t.font-italic, style: "italic", weight: 200,
+                    text(font: _t.font-serif, style: "italic", weight: 300,
                          size: 20pt, tracking: -0.02em, fill: _t.neutral-900,
                          cur-part.title)
-                    text(font: _t.font-italic, style: "italic", weight: 200,
+                    text(font: _t.font-serif, style: "italic", weight: 300,
                          size: 20pt, fill: _t.primary, ".")
                   },
                 )
@@ -203,7 +203,7 @@
               columns: (18mm, 1fr, 34mm),
               column-gutter: 0mm,
               align: (left + bottom, left + bottom, right + bottom),
-              text(font: _t.font-italic, style: "italic", weight: 300,
+              text(font: _t.font-serif, style: "italic", weight: 300,
                    size: 24pt, fill: _t.primary, _pad2(n)),
               text(font: _t.font-display, size: 16pt, weight: 600,
                    fill: _t.neutral-900, it.body()),
@@ -251,8 +251,8 @@
 //     .abstract-side  (label-row × N, hairline border-right)
 //     .abstract-body
 //       h2 (Archivo 28pt 700)
-//       p.lead   (Fraunces 12pt body, ::first-letter 56pt drop-cap)
-//       p · p · ... (Fraunces 12pt body)
+//       p.lead   (Cormorant Garamond 12pt body, ::first-letter 56pt drop-cap)
+//       p · p · ... (Cormorant Garamond 12pt body)
 // =============================================================
 #let chanwe-side-row(label: "", value: "", dark: false) = {
   let lc = if dark { white.transparentize(45%) } else { _t.fg-subtle }
@@ -339,7 +339,7 @@
           let first-word = parts.at(0)
           let rest = if parts.len() > 1 { " " + parts.slice(1).join(" ") } else { "" }
           block(below: 6mm)[
-            #text(font: _t.font-italic, size: 32pt, weight: 300, style: "italic", fill: _t.primary, first-word)#text(weight: 700, fill: takwy-color, rest)
+            #text(font: _t.font-serif, size: 32pt, weight: 300, style: "italic", fill: _t.primary, first-word)#text(weight: 700, fill: takwy-color, rest)
           ]
         }
         #body
@@ -532,7 +532,7 @@
           columns: (1fr, auto),
           column-gutter: 3mm,
           align: (left + bottom, right + bottom),
-          text(font: _t.font-italic, size: 24pt, weight: 200,
+          text(font: _t.font-serif, size: 24pt, weight: 300,
                style: "italic", fill: s-color, str(status-hero)),
           meta-right,
         )
@@ -638,7 +638,7 @@
           let fw    = parts.at(0)
           let rest  = if parts.len() > 1 { " " + parts.slice(1).join(" ") } else { "" }
           block(below: 5mm)[
-            #text(font: _t.font-italic, size: 20pt, weight: 300,
+            #text(font: _t.font-serif, size: 20pt, weight: 300,
                   style: "italic", fill: _t.primary, fw
             )#text(weight: 700, size: 10pt, fill: takwy-color, rest)
           ]
@@ -789,7 +789,7 @@
           align: (left + bottom, left + bottom),
           // GIANT italic numeral
           text(
-            font: _t.font-italic, style: "italic", weight: 100,
+            font: _t.font-serif, style: "italic", weight: 300,
             size: 220pt, tracking: -0.04em,
             fill: _t.primary,
             number,
@@ -799,7 +799,7 @@
             dir: ttb, spacing: 7mm,
             chanwe-eyebrow(eyebrow, color: _t.primary, with-rule: true),
             text(
-              font: _t.font-italic, style: "italic", weight: 300,
+              font: _t.font-serif, style: "italic", weight: 300,
               size: 36pt, tracking: -0.02em, fill: _t.neutral-900,
               title,
             ),
@@ -899,13 +899,13 @@
     #block[
       #set par(leading: 0.45em)
       #text(
-        font: _t.font-italic, style: "italic", weight: 300,
+        font: _t.font-serif, style: "italic", weight: 300,
         size: 36pt, tracking: -0.01em, fill: white,
         tagline-line1,
       )
       \
       #text(
-        font: _t.font-italic, style: "italic", weight: 300,
+        font: _t.font-serif, style: "italic", weight: 300,
         size: 36pt, tracking: -0.01em, fill: _t.primary,
         tagline-line2,
       )

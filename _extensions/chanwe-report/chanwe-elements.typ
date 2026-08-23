@@ -90,10 +90,11 @@
   inset: (left: 6mm),
   stroke: (left: 2pt + _t.primary),
 )[
-  #text(font: _t.font-italic, size: 16pt, weight: 300, style: "italic", fill: _t.neutral-900, body)
+  #set par(leading: 0.425em)
+  #text(font: _t.font-serif, size: 11.2pt, weight: 300, style: "italic", fill: _t.neutral-900, body)
   #if attribution != none {
-    v(3mm)
-    text(font: _t.font-mono, size: 8pt, tracking: 0.18em, fill: _t.fg-subtle, upper[— #attribution])
+    v(1.5mm)
+    text(font: _t.font-mono, size: 5.6pt, weight: 100, tracking: 0.12em, fill: _t.ink, upper[— #attribution])
   }
 ]
 
@@ -147,22 +148,22 @@
     inset: (x: 22mm, top: 40mm, bottom: 30mm),
     fill: s.bg,
   )[
-    #show emph: it => text(font: _t.font-italic, fill: s.emph, style: "italic", it.body)
+    #show emph: it => text(fill: s.emph, style: "italic", it.body)
     #chanwe-eyebrow("Verbatim", color: s.eyebrow, with-rule: true, size: 12pt)
     #v(6mm)
-    #set par(leading: 0.64em)
+    #set par(leading: 0.32em)
     #text(
-      font: _t.font-italic, size: 40pt, style: "italic", weight: 100,
+      font: _t.font-serif, size: 28pt, style: "italic", weight: 300,
       tracking: -0.01em, fill: s.quote,
     )[\u{201C}#body\u{201D}]
     #v(1fr)
     #if caption != none {
       line(length: 30%, stroke: 1pt + s.line)
       v(5mm)
-      text(font: _t.font-display, size: 12pt, weight: 600, tracking: 0.08em, fill: s.attr, caption)
+      text(font: _t.font-display, size: 8.4pt, weight: 600, tracking: 0.08em, fill: s.attr, caption)
       if source != none {
-        v(3mm)
-        text(font: _t.font-mono, size: 8pt, tracking: 0.18em, fill: s.source, upper(source))
+        v(1.5mm)
+        text(font: _t.font-mono, size: 5.6pt, weight: 100, tracking: 0.12em, fill: s.source, upper(source))
       }
     }
   ]
@@ -176,23 +177,23 @@
       fill: s.bg,
       inset: (x: 22mm, top: 12mm, bottom: 14mm),
     )[
-      #show emph: it => text(font: _t.font-italic, fill: s.emph, style: "italic", it.body)
-      #set par(leading: 0.64em)
+      #show emph: it => text(fill: s.emph, style: "italic", it.body)
+      #set par(leading: 0.32em)
       #chanwe-eyebrow("Verbatim", color: s.eyebrow, with-rule: true)
       #v(3mm)
       #text(
-        font: _t.font-italic, size: 22pt, style: "italic", weight: 100,
+        font: _t.font-serif, size: 15.4pt, style: "italic", weight: 300,
         tracking: -0.01em, fill: s.quote,
       )[\u{201C}#body\u{201D}]
       #if caption != none {
         v(8mm)
         line(length: 20%, stroke: 1pt + s.line)
         v(4mm)
-        text(font: _t.font-display, size: 10pt, weight: 600, tracking: 0.08em, fill: s.attr, caption)
+        text(font: _t.font-display, size: 7pt, weight: 600, tracking: 0.08em, fill: s.attr, caption)
         if source != none {
           linebreak()
           v(1mm)
-          text(font: _t.font-mono, size: 7.5pt, tracking: 0.18em, fill: s.source, upper(source))
+          text(font: _t.font-mono, size: 5.25pt, weight: 100, tracking: 0.12em, fill: s.source, upper(source))
         }
       }
     ]
@@ -238,9 +239,9 @@
   let plot-col = block(width: 100%)[
     #body
     #if source != none {
-      v(3mm)
-      text(font: _t.font-mono, size: 7pt, tracking: 0.16em,
-           fill: s.source, upper(source))
+      v(1.5mm)
+      text(font: _t.font-mono, size: 5.5pt, weight: 100, tracking: 0.10em,
+           fill: if color == "dark" or color == "primary" { s.source } else { _t.ink }, upper(source))
     }
   ]
 
@@ -256,7 +257,7 @@
       fill: s.bg,
       inset: (x: 22mm, top: 14mm, bottom: 14mm),
     )[
-      #show emph: it => text(font: _t.font-italic, fill: s.emph, style: "italic", it.body)
+      #show emph: it => text(fill: s.emph, style: "italic", it.body)
       #grid(
         columns: col-widths,
         column-gutter: 14mm,
@@ -319,7 +320,7 @@
     column-gutter: 6mm,
     align: (left + top, left + top),
     text(
-      font: _t.font-italic, size: 38pt, weight: 100, style: "italic",
+      font: _t.font-serif, size: 38pt, weight: 300, style: "italic",
       fill: _t.primary, number,
     ),
     block(width: 100%)[
@@ -416,7 +417,7 @@
           text(font: _t.font-display, size: 14pt, weight: 700, fill: _t.fg-muted, prefix)
           h(0.5mm)
         }
-        #text(font: _t.font-italic, size: 32pt, weight: 600, style: "italic", fill: mc, main)
+        #text(font: _t.font-serif, size: 32pt, weight: 600, style: "italic", fill: mc, main)
         #if unit != "" {
           h(1mm)
           text(font: _t.font-display, size: 10pt, weight: 600, fill: _t.fg-muted, unit)
@@ -483,6 +484,111 @@
     ]
   )
   if below != none { v(below) }
+}
+
+// =============================================================
+// FIGURE FRAME — figure-local footer + alt-footer treatment
+// top-left/top-right form the upper footer; bottom-left/bottom-right
+// form the lower alt-footer. The body may contain a Markdown image,
+// generated plot, table, or raw Typst figure.
+// =============================================================
+#let chanwe-figure-frame(
+  top-left: none,
+  top-right: none,
+  bottom-left: none,
+  bottom-right: none,
+  body,
+) = {
+  let has-top = top-left != none or top-right != none
+  let has-bottom = bottom-left != none or bottom-right != none
+
+  figure(
+    block(
+      width: 100%,
+      breakable: false,
+    )[
+    #set block(spacing: 0pt)
+    #if has-top {
+      grid(
+        columns: (5fr, 7fr),
+        column-gutter: 7mm,
+        align: (left + horizon, right + horizon),
+        if top-left != none {
+          grid(
+            columns: (8mm, 1fr),
+            column-gutter: 3mm,
+            align: left + horizon,
+            line(length: 8mm, stroke: 1.1pt + _t.primary),
+            text(
+              font: _t.font-mono,
+              size: 6pt,
+              weight: 500,
+              tracking: 0.18em,
+              fill: _t.ink,
+              upper(top-left),
+            ),
+          )
+        } else { [] },
+        if top-right != none {
+          align(right, text(
+            font: _t.font-sans,
+            size: 7.4pt,
+            weight: 350,
+            fill: _t.fg-muted,
+            top-right,
+          ))
+        } else { [] },
+      )
+      v(1.6mm)
+      line(length: 100%, stroke: 0.1pt + _t.ink)
+      v(2.4mm)
+    }
+
+    #block(width: 100%)[
+      #show figure.where(kind: image): it => block(width: 100%)[#it.body]
+      #show figure.where(kind: table): it => block(width: 100%)[#it.body]
+      #show figure: it => block(width: 100%)[#it.body]
+      #body
+    ]
+
+    #if has-bottom {
+      v(2.4mm)
+      line(length: 100%, stroke: 0.1pt + _t.ink)
+      v(1.6mm)
+      grid(
+        columns: (auto, 1fr),
+        column-gutter: 7mm,
+        align: (left + horizon, left + horizon),
+        if bottom-left != none {
+          box(
+            fill: _t.primary,
+            inset: (x: 4mm, y: 1.6mm),
+            text(
+              font: _t.font-mono,
+              size: 4.7pt,
+              weight: 600,
+              tracking: 0.16em,
+              fill: white,
+              upper(bottom-left),
+            ),
+          )
+        } else { [] },
+        if bottom-right != none {
+          text(
+            font: _t.font-sans,
+            size: 7.2pt,
+            weight: 350,
+            fill: _t.fg-muted,
+            bottom-right,
+          )
+        } else { [] },
+      )
+    }
+    ],
+    kind: "chanwe-figure-frame",
+    supplement: [Figure],
+    numbering: "1",
+  )
 }
 
 #let fig-border(body) = {
