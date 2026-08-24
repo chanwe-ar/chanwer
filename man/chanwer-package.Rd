@@ -4,9 +4,9 @@
 \name{chanwer-package}
 \alias{chanwer}
 \alias{chanwer-package}
-\title{chanwer: ChanWe Visual Themes for Reporting}
+\title{chanwer: Chanwe Visual Themes for Reporting}
 \description{
-The \code{chanwer} package provides ChanWe-branded palettes and themes for
+The \code{chanwer} package provides Chanwe-branded palettes and themes for
 ggplot2, a native Typst table generator for Quarto PDF reports, font
 registration helpers, and Quarto reporting styles.
 }

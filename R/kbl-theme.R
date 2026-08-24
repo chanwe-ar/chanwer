@@ -1,8 +1,10 @@
-#' ChanWe Table via Native Typst Output
+#' Chanwe Table via Native Typst Output
 #'
 #' Generates a styled Typst table directly from a data frame, bypassing the
-#' HTML→Pandoc→Typst pipeline. Archivo title, Satoshi body, JetBrains Mono
-#' column headers, thin ink divider lines. No CSS translation losses.
+#' HTML→Pandoc→Typst pipeline. Archivo title, Satoshi subtitle, JetBrains
+#' Mono column headers and data cells (mono keeps figures tabular so numeric
+#' columns align digit-for-digit), thin ink divider lines. No CSS
+#' translation losses.
 #'
 #' @param data A data frame or tibble.
 #' @param title Table title.
@@ -85,7 +87,7 @@
 #'
 #' ## Signed-deltas pattern: fmt renders the delta as text, while the
 #' ## col_colors function still receives the raw numbers and colors by sign
-#' ## using the canonical ChanWe signed tokens.
+#' ## using the canonical Chanwe signed tokens.
 #' chanwe_kbl(
 #'   df,
 #'   title = "Quarterly deltas",
@@ -130,6 +132,11 @@ chanwe_kbl <- function(
   density <- match.arg(density)
 
   sp <- density == "spacious"
+
+  # table chrome colors come from the token system
+  tokens <- chanwe_get_colors()
+  vline_color <- tokens[["typst-neutral-300"]]
+  total_fill_color <- tokens[["typst-neutral-100"]]
 
   inset_y <- if (!is.null(row_padding)) {
     row_padding
@@ -297,9 +304,9 @@ chanwe_kbl <- function(
   }
   bg_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
   row_divider_color <- if (!is.null(bg) && tolower(bg) %in% c("metallic", "silver")) {
-    "#D4D4D4"
+    tokens[["typst-neutral-300"]]
   } else {
-    "#E9E9E9"
+    tokens[["typst-neutral-200"]]
   }
 
   # code builder
@@ -320,7 +327,7 @@ chanwe_kbl <- function(
 
   if (!is.null(vlines)) {
     for (vx in vlines) {
-      p('    table.vline(x: ', vx, ', stroke: 0.4pt + rgb("#DADADA")),')
+      p('    table.vline(x: ', vx, ', stroke: 0.4pt + rgb("', vline_color, '")),')
     }
   }
 
@@ -338,7 +345,7 @@ chanwe_kbl <- function(
           ", weak: false)",
           '#chanwe-eyebrow(with-rule: true, size: ',
           eyebrow_pt,
-          ')[',
+          ', color: rgb("', tokens[["typst-primary-text"]], '"))[',
           esc(eyebrow),
           ']',
           "#v(-6pt, weak: false)"
@@ -425,7 +432,7 @@ chanwe_kbl <- function(
       fill <- if (!is.null(color_data[[j]])) color_data[[j]][i] else "_t.ink"
       weight <- if (is_first) '"medium"' else '"thin"'
       cell_fill <- if (is_total && total_fill) {
-        ', fill: rgb("#F3F3F3")'
+        paste0(', fill: rgb("', total_fill_color, '")')
       } else if (!is.null(highlight_cols) && j %in% highlight_cols) {
         paste0(', fill: rgb("', highlight_color, '")')
       } else {
@@ -467,7 +474,7 @@ chanwe_kbl <- function(
       '#text(font: "JetBrains Mono", size: ',
       note_pt,
       ', fill: _t.ink)[',
-      '#text(fill: _t.primary)[/\\/]#h(4pt)',
+      '#text(fill: rgb("', tokens[["typst-primary-text"]], '"))[/\\/]#h(4pt)',
       esc(caption),
       ']],'
     )
@@ -505,10 +512,10 @@ chanwe_kbl <- function(
   ))
 }
 
-#' Signed Color Function for ChanWe Tables
+#' Signed Color Function for Chanwe Tables
 #'
 #' Returns a ready-made function for the \code{col_colors} argument of
-#' \code{\link{chanwe_kbl}()}: positive values in the canonical ChanWe
+#' \code{\link{chanwe_kbl}()}: positive values in the canonical Chanwe
 #' positive green, negative values in the alert vermillion, values at the
 #' threshold (and \code{NA}) in neutral ink. The same three tokens drive the
 #' KPI scoreboard arrows and the poles of \code{\link{scale_color_chanwe_div}()},
@@ -521,7 +528,10 @@ chanwe_kbl <- function(
 #' @param positive,negative,neutral Optional hex overrides for the three
 #'   states. Defaults are the canonical signed tokens.
 #' @param flip Set \code{TRUE} when smaller is better (e.g. costs, churn):
-#'   values below the threshold get the positive color. Default \code{FALSE}.
+#'   values below the threshold get the positive color. May also be a
+#'   logical \emph{vector}, recycled along the column, for tables that mix
+#'   larger-is-better and smaller-is-better rows in one column — e.g.
+#'   \code{flip = df$metric \%in\% c("Opex", "Churn")}. Default \code{FALSE}.
 #'
 #' @return A function taking a numeric vector and returning raw Typst color
 #'   expressions, suitable for one entry of \code{col_colors}. Because
@@ -536,6 +546,10 @@ chanwe_kbl <- function(
 #'
 #' ## Smaller-is-better metric:
 #' chanwe_col_signed(flip = TRUE)(c(-3, 4))
+#'
+#' ## Mixed-valence column — flip only the smaller-is-better rows:
+#' df <- data.frame(metric = c("Revenue", "Churn"), qoq = c(2.1, -0.8))
+#' chanwe_col_signed(flip = df$metric == "Churn")(df$qoq)
 chanwe_col_signed <- function(
   threshold = 0,
   positive = NULL,
@@ -547,18 +561,20 @@ chanwe_col_signed <- function(
   pos <- if (!is.null(positive)) positive else signed[["positive"]]
   neg <- if (!is.null(negative)) negative else signed[["negative"]]
   neu <- if (!is.null(neutral)) neutral else signed[["neutral"]]
-  if (isTRUE(flip)) {
-    tmp <- pos
-    pos <- neg
-    neg <- tmp
-  }
   typst_rgb <- function(hex) paste0('rgb("', hex, '")')
 
   function(x) {
     x <- suppressWarnings(as.numeric(x))
-    out <- rep(typst_rgb(neu), length(x))
-    out[!is.na(x) & x > threshold] <- typst_rgb(pos)
-    out[!is.na(x) & x < threshold] <- typst_rgb(neg)
+    n <- length(x)
+    fl <- rep_len(as.logical(flip), n)
+    fl[is.na(fl)] <- FALSE
+    above_col <- ifelse(fl, typst_rgb(neg), typst_rgb(pos))
+    below_col <- ifelse(fl, typst_rgb(pos), typst_rgb(neg))
+    out <- rep(typst_rgb(neu), n)
+    above <- !is.na(x) & x > threshold
+    below <- !is.na(x) & x < threshold
+    out[above] <- above_col[above]
+    out[below] <- below_col[below]
     out
   }
 }

@@ -1,6 +1,6 @@
-#' Load ChanWe Fonts into systemfonts
+#' Load Chanwe Fonts into systemfonts
 #'
-#' Registers all ChanWe font families with [systemfonts::register_font()],
+#' Registers all Chanwe font families with [systemfonts::register_font()],
 #' making them available to the ragg and svglite devices and to ggplot2.
 #' Call once per session before creating plots with [theme_chanwe()].
 #'
@@ -16,9 +16,10 @@
 #' - `"JetBrains Mono"` — Regular / Bold / Italic / BoldItalic
 #' - `"JetBrains Mono Thin"` — plain face = Thin (100); used by axis titles / facet labels
 #'
-#' @param path Directory containing the TTF files. Defaults to
-#'   `_extensions/chanwe-report/fonts` relative to the working directory (i.e. the
-#'   fonts bundled with the chanwe-report-typst Quarto extension).
+#' @param path Directory containing the TTF files. Defaults to the fonts
+#'   bundled with any installed Chanwe Quarto extension, searched relative to
+#'   the working directory: `_extensions/chanwe-report/fonts` first, then
+#'   `_extensions/chanwe-publications/fonts`.
 #'
 #' @return Invisibly, the resolved fonts directory path.
 #' @export
@@ -43,8 +44,11 @@ chanwe_load_fonts <- function(path = NULL) {
     pkg_root <- if (nzchar(pkg_inst)) dirname(pkg_inst) else ""
     candidates <- c(
       if (nzchar(pkg_root)) file.path(pkg_root, "_extensions/chanwe-report/fonts"),
+      if (nzchar(pkg_root)) file.path(pkg_root, "_extensions/chanwe-publications/fonts"),
       "_extensions/chanwe-report/fonts",
+      "_extensions/chanwe-publications/fonts",
       file.path(getwd(), "_extensions/chanwe-report/fonts"),
+      file.path(getwd(), "_extensions/chanwe-publications/fonts"),
       system.file("fonts", package = "chanwer")
     )
     path <- Find(function(p) nzchar(p) && dir.exists(p), candidates)

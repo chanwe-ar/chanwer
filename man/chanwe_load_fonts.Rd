@@ -2,20 +2,21 @@
 % Please edit documentation in R/utils.R
 \name{chanwe_load_fonts}
 \alias{chanwe_load_fonts}
-\title{Load ChanWe Fonts into systemfonts}
+\title{Load Chanwe Fonts into systemfonts}
 \usage{
 chanwe_load_fonts(path = NULL)
 }
 \arguments{
-\item{path}{Directory containing the TTF files. Defaults to
-\verb{_extensions/chanwe-report/fonts} relative to the working directory (i.e. the
-fonts bundled with the chanwe-report-typst Quarto extension).}
+\item{path}{Directory containing the TTF files. Defaults to the fonts
+bundled with any installed Chanwe Quarto extension, searched relative to
+the working directory: \verb{_extensions/chanwe-report/fonts} first, then
+\verb{_extensions/chanwe-publications/fonts}.}
 }
 \value{
 Invisibly, the resolved fonts directory path.
 }
 \description{
-Registers all ChanWe font families with \code{\link[systemfonts:register_font]{systemfonts::register_font()}},
+Registers all Chanwe font families with \code{\link[systemfonts:register_font]{systemfonts::register_font()}},
 making them available to the ragg and svglite devices and to ggplot2.
 Call once per session before creating plots with \code{\link[=theme_chanwe]{theme_chanwe()}}.
 }

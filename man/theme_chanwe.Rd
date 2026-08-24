@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggplot2-theme.R
 \name{theme_chanwe}
 \alias{theme_chanwe}
-\title{ChanWe ggplot2 Theme}
+\title{Chanwe ggplot2 Theme}
 \usage{
 theme_chanwe(
   base_text_size = 6.75,
@@ -60,9 +60,9 @@ draws it below the title text. Set to \code{FALSE} to suppress the line entirely
 A ggplot2 theme object. Add to any ggplot with \code{+ theme_chanwe()}.
 }
 \description{
-A clean editorial ggplot2 theme with ChanWe typography, neutral surfaces,
+A clean editorial ggplot2 theme with Chanwe typography, neutral surfaces,
 orange accents, and minimal chrome. Pairs with \code{\link[=chanwe_title]{chanwe_title()}},
-\code{\link[=chanwe_subtitle]{chanwe_subtitle()}}, and \code{\link[=chanwe_caption]{chanwe_caption()}} for the full ChanWe title
+\code{\link[=chanwe_subtitle]{chanwe_subtitle()}}, and \code{\link[=chanwe_caption]{chanwe_caption()}} for the full Chanwe title
 treatment, and with \code{\link[=scale_color_chanwe_d]{scale_color_chanwe_d()}} / \code{\link[=scale_fill_chanwe_d]{scale_fill_chanwe_d()}} for
 brand-consistent color palettes.
 }
@@ -73,12 +73,17 @@ brand-consistent color palettes.
    Subtitle \tab Satoshi \tab 400 \cr
    Subtitle note / KPI hero \tab Cormorant Garamond \tab italic \cr
    Axis text \tab Satoshi \tab 400 \cr
-   Axis titles \tab JetBrains Mono Thin \tab 100 \cr
+   Axis titles \tab JetBrains Mono \tab 400 \cr
    Facet strip labels \tab JetBrains Mono Thin \tab 100 \cr
    Legend text / title \tab JetBrains Mono \tab 400 \cr
-   Caption \tab JetBrains Mono \tab 400 \cr
+   Caption \tab JetBrains Mono Thin \tab 100 \cr
 }
 
+
+Eyebrows and the caption \verb{//} prefix use the text-accessible primary
+variant (\code{typst-primary-text}), which passes WCAG 4.5:1 small-text
+contrast on every brand surface; rules and glyphs keep the display
+primary.
 
 Call \code{\link[=chanwe_load_fonts]{chanwe_load_fonts()}} once per session to register the custom font
 families. \code{theme_chanwe()} calls it automatically.

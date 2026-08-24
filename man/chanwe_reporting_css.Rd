@@ -2,7 +2,7 @@
 % Please edit documentation in R/reporting.R
 \name{chanwe_reporting_css}
 \alias{chanwe_reporting_css}
-\title{ChanWe Reporting CSS for Quarto}
+\title{Chanwe Reporting CSS for Quarto}
 \usage{
 chanwe_reporting_css()
 }
@@ -11,7 +11,7 @@ A string path to \code{inst/quarto/chanwe-reporting.scss} in an installed
 package.
 }
 \description{
-Returns the path to the bundled ChanWe reporting stylesheet for Quarto.
+Returns the path to the bundled Chanwe reporting stylesheet for Quarto.
 The stylesheet includes chunk block styling, callout accents, caption styles,
 and orange section numbering markers.
 }

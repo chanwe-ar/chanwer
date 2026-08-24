@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggplot2-theme.R
 \name{chanwe_caption}
 \alias{chanwe_caption}
-\title{ChanWe Caption Helper}
+\title{Chanwe Caption Helper}
 \usage{
 chanwe_caption(text)
 }
@@ -13,7 +13,7 @@ chanwe_caption(text)
 A character string for \code{labs(caption = ...)}.
 }
 \description{
-Marks a string for the ChanWe caption treatment: \code{\link[=theme_chanwe]{theme_chanwe()}} renders
+Marks a string for the Chanwe caption treatment: \code{\link[=theme_chanwe]{theme_chanwe()}} renders
 captions in JetBrains Mono with an orange \verb{//} prefix and a thin separator
 line above. Use inside \code{labs(caption = ...)}. Plain strings passed directly
 to \code{labs(caption = )} receive the same treatment; this helper exists to

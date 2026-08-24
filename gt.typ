@@ -221,6 +221,10 @@
   fg-muted:    rgb("#71706C"),
   fg-subtle:   rgb("#928D86"),
   primary:     rgb("#FD3810"),
+  // text-accessible primary: same hue, darkened until it passes WCAG 4.5:1
+  // small-text contrast on every brand surface — use for small text
+  // (eyebrows, caption prefixes); keep `primary` for rules and display
+  primary-text: rgb("#C52C0C"),
   primary-dark: rgb("#EE5524"),
   primary-soft: rgb("#FD38101A"),
   beige:       rgb("#F5F1EB"),
@@ -330,10 +334,10 @@
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
           [
-            #text(weight: 700, fill: _t.primary, "//")
+            #text(weight: 700, fill: _t.primary-text, "//")
             #h(5pt)
-            #text(fill: _t.fg-subtle, upper(section))
-            #if topic != "" [#text(fill: _t.fg-subtle, upper(" · " + topic))]
+            #text(fill: _t.fg-muted, upper(section))
+            #if topic != "" [#text(fill: _t.fg-muted, upper(" · " + topic))]
           ],
           image(_chanwe-assets + "Logo_Negro.svg", height: 3.5mm, fit: "contain"),
         )
@@ -350,12 +354,12 @@
       rows: (auto, 1fr),
       pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + _t.border)),
       align(horizon, {
-        set text(font: _t.font-mono, size: 6pt, tracking: 0.14em, fill: _t.fg-subtle)
+        set text(font: _t.font-mono, size: 6pt, tracking: 0.14em, fill: _t.fg-muted)
         grid(
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
-          [#upper[#doc-id #h(8pt) #text(fill: _t.neutral-300, edition)]],
-          [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-subtle, upper(" / " + str(counter(page).final().first())))],
+          [#upper[#doc-id #h(8pt) #text(fill: _t.fg-subtle, edition)]],
+          [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-muted, upper(" / " + str(counter(page).final().first())))],
         )
       }),
     )
@@ -406,6 +410,7 @@
   show-date-strip: false,
   cover-edge: none,
   cover-edge-color: none,
+  dark: false,  // dark wordmark slab: the bottom band goes ink with the white wordmark
 ) = {
   let hero-image = if hero-image == none {
     _chanwe-assets + "hero-img.svg"
@@ -413,7 +418,12 @@
     _chanwe-clean-path(hero-image)
   }
   let _edge-color = if cover-edge-color != none { cover-edge-color } else { _t.primary }
-  let wordmark   = if wordmark == none { _chanwe-assets + "Logo_Negro.svg" } else { _chanwe-clean-path(wordmark) }
+  let wordmark = if wordmark == none {
+    _chanwe-assets + (if dark { "Logo_Blanco.svg" } else { "Logo_Negro.svg" })
+  } else {
+    _chanwe-clean-path(wordmark)
+  }
+  let _slab-bg = if dark { _t.ink } else { _t.paper }
   set page(
     paper: "a4", margin: 0pt, header: none, footer: none, fill: _t.paper,
     foreground: {
@@ -490,8 +500,12 @@
             font: _t.font-display, size: 36pt, weight: 600,
             tracking: -0.04em, fill: _t.neutral-900,
             title,
-          )#h(3pt)#box(width: 8pt, height: 8pt, baseline: -2pt,
-            circle(fill: _t.primary, stroke: none))
+          )#box(baseline: -2pt, {
+            // no glue between title and box: the terminal dot must never
+            // wrap to its own line, so the 3pt gap lives inside the box
+            h(3pt)
+            circle(radius: 4pt, fill: _t.primary, stroke: none)
+          })
         ]
 
         #if subtitle != none {
@@ -566,7 +580,7 @@
   // ---- 3. BOTTOM SLAB (50mm) - huge wordmark ----------------
   block(
     width: 100%, height: 50mm,
-    fill: _t.paper,
+    fill: _slab-bg,
     stroke: (top: 0.5pt + _t.neutral-900),
     inset: (x: 14mm, top: 0mm, bottom: 0mm),
   )[
@@ -1055,11 +1069,15 @@
 // KPI cards
 // =============================================================
 
+// "green"/"red" resolve to the canonical signed tokens so KPI cards, chart
+// arrows, and table deltas share one positive/negative pair. Raw "#RRGGBB"
+// strings pass through for self-describing swatches.
 #let _kpi-color(name) = {
   if name == "primary" { _t.primary }
-  else if name == "green" { rgb("#15803D") }
+  else if name == "green" { rgb("#147705") }
   else if name == "red" { rgb("#CC1914") }
   else if name == "ink" { _t.ink }
+  else if type(name) == str and name.starts-with("#") { rgb(name) }
   else { _t.fg-muted }
 }
 
@@ -1070,7 +1088,7 @@
   unit: "",
   main-color: "ink",
   secondary: "",
-  secondary-color: "primary",
+  secondary-color: "muted",
   direction: "none",
 ) = {
   let mc = if main-color == "ink" { _t.ink } else { _kpi-color(main-color) }
@@ -1100,7 +1118,7 @@
       // title
       block(height: 8mm, width: 100%, clip: false)[
         #set par(leading: 0.7em)
-        #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.primary, "// ")#text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-subtle, upper(title))
+        #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.primary-text, "// ")#text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-muted, upper(title))
       ],
       v(5mm),   // gap: title → main
       // main number
@@ -1145,7 +1163,7 @@
 #let zone-highlight(color: "metallic", margin: 2mm, above: 3mm, below: 3mm, col-gutter: 14mm, ..bodies) = {
   let bg = if color == "metallic"        { rgb("#F7F7F7") }
     else if color == "beige"             { _t.beige       }
-    else if color == "white-ivory"       { rgb("#FAFAFA") }
+    else if color == "white-ivory"       { rgb("#FAF9F7") }
     else if color == "gray"              { rgb("#EDF0F1") }
     else if color == "dark"              { _t.ink         }
     else if color == "orange"            { _t.primary     }
@@ -1307,16 +1325,16 @@
       column-gutter: 4mm,
       align: (left + bottom, left + bottom, left + bottom, right + bottom),
       [],
-      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-mono, size: 7.5pt, weight: 100, fill: _t.fg-subtle, label),
-      text(font: _t.font-mono, size: 7.5pt, tracking: 0.14em, weight: 100, fill: _t.fg-subtle, page),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-muted, num),
+      text(font: _t.font-mono, size: 7.5pt, weight: 100, fill: _t.fg-muted, label),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
     )
   } else {
     grid(
       columns: (14mm, 1fr, 12mm),
       column-gutter: 4mm,
       align: (left + bottom, left + bottom, right + bottom),
-      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-muted, num),
       text(font: _t.font-mono, size: 7.5pt, weight: 100, fill: _t.ink, label),
       text(font: _t.font-mono, size: 7.5pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
     )
@@ -1341,7 +1359,7 @@
       ),
       text(
         font: _t.font-mono, size: 8pt, tracking: 0.18em,
-        fill: _t.fg-subtle, upper(pages),
+        fill: _t.fg-muted, upper(pages),
       ),
     )
     #v(2mm)
@@ -1409,7 +1427,7 @@
           v(1.5mm)
           text(font: _t.font-sans, size: 9.5pt, fill: _t.fg-muted, desc)
         },
-        text(font: _t.font-mono, size: 8pt, tracking: 0.12em, fill: _t.fg-subtle, upper(pg)),
+        text(font: _t.font-mono, size: 8pt, tracking: 0.12em, fill: _t.fg-muted, upper(pg)),
       )
       v(3mm)
       line(length: 100%, stroke: 0.5pt + _t.border)
@@ -1501,7 +1519,7 @@
               text(font: _t.font-display, size: 16pt, weight: 600,
                    fill: _t.neutral-900, it.body()),
               text(font: _t.font-mono, size: 7pt, tracking: 0.18em,
-                   fill: _t.fg-subtle, upper(pages_str)),
+                   fill: _t.fg-muted, upper(pages_str)),
             )
             #v(4mm)
             #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
@@ -1548,7 +1566,7 @@
 //       p · p · ... (Cormorant Garamond 12pt body)
 // =============================================================
 #let chanwe-side-row(label: "", value: "", dark: false) = {
-  let lc = if dark { white.transparentize(45%) } else { _t.fg-subtle }
+  let lc = if dark { white.transparentize(45%) } else { _t.fg-muted }
   let vc = if dark { white                     } else { _t.fg        }
   stack(
     dir: ttb, spacing: 8pt,
@@ -1779,7 +1797,7 @@
   let body-color  = if dark { white.transparentize(15%)  } else { _t.fg-muted    }
   let takwy-color = if dark { white                      } else { _t.ink         }
   let div-stroke  = if divider { (bottom: 0.5pt + _t.neutral-900) } else { none }
-  let lc          = if dark { white.transparentize(45%) } else { _t.fg-subtle }
+  let lc          = if dark { white.transparentize(45%) } else { _t.fg-muted }
   let vc          = if dark { white                     } else { _t.neutral-900 }
   let border-col  = if dark { white.transparentize(70%) } else { _t.neutral-300 }
 
@@ -2120,7 +2138,7 @@
       align: (left + horizon, right + horizon),
       {
         set text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
-                 fill: _t.fg-subtle)
+                 fill: _t.fg-muted)
         upper(doc.doc-id)
         if doc.edition != "" {
           h(14mm)
@@ -2128,7 +2146,7 @@
         }
       },
       text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
-           fill: _t.fg-subtle, upper(_pages)),
+           fill: _t.fg-muted, upper(_pages)),
     )
   ]
   }
@@ -2366,6 +2384,7 @@
   ),
   // toggles
   cover: true,
+  cover-dark: false,        // dark wordmark slab: bottom band goes ink with the white wordmark
   // toc
   toc-eyebrow: "Document map",
   toc-title: "Agenda",
@@ -2622,6 +2641,7 @@
       date: date,
       cover-edge: cover-edge,
       cover-edge-color: cover-edge-color,
+      dark: cover-dark,
     )
   }
 
@@ -2721,7 +2741,7 @@
   title: [Chanwe Showcase: ggplot2 + gt],
   subtitle: [Tables and plots aligned with chanwe-report-typst design tokens],
   author: "Alejandro Abraham",
-  date: "2026-08-23",
+  date: "2026-08-24",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",
@@ -2777,7 +2797,7 @@
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt)[TABLE · SPACIOUS · WHITE-IVORY]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · white-ivory]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · WHITE-IVORY]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · white-ivory]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[title\_size · 16pt  ·  weight · regular  ·  density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -2792,43 +2812,43 @@
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.62]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Mazda RX4 Wag]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.00]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.88]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Datsun 710]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[22.80]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[93]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.32]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet 4 Drive]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.21]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet Sportabout]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.70]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[175]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.44]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Valiant]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.10]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[105]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.46]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Duster 360]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[14.30]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[245]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.57]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Merc 240D]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[24.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
@@ -2837,7 +2857,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -2854,7 +2874,7 @@
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt)[TABLE · SPACIOUS · WHITE]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · white]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · WHITE]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · white]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[title\_size · 16pt  ·  weight · regular  ·  density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -2869,43 +2889,43 @@
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.62]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Mazda RX4 Wag]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.00]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.88]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Datsun 710]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[22.80]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[93]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.32]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet 4 Drive]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.21]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet Sportabout]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.70]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[175]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.44]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Valiant]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.10]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[105]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.46]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Duster 360]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[14.30]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[245]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.57]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Merc 240D]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[24.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
@@ -2914,7 +2934,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -2931,7 +2951,7 @@
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt)[TABLE · SPACIOUS · BEIGE]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · beige]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · BEIGE]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · beige]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[title\_size · 16pt  ·  weight · regular  ·  density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -2946,43 +2966,43 @@
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.62]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Mazda RX4 Wag]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.00]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.88]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Datsun 710]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[22.80]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[93]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.32]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet 4 Drive]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.21]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet Sportabout]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.70]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[175]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.44]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Valiant]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.10]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[105]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.46]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Duster 360]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[14.30]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[245]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.57]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Merc 240D]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[24.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
@@ -2991,7 +3011,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3007,7 +3027,7 @@
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt)[TABLE · SPACIOUS · GRAY]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · gray]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · GRAY]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · gray]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[title\_size · 16pt  ·  weight · regular  ·  density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -3022,43 +3042,43 @@
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.62]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Mazda RX4 Wag]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.00]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.88]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Datsun 710]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[22.80]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[93]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.32]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet 4 Drive]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.21]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet Sportabout]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.70]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[175]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.44]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Valiant]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.10]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[105]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.46]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Duster 360]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[14.30]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[245]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.57]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Merc 240D]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[24.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
@@ -3067,7 +3087,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3083,7 +3103,7 @@
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt)[TABLE · SPACIOUS · METALLIC · DEFAULT]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · metallic  ·  default]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · METALLIC · DEFAULT]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · metallic  ·  default]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[title\_size · 16pt  ·  weight · regular  ·  density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -3143,7 +3163,7 @@
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3262,7 +3282,7 @@ establece el piso de referencia para el analisis diferencial.
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt)[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[title only · no subtitle]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[title only · no subtitle]],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MPG]],
@@ -3321,7 +3341,7 @@ establece el piso de referencia para el analisis diferencial.
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3341,7 +3361,7 @@ establece el piso de referencia para el analisis diferencial.
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt)[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[title only · zone-highlight]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[title only · zone-highlight]],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MPG]],
@@ -3355,43 +3375,43 @@ establece el piso de referencia para el analisis diferencial.
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.62]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Mazda RX4 Wag]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.00]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.88]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Datsun 710]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[22.80]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[93]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.32]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet 4 Drive]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.21]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet Sportabout]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.70]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[175]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.44]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Valiant]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.10]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[105]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.46]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Duster 360]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[14.30]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[245]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.57]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Merc 240D]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[24.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
@@ -3400,7 +3420,7 @@ establece el piso de referencia para el analisis diferencial.
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3470,7 +3490,7 @@ establece el piso de referencia para el analisis diferencial.
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3495,43 +3515,43 @@ establece el piso de referencia para el analisis diferencial.
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.62]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Mazda RX4 Wag]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.00]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.88]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Datsun 710]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[22.80]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[93]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[2.32]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet 4 Drive]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[21.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[110]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.21]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Hornet Sportabout]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.70]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[175]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.44]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Valiant]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[18.10]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[6]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[105]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.46]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Duster 360]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[14.30]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[8]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[245]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[3.57]],
-    table.hline(stroke: 0.3pt + rgb("#E9E9E9")),
+    table.hline(stroke: 0.3pt + rgb("#E8E8E8")),
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[Merc 240D]],
     table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[24.40]],
     table.cell(align: left)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[4]],
@@ -3540,7 +3560,7 @@ establece el piso de referencia para el analisis diferencial.
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: _t.primary)[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]

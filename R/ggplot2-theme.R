@@ -1,16 +1,29 @@
 # ggplot2 helpers -----------------------------------------------------------
 
 chanwe_discrete_pal <- function(palette = "chart", reverse = FALSE) {
-  values <- if (length(palette) > 1L || grepl("^#", palette[[1L]])) {
-    as.character(palette) # raw color vector passed directly
-  } else {
+  is_named_group <- length(palette) == 1L && !grepl("^#", palette[[1L]])
+  # Ramp groups (one-hue shade scales) sample across the FULL ramp so small
+  # n still spans light → dark; categorical groups keep their fixed,
+  # CVD-validated slot order and recycle past their length.
+  is_ramp <- is_named_group && grepl("^(p13_|p15_|mb_)", palette[[1L]])
+  values <- if (is_named_group) {
     unname(chanwe_palette(palette))
+  } else {
+    as.character(palette) # raw color vector passed directly
   }
   if (isTRUE(reverse)) {
     values <- rev(values)
   }
   function(n) {
-    rep(values, length.out = n)
+    if (is_ramp) {
+      if (n > length(values)) {
+        grDevices::colorRampPalette(values)(n)
+      } else {
+        values[round(seq(1L, length(values), length.out = n))]
+      }
+    } else {
+      rep(values, length.out = n)
+    }
   }
 }
 
@@ -34,11 +47,11 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
   values
 }
 
-#' ChanWe ggplot2 Theme
+#' Chanwe ggplot2 Theme
 #'
-#' A clean editorial ggplot2 theme with ChanWe typography, neutral surfaces,
+#' A clean editorial ggplot2 theme with Chanwe typography, neutral surfaces,
 #' orange accents, and minimal chrome. Pairs with [chanwe_title()],
-#' [chanwe_subtitle()], and [chanwe_caption()] for the full ChanWe title
+#' [chanwe_subtitle()], and [chanwe_caption()] for the full Chanwe title
 #' treatment, and with [scale_color_chanwe_d()] / [scale_fill_chanwe_d()] for
 #' brand-consistent color palettes.
 #'
@@ -49,10 +62,15 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' | Subtitle | Satoshi | 400 |
 #' | Subtitle note / KPI hero | Cormorant Garamond | italic |
 #' | Axis text | Satoshi | 400 |
-#' | Axis titles | JetBrains Mono Thin | 100 |
+#' | Axis titles | JetBrains Mono | 400 |
 #' | Facet strip labels | JetBrains Mono Thin | 100 |
 #' | Legend text / title | JetBrains Mono | 400 |
-#' | Caption | JetBrains Mono | 400 |
+#' | Caption | JetBrains Mono Thin | 100 |
+#'
+#' Eyebrows and the caption `//` prefix use the text-accessible primary
+#' variant (`typst-primary-text`), which passes WCAG 4.5:1 small-text
+#' contrast on every brand surface; rules and glyphs keep the display
+#' primary.
 #'
 #' Call [chanwe_load_fonts()] once per session to register the custom font
 #' families. `theme_chanwe()` calls it automatically.
@@ -232,8 +250,8 @@ theme_chanwe <- function(
     size = base_text_size * 1.50,
     colour = colors[["typst-ink"]],
     eyebrow_family = mono_family,
-    eyebrow_size = base_text_size * 0.55,
-    eyebrow_colour = colors[["typst-primary"]],
+    eyebrow_size = base_text_size * 0.62,
+    eyebrow_colour = colors[["typst-primary-text"]],
     ink_colour = colors[["typst-ink"]],
     top_pad = if (compact_title) 4 else 8
   )
@@ -241,18 +259,13 @@ theme_chanwe <- function(
     title_element$margin <- ggplot2::margin(0, 0, 25, 0)
     title_element$draw_bottom_line <- isTRUE(header_line)
   }
-  kpi_label_colour <- switch(
-    bg_color,
-    "#FAF9F7" = "#AEABA6",
-    "#FFFFFF"  = "#AEABA6",
-    "#656460"
-  )
+  kpi_label_colour <- colors[["typst-fg-muted"]]
 
   subtitle_element <- new_element_chanwe_subtitle(
     family = subtitle_family,
     italic_family = italic_family,
     size = base_text_size * 0.9,
-    colour = '#888888',
+    colour = colors[["typst-fg-muted"]],
     ink_colour = colors[["typst-ink"]],
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
@@ -279,18 +292,18 @@ theme_chanwe <- function(
         mono_thin_family = mono_thin_family,
         size = base_text_size * 0.70,
         colour = colors[["typst-ink"]],
-        primary_colour = colors[["typst-primary"]],
+        primary_colour = colors[["typst-primary-text"]],
         ink_colour = colors[["typst-ink"]]
       ),
       axis.title = ggplot2::element_text(
-        family = mono_thin_family,
+        family = mono_family,
         color = colors[["typst-ink"]],
         face = "plain",
-        size = base_text_size * 0.60
+        size = base_text_size * 0.66
       ),
       axis.text = ggplot2::element_text(
         color = colors[["typst-ink"]],
-        size = base_text_size * 0.60
+        size = base_text_size * 0.66
       ),
       axis.title.x = ggplot2::element_text(
         hjust = 1,
@@ -378,7 +391,7 @@ theme_chanwe <- function(
   theme_obj
 }
 
-#' ChanWe Title Helper
+#' Chanwe Title Helper
 #'
 #' Produces a title string for `labs(title = ...)` styled by [theme_chanwe()].
 #' Without an eyebrow you can pass plain text directly — this helper is only
@@ -414,7 +427,7 @@ chanwe_title <- function(text, eyebrow = NULL) {
   paste(eyebrow, text, sep = .CW_SEP)
 }
 
-#' ChanWe KPI Panel Encoder
+#' Chanwe KPI Panel Encoder
 #'
 #' Builds the KPI scoreboard that sits between the subtitle and the chart.
 #' Always wrap the result in [chanwe_subtitle()] and pass that to
@@ -435,6 +448,18 @@ chanwe_title <- function(text, eyebrow = NULL) {
 #' - **Left block** — hero value (`num`), unit label (`label`), date (`period`)
 #' - **Right block** — up to 3 period metrics, right-anchored, each with a
 #'   short label row (e.g. WOW) and a value row with ▲/▼ direction indicator
+#'
+#' ## Direction vs valence
+#'
+#' The arrow and the color are two separate channels. `mtcN_direction`
+#' states the *movement* (`"+"` → ▲, `"-"` → ▼); `mtcN_valence` states
+#' whether that movement is *good news*, and drives the color. The default
+#' `"auto"` colors by arithmetic sign (up = positive green), which is right
+#' for revenue-like metrics. For smaller-is-better metrics (unemployment,
+#' churn, costs) pass the valence explicitly: a falling unemployment rate
+#' is `mtc1_direction = "-", mtc1_valence = "good"` — a green ▼. This keeps
+#' the brand promise that green/red always encode good/bad, never a raw
+#' sign.
 #'
 #' ## Call pattern
 #'
@@ -460,8 +485,13 @@ chanwe_title <- function(text, eyebrow = NULL) {
 #' @param mtc1_label,mtc2_label,mtc3_label Short header rendered above the
 #'   metric value, e.g. `"WoW"`, `"MoM"`, `"YoY"`.
 #' @param mtc1_direction,mtc2_direction,mtc3_direction
-#'   `"+"` → ▲ in green; `"-"` → ▼ in red; any other value → no arrow,
-#'   neutral ink. Default `"+"`.
+#'   Movement of the metric: `"+"` → ▲; `"-"` → ▼; any other value → no
+#'   arrow. Default `"+"`.
+#' @param mtc1_valence,mtc2_valence,mtc3_valence Whether the movement is
+#'   good news — drives the color via the canonical signed tokens.
+#'   `"good"` → positive green, `"bad"` → alert vermillion, `"neutral"` →
+#'   neutral ink, `"auto"` (default) → derive from the direction (up = good,
+#'   down = bad). Set explicitly for smaller-is-better metrics.
 #'
 #' @return An opaque encoded string. Pass it to the `kpi` argument of
 #'   [chanwe_subtitle()]; do not use it directly in `labs()`.
@@ -478,6 +508,13 @@ chanwe_title <- function(text, eyebrow = NULL) {
 #'   mtc1_num = "0,19%",  mtc1_label = "WoW", mtc1_direction = "+",
 #'   mtc2_num = "3,29%",  mtc2_label = "MoM", mtc2_direction = "+",
 #'   mtc3_num = "17,78%", mtc3_label = "YoY", mtc3_direction = "-"
+#' )
+#'
+#' ## Smaller-is-better metric — falling churn is GOOD news (green ▼):
+#' chanwe_kpi(
+#'   num = "2,1", label = "PCT", period = "Q1·2026",
+#'   mtc1_num = "0,3pp", mtc1_label = "QoQ",
+#'   mtc1_direction = "-", mtc1_valence = "good"
 #' )
 #'
 #' ## Full plot — the typical usage (assign; print to render with brand fonts):
@@ -501,26 +538,36 @@ chanwe_kpi <- function(
   num,
   label     = "",
   period    = "",
-  mtc1_num  = NULL, mtc1_label = NULL, mtc1_direction = "+",
-  mtc2_num  = NULL, mtc2_label = NULL, mtc2_direction = "+",
-  mtc3_num  = NULL, mtc3_label = NULL, mtc3_direction = "+"
+  mtc1_num  = NULL, mtc1_label = NULL, mtc1_direction = "+", mtc1_valence = "auto",
+  mtc2_num  = NULL, mtc2_label = NULL, mtc2_direction = "+", mtc2_valence = "auto",
+  mtc3_num  = NULL, mtc3_label = NULL, mtc3_direction = "+", mtc3_valence = "auto"
 ) {
   raw_metrics <- list(
-    list(num = mtc1_num, label = mtc1_label, direction = mtc1_direction),
-    list(num = mtc2_num, label = mtc2_label, direction = mtc2_direction),
-    list(num = mtc3_num, label = mtc3_label, direction = mtc3_direction)
+    list(num = mtc1_num, label = mtc1_label, direction = mtc1_direction, valence = mtc1_valence),
+    list(num = mtc2_num, label = mtc2_label, direction = mtc2_direction, valence = mtc2_valence),
+    list(num = mtc3_num, label = mtc3_label, direction = mtc3_direction, valence = mtc3_valence)
   )
   metric_fields <- character(0)
   for (m in raw_metrics) {
     if (!is.null(m$num) && !is.null(m$label)) {
       dir <- if (identical(m$direction, "+")) 1L else if (identical(m$direction, "-")) -1L else 0L
-      metric_fields <- c(metric_fields, m$label, as.character(m$num), as.character(dir))
+      val <- switch(
+        as.character(m$valence),
+        good = 1L,
+        bad = -1L,
+        neutral = 0L,
+        dir # "auto" (and anything else): color follows the movement
+      )
+      metric_fields <- c(
+        metric_fields,
+        m$label, as.character(m$num), as.character(dir), as.character(val)
+      )
     }
   }
   paste(c(as.character(num), label, period, metric_fields), collapse = .CW_KPI_SEP)
 }
 
-#' ChanWe Subtitle Helper
+#' Chanwe Subtitle Helper
 #'
 #' Wraps a subtitle string for `labs(subtitle = ...)` when you need either a
 #' secondary note line or a KPI scoreboard panel. For plain text you do
@@ -574,9 +621,9 @@ chanwe_subtitle <- function(text, note = NULL, kpi = NULL) {
   paste(text, note_part, kpi, sep = .CW_SEP)
 }
 
-#' ChanWe Caption Helper
+#' Chanwe Caption Helper
 #'
-#' Marks a string for the ChanWe caption treatment: [theme_chanwe()] renders
+#' Marks a string for the Chanwe caption treatment: [theme_chanwe()] renders
 #' captions in JetBrains Mono with an orange `//` prefix and a thin separator
 #' line above. Use inside `labs(caption = ...)`. Plain strings passed directly
 #' to `labs(caption = )` receive the same treatment; this helper exists to
@@ -600,9 +647,9 @@ chanwe_caption <- function(text) {
   as.character(text)
 }
 
-#' ChanWe Discrete Color Scales
+#' Chanwe Discrete Color Scales
 #'
-#' Apply a ChanWe categorical palette to `color` or `fill` aesthetics.
+#' Apply a Chanwe categorical palette to `color` or `fill` aesthetics.
 #' Colors cycle through the chosen palette when there are more categories
 #' than palette entries.
 #'
@@ -663,9 +710,9 @@ scale_fill_chanwe_d <- function(palette = "chart", reverse = FALSE, ...) {
   )
 }
 
-#' ChanWe Continuous Color Scales
+#' Chanwe Continuous Color Scales
 #'
-#' Sequential (one hue, light \eqn{\to} dark) ChanWe gradient scales for
+#' Sequential (one hue, light \eqn{\to} dark) Chanwe gradient scales for
 #' magnitude encoding. Pick the hue with `palette`; every named ramp is a
 #' brand family from [chanwe_palette()].
 #'
@@ -717,7 +764,7 @@ scale_fill_chanwe_c <- function(
   ggplot2::scale_fill_gradientn(colours = values, ...)
 }
 
-#' ChanWe Diverging Color Scales
+#' Chanwe Diverging Color Scales
 #'
 #' Diverging gradient for values with a meaningful zero or baseline:
 #' negative pole in the brand vermillion (alert) family, positive pole in
@@ -730,8 +777,18 @@ scale_fill_chanwe_c <- function(
 #' `limits = c(-max(abs(x)), max(abs(x)))` — otherwise zero drifts off the
 #' neutral gray.
 #'
+#' ## Color-vision deficiency
+#'
+#' Red↔green is the classic deuteranopia trap. When the audience includes
+#' red-green CVD readers, pass `cvd = TRUE`: the positive arm switches to
+#' the brand's structural blue family (pole = the report info blue) while
+#' the negative arm stays vermillion, so polarity survives simulation and
+#' both arms remain brand families.
+#'
 #' @param reverse Flip the scale (positive pole on the low end).
 #'   Default `FALSE`.
+#' @param cvd Use the CVD-safe vermillion↔blue variant instead of
+#'   vermillion↔green. Default `FALSE`.
 #' @param ... Additional arguments passed to
 #'   [ggplot2::scale_color_gradientn()] / [ggplot2::scale_fill_gradientn()],
 #'   e.g. `limits`, `name`, `na.value`.
@@ -748,16 +805,16 @@ scale_fill_chanwe_c <- function(
 #'   ggplot2::geom_tile() +
 #'   scale_fill_chanwe_div(limits = c(-m, m)) +
 #'   theme_chanwe()
-scale_color_chanwe_div <- function(reverse = FALSE, ...) {
-  values <- .chanwe_div_ramp()
+scale_color_chanwe_div <- function(reverse = FALSE, cvd = FALSE, ...) {
+  values <- .chanwe_div_ramp(cvd = cvd)
   if (isTRUE(reverse)) values <- rev(values)
   ggplot2::scale_color_gradientn(colours = values, ...)
 }
 
 #' @rdname scale_color_chanwe_div
 #' @export
-scale_fill_chanwe_div <- function(reverse = FALSE, ...) {
-  values <- .chanwe_div_ramp()
+scale_fill_chanwe_div <- function(reverse = FALSE, cvd = FALSE, ...) {
+  values <- .chanwe_div_ramp(cvd = cvd)
   if (isTRUE(reverse)) values <- rev(values)
   ggplot2::scale_fill_gradientn(colours = values, ...)
 }

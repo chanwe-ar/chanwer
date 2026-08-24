@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggplot2-theme.R
 \name{chanwe_kpi}
 \alias{chanwe_kpi}
-\title{ChanWe KPI Panel Encoder}
+\title{Chanwe KPI Panel Encoder}
 \usage{
 chanwe_kpi(
   num,
@@ -11,12 +11,15 @@ chanwe_kpi(
   mtc1_num = NULL,
   mtc1_label = NULL,
   mtc1_direction = "+",
+  mtc1_valence = "auto",
   mtc2_num = NULL,
   mtc2_label = NULL,
   mtc2_direction = "+",
+  mtc2_valence = "auto",
   mtc3_num = NULL,
   mtc3_label = NULL,
-  mtc3_direction = "+"
+  mtc3_direction = "+",
+  mtc3_valence = "auto"
 )
 }
 \arguments{
@@ -37,8 +40,14 @@ non-\code{NULL} to display a metric; set either to \code{NULL} to omit it entire
 \item{mtc1_label, mtc2_label, mtc3_label}{Short header rendered above the
 metric value, e.g. \code{"WoW"}, \code{"MoM"}, \code{"YoY"}.}
 
-\item{mtc1_direction, mtc2_direction, mtc3_direction}{\code{"+"} → ▲ in green; \code{"-"} → ▼ in red; any other value → no arrow,
-neutral ink. Default \code{"+"}.}
+\item{mtc1_direction, mtc2_direction, mtc3_direction}{Movement of the metric: \code{"+"} → ▲; \code{"-"} → ▼; any other value → no
+arrow. Default \code{"+"}.}
+
+\item{mtc1_valence, mtc2_valence, mtc3_valence}{Whether the movement is
+good news — drives the color via the canonical signed tokens.
+\code{"good"} → positive green, \code{"bad"} → alert vermillion, \code{"neutral"} →
+neutral ink, \code{"auto"} (default) → derive from the direction (up = good,
+down = bad). Set explicitly for smaller-is-better metrics.}
 }
 \value{
 An opaque encoded string. Pass it to the \code{kpi} argument of
@@ -67,6 +76,19 @@ short label row (e.g. WOW) and a value row with ▲/▼ direction indicator
 }
 }
 
+\subsection{Direction vs valence}{
+
+The arrow and the color are two separate channels. \code{mtcN_direction}
+states the \emph{movement} (\code{"+"} → ▲, \code{"-"} → ▼); \code{mtcN_valence} states
+whether that movement is \emph{good news}, and drives the color. The default
+\code{"auto"} colors by arithmetic sign (up = positive green), which is right
+for revenue-like metrics. For smaller-is-better metrics (unemployment,
+churn, costs) pass the valence explicitly: a falling unemployment rate
+is \verb{mtc1_direction = "-", mtc1_valence = "good"} — a green ▼. This keeps
+the brand promise that green/red always encode good/bad, never a raw
+sign.
+}
+
 \subsection{Call pattern}{
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{labs(
@@ -88,6 +110,13 @@ chanwe_kpi(
   mtc1_num = "0,19\%",  mtc1_label = "WoW", mtc1_direction = "+",
   mtc2_num = "3,29\%",  mtc2_label = "MoM", mtc2_direction = "+",
   mtc3_num = "17,78\%", mtc3_label = "YoY", mtc3_direction = "-"
+)
+
+## Smaller-is-better metric — falling churn is GOOD news (green ▼):
+chanwe_kpi(
+  num = "2,1", label = "PCT", period = "Q1·2026",
+  mtc1_num = "0,3pp", mtc1_label = "QoQ",
+  mtc1_direction = "-", mtc1_valence = "good"
 )
 
 ## Full plot — the typical usage (assign; print to render with brand fonts):

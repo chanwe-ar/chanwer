@@ -2,7 +2,7 @@
 % Please edit documentation in R/kbl-theme.R
 \name{chanwe_kbl}
 \alias{chanwe_kbl}
-\title{ChanWe Table via Native Typst Output}
+\title{Chanwe Table via Native Typst Output}
 \usage{
 chanwe_kbl(
   data,
@@ -145,8 +145,10 @@ Works in Quarto documents rendered with \code{format: chanwe-report-typst}.
 }
 \description{
 Generates a styled Typst table directly from a data frame, bypassing the
-HTML→Pandoc→Typst pipeline. Archivo title, Satoshi body, JetBrains Mono
-column headers, thin ink divider lines. No CSS translation losses.
+HTML→Pandoc→Typst pipeline. Archivo title, Satoshi subtitle, JetBrains
+Mono column headers and data cells (mono keeps figures tabular so numeric
+columns align digit-for-digit), thin ink divider lines. No CSS
+translation losses.
 }
 \examples{
 \dontshow{if (requireNamespace("knitr", quietly = TRUE)) withAutoprint(\{ # examplesIf}
@@ -157,7 +159,7 @@ df <- data.frame(
 
 ## Signed-deltas pattern: fmt renders the delta as text, while the
 ## col_colors function still receives the raw numbers and colors by sign
-## using the canonical ChanWe signed tokens.
+## using the canonical Chanwe signed tokens.
 chanwe_kbl(
   df,
   title = "Quarterly deltas",

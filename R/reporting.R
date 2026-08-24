@@ -1,6 +1,6 @@
-#' ChanWe Reporting CSS for Quarto
+#' Chanwe Reporting CSS for Quarto
 #'
-#' Returns the path to the bundled ChanWe reporting stylesheet for Quarto.
+#' Returns the path to the bundled Chanwe reporting stylesheet for Quarto.
 #' The stylesheet includes chunk block styling, callout accents, caption styles,
 #' and orange section numbering markers.
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/palette.R
 \name{chanwe_brand_tokens}
 \alias{chanwe_brand_tokens}
-\title{ChanWe Brand Tokens}
+\title{Chanwe Brand Tokens}
 \usage{
 chanwe_brand_tokens()
 }

@@ -114,6 +114,12 @@
   "mb-beige-500" = "#CFC8BD",
   # chanwe-report-typst report system tokens
   "typst-primary"     = "#FD3810",
+  # Text-accessible darkening of typst-primary: same hue, stepped down until
+  # it clears WCAG 4.5:1 small-text contrast on every brand surface (4.90 on
+  # gray, 5.62 on white). Use it wherever the primary paints SMALL text —
+  # eyebrows, caption prefixes — and keep typst-primary for rules, glyphs,
+  # and large display accents (which only need 3:1).
+  "typst-primary-text" = "#C52C0C",
   "typst-ink"         = "#0F0F0F",
   "typst-fg"          = "#211F1C",
   "typst-fg-muted"    = "#71706C",
@@ -127,7 +133,11 @@
   "typst-green"       = "#15803D",
   "typst-red"         = "#CC1914",
   "typst-warning"     = "#EB9113",
-  "typst-info"        = "#0758E5"
+  "typst-info"        = "#0758E5",
+  # Callout accents used by the Typst extensions (chanwe-elements.typ keeps
+  # the same literals — they are part of the Quarto callout contract).
+  "typst-tip"         = "#00A047",
+  "typst-caution"     = "#FC5300"
 )
 
 .chanwe_semantic_names <- c(
@@ -214,17 +224,23 @@ chanwe_get_signed <- function() {
 # Sequential ramps for the continuous scales — light → dark, one brand hue
 # each. Built from the p15 5-shade ramps; green and vermillion get their
 # dark pole extended with the matching signed token so the strong end
-# clears 3:1 mark contrast on the brand surfaces. The yellow and cyan
+# clears 3:1 mark contrast on the brand surfaces. The light pole is clamped
+# one step above the family's lightest shade (-04 instead of -05) for the
+# mirror-image reason: the -05 shades all but vanish on the light brand
+# surfaces, so minimum-value marks would carry data invisibly. The full
+# 5-shade ramps stay available via chanwe_palette(). The yellow and cyan
 # families are deliberately absent: their entire ramp is too light to
 # encode magnitude on light surfaces (dark end < 2:1). "orange" is the
-# historical default gradient anchored on the report primary.
+# historical default gradient anchored on the report primary, clamped the
+# same way (light pole -07 instead of -10 on the 10-step p13 scale).
 .chanwe_seq_ramps <- function() {
   cols <- .chanwe_colors
   ramp <- function(prefix) {
-    rev(unname(cols[grep(paste0("^", prefix), names(cols))]))
+    shades <- rev(unname(cols[grep(paste0("^", prefix), names(cols))]))
+    shades[-1] # clamp the light pole: drop the -05 shade
   }
   list(
-    orange     = unname(cols[c("p13-orange-10", "p13-orange-05", "typst-primary")]),
+    orange     = unname(cols[c("p13-orange-07", "p13-orange-03", "typst-primary")]),
     coral      = ramp("p15-coral"),
     blue       = ramp("p15-blue"),
     teal       = ramp("p15-teal"),
@@ -242,20 +258,35 @@ chanwe_get_signed <- function() {
 # Poles are the signed tokens; arm steps are p15 shades chosen so lightness
 # is monotone from the midpoint out to each pole (green-05 is lighter than
 # the midpoint and is skipped for that reason).
-.chanwe_div_ramp <- function() {
+#
+# cvd = TRUE swaps the positive arm for the brand's structural blue family
+# (pole = typst-info). Red↔green is the canonical deuteranopia trap; when
+# the audience includes red-green CVD readers, the vermillion↔blue variant
+# keeps polarity legible while both arms stay brand families.
+.chanwe_div_ramp <- function(cvd = FALSE) {
   cols <- .chanwe_colors
+  positive_arm <- if (isTRUE(cvd)) {
+    c(
+      unname(cols[c("p15-blue-04", "p15-blue-03", "p15-blue-01")]),
+      cols[["typst-info"]]
+    )
+  } else {
+    c(
+      unname(cols[c("p15-green-04", "p15-green-03", "p15-green-01")]),
+      cols[["signed-positive"]]
+    )
+  }
   unname(c(
     cols[["signed-negative"]],
     cols[c("p15-vermillion-01", "p15-vermillion-03", "p15-vermillion-05")],
     cols[["typst-neutral-200"]],
-    cols[c("p15-green-04", "p15-green-03", "p15-green-01")],
-    cols[["signed-positive"]]
+    positive_arm
   ))
 }
 
-#' ChanWe Color Palette Tokens
+#' Chanwe Color Palette Tokens
 #'
-#' Returns ChanWe brand colors as a single named vector, grouped vectors,
+#' Returns Chanwe brand colors as a single named vector, grouped vectors,
 #' or specific palette subsets used by plotting and reporting helpers.
 #'
 #' @param palette Optional palette selector. Use `NULL` (default) to return
@@ -306,7 +337,7 @@ chanwe_palette <- function(palette = NULL) {
   }
 }
 
-#' ChanWe Brand Tokens
+#' Chanwe Brand Tokens
 #'
 #' Returns structured brand tokens used across theme helpers and Quarto
 #' reporting components.
@@ -320,7 +351,7 @@ chanwe_brand_tokens <- function() {
   semantic <- chanwe_get_semantic()
 
   list(
-    name = "ChanWe",
+    name = "Chanwe",
     colors = chanwe_get_colors(),
     semantic = semantic,
     chart_order = chanwe_get_chart(),
@@ -342,14 +373,17 @@ chanwe_brand_tokens <- function() {
       code_background = semantic[["background"]],
       code_left_rule = semantic[["primary"]],
       caption_color = chanwe_get_colors()[["typst-fg-subtle"]],
+      # Mirrors the callout accents rendered by chanwe-elements.typ in the
+      # Typst extensions — keep the two in sync.
       callouts = c(
-        note = chanwe_get_colors()[["p14-cyan-strong"]],
-        info = chanwe_get_colors()[["p14-cyan-strong"]],
-        success = chanwe_get_colors()[["p14-green-strong"]],
-        warning = chanwe_get_colors()[["p14-yellow-strong"]],
-        important = chanwe_get_colors()[["p14-magenta-strong"]],
-        caution = chanwe_get_colors()[["p14-red-strong"]],
-        alert = chanwe_get_colors()[["p14-red-strong"]]
+        note = chanwe_get_colors()[["typst-info"]],
+        info = chanwe_get_colors()[["typst-info"]],
+        tip = chanwe_get_colors()[["typst-tip"]],
+        success = chanwe_get_colors()[["typst-green"]],
+        warning = chanwe_get_colors()[["typst-warning"]],
+        important = chanwe_get_colors()[["typst-red"]],
+        caution = chanwe_get_colors()[["typst-caution"]],
+        alert = chanwe_get_colors()[["typst-red"]]
       ),
       section_marker_asset = system.file(
         "assets",
@@ -360,9 +394,10 @@ chanwe_brand_tokens <- function() {
   )
 }
 
-#' Preview ChanWe Palette
+#' Preview Chanwe Palette
 #'
-#' Draws a swatch grid of ChanWe colors using ggplot2.
+#' Draws a swatch grid of Chanwe colors using ggplot2. The grid title names
+#' the previewed group so rendered previews stay self-describing.
 #'
 #' @param palette Palette selector accepted by `chanwe_palette()`.
 #'
@@ -377,6 +412,11 @@ chanwe_preview_palette <- function(palette = "all") {
   if (is.list(values)) {
     values <- values$all
   }
+
+  title_label <- paste0(
+    "Chanwe palette · ",
+    if (is.null(palette)) "all" else palette
+  )
 
   n <- length(values)
   ncol <- if (n <= 12) 4 else 5
@@ -417,9 +457,8 @@ chanwe_preview_palette <- function(palette = "all") {
     ) +
     ggplot2::scale_color_identity() +
     ggplot2::scale_fill_identity() +
-    ggplot2::coord_equal() +
     ggplot2::theme_void(base_family = "Satoshi") +
-    ggplot2::labs(title = "ChanWe Palette") +
+    ggplot2::labs(title = title_label) +
     ggplot2::theme(
       plot.title = ggplot2::element_text(
         hjust = 0,

@@ -363,11 +363,15 @@
 // KPI cards
 // =============================================================
 
+// "green"/"red" resolve to the canonical signed tokens so KPI cards, chart
+// arrows, and table deltas share one positive/negative pair. Raw "#RRGGBB"
+// strings pass through for self-describing swatches.
 #let _kpi-color(name) = {
   if name == "primary" { _t.primary }
-  else if name == "green" { rgb("#15803D") }
+  else if name == "green" { rgb("#147705") }
   else if name == "red" { rgb("#CC1914") }
   else if name == "ink" { _t.ink }
+  else if type(name) == str and name.starts-with("#") { rgb(name) }
   else { _t.fg-muted }
 }
 
@@ -378,7 +382,7 @@
   unit: "",
   main-color: "ink",
   secondary: "",
-  secondary-color: "primary",
+  secondary-color: "muted",
   direction: "none",
 ) = {
   let mc = if main-color == "ink" { _t.ink } else { _kpi-color(main-color) }
@@ -408,7 +412,7 @@
       // title
       block(height: 8mm, width: 100%, clip: false)[
         #set par(leading: 0.7em)
-        #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.primary, "// ")#text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-subtle, upper(title))
+        #text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.primary-text, "// ")#text(font: _t.font-mono, size: 7.5pt, weight: 500, fill: _t.fg-muted, upper(title))
       ],
       v(5mm),   // gap: title → main
       // main number
@@ -453,7 +457,7 @@
 #let zone-highlight(color: "metallic", margin: 2mm, above: 3mm, below: 3mm, col-gutter: 14mm, ..bodies) = {
   let bg = if color == "metallic"        { rgb("#F7F7F7") }
     else if color == "beige"             { _t.beige       }
-    else if color == "white-ivory"       { rgb("#FAFAFA") }
+    else if color == "white-ivory"       { rgb("#FAF9F7") }
     else if color == "gray"              { rgb("#EDF0F1") }
     else if color == "dark"              { _t.ink         }
     else if color == "orange"            { _t.primary     }

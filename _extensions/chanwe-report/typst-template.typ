@@ -11,6 +11,10 @@
   fg-muted:    rgb("#71706C"),
   fg-subtle:   rgb("#928D86"),
   primary:     rgb("#FD3810"),
+  // text-accessible primary: same hue, darkened until it passes WCAG 4.5:1
+  // small-text contrast on every brand surface — use for small text
+  // (eyebrows, caption prefixes); keep `primary` for rules and display
+  primary-text: rgb("#C52C0C"),
   primary-dark: rgb("#EE5524"),
   primary-soft: rgb("#FD38101A"),
   beige:       rgb("#F5F1EB"),
@@ -120,10 +124,10 @@
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
           [
-            #text(weight: 700, fill: _t.primary, "//")
+            #text(weight: 700, fill: _t.primary-text, "//")
             #h(5pt)
-            #text(fill: _t.fg-subtle, upper(section))
-            #if topic != "" [#text(fill: _t.fg-subtle, upper(" · " + topic))]
+            #text(fill: _t.fg-muted, upper(section))
+            #if topic != "" [#text(fill: _t.fg-muted, upper(" · " + topic))]
           ],
           image(_chanwe-assets + "Logo_Negro.svg", height: 3.5mm, fit: "contain"),
         )
@@ -140,12 +144,12 @@
       rows: (auto, 1fr),
       pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + _t.border)),
       align(horizon, {
-        set text(font: _t.font-mono, size: 6pt, tracking: 0.14em, fill: _t.fg-subtle)
+        set text(font: _t.font-mono, size: 6pt, tracking: 0.14em, fill: _t.fg-muted)
         grid(
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
-          [#upper[#doc-id #h(8pt) #text(fill: _t.neutral-300, edition)]],
-          [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-subtle, upper(" / " + str(counter(page).final().first())))],
+          [#upper[#doc-id #h(8pt) #text(fill: _t.fg-subtle, edition)]],
+          [#text(size: 6.9pt, fill: _t.ink, weight: 600, upper(str(counter(page).get().first())))#text(size: 6.9pt, fill: _t.fg-muted, upper(" / " + str(counter(page).final().first())))],
         )
       }),
     )

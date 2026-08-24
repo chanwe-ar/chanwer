@@ -261,7 +261,7 @@ local function Div(el)
         local unit            = attr(block, "unit",            "")
         local main_color      = attr(block, "main-color",      "ink")
         local secondary       = attr(block, "secondary",       "")
-        local secondary_color = attr(block, "secondary-color", "primary")
+        local secondary_color = attr(block, "secondary-color", "muted")
         local direction       = attr(block, "direction",       "none")
 
         local card = string.format(

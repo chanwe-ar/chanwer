@@ -14,16 +14,16 @@
       column-gutter: 4mm,
       align: (left + bottom, left + bottom, left + bottom, right + bottom),
       [],
-      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
-      text(font: _t.font-mono, size: 7.5pt, weight: 100, fill: _t.fg-subtle, label),
-      text(font: _t.font-mono, size: 7.5pt, tracking: 0.14em, weight: 100, fill: _t.fg-subtle, page),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-muted, num),
+      text(font: _t.font-mono, size: 7.5pt, weight: 100, fill: _t.fg-muted, label),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
     )
   } else {
     grid(
       columns: (14mm, 1fr, 12mm),
       column-gutter: 4mm,
       align: (left + bottom, left + bottom, right + bottom),
-      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-subtle, num),
+      text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: 100, fill: _t.fg-muted, num),
       text(font: _t.font-mono, size: 7.5pt, weight: 100, fill: _t.ink, label),
       text(font: _t.font-mono, size: 7.5pt, tracking: 0.14em, weight: 100, fill: _t.fg-muted, page),
     )
@@ -48,7 +48,7 @@
       ),
       text(
         font: _t.font-mono, size: 8pt, tracking: 0.18em,
-        fill: _t.fg-subtle, upper(pages),
+        fill: _t.fg-muted, upper(pages),
       ),
     )
     #v(2mm)
@@ -116,7 +116,7 @@
           v(1.5mm)
           text(font: _t.font-sans, size: 9.5pt, fill: _t.fg-muted, desc)
         },
-        text(font: _t.font-mono, size: 8pt, tracking: 0.12em, fill: _t.fg-subtle, upper(pg)),
+        text(font: _t.font-mono, size: 8pt, tracking: 0.12em, fill: _t.fg-muted, upper(pg)),
       )
       v(3mm)
       line(length: 100%, stroke: 0.5pt + _t.border)
@@ -208,7 +208,7 @@
               text(font: _t.font-display, size: 16pt, weight: 600,
                    fill: _t.neutral-900, it.body()),
               text(font: _t.font-mono, size: 7pt, tracking: 0.18em,
-                   fill: _t.fg-subtle, upper(pages_str)),
+                   fill: _t.fg-muted, upper(pages_str)),
             )
             #v(4mm)
             #line(length: 100%, stroke: 0.5pt + _t.neutral-900)
@@ -255,7 +255,7 @@
 //       p · p · ... (Cormorant Garamond 12pt body)
 // =============================================================
 #let chanwe-side-row(label: "", value: "", dark: false) = {
-  let lc = if dark { white.transparentize(45%) } else { _t.fg-subtle }
+  let lc = if dark { white.transparentize(45%) } else { _t.fg-muted }
   let vc = if dark { white                     } else { _t.fg        }
   stack(
     dir: ttb, spacing: 8pt,
@@ -486,7 +486,7 @@
   let body-color  = if dark { white.transparentize(15%)  } else { _t.fg-muted    }
   let takwy-color = if dark { white                      } else { _t.ink         }
   let div-stroke  = if divider { (bottom: 0.5pt + _t.neutral-900) } else { none }
-  let lc          = if dark { white.transparentize(45%) } else { _t.fg-subtle }
+  let lc          = if dark { white.transparentize(45%) } else { _t.fg-muted }
   let vc          = if dark { white                     } else { _t.neutral-900 }
   let border-col  = if dark { white.transparentize(70%) } else { _t.neutral-300 }
 
@@ -827,7 +827,7 @@
       align: (left + horizon, right + horizon),
       {
         set text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
-                 fill: _t.fg-subtle)
+                 fill: _t.fg-muted)
         upper(doc.doc-id)
         if doc.edition != "" {
           h(14mm)
@@ -835,7 +835,7 @@
         }
       },
       text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
-           fill: _t.fg-subtle, upper(_pages)),
+           fill: _t.fg-muted, upper(_pages)),
     )
   ]
   }

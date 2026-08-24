@@ -1,6 +1,6 @@
 title: Chanwe Publications
 author: Chanwe Studio
-version: 1.1.0
+version: 1.2.0
 quarto-required: ">=1.9.37"
 contributes:
   formats:
@@ -11,7 +11,7 @@ contributes:
       margin:
         x: 18mm
         y: 22mm
-      mainfont: "Inter"
+      mainfont: "Satoshi"
       monofont: "JetBrains Mono"
       fontsize: 10.5pt
       highlight-style: none

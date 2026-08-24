@@ -3,7 +3,7 @@
 \name{scale_color_chanwe_c}
 \alias{scale_color_chanwe_c}
 \alias{scale_fill_chanwe_c}
-\title{ChanWe Continuous Color Scales}
+\title{Chanwe Continuous Color Scales}
 \usage{
 scale_color_chanwe_c(palette = "orange", reverse = FALSE, colours = NULL, ...)
 
@@ -25,7 +25,7 @@ colors that, when supplied, overrides \code{palette}.}
 A ggplot2 scale object.
 }
 \description{
-Sequential (one hue, light \eqn{\to} dark) ChanWe gradient scales for
+Sequential (one hue, light \eqn{\to} dark) Chanwe gradient scales for
 magnitude encoding. Pick the hue with \code{palette}; every named ramp is a
 brand family from \code{\link[=chanwe_palette]{chanwe_palette()}}.
 }

@@ -3,7 +3,7 @@
 \name{scale_color_chanwe_d}
 \alias{scale_color_chanwe_d}
 \alias{scale_fill_chanwe_d}
-\title{ChanWe Discrete Color Scales}
+\title{Chanwe Discrete Color Scales}
 \usage{
 scale_color_chanwe_d(palette = "chart", reverse = FALSE, ...)
 
@@ -24,7 +24,7 @@ e.g. \code{name}, \code{labels}, \code{guide}, \code{drop}.}
 A ggplot2 scale object.
 }
 \description{
-Apply a ChanWe categorical palette to \code{color} or \code{fill} aesthetics.
+Apply a Chanwe categorical palette to \code{color} or \code{fill} aesthetics.
 Colors cycle through the chosen palette when there are more categories
 than palette entries.
 }

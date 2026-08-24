@@ -2,7 +2,7 @@
 % Please edit documentation in R/palette.R
 \name{chanwe_palette}
 \alias{chanwe_palette}
-\title{ChanWe Color Palette Tokens}
+\title{Chanwe Color Palette Tokens}
 \usage{
 chanwe_palette(palette = NULL)
 }
@@ -20,7 +20,7 @@ If \code{palette = NULL}, a list containing \code{all} and \code{groups}.
 Otherwise, a named character vector of hex colors.
 }
 \description{
-Returns ChanWe brand colors as a single named vector, grouped vectors,
+Returns Chanwe brand colors as a single named vector, grouped vectors,
 or specific palette subsets used by plotting and reporting helpers.
 }
 \section{Signed colors}{

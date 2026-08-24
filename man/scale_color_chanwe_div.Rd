@@ -3,15 +3,18 @@
 \name{scale_color_chanwe_div}
 \alias{scale_color_chanwe_div}
 \alias{scale_fill_chanwe_div}
-\title{ChanWe Diverging Color Scales}
+\title{Chanwe Diverging Color Scales}
 \usage{
-scale_color_chanwe_div(reverse = FALSE, ...)
+scale_color_chanwe_div(reverse = FALSE, cvd = FALSE, ...)
 
-scale_fill_chanwe_div(reverse = FALSE, ...)
+scale_fill_chanwe_div(reverse = FALSE, cvd = FALSE, ...)
 }
 \arguments{
 \item{reverse}{Flip the scale (positive pole on the low end).
 Default \code{FALSE}.}
+
+\item{cvd}{Use the CVD-safe vermillion↔blue variant instead of
+vermillion↔green. Default \code{FALSE}.}
 
 \item{...}{Additional arguments passed to
 \code{\link[ggplot2:scale_gradient]{ggplot2::scale_color_gradientn()}} / \code{\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradientn()}},
@@ -32,6 +35,14 @@ The midpoint maps to the \emph{middle of the data range}, so give the scale
 symmetric limits when zero is the baseline, e.g.
 \code{limits = c(-max(abs(x)), max(abs(x)))} — otherwise zero drifts off the
 neutral gray.
+\subsection{Color-vision deficiency}{
+
+Red↔green is the classic deuteranopia trap. When the audience includes
+red-green CVD readers, pass \code{cvd = TRUE}: the positive arm switches to
+the brand's structural blue family (pole = the report info blue) while
+the negative arm stays vermillion, so polarity survives simulation and
+both arms remain brand families.
+}
 }
 \examples{
 df <- data.frame(x = 1:10, y = 1, delta = seq(-3, 3, length.out = 10))

@@ -118,8 +118,12 @@
             font: _t.font-display, size: 36pt, weight: 600,
             tracking: -0.04em, fill: _t.neutral-900,
             title,
-          )#h(3pt)#box(width: 8pt, height: 8pt, baseline: -2pt,
-            circle(fill: _t.primary, stroke: none))
+          )#box(baseline: -2pt, {
+            // no glue between title and box: the terminal dot must never
+            // wrap to its own line, so the 3pt gap lives inside the box
+            h(3pt)
+            circle(radius: 4pt, fill: _t.primary, stroke: none)
+          })
         ]
 
         #if subtitle != none {

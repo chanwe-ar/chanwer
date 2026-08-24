@@ -2,7 +2,7 @@
 % Please edit documentation in R/kbl-theme.R
 \name{chanwe_col_signed}
 \alias{chanwe_col_signed}
-\title{Signed Color Function for ChanWe Tables}
+\title{Signed Color Function for Chanwe Tables}
 \usage{
 chanwe_col_signed(
   threshold = 0,
@@ -20,7 +20,10 @@ Default \code{0}.}
 states. Defaults are the canonical signed tokens.}
 
 \item{flip}{Set \code{TRUE} when smaller is better (e.g. costs, churn):
-values below the threshold get the positive color. Default \code{FALSE}.}
+values below the threshold get the positive color. May also be a
+logical \emph{vector}, recycled along the column, for tables that mix
+larger-is-better and smaller-is-better rows in one column — e.g.
+\code{flip = df$metric \%in\% c("Opex", "Churn")}. Default \code{FALSE}.}
 }
 \value{
 A function taking a numeric vector and returning raw Typst color
@@ -30,7 +33,7 @@ values, this works even when \code{fmt} renders the column as text.
 }
 \description{
 Returns a ready-made function for the \code{col_colors} argument of
-\code{\link{chanwe_kbl}()}: positive values in the canonical ChanWe
+\code{\link{chanwe_kbl}()}: positive values in the canonical Chanwe
 positive green, negative values in the alert vermillion, values at the
 threshold (and \code{NA}) in neutral ink. The same three tokens drive the
 KPI scoreboard arrows and the poles of \code{\link{scale_color_chanwe_div}()},
@@ -44,6 +47,10 @@ fn(c(2.5, -1.25, 0, NA))
 
 ## Smaller-is-better metric:
 chanwe_col_signed(flip = TRUE)(c(-3, 4))
+
+## Mixed-valence column — flip only the smaller-is-better rows:
+df <- data.frame(metric = c("Revenue", "Churn"), qoq = c(2.1, -0.8))
+chanwe_col_signed(flip = df$metric == "Churn")(df$qoq)
 }
 \seealso{
 \code{\link[=chanwe_kbl]{chanwe_kbl()}}, \code{\link[=scale_color_chanwe_div]{scale_color_chanwe_div()}}, \code{\link[=chanwe_palette]{chanwe_palette()}}

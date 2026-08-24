@@ -18,17 +18,20 @@
   }
   metrics <- list()
   idx <- 4L
-  while (idx + 2L <= length(parts)) {
+  # each metric encodes 4 fields: label, value, direction (arrow), valence (color)
+  while (idx + 3L <= length(parts)) {
     dir <- suppressWarnings(as.integer(parts[idx + 2L]))
+    val <- suppressWarnings(as.integer(parts[idx + 3L]))
     metrics <- c(
       metrics,
       list(list(
         label = parts[idx],
         value = parts[idx + 1L],
-        dir = if (is.na(dir)) 0L else dir
+        dir = if (is.na(dir)) 0L else dir,
+        valence = if (is.na(val)) 0L else val
       ))
     )
-    idx <- idx + 3L
+    idx <- idx + 4L
   }
   list(value = parts[1L], unit = parts[2L], date = parts[3L], metrics = metrics)
 }
@@ -461,8 +464,7 @@ makeContent.cw_subtitle_tree <- function(x) {
     kpi <- x$kpi_data
     mono_fam <- x$mono_family %||_% "JetBrains Mono"
     ink <- x$ink_col
-    fg_muted <- "#656460"
-    subtle <- x$kpi_label_colour %||_% "#AEABA6"
+    fg_muted <- x$kpi_label_colour %||_% chanwe_get_colors()[["typst-fg-muted"]]
     # canonical signed tokens — same pair as chanwe_col_signed() and the
     # diverging scale poles
     signed <- chanwe_get_signed()
@@ -503,19 +505,15 @@ makeContent.cw_subtitle_tree <- function(x) {
     )
     ch <- grid::gList(ch, val_g)
 
-    # Unit + AS OF + date block, positioned right of the hero value
+    # Unit + date block, positioned right of the hero value.
+    # Micro-type floor: nothing in the KPI panel renders below 3.8pt.
     side_x <- grid::unit(1, "grobwidth", val_g) + grid::unit(11, "pt")
     unit_gp <- grid::gpar(
       fontfamily = mono_fam,
-      fontsize = 3.5,
+      fontsize = 4.2,
       col = fg_muted
     )
-    as_of_gp <- grid::gpar(
-      fontfamily = mono_fam,
-      fontsize = 3.5,
-      col = fg_muted
-    )
-    date_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 4.5, col = fg_muted)
+    date_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 5.0, col = fg_muted)
 
     if (nzchar(kpi$unit)) {
       ch <- grid::gList(
@@ -550,15 +548,17 @@ makeContent.cw_subtitle_tree <- function(x) {
       col_step <- 0.13 # spacing between column right-edges
       lbl_gp <- grid::gpar(
         fontfamily = mono_fam,
-        fontsize = 3.0,
+        fontsize = 3.8,
         col = fg_muted
       )
       for (i in seq_along(kpi$metrics)) {
         m <- kpi$metrics[[i]]
         col_x <- col_right - (n_metrics - i) * col_step
-        m_col <- if (m$dir > 0L) {
+        # arrow encodes the MOVEMENT (direction); color encodes the VALENCE
+        valence <- m$valence %||_% m$dir
+        m_col <- if (valence > 0L) {
           green
-        } else if (m$dir < 0L) {
+        } else if (valence < 0L) {
           red
         } else {
           neutral
@@ -572,7 +572,7 @@ makeContent.cw_subtitle_tree <- function(x) {
         }
         val_m_gp <- grid::gpar(
           fontfamily = mono_fam,
-          fontsize = 5.0,
+          fontsize = 5.6,
           col = m_col
         )
         ch <- grid::gList(

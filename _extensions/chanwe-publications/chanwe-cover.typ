@@ -10,6 +10,12 @@
 // Pandoc/Quarto escapes underscores and hyphens in YAML values.
 #let _chanwe-clean-path(p) = if p == none { none } else { p.replace("\\_", "_").replace("\\-", "-") }
 
+// Pandoc's typst writer escapes markup characters inside YAML metadata
+// strings (@ → \@, _ → \_); strip those so they never print literally.
+#let _chanwe-clean-str(s) = if s == none { none } else if type(s) == str {
+  s.replace("\\@", "@").replace("\\_", "_").replace("\\-", "-").replace("\\#", "#")
+} else { s }
+
 #let _publication-paper = rgb("#F7F7F7")
 #let _publication-art-paper = rgb("#FAF9F7")
 #let _publication-ink = rgb("#14141A")
@@ -204,12 +210,11 @@
                     tracking: -0.04em,
                     fill: _t.neutral-900,
                     title,
-                  )#h(3pt)#box(
-                    width: 8pt,
-                    height: 8pt,
-                    baseline: -2pt,
-                    circle(fill: _t.primary, stroke: none),
-                  )
+                  )#box(baseline: -2pt, {
+                    // gap inside the box so the terminal dot cannot wrap
+                    h(3pt)
+                    circle(radius: 4pt, fill: _t.primary, stroke: none)
+                  })
                 ],
                 if subtitle != none {
                   block(width: 118mm)[
@@ -383,13 +388,13 @@
             column-gutter: 8mm,
             ..back-cols.map(((label, value, sub)) => block(spacing: 0pt)[
               #text(font: _t.font-mono, size: 6pt, tracking: 0.20em,
-                    fill: white.transparentize(50%), upper(label))
+                    fill: white.transparentize(50%), upper(_chanwe-clean-str(label)))
               #v(2.5mm)
-              #text(font: _t.font-display, size: 9.5pt, weight: 700, fill: white, value)
+              #text(font: _t.font-display, size: 9.5pt, weight: 700, fill: white, _chanwe-clean-str(value))
               #if sub != none and sub != "" {
                 linebreak()
                 v(0.5mm)
-                text(font: _t.font-sans, size: 8pt, fill: white.transparentize(40%), sub)
+                text(font: _t.font-sans, size: 8pt, fill: white.transparentize(40%), _chanwe-clean-str(sub))
               }
             ])
           )

@@ -2,7 +2,7 @@
 % Please edit documentation in R/palette.R
 \name{chanwe_preview_palette}
 \alias{chanwe_preview_palette}
-\title{Preview ChanWe Palette}
+\title{Preview Chanwe Palette}
 \usage{
 chanwe_preview_palette(palette = "all")
 }
@@ -13,7 +13,8 @@ chanwe_preview_palette(palette = "all")
 A ggplot object.
 }
 \description{
-Draws a swatch grid of ChanWe colors using ggplot2.
+Draws a swatch grid of Chanwe colors using ggplot2. The grid title names
+the previewed group so rendered previews stay self-describing.
 }
 \examples{
 p <- chanwe_preview_palette("chart")

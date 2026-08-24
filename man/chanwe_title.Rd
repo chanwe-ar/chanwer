@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggplot2-theme.R
 \name{chanwe_title}
 \alias{chanwe_title}
-\title{ChanWe Title Helper}
+\title{Chanwe Title Helper}
 \usage{
 chanwe_title(text, eyebrow = NULL)
 }

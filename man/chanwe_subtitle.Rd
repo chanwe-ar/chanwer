@@ -2,7 +2,7 @@
 % Please edit documentation in R/ggplot2-theme.R
 \name{chanwe_subtitle}
 \alias{chanwe_subtitle}
-\title{ChanWe Subtitle Helper}
+\title{Chanwe Subtitle Helper}
 \usage{
 chanwe_subtitle(text, note = NULL, kpi = NULL)
 }
