@@ -1,6 +1,6 @@
 Package: chanwer
 Title: ChanWe Visual Themes for Quarto Workflows
-Version: 2.3.0
+Version: 2.3.1
 Authors@R:
     person(given = "Chanwe",
            family = "Team",

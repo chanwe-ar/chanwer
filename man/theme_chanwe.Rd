@@ -76,7 +76,7 @@ brand-consistent color palettes.
    Axis titles \tab JetBrains Mono \tab 400 \cr
    Facet strip labels \tab JetBrains Mono Thin \tab 100 \cr
    Legend text / title \tab JetBrains Mono \tab 400 \cr
-   Caption \tab JetBrains Mono Thin \tab 100 \cr
+   Caption \tab JetBrains Mono \tab 400 \cr
 }
 
 

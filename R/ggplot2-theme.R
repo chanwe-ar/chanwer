@@ -65,7 +65,7 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' | Axis titles | JetBrains Mono | 400 |
 #' | Facet strip labels | JetBrains Mono Thin | 100 |
 #' | Legend text / title | JetBrains Mono | 400 |
-#' | Caption | JetBrains Mono Thin | 100 |
+#' | Caption | JetBrains Mono | 400 |
 #'
 #' The eyebrow renders in the brand primary (`typst-primary`, `#FD3810`);
 #' the caption `//` prefix uses the text-accessible primary variant
@@ -301,15 +301,16 @@ theme_chanwe <- function(
         primary_colour = colors[["typst-primary-text"]],
         ink_colour = colors[["typst-ink"]]
       ),
+      # Axis titles and tick labels at 0.825x base (25% up from 0.66x).
       axis.title = ggplot2::element_text(
         family = mono_family,
         color = colors[["typst-ink"]],
         face = "plain",
-        size = base_text_size * 0.66
+        size = base_text_size * 0.825
       ),
       axis.text = ggplot2::element_text(
         color = colors[["typst-ink"]],
-        size = base_text_size * 0.66
+        size = base_text_size * 0.825
       ),
       axis.title.x = ggplot2::element_text(
         hjust = 1,

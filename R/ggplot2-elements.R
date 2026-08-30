@@ -810,13 +810,15 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
   primary <- element$primary_colour %||_% "#FB3D0E"
   cap_size <- element$size %||_% 9
 
+  # Caption text in the regular mono weight: the Thin face (100) reads as
+  # gray even in ink, so the source line was hard to see.
   cap_gp <- grid::gpar(
-    fontfamily = element$mono_thin_family %||_% "JetBrains Mono Thin",
+    fontfamily = element$family %||_% "JetBrains Mono",
     fontsize = cap_size,
     col = element$colour %||_% "#808080"
   )
   pfx_gp <- grid::gpar(
-    fontfamily = element$mono_thin_family %||_% "JetBrains Mono Thin",
+    fontfamily = element$family %||_% "JetBrains Mono",
     fontsize = cap_size * 0.75,
     col = primary
   )
