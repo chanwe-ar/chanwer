@@ -2913,7 +2913,7 @@ One pair everywhere: `chanwe_palette("signed")` drives the KPI arrows, table del
     columns: (1fr, 1fr, 1fr, 1fr),
     align: (left, right, right, right,),
     table.header(
-      table.cell(align: left, colspan: 4, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[SIGNED - TABLES]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[Quarterly performance]],
+      table.cell(align: left, colspan: 4, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[SIGNED - TABLES]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[Quarterly performance]],
       table.cell(align: left, colspan: 4, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[Signed deltas via chanwe\_col\_signed() - flip marks Opex and Churn so color reads as valence]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[METRIC]],
@@ -2954,7 +2954,7 @@ One pair everywhere: `chanwe_palette("signed")` drives the KPI arrows, table del
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 4, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source: finance close, Q1 - simulated]],
+      table.cell(colspan: 4, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source: finance close, Q1 - simulated]],
     )
   )
   ]
@@ -3111,7 +3111,7 @@ establece el piso de referencia para el análisis diferencial.
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · WHITE-IVORY]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · white-ivory]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLE · SPACIOUS · WHITE-IVORY]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · white-ivory]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -3171,7 +3171,7 @@ establece el piso de referencia para el análisis diferencial.
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3200,7 +3200,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · WHITE]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · white]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLE · SPACIOUS · WHITE]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · white]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -3260,7 +3260,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3289,7 +3289,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · BEIGE]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · beige]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLE · SPACIOUS · BEIGE]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · beige]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[top\_border = FALSE]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -3349,7 +3349,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3377,7 +3377,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · GRAY]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · gray]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLE · SPACIOUS · GRAY]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · gray]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[padding = 0  ·  top\_border = FALSE]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -3437,7 +3437,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3465,7 +3465,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · SPACIOUS · METALLIC]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · metallic]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLE · SPACIOUS · METALLIC]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[bg · metallic]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -3525,7 +3525,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3554,7 +3554,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, right, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLES - SPACIOUS]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[Fleet summary by cylinder count]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLES - SPACIOUS]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[Fleet summary by cylinder count]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[Spacious density - the presentation default]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[CYLINDERS]],
@@ -3584,7 +3584,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source: mtcars]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source: mtcars]],
     )
   )
   ]
@@ -3611,7 +3611,7 @@ supplement: "Table",
     columns: (2.2fr, 1fr, 0.8fr, 1fr, 1.1fr, 1.6fr),
     align: (left, right, left, right, right, left,),
     table.header(
-      table.cell(align: left, colspan: 6, inset: (top: 5pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(2pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLES - COMPACT]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[Vehicle detail]],
+      table.cell(align: left, colspan: 6, inset: (top: 5pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(2pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLES - COMPACT]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[Vehicle detail]],
       table.cell(align: left, colspan: 6, inset: (top: 3pt, bottom: 5pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[Compact density for dense reporting tables - explicit col\_widths]#v(4pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 14pt, bottom: 5pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
@@ -3680,7 +3680,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 6, align: left, inset: (top: 9pt, bottom: 5pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source: mtcars]],
+      table.cell(colspan: 6, align: left, inset: (top: 9pt, bottom: 5pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source: mtcars]],
     )
   )
   ]
@@ -3710,7 +3710,7 @@ supplement: "Table",
     align: (left, right, right, right,),
     table.vline(x: 3, stroke: 0.4pt + rgb("#D4D4D4")),
     table.header(
-      table.cell(align: left, colspan: 4, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLES - TOTALS + HIGHLIGHT]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[Revenue by region]],
+      table.cell(align: left, colspan: 4, inset: (top: 10pt, bottom: 3pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLES - TOTALS + HIGHLIGHT]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[Revenue by region]],
       table.cell(align: left, colspan: 4, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[Total row via n\_total; QoQ column highlighted and signed; vline separates quarters from the delta]#v(8pt, weak: false)],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[REGION]],
@@ -3747,7 +3747,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 4, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source: finance close - simulated]],
+      table.cell(colspan: 4, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source: finance close - simulated]],
     )
   )
   ]
@@ -3778,7 +3778,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[title only · no subtitle]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[title only · no subtitle]],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MPG]],
@@ -3837,7 +3837,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -3870,7 +3870,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#C52C0C"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[title only · zone-highlight]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm), stroke: (top: 0.1pt + _t.ink))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#E94B2B"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Archivo", size: 13pt, fill: _t.ink, weight: "medium")[title only · zone-highlight]],
       table.hline(stroke: 0.7pt + _t.ink),
       table.cell(align: left, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MODEL]],
       table.cell(align: right, inset: (top: 18pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[MPG]],
@@ -3929,7 +3929,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -4004,7 +4004,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]
@@ -4087,7 +4087,7 @@ supplement: "Table",
     table.hline(stroke: 0.5pt + _t.ink),
     table.footer(
       table.hline(stroke: 0.3pt + _t.ink),
-      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#C52C0C"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
+      table.cell(colspan: 5, align: left, inset: (top: 10pt, bottom: 10pt, x: 2.5mm))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.ink)[#text(fill: rgb("#E94B2B"))[/\/]#h(4pt)Source · Motor Trend, 1974 · mtcars dataset.]],
     )
   )
   ]

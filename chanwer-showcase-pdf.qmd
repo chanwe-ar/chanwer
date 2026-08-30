@@ -87,7 +87,14 @@ econ <- economics |>
     mutate(unemp_pct = unemploy / pop * 100)
 
 deltas <- tibble::tibble(
-    metric = c("Revenue", "Gross margin", "EBITDA", "Opex", "Net income", "Churn"),
+    metric = c(
+        "Revenue",
+        "Gross margin",
+        "EBITDA",
+        "Opex",
+        "Net income",
+        "Churn"
+    ),
     actual = c(1240.5, 682.1, 310.2, -420.3, 185.7, 42.0),
     qoq = c(12.4, 4.2, -3.1, -1.9, 5.8, -0.8),
     yoy = c(28.1, 9.6, 11.2, 6.3, -2.4, -4.1)
@@ -257,8 +264,13 @@ ggplot(mt, aes(wt, mpg, color = am)) +
     geom_point(size = 2.6, alpha = 0.9) +
     scale_color_chanwe_d() +
     labs(
-        title = chanwe_title("Fuel economy by weight", eyebrow = "CATEGORICAL - 2 SERIES"),
-        subtitle = chanwe_subtitle("Nominal series only - scatter charts stay at three or fewer"),
+        title = chanwe_title(
+            "Fuel economy by weight",
+            eyebrow = "CATEGORICAL - 2 SERIES"
+        ),
+        subtitle = chanwe_subtitle(
+            "Nominal series only - scatter charts stay at three or fewer"
+        ),
         x = "Weight (1000 lbs)",
         y = "MPG",
         color = "Transmission",
@@ -278,15 +290,24 @@ series into "Other" or facet. Bars, lines, and stacks may use up to six.
 #| fig-height: 4.2
 mpg_drv <- ggplot2::mpg |>
     mutate(
-        drv = factor(drv, levels = c("f", "4", "r"), labels = c("Front", "4WD", "Rear")),
+        drv = factor(
+            drv,
+            levels = c("f", "4", "r"),
+            labels = c("Front", "4WD", "Rear")
+        ),
         class = reorder(class, class, FUN = length)
     )
 ggplot(mpg_drv, aes(y = class, fill = drv)) +
     geom_bar(width = 0.62) +
     scale_fill_chanwe_d() +
     labs(
-        title = chanwe_title("Vehicles by class and drivetrain", eyebrow = "CATEGORICAL - STACKED BARS"),
-        subtitle = chanwe_subtitle("Color encodes a second nominal variable - bars and stacks may use up to six series"),
+        title = chanwe_title(
+            "Vehicles by class and drivetrain",
+            eyebrow = "CATEGORICAL - STACKED BARS"
+        ),
+        subtitle = chanwe_subtitle(
+            "Color encodes a second nominal variable - bars and stacks may use up to six series"
+        ),
         x = "Vehicles",
         y = NULL,
         fill = "Drivetrain",
@@ -307,8 +328,13 @@ ggplot(mt, aes(hp_band, fill = hp_band)) +
     geom_bar(width = 0.55) +
     scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE) +
     labs(
-        title = chanwe_title("Fleet by horsepower band", eyebrow = "ORDINAL - ONE HUE"),
-        subtitle = chanwe_subtitle("Low to High reads light to dark in a single family"),
+        title = chanwe_title(
+            "Fleet by horsepower band",
+            eyebrow = "ORDINAL - ONE HUE"
+        ),
+        subtitle = chanwe_subtitle(
+            "Low to High reads light to dark in a single family"
+        ),
         x = NULL,
         y = "Vehicles",
         caption = chanwe_caption("Source: mtcars")
@@ -330,7 +356,10 @@ ggplot(mt, aes(wt, mpg, color = disp)) +
     geom_point(size = 2.8) +
     scale_color_chanwe_c(palette = "teal") +
     labs(
-        title = chanwe_title("Displacement gradient", eyebrow = "SEQUENTIAL - TEAL"),
+        title = chanwe_title(
+            "Displacement gradient",
+            eyebrow = "SEQUENTIAL - TEAL"
+        ),
         subtitle = chanwe_subtitle("One hue, light to dark, magnitude only"),
         x = "Weight (1000 lbs)",
         y = "MPG",
@@ -347,8 +376,13 @@ ggplot(econ, aes(date, unemp_pct, color = psavert)) +
     geom_line(linewidth = 0.9) +
     scale_color_chanwe_c() +
     labs(
-        title = chanwe_title("Unemployment, colored by savings rate", eyebrow = "SEQUENTIAL - ORANGE (DEFAULT)"),
-        subtitle = chanwe_subtitle("The default gradient anchors on the report primary"),
+        title = chanwe_title(
+            "Unemployment, colored by savings rate",
+            eyebrow = "SEQUENTIAL - ORANGE (DEFAULT)"
+        ),
+        subtitle = chanwe_subtitle(
+            "The default gradient anchors on the report primary"
+        ),
         x = NULL,
         y = "Unemployment (%)",
         color = "Savings %",
@@ -367,12 +401,20 @@ zero lands on the midpoint.
 #| label: div-heat
 #| fig-height: 3.6
 ggplot(heat, aes(week, region, fill = delta)) +
-    geom_tile(color = chanwe_palette("core")[["brand-white"]], linewidth = 1.2) +
+    geom_tile(
+        color = chanwe_palette("core")[["brand-white"]],
+        linewidth = 1.2
+    ) +
     scale_fill_chanwe_div(limits = c(-heat_m, heat_m)) +
     scale_x_continuous(breaks = seq(2, 12, by = 2)) +
     labs(
-        title = chanwe_title("Weekly delta vs plan", eyebrow = "DIVERGING - HEATMAP"),
-        subtitle = chanwe_subtitle("Symmetric limits pin zero to the neutral midpoint"),
+        title = chanwe_title(
+            "Weekly delta vs plan",
+            eyebrow = "DIVERGING - HEATMAP"
+        ),
+        subtitle = chanwe_subtitle(
+            "Symmetric limits pin zero to the neutral midpoint"
+        ),
         x = "Week",
         y = NULL,
         fill = "Δ pp",
@@ -385,12 +427,20 @@ ggplot(heat, aes(week, region, fill = delta)) +
 #| label: div-heat-cvd
 #| fig-height: 3.6
 ggplot(heat, aes(week, region, fill = delta)) +
-    geom_tile(color = chanwe_palette("core")[["brand-white"]], linewidth = 1.2) +
+    geom_tile(
+        color = chanwe_palette("core")[["brand-white"]],
+        linewidth = 1.2
+    ) +
     scale_fill_chanwe_div(limits = c(-heat_m, heat_m), cvd = TRUE) +
     scale_x_continuous(breaks = seq(2, 12, by = 2)) +
     labs(
-        title = chanwe_title("Weekly delta vs plan, CVD-safe", eyebrow = "DIVERGING - CVD = TRUE"),
-        subtitle = chanwe_subtitle("Positive arm switches to structural blue; polarity survives deuteranopia"),
+        title = chanwe_title(
+            "Weekly delta vs plan, CVD-safe",
+            eyebrow = "DIVERGING - CVD = TRUE"
+        ),
+        subtitle = chanwe_subtitle(
+            "Positive arm switches to structural blue; polarity survives deuteranopia"
+        ),
         x = "Week",
         y = NULL,
         fill = "Δ pp",
@@ -411,8 +461,13 @@ ggplot(mk, aes(delta, manufacturer, fill = delta)) +
     geom_col(width = 0.62) +
     scale_fill_chanwe_div(limits = c(-md, md)) +
     labs(
-        title = chanwe_title("Highway MPG vs fleet average", eyebrow = "DIVERGING - BARS"),
-        subtitle = chanwe_subtitle("Above average in green, below in vermillion"),
+        title = chanwe_title(
+            "Highway MPG vs fleet average",
+            eyebrow = "DIVERGING - BARS"
+        ),
+        subtitle = chanwe_subtitle(
+            "Above average in green, below in vermillion"
+        ),
         x = "Δ MPG",
         y = NULL,
         caption = chanwe_caption("Source: ggplot2::mpg")
@@ -446,7 +501,10 @@ color.
 ggplot(econ, aes(date, unemp_pct)) +
     geom_line(linewidth = 0.8, color = chart[["chart-blue"]]) +
     labs(
-        title = chanwe_title("Unemployment rate", eyebrow = "SIGNED - KPI SCOREBOARD"),
+        title = chanwe_title(
+            "Unemployment rate",
+            eyebrow = "SIGNED - KPI SCOREBOARD"
+        ),
         subtitle = chanwe_subtitle(
             "Share of population, monthly",
             kpi = chanwe_kpi(
@@ -488,10 +546,17 @@ chanwe_kbl(
     subtitle = "Signed deltas via chanwe_col_signed() - flip marks Opex and Churn so color reads as valence",
     eyebrow = "SIGNED - TABLES",
     caption = "Source: finance close, Q1 - simulated",
-    col_labels = c(metric = "Metric", actual = "USD K", qoq = "QoQ", yoy = "YoY"),
+    col_labels = c(
+        metric = "Metric",
+        actual = "USD K",
+        qoq = "QoQ",
+        yoy = "YoY"
+    ),
     stub = "metric",
     fmt = list(
-        actual = function(x) formatC(x, format = "f", digits = 1, big.mark = ","),
+        actual = function(x) {
+            formatC(x, format = "f", digits = 1, big.mark = ",")
+        },
         qoq = function(x) sprintf("%+.1f%%", x),
         yoy = function(x) sprintf("%+.1f%%", x)
     ),
@@ -516,7 +581,9 @@ The header grammar: mono-caps eyebrow with an orange rule, Archivo title at
 p_fleet +
     labs(
         title = chanwe_title("Simple fleet view", eyebrow = "HEADER - DEFAULT"),
-        subtitle = chanwe_subtitle("Eyebrow, title and subtitle with the header rule")
+        subtitle = chanwe_subtitle(
+            "Eyebrow, title and subtitle with the header rule"
+        )
     ) +
     theme_chanwe()
 ```
@@ -528,7 +595,10 @@ p_fleet +
 #| fig-height: 4.0
 p_fleet +
     labs(
-        title = chanwe_title("Transmission comparison", eyebrow = "HEADER - NOTE LINE"),
+        title = chanwe_title(
+            "Transmission comparison",
+            eyebrow = "HEADER - NOTE LINE"
+        ),
         subtitle = chanwe_subtitle(
             "Linear fit per horsepower band",
             note = "Excludes exotics; n = 32; OLS with no interaction terms"
@@ -544,7 +614,10 @@ p_fleet +
 #| fig-height: 5
 p_fleet +
     labs(
-        title = chanwe_title("Reservas Internacionales", eyebrow = "BCRA · SECTOR EXTERNO"),
+        title = chanwe_title(
+            "Reservas Internacionales",
+            eyebrow = "BCRA · SECTOR EXTERNO"
+        ),
         subtitle = chanwe_subtitle(
             "Evolución de reservas internacionales brutas (USD MM).",
             kpi = kpi_reserves
@@ -560,7 +633,10 @@ p_fleet +
 #| fig-height: 4.8
 p_fleet +
     labs(
-        title = chanwe_title("KPI only · no subtitle text", eyebrow = "KPI · COMPACT"),
+        title = chanwe_title(
+            "KPI only · no subtitle text",
+            eyebrow = "KPI · COMPACT"
+        ),
         subtitle = chanwe_subtitle("", kpi = kpi_reserves)
     ) +
     theme_chanwe()
@@ -572,7 +648,12 @@ p_fleet +
 #| label: hdr-title-only
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("Title only · no subtitle", eyebrow = "HEADER - HAS_SUBTITLE = FALSE")) +
+    labs(
+        title = chanwe_title(
+            "Title only · no subtitle",
+            eyebrow = "HEADER - HAS_SUBTITLE = FALSE"
+        )
+    ) +
     theme_chanwe(has_subtitle = FALSE)
 ```
 
@@ -582,7 +663,12 @@ p_fleet +
 #| label: hdr-plain
 #| fig-height: 3.8
 p_fleet +
-    labs(title = "Plain title, no eyebrow", subtitle = chanwe_subtitle("A plain string works when no eyebrow is needed")) +
+    labs(
+        title = "Plain title, no eyebrow",
+        subtitle = chanwe_subtitle(
+            "A plain string works when no eyebrow is needed"
+        )
+    ) +
     theme_chanwe()
 ```
 
@@ -601,8 +687,13 @@ p_fleet + theme_chanwe()
 #| fig-height: 4.0
 p_fleet +
     labs(
-        title = chanwe_title("With subtitle · spacious · no line", eyebrow = "HEADER LINE · FALSE"),
-        subtitle = chanwe_subtitle("compact_title = FALSE  ·  header_line = FALSE")
+        title = chanwe_title(
+            "With subtitle · spacious · no line",
+            eyebrow = "HEADER LINE · FALSE"
+        ),
+        subtitle = chanwe_subtitle(
+            "compact_title = FALSE  ·  header_line = FALSE"
+        )
     ) +
     theme_chanwe(compact_title = FALSE, header_line = FALSE)
 ```
@@ -612,8 +703,13 @@ p_fleet +
 #| fig-height: 4.0
 p_fleet +
     labs(
-        title = chanwe_title("With subtitle · compact · no line", eyebrow = "HEADER LINE · FALSE"),
-        subtitle = chanwe_subtitle("compact_title = TRUE  ·  header_line = FALSE")
+        title = chanwe_title(
+            "With subtitle · compact · no line",
+            eyebrow = "HEADER LINE · FALSE"
+        ),
+        subtitle = chanwe_subtitle(
+            "compact_title = TRUE  ·  header_line = FALSE"
+        )
     ) +
     theme_chanwe(compact_title = TRUE, header_line = FALSE)
 ```
@@ -622,16 +718,34 @@ p_fleet +
 #| label: hdr-line-nosub-spacious
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("No subtitle · spacious · no line", eyebrow = "HEADER LINE · FALSE")) +
-    theme_chanwe(has_subtitle = FALSE, compact_title = FALSE, header_line = FALSE)
+    labs(
+        title = chanwe_title(
+            "No subtitle · spacious · no line",
+            eyebrow = "HEADER LINE · FALSE"
+        )
+    ) +
+    theme_chanwe(
+        has_subtitle = FALSE,
+        compact_title = FALSE,
+        header_line = FALSE
+    )
 ```
 
 ```{r}
 #| label: hdr-line-nosub-compact
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("No subtitle · compact · no line", eyebrow = "HEADER LINE · FALSE")) +
-    theme_chanwe(has_subtitle = FALSE, compact_title = TRUE, header_line = FALSE)
+    labs(
+        title = chanwe_title(
+            "No subtitle · compact · no line",
+            eyebrow = "HEADER LINE · FALSE"
+        )
+    ) +
+    theme_chanwe(
+        has_subtitle = FALSE,
+        compact_title = TRUE,
+        header_line = FALSE
+    )
 ```
 
 ```{r}
@@ -639,7 +753,10 @@ p_fleet +
 #| fig-height: 4.0
 p_fleet +
     labs(
-        title = chanwe_title("Spacious title", eyebrow = "COMPACT_TITLE = FALSE"),
+        title = chanwe_title(
+            "Spacious title",
+            eyebrow = "COMPACT_TITLE = FALSE"
+        ),
         subtitle = chanwe_subtitle("gap_ln · 14pt  ·  compact_title = FALSE")
     ) +
     theme_chanwe(compact_title = FALSE)
@@ -656,7 +773,13 @@ hex; grid colors adapt per surface.
 #| label: bg-metallic
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("bg_color · metallic · default", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe()')) +
+    labs(
+        title = chanwe_title(
+            "bg_color · metallic · default",
+            eyebrow = "SURFACE"
+        ),
+        subtitle = chanwe_subtitle('theme_chanwe()')
+    ) +
     theme_chanwe()
 ```
 
@@ -666,7 +789,10 @@ p_fleet +
 #| label: bg-white
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("bg_color · white", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe(bg_color = "white")')) +
+    labs(
+        title = chanwe_title("bg_color · white", eyebrow = "SURFACE"),
+        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "white")')
+    ) +
     theme_chanwe(bg_color = "white")
 ```
 
@@ -676,7 +802,10 @@ p_fleet +
 #| label: bg-ivory
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("bg_color · white-ivory", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe(bg_color = "white-ivory")')) +
+    labs(
+        title = chanwe_title("bg_color · white-ivory", eyebrow = "SURFACE"),
+        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "white-ivory")')
+    ) +
     theme_chanwe(bg_color = "white-ivory")
 ```
 
@@ -686,7 +815,10 @@ p_fleet +
 #| label: bg-gray
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("bg_color · gray", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe(bg_color = "gray")')) +
+    labs(
+        title = chanwe_title("bg_color · gray", eyebrow = "SURFACE"),
+        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "gray")')
+    ) +
     theme_chanwe(bg_color = "gray")
 ```
 
@@ -696,7 +828,12 @@ p_fleet +
 #| label: bg-beige
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("bg_color · beige", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe(bg_color = "beige", plot_padding = 18)')) +
+    labs(
+        title = chanwe_title("bg_color · beige", eyebrow = "SURFACE"),
+        subtitle = chanwe_subtitle(
+            'theme_chanwe(bg_color = "beige", plot_padding = 18)'
+        )
+    ) +
     theme_chanwe(bg_color = "beige", plot_padding = 18)
 ```
 
@@ -708,7 +845,13 @@ p_fleet +
 #| label: bg-transparent
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("bg_color · transparent", eyebrow = "SURFACE · ZONE-HIGHLIGHT"), subtitle = chanwe_subtitle("The page zone supplies the surface")) +
+    labs(
+        title = chanwe_title(
+            "bg_color · transparent",
+            eyebrow = "SURFACE · ZONE-HIGHLIGHT"
+        ),
+        subtitle = chanwe_subtitle("The page zone supplies the surface")
+    ) +
     theme_chanwe(bg_color = "transparent")
 ```
 
@@ -720,7 +863,10 @@ p_fleet +
 #| label: frame-true
 #| fig-height: 3.8
 p_fleet +
-    labs(title = chanwe_title("plot_borders · TRUE", eyebrow = "FRAME"), subtitle = chanwe_subtitle("Thin ink frame lines on the white surface")) +
+    labs(
+        title = chanwe_title("plot_borders · TRUE", eyebrow = "FRAME"),
+        subtitle = chanwe_subtitle("Thin ink frame lines on the white surface")
+    ) +
     theme_chanwe(bg_color = "white", plot_borders = TRUE)
 ```
 
@@ -731,7 +877,9 @@ ggplot(mt, aes(wt, mpg)) +
     geom_point(size = 2.2, color = chart[["chart-teal"]]) +
     labs(
         title = chanwe_title("plot_borders · top_bottom", eyebrow = "FRAME"),
-        subtitle = chanwe_subtitle('plot_borders = "top_bottom" adds thin ink frame lines'),
+        subtitle = chanwe_subtitle(
+            'plot_borders = "top_bottom" adds thin ink frame lines'
+        ),
         x = "Weight",
         y = "MPG",
         caption = chanwe_caption("Source: mtcars")
@@ -748,7 +896,13 @@ La categoría C presenta el valor más alto del conjunto. Los segmentos A y E mu
 #| label: inset-facets
 p_fleet +
     facet_wrap(~am) +
-    labs(title = chanwe_title("Faceted by transmission", eyebrow = "PLOT · INSET"), subtitle = chanwe_subtitle("title · Archivo  ·  padding · 18pt")) +
+    labs(
+        title = chanwe_title(
+            "Faceted by transmission",
+            eyebrow = "PLOT · INSET"
+        ),
+        subtitle = chanwe_subtitle("title · Archivo  ·  padding · 18pt")
+    ) +
     theme_chanwe(bg_color = "beige", plot_padding = 18)
 ```
 
@@ -774,11 +928,20 @@ ggplot(rev_df, aes(month, revenue, color = segment)) +
         show.legend = FALSE
     ) +
     scale_color_chanwe_d() +
-    scale_x_date(date_labels = "%b", breaks = months[c(2, 5, 8, 11)], expand = expansion(mult = c(0.02, 0.2))) +
+    scale_x_date(
+        date_labels = "%b",
+        breaks = months[c(2, 5, 8, 11)],
+        expand = expansion(mult = c(0.02, 0.2))
+    ) +
     coord_cartesian(clip = "off") +
     labs(
-        title = chanwe_title("Monthly revenue by segment", eyebrow = "FORM - LINE"),
-        subtitle = chanwe_subtitle("Twelve trailing months, USD MM - series labelled where they end"),
+        title = chanwe_title(
+            "Monthly revenue by segment",
+            eyebrow = "FORM - LINE"
+        ),
+        subtitle = chanwe_subtitle(
+            "Twelve trailing months, USD MM - series labelled where they end"
+        ),
         x = NULL,
         y = "USD MM",
         caption = chanwe_caption("Source: internal ledger, simulated")
@@ -812,7 +975,10 @@ ggplot(mt, aes(mpg, fill = am)) +
     geom_density(alpha = 0.7, color = NA) +
     scale_fill_chanwe_d() +
     labs(
-        title = chanwe_title("Fuel economy distribution", eyebrow = "FORM - DENSITY"),
+        title = chanwe_title(
+            "Fuel economy distribution",
+            eyebrow = "FORM - DENSITY"
+        ),
         subtitle = chanwe_subtitle("Manual transmissions skew to higher MPG"),
         x = "MPG",
         y = "Density",
@@ -835,7 +1001,10 @@ ggplot(cyl_summary, aes(cyl, avg_mpg)) +
         size = 0.6
     ) +
     labs(
-        title = chanwe_title("Fuel economy by cylinders", eyebrow = "FORM - ERROR BARS"),
+        title = chanwe_title(
+            "Fuel economy by cylinders",
+            eyebrow = "FORM - ERROR BARS"
+        ),
         subtitle = chanwe_subtitle("Mean ± one standard deviation"),
         x = "Cylinders",
         y = "MPG",
@@ -858,16 +1027,31 @@ ggplot(cyl_summary, aes(cyl, avg_mpg)) +
         colour = chanwe_palette("semantic")[["secondary"]],
         size = 6.75 * 0.8 / ggplot2::.pt
     ) +
-    scale_fill_manual(values = c(`TRUE` = chanwe_palette("semantic")[["primary"]], `FALSE` = "#D4D4D4"), guide = "none") +
+    scale_fill_manual(
+        values = c(
+            `TRUE` = chanwe_palette("semantic")[["primary"]],
+            `FALSE` = "#D4D4D4"
+        ),
+        guide = "none"
+    ) +
     scale_y_continuous(expand = expansion(mult = c(0, 0.14))) +
     labs(
-        title = chanwe_title("Fuel economy by cylinders", eyebrow = "FORM - FOCUS BAR"),
-        subtitle = chanwe_subtitle("One accent, gray context, values on the bars"),
+        title = chanwe_title(
+            "Fuel economy by cylinders",
+            eyebrow = "FORM - FOCUS BAR"
+        ),
+        subtitle = chanwe_subtitle(
+            "One accent, gray context, values on the bars"
+        ),
         x = "Cylinders",
         caption = chanwe_caption("Source: mtcars")
     ) +
     theme_chanwe() +
-    theme(panel.grid.major.y = element_blank(), axis.text.y = element_blank(), axis.title.y = element_blank())
+    theme(
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank()
+    )
 ```
 
 ##### Facets
@@ -880,7 +1064,10 @@ ggplot(mt, aes(wt, mpg, color = cyl)) +
     facet_wrap(~am) +
     scale_color_chanwe_d() +
     labs(
-        title = chanwe_title("Faceted by transmission", eyebrow = "FORM - FACETS"),
+        title = chanwe_title(
+            "Faceted by transmission",
+            eyebrow = "FORM - FACETS"
+        ),
         subtitle = chanwe_subtitle("Strip labels in JetBrains Mono Thin"),
         x = "Weight",
         y = "MPG",
@@ -991,7 +1178,13 @@ chanwe_kbl(
     subtitle = "Spacious density - the presentation default",
     eyebrow = "TABLES - SPACIOUS",
     caption = "Source: mtcars",
-    col_labels = c(cyl = "Cylinders", avg_mpg = "Avg MPG", avg_hp = "Avg HP", avg_wt = "Avg weight", n = "Vehicles"),
+    col_labels = c(
+        cyl = "Cylinders",
+        avg_mpg = "Avg MPG",
+        avg_hp = "Avg HP",
+        avg_wt = "Avg weight",
+        n = "Vehicles"
+    ),
     fmt = list(
         avg_mpg = function(x) sprintf("%.1f", x),
         avg_hp = function(x) sprintf("%.0f", x),
@@ -1009,7 +1202,14 @@ chanwe_kbl(
     subtitle = "Compact density for dense reporting tables - explicit col_widths",
     eyebrow = "TABLES - COMPACT",
     caption = "Source: mtcars",
-    col_labels = c(model = "Model", mpg = "MPG", cyl = "Cyl", hp = "HP", wt = "Weight", am = "Transmission"),
+    col_labels = c(
+        model = "Model",
+        mpg = "MPG",
+        cyl = "Cyl",
+        hp = "HP",
+        wt = "Weight",
+        am = "Transmission"
+    ),
     col_widths = c("2.2fr", "1fr", "0.8fr", "1fr", "1.1fr", "1.6fr"),
     fmt = list(
         mpg = function(x) sprintf("%.1f", x),
@@ -1032,7 +1232,12 @@ chanwe_kbl(
     subtitle = "Total row via n_total; QoQ column highlighted and signed; vline separates quarters from the delta",
     eyebrow = "TABLES - TOTALS + HIGHLIGHT",
     caption = "Source: finance close - simulated",
-    col_labels = c(region = "Region", q1 = "Q1 USD K", q2 = "Q2 USD K", delta = "QoQ %"),
+    col_labels = c(
+        region = "Region",
+        q1 = "Q1 USD K",
+        q2 = "Q2 USD K",
+        delta = "QoQ %"
+    ),
     stub = "region",
     fmt = list(
         q1 = function(x) formatC(x, format = "f", digits = 1, big.mark = ","),
