@@ -1,0 +1,1120 @@
+---
+title: "chanwer Showcase"
+subtitle: "Every palette, scale, header treatment, surface, chart form and native Typst table pattern in the chanwer R package — static output for chanwe-report-typst"
+author: "Alejandro Abraham"
+date: today
+format:
+  chanwe-report-typst:
+    keep-typ: true
+    number-sections: true
+    section-numbering: "1.1.1"
+execute:
+  echo: false
+  warning: false
+  message: false
+  dev: ragg_png
+  fig-format: png
+  fig-dpi: 320
+  fig-width: 7.08
+chanwe:
+  document: "CHW · DEV"
+  edition: "SHOWCASE / 2026"
+  volume: "MENDOZA · ARGENTINA"
+  chapter: "Design System"
+  section: "R Package"
+  topic: "chanwer v2.3"
+  rail-eyebrow: "VISUAL REFERENCE"
+  hero-image: "_extensions/chanwe-report/assets/bg_mountains.jpg"
+  hero-img-position: 10
+  cover: true
+  toc: true
+  toc-eyebrow: "Document map"
+  toc-title: "Contents"
+  toc-lede: "The complete static reference for chanwer: the brand color system and its validated palettes, the four scale jobs (categorical, ordinal, sequential, diverging), the signed system, every theme_chanwe() header treatment and surface, the chart forms, and the full native-Typst table API — all on the chanwe-report-typst tokens."
+  page-bg: "FBFBFB"
+  abstract-eyebrow: "TLDR;"
+  abstract-title: "Static Reference"
+  abstract-takeaway: "One color system and one header grammar, mapped to every chart and table: the same tokens drive eyebrows, KPI arrows, table deltas, and this document."
+  abstract-text: "This showcase covers every static output in the chanwer package: palette previews, categorical / ordinal / sequential / diverging scales, the signed positive-negative system with its KPI scoreboard, all header treatments (eyebrow, subtitle, note, KPI, title-only, no header line, compact and spacious), all five brand surfaces plus transparent, framed variants, the chart forms (scatter, bar, line, area, distribution, error bars, heatmap, facets), and every chanwe_kbl() pattern — surfaces, densities, totals, highlights, vertical rules, signed deltas, title-only and header-less tables. The interactive counterparts (gt, plotly, reactable) live in chanwer-showcase-html.qmd."
+  abstract-status: "Stable · Internal"
+  abstract-show:
+    - document
+    - edition
+    - author
+    - status
+  meta-rows:
+    - { label: "Package",  value: "chanwer v2.3",     sub: "R design system" }
+    - { label: "Format",   value: "chanwe-report-typst", sub: "Quarto extension" }
+    - { label: "Author",   value: "Chanwe",            sub: "Alejandro Abraham" }
+  back-cover: true
+  back-cover-tagline-1: "Estrategia Activa,"
+  back-cover-tagline-2: "Codo a codo."
+  back-cover-cols:
+    - { label: "Web",      value: "chanwe.com.ar",     sub: "contacto@chanwe.com.ar" }
+    - { label: "Repo",     value: "chanwe-ar/chanwer", sub: "github.com" }
+    - { label: "Document", value: "CHW · DEV",         sub: "Showcase / 2026" }
+---
+
+```{r}
+#| label: setup
+#| include: false
+devtools::load_all(".", quiet = TRUE)
+chanwe_load_fonts()
+# Quarto's fig-format resets knitr's dev to plain png (quartz on macOS),
+# which cannot see systemfonts-registered families — re-assert ragg here.
+knitr::opts_chunk$set(dev = "ragg_png", dev.args = list(bg = "transparent"))
+
+library(ggplot2)
+library(dplyr)
+
+set.seed(42)
+
+# ── data ────────────────────────────────────────────────────────────────────
+mt <- tibble::as_tibble(mtcars, rownames = "model") |>
+    mutate(
+        cyl = factor(cyl),
+        gear = factor(gear),
+        am = factor(am, labels = c("Automatic", "Manual")),
+        hp_band = cut(
+            hp,
+            breaks = c(-Inf, 110, 180, Inf),
+            labels = c("Low", "Mid", "High")
+        )
+    )
+
+econ <- economics |>
+    filter(date >= as.Date("2000-01-01")) |>
+    mutate(unemp_pct = unemploy / pop * 100)
+
+deltas <- tibble::tibble(
+    metric = c("Revenue", "Gross margin", "EBITDA", "Opex", "Net income", "Churn"),
+    actual = c(1240.5, 682.1, 310.2, -420.3, 185.7, 42.0),
+    qoq = c(12.4, 4.2, -3.1, -1.9, 5.8, -0.8),
+    yoy = c(28.1, 9.6, 11.2, 6.3, -2.4, -4.1)
+)
+
+months <- seq(as.Date("2025-09-01"), by = "month", length.out = 12)
+rev_df <- expand.grid(
+    month = months,
+    segment = c("Retail", "Wholesale", "Online"),
+    stringsAsFactors = FALSE
+) |>
+    arrange(segment, month) |>
+    group_by(segment) |>
+    mutate(
+        revenue = round(
+            c(Retail = 18, Wholesale = 12, Online = 7)[segment] +
+                cumsum(rnorm(12, 0.6, 1.1)),
+            2
+        )
+    ) |>
+    ungroup()
+spread_labels <- function(y, gap) {
+    o <- order(y)
+    ys <- y[o]
+    for (i in seq_along(ys)[-1]) {
+        if (ys[i] - ys[i - 1] < gap) ys[i] <- ys[i - 1] + gap
+    }
+    y[o] <- ys
+    y
+}
+rev_last <- rev_df |>
+    group_by(segment) |>
+    slice_max(month, n = 1) |>
+    ungroup() |>
+    mutate(y_lab = spread_labels(revenue, 1.5))
+
+cyl_summary <- mt |>
+    group_by(cyl) |>
+    summarise(
+        avg_mpg = mean(mpg),
+        avg_hp = mean(hp),
+        avg_wt = mean(wt),
+        sd_mpg = sd(mpg),
+        n = n(),
+        .groups = "drop"
+    )
+
+region_rev <- tibble::tibble(
+    region = c("North", "Center", "West", "South", "Total"),
+    q1 = c(412.1, 388.4, 251.9, 188.1, 1240.5),
+    q2 = c(438.0, 371.2, 266.3, 201.5, 1277.0),
+    delta = c(6.3, -4.4, 5.7, 7.1, 2.9)
+)
+
+heat <- expand.grid(week = 1:12, region = c("North", "Center", "West", "South"))
+heat$delta <- round(
+    rnorm(nrow(heat), 0, 2) + rep(c(1.4, 0.3, -0.6, -1.5), each = 12),
+    1
+)
+heat_m <- max(abs(heat$delta))
+
+fleet8 <- mt |> select(model, mpg, cyl, hp, wt) |> slice_head(n = 8)
+fmt_fleet <- list(
+    mpg = \(x) formatC(x, digits = 2, format = "f"),
+    hp = \(x) formatC(x, digits = 0, format = "d"),
+    wt = \(x) formatC(x, digits = 2, format = "f")
+)
+
+# ── reusable pieces ──────────────────────────────────────────────────────────
+chart <- chanwe_palette("chart")
+
+kpi_reserves <- chanwe_kpi(
+    num = "45,91",
+    label = "USD MM",
+    period = "05·MAY·2026",
+    mtc1_num = "0,19%",
+    mtc1_label = "WoW",
+    mtc1_direction = "+",
+    mtc2_num = "3,17%",
+    mtc2_label = "MoM",
+    mtc2_direction = "-",
+    mtc3_num = "17,78%",
+    mtc3_label = "YoY",
+    mtc3_direction = "+"
+)
+
+# base scatter used across the header / surface sections
+p_fleet <- ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    labs(
+        x = "Weight (1000 lbs)",
+        y = "Miles per gallon",
+        color = "HP band",
+        caption = chanwe_caption("Source: Motor Trend, 1974")
+    )
+```
+
+# The Color System
+
+Every color in `chanwer` is a named token. `chanwe_palette()` returns the
+full inventory; `chanwe_palette("<group>")` returns one group;
+`chanwe_preview_palette("<group>")` draws its swatch grid.
+
+::: {.chanwe-callout kind="note" eyebrow="BRAND ROLES" title="The manual assigns each family a job"}
+Coral is the house lead, blue is structural, green is positive, vermillion
+is alert, ink is the neutral anchor. The scales below are built on those
+roles — positive/negative is never an arbitrary red/green pair.
+:::
+
+## The categorical eight
+
+Fixed, CVD-validated slot order — coral, blue, teal, green, violet,
+magenta, mustard, ink. Mustard and ink sit last deliberately: charts with
+up to six series never reach them.
+
+```{r}
+#| label: preview-chart
+#| fig-height: 3.4
+chanwe_preview_palette("chart")
+```
+
+## The signed trio
+
+Hue-true darkenings of the brand's positive (green), alert (vermillion)
+and neutral (ink) families, stepped until each passes WCAG 4.5:1
+small-text contrast on all five brand surfaces.
+
+```{r}
+#| label: preview-signed
+#| fig-height: 2.4
+chanwe_preview_palette("signed")
+```
+
+## Semantic roles and family ramps
+
+```{r}
+#| label: preview-semantic
+#| fig-height: 3.4
+chanwe_preview_palette("semantic")
+```
+
+```{r}
+#| label: preview-teal
+#| fig-height: 2.4
+chanwe_preview_palette("p15_teal")
+```
+
+```{r}
+#| label: preview-mb
+#| fig-height: 3.4
+chanwe_preview_palette("mb_orange")
+```
+
+# Scales
+
+## Categorical
+
+`scale_color_chanwe_d()` / `scale_fill_chanwe_d()` assign the chart
+palette in slot order, recycling past eight.
+
+```{r}
+#| label: cat-scatter
+#| fig-height: 4.0
+ggplot(mt, aes(wt, mpg, color = am)) +
+    geom_point(size = 2.6, alpha = 0.9) +
+    scale_color_chanwe_d() +
+    labs(
+        title = chanwe_title("Fuel economy by weight", eyebrow = "CATEGORICAL - 2 SERIES"),
+        subtitle = chanwe_subtitle("Nominal series only - scatter charts stay at three or fewer"),
+        x = "Weight (1000 lbs)",
+        y = "MPG",
+        color = "Transmission",
+        caption = chanwe_caption("Source: mtcars")
+    ) +
+    theme_chanwe()
+```
+
+::: {.chanwe-callout kind="warning" eyebrow="SERIES CAP" title="Scatter, bubble, and maps: three series maximum"}
+In those forms any two marks can sit side by side, so the palette must
+pass the stricter all-pairs check — the first three slots do. Fold extra
+series into "Other" or facet. Bars, lines, and stacks may use up to six.
+:::
+
+```{r}
+#| label: cat-bars
+#| fig-height: 4.2
+mpg_drv <- ggplot2::mpg |>
+    mutate(
+        drv = factor(drv, levels = c("f", "4", "r"), labels = c("Front", "4WD", "Rear")),
+        class = reorder(class, class, FUN = length)
+    )
+ggplot(mpg_drv, aes(y = class, fill = drv)) +
+    geom_bar(width = 0.62) +
+    scale_fill_chanwe_d() +
+    labs(
+        title = chanwe_title("Vehicles by class and drivetrain", eyebrow = "CATEGORICAL - STACKED BARS"),
+        subtitle = chanwe_subtitle("Color encodes a second nominal variable - bars and stacks may use up to six series"),
+        x = "Vehicles",
+        y = NULL,
+        fill = "Drivetrain",
+        caption = chanwe_caption("Source: ggplot2::mpg")
+    ) +
+    theme_chanwe()
+```
+
+## Ordinal: one-hue ramp
+
+When category order carries meaning, use a ramp group so the reader sees
+the order in the color: `scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE)`.
+
+```{r}
+#| label: ordinal
+#| fig-height: 4.0
+ggplot(mt, aes(hp_band, fill = hp_band)) +
+    geom_bar(width = 0.55) +
+    scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE) +
+    labs(
+        title = chanwe_title("Fleet by horsepower band", eyebrow = "ORDINAL - ONE HUE"),
+        subtitle = chanwe_subtitle("Low to High reads light to dark in a single family"),
+        x = NULL,
+        y = "Vehicles",
+        caption = chanwe_caption("Source: mtcars")
+    ) +
+    theme_chanwe(legend_position = "none")
+```
+
+## Sequential
+
+`scale_color_chanwe_c()` / `scale_fill_chanwe_c()` encode magnitude with
+one-hue, light-to-dark brand gradients: `orange` (default), `coral`,
+`blue`, `teal`, `green`, `vermillion`, `magenta`, `violet`, `mustard`,
+`ink`.
+
+```{r}
+#| label: seq-teal
+#| fig-height: 4.0
+ggplot(mt, aes(wt, mpg, color = disp)) +
+    geom_point(size = 2.8) +
+    scale_color_chanwe_c(palette = "teal") +
+    labs(
+        title = chanwe_title("Displacement gradient", eyebrow = "SEQUENTIAL - TEAL"),
+        subtitle = chanwe_subtitle("One hue, light to dark, magnitude only"),
+        x = "Weight (1000 lbs)",
+        y = "MPG",
+        color = "Disp.",
+        caption = chanwe_caption("Source: mtcars")
+    ) +
+    theme_chanwe()
+```
+
+```{r}
+#| label: seq-orange
+#| fig-height: 4.0
+ggplot(econ, aes(date, unemp_pct, color = psavert)) +
+    geom_line(linewidth = 0.9) +
+    scale_color_chanwe_c() +
+    labs(
+        title = chanwe_title("Unemployment, colored by savings rate", eyebrow = "SEQUENTIAL - ORANGE (DEFAULT)"),
+        subtitle = chanwe_subtitle("The default gradient anchors on the report primary"),
+        x = NULL,
+        y = "Unemployment (%)",
+        color = "Savings %",
+        caption = chanwe_caption("Source: ggplot2::economics")
+    ) +
+    theme_chanwe()
+```
+
+## Diverging
+
+`scale_fill_chanwe_div()` encodes polarity — vermillion through a neutral
+midpoint to green, signed tokens at the poles. Give it symmetric limits so
+zero lands on the midpoint.
+
+```{r}
+#| label: div-heat
+#| fig-height: 3.6
+ggplot(heat, aes(week, region, fill = delta)) +
+    geom_tile(color = chanwe_palette("core")[["brand-white"]], linewidth = 1.2) +
+    scale_fill_chanwe_div(limits = c(-heat_m, heat_m)) +
+    scale_x_continuous(breaks = seq(2, 12, by = 2)) +
+    labs(
+        title = chanwe_title("Weekly delta vs plan", eyebrow = "DIVERGING - HEATMAP"),
+        subtitle = chanwe_subtitle("Symmetric limits pin zero to the neutral midpoint"),
+        x = "Week",
+        y = NULL,
+        fill = "Δ pp",
+        caption = chanwe_caption("Source: simulated")
+    ) +
+    theme_chanwe()
+```
+
+```{r}
+#| label: div-heat-cvd
+#| fig-height: 3.6
+ggplot(heat, aes(week, region, fill = delta)) +
+    geom_tile(color = chanwe_palette("core")[["brand-white"]], linewidth = 1.2) +
+    scale_fill_chanwe_div(limits = c(-heat_m, heat_m), cvd = TRUE) +
+    scale_x_continuous(breaks = seq(2, 12, by = 2)) +
+    labs(
+        title = chanwe_title("Weekly delta vs plan, CVD-safe", eyebrow = "DIVERGING - CVD = TRUE"),
+        subtitle = chanwe_subtitle("Positive arm switches to structural blue; polarity survives deuteranopia"),
+        x = "Week",
+        y = NULL,
+        fill = "Δ pp",
+        caption = chanwe_caption("Source: simulated")
+    ) +
+    theme_chanwe()
+```
+
+```{r}
+#| label: div-bars
+#| fig-height: 4.2
+mk <- ggplot2::mpg |>
+    group_by(manufacturer) |>
+    summarise(hwy = mean(hwy), .groups = "drop") |>
+    mutate(delta = hwy - mean(hwy), manufacturer = reorder(manufacturer, delta))
+md <- max(abs(mk$delta))
+ggplot(mk, aes(delta, manufacturer, fill = delta)) +
+    geom_col(width = 0.62) +
+    scale_fill_chanwe_div(limits = c(-md, md)) +
+    labs(
+        title = chanwe_title("Highway MPG vs fleet average", eyebrow = "DIVERGING - BARS"),
+        subtitle = chanwe_subtitle("Above average in green, below in vermillion"),
+        x = "Δ MPG",
+        y = NULL,
+        caption = chanwe_caption("Source: ggplot2::mpg")
+    ) +
+    theme_chanwe(legend_position = "none")
+```
+
+# The Signed System
+
+One pair everywhere: `chanwe_palette("signed")` drives the KPI arrows,
+table deltas and the diverging poles. `direction` states the movement
+(▲/▼); `valence` states whether that movement is good news and drives the
+color.
+
+::::: {.kpi-grid cols="4"}
+:::: {.kpi title="POSITIVE" main="#147705" main-color="#147705" secondary="hue-true brand green" direction="none"}
+::::
+:::: {.kpi title="NEGATIVE" main="#CC1914" main-color="#CC1914" secondary="hue-true vermillion" direction="none"}
+::::
+:::: {.kpi title="NEUTRAL" main="#666666" main-color="#666666" secondary="brand ink-03" direction="none"}
+::::
+:::: {.kpi title="CONTRAST" main="4.9+" unit=":1" secondary="on all five surfaces" direction="up"}
+::::
+:::::
+
+## KPI scoreboard with valence
+
+```{r}
+#| label: kpi-valence
+#| fig-height: 4.4
+ggplot(econ, aes(date, unemp_pct)) +
+    geom_line(linewidth = 0.8, color = chart[["chart-blue"]]) +
+    labs(
+        title = chanwe_title("Unemployment rate", eyebrow = "SIGNED - KPI SCOREBOARD"),
+        subtitle = chanwe_subtitle(
+            "Share of population, monthly",
+            kpi = chanwe_kpi(
+                num = "3,9",
+                label = "PCT",
+                period = "APR·2015",
+                mtc1_num = "0,1pp",
+                mtc1_label = "MoM",
+                mtc1_direction = "-",
+                mtc1_valence = "good",
+                mtc2_num = "0,4pp",
+                mtc2_label = "QoQ",
+                mtc2_direction = "-",
+                mtc2_valence = "good",
+                mtc3_num = "1,1pp",
+                mtc3_label = "YoY",
+                mtc3_direction = "+",
+                mtc3_valence = "bad"
+            )
+        ),
+        x = NULL,
+        y = "%",
+        caption = chanwe_caption("Source: ggplot2::economics")
+    ) +
+    theme_chanwe()
+```
+
+## Signed deltas in tables
+
+`chanwe_col_signed()` colors by the column's *raw* values; `flip` marks
+the smaller-is-better rows so color reads as valence, not sign.
+
+```{r}
+#| label: table-signed
+smaller_is_better <- deltas$metric %in% c("Opex", "Churn")
+chanwe_kbl(
+    deltas,
+    title = "Quarterly performance",
+    subtitle = "Signed deltas via chanwe_col_signed() - flip marks Opex and Churn so color reads as valence",
+    eyebrow = "SIGNED - TABLES",
+    caption = "Source: finance close, Q1 - simulated",
+    col_labels = c(metric = "Metric", actual = "USD K", qoq = "QoQ", yoy = "YoY"),
+    stub = "metric",
+    fmt = list(
+        actual = function(x) formatC(x, format = "f", digits = 1, big.mark = ","),
+        qoq = function(x) sprintf("%+.1f%%", x),
+        yoy = function(x) sprintf("%+.1f%%", x)
+    ),
+    col_colors = list(
+        qoq = chanwe_col_signed(flip = smaller_is_better),
+        yoy = chanwe_col_signed(flip = smaller_is_better)
+    )
+)
+```
+
+# Header Treatments
+
+The header grammar: mono-caps eyebrow with an orange rule, Archivo title at
+1.85x base, Satoshi subtitle, optional note line or KPI scoreboard, and a
+`//` source caption.
+
+##### Eyebrow · title · subtitle (default)
+
+```{r}
+#| label: hdr-default
+#| fig-height: 4.0
+p_fleet +
+    labs(
+        title = chanwe_title("Simple fleet view", eyebrow = "HEADER - DEFAULT"),
+        subtitle = chanwe_subtitle("Eyebrow, title and subtitle with the header rule")
+    ) +
+    theme_chanwe()
+```
+
+##### Subtitle with a note line
+
+```{r}
+#| label: hdr-note
+#| fig-height: 4.0
+p_fleet +
+    labs(
+        title = chanwe_title("Transmission comparison", eyebrow = "HEADER - NOTE LINE"),
+        subtitle = chanwe_subtitle(
+            "Linear fit per horsepower band",
+            note = "Excludes exotics; n = 32; OLS with no interaction terms"
+        )
+    ) +
+    theme_chanwe()
+```
+
+##### KPI scoreboard
+
+```{r}
+#| label: hdr-kpi
+#| fig-height: 5
+p_fleet +
+    labs(
+        title = chanwe_title("Reservas Internacionales", eyebrow = "BCRA · SECTOR EXTERNO"),
+        subtitle = chanwe_subtitle(
+            "Evolución de reservas internacionales brutas (USD MM).",
+            kpi = kpi_reserves
+        )
+    ) +
+    theme_chanwe(bg_color = "white", plot_borders = TRUE)
+```
+
+##### KPI only · no subtitle text
+
+```{r}
+#| label: hdr-kpi-only
+#| fig-height: 4.8
+p_fleet +
+    labs(
+        title = chanwe_title("KPI only · no subtitle text", eyebrow = "KPI · COMPACT"),
+        subtitle = chanwe_subtitle("", kpi = kpi_reserves)
+    ) +
+    theme_chanwe()
+```
+
+##### Title only · has_subtitle = FALSE
+
+```{r}
+#| label: hdr-title-only
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("Title only · no subtitle", eyebrow = "HEADER - HAS_SUBTITLE = FALSE")) +
+    theme_chanwe(has_subtitle = FALSE)
+```
+
+##### Plain title · no eyebrow
+
+```{r}
+#| label: hdr-plain
+#| fig-height: 3.8
+p_fleet +
+    labs(title = "Plain title, no eyebrow", subtitle = chanwe_subtitle("A plain string works when no eyebrow is needed")) +
+    theme_chanwe()
+```
+
+##### No title · no subtitle
+
+```{r}
+#| label: hdr-none
+#| fig-height: 3.6
+p_fleet + theme_chanwe()
+```
+
+## Header line and spacing
+
+```{r}
+#| label: hdr-line-spacious
+#| fig-height: 4.0
+p_fleet +
+    labs(
+        title = chanwe_title("With subtitle · spacious · no line", eyebrow = "HEADER LINE · FALSE"),
+        subtitle = chanwe_subtitle("compact_title = FALSE  ·  header_line = FALSE")
+    ) +
+    theme_chanwe(compact_title = FALSE, header_line = FALSE)
+```
+
+```{r}
+#| label: hdr-line-compact
+#| fig-height: 4.0
+p_fleet +
+    labs(
+        title = chanwe_title("With subtitle · compact · no line", eyebrow = "HEADER LINE · FALSE"),
+        subtitle = chanwe_subtitle("compact_title = TRUE  ·  header_line = FALSE")
+    ) +
+    theme_chanwe(compact_title = TRUE, header_line = FALSE)
+```
+
+```{r}
+#| label: hdr-line-nosub-spacious
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("No subtitle · spacious · no line", eyebrow = "HEADER LINE · FALSE")) +
+    theme_chanwe(has_subtitle = FALSE, compact_title = FALSE, header_line = FALSE)
+```
+
+```{r}
+#| label: hdr-line-nosub-compact
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("No subtitle · compact · no line", eyebrow = "HEADER LINE · FALSE")) +
+    theme_chanwe(has_subtitle = FALSE, compact_title = TRUE, header_line = FALSE)
+```
+
+```{r}
+#| label: hdr-compact-false
+#| fig-height: 4.0
+p_fleet +
+    labs(
+        title = chanwe_title("Spacious title", eyebrow = "COMPACT_TITLE = FALSE"),
+        subtitle = chanwe_subtitle("gap_ln · 14pt  ·  compact_title = FALSE")
+    ) +
+    theme_chanwe(compact_title = FALSE)
+```
+
+# Surfaces and Frames
+
+`theme_chanwe()` exposes five named surfaces plus `"transparent"` and raw
+hex; grid colors adapt per surface.
+
+##### metallic · default
+
+```{r}
+#| label: bg-metallic
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("bg_color · metallic · default", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe()')) +
+    theme_chanwe()
+```
+
+##### white
+
+```{r}
+#| label: bg-white
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("bg_color · white", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe(bg_color = "white")')) +
+    theme_chanwe(bg_color = "white")
+```
+
+##### white-ivory
+
+```{r}
+#| label: bg-ivory
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("bg_color · white-ivory", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe(bg_color = "white-ivory")')) +
+    theme_chanwe(bg_color = "white-ivory")
+```
+
+##### gray
+
+```{r}
+#| label: bg-gray
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("bg_color · gray", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe(bg_color = "gray")')) +
+    theme_chanwe(bg_color = "gray")
+```
+
+##### beige · padding 18
+
+```{r}
+#| label: bg-beige
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("bg_color · beige", eyebrow = "SURFACE"), subtitle = chanwe_subtitle('theme_chanwe(bg_color = "beige", plot_padding = 18)')) +
+    theme_chanwe(bg_color = "beige", plot_padding = 18)
+```
+
+##### transparent · zone-highlight
+
+:::: {.zone-highlight color="metallic" above="-2"}
+
+```{r}
+#| label: bg-transparent
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("bg_color · transparent", eyebrow = "SURFACE · ZONE-HIGHLIGHT"), subtitle = chanwe_subtitle("The page zone supplies the surface")) +
+    theme_chanwe(bg_color = "transparent")
+```
+
+::::
+
+## Frames
+
+```{r}
+#| label: frame-true
+#| fig-height: 3.8
+p_fleet +
+    labs(title = chanwe_title("plot_borders · TRUE", eyebrow = "FRAME"), subtitle = chanwe_subtitle("Thin ink frame lines on the white surface")) +
+    theme_chanwe(bg_color = "white", plot_borders = TRUE)
+```
+
+```{r}
+#| label: frame-top-bottom
+#| fig-height: 3.8
+ggplot(mt, aes(wt, mpg)) +
+    geom_point(size = 2.2, color = chart[["chart-teal"]]) +
+    labs(
+        title = chanwe_title("plot_borders · top_bottom", eyebrow = "FRAME"),
+        subtitle = chanwe_subtitle('plot_borders = "top_bottom" adds thin ink frame lines'),
+        x = "Weight",
+        y = "MPG",
+        caption = chanwe_caption("Source: mtcars")
+    ) +
+    theme_chanwe(plot_borders = "top_bottom")
+```
+
+## Inset figure
+
+::: {.inset-great-figure eyebrow="FY 2025" title="Revenue by Segment" layout="left" position="right" color="beige" source="Data: FY 2025 — valores normalizados"}
+La categoría C presenta el valor más alto del conjunto. Los segmentos A y E muestran rendimiento dentro del rango esperado, mientras que F establece el piso de referencia para el análisis diferencial.
+
+```{r}
+#| label: inset-facets
+p_fleet +
+    facet_wrap(~am) +
+    labs(title = chanwe_title("Faceted by transmission", eyebrow = "PLOT · INSET"), subtitle = chanwe_subtitle("title · Archivo  ·  padding · 18pt")) +
+    theme_chanwe(bg_color = "beige", plot_padding = 18)
+```
+
+:::
+
+# Chart Forms
+
+##### Line · direct labels
+
+```{r}
+#| label: form-line
+#| fig-height: 4.2
+ggplot(rev_df, aes(month, revenue, color = segment)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(data = rev_last, size = 1.9) +
+    geom_text(
+        data = rev_last,
+        aes(y = y_lab, label = segment),
+        hjust = 0,
+        nudge_x = 7,
+        family = "JetBrains Mono",
+        size = 6.75 * 0.72 / ggplot2::.pt,
+        show.legend = FALSE
+    ) +
+    scale_color_chanwe_d() +
+    scale_x_date(date_labels = "%b", breaks = months[c(2, 5, 8, 11)], expand = expansion(mult = c(0.02, 0.2))) +
+    coord_cartesian(clip = "off") +
+    labs(
+        title = chanwe_title("Monthly revenue by segment", eyebrow = "FORM - LINE"),
+        subtitle = chanwe_subtitle("Twelve trailing months, USD MM - series labelled where they end"),
+        x = NULL,
+        y = "USD MM",
+        caption = chanwe_caption("Source: internal ledger, simulated")
+    ) +
+    theme_chanwe(legend_position = "none")
+```
+
+##### Area
+
+```{r}
+#| label: form-area
+#| fig-height: 4.0
+ggplot(econ, aes(date, unemploy / 1000)) +
+    geom_area(fill = chart[["chart-coral"]], alpha = 0.85) +
+    labs(
+        title = chanwe_title("Unemployed persons", eyebrow = "FORM - AREA"),
+        subtitle = chanwe_subtitle("Millions, monthly since 2000"),
+        x = NULL,
+        y = "Millions",
+        caption = chanwe_caption("Source: ggplot2::economics")
+    ) +
+    theme_chanwe()
+```
+
+##### Distribution · density
+
+```{r}
+#| label: form-density
+#| fig-height: 4.0
+ggplot(mt, aes(mpg, fill = am)) +
+    geom_density(alpha = 0.7, color = NA) +
+    scale_fill_chanwe_d() +
+    labs(
+        title = chanwe_title("Fuel economy distribution", eyebrow = "FORM - DENSITY"),
+        subtitle = chanwe_subtitle("Manual transmissions skew to higher MPG"),
+        x = "MPG",
+        y = "Density",
+        fill = NULL,
+        caption = chanwe_caption("Source: mtcars")
+    ) +
+    theme_chanwe()
+```
+
+##### Error bars · mean ± SD
+
+```{r}
+#| label: form-errorbar
+#| fig-height: 4.0
+ggplot(cyl_summary, aes(cyl, avg_mpg)) +
+    geom_pointrange(
+        aes(ymin = avg_mpg - sd_mpg, ymax = avg_mpg + sd_mpg),
+        color = chart[["chart-blue"]],
+        linewidth = 0.7,
+        size = 0.6
+    ) +
+    labs(
+        title = chanwe_title("Fuel economy by cylinders", eyebrow = "FORM - ERROR BARS"),
+        subtitle = chanwe_subtitle("Mean ± one standard deviation"),
+        x = "Cylinders",
+        y = "MPG",
+        caption = chanwe_caption("Source: mtcars")
+    ) +
+    theme_chanwe()
+```
+
+##### Focus bar · value labels
+
+```{r}
+#| label: form-focus
+#| fig-height: 4.0
+ggplot(cyl_summary, aes(cyl, avg_mpg)) +
+    geom_col(aes(fill = cyl == "4"), width = 0.62) +
+    geom_text(
+        aes(label = sprintf("%.1f", avg_mpg)),
+        vjust = -0.7,
+        family = "JetBrains Mono",
+        colour = chanwe_palette("semantic")[["secondary"]],
+        size = 6.75 * 0.8 / ggplot2::.pt
+    ) +
+    scale_fill_manual(values = c(`TRUE` = chanwe_palette("semantic")[["primary"]], `FALSE` = "#D4D4D4"), guide = "none") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.14))) +
+    labs(
+        title = chanwe_title("Fuel economy by cylinders", eyebrow = "FORM - FOCUS BAR"),
+        subtitle = chanwe_subtitle("One accent, gray context, values on the bars"),
+        x = "Cylinders",
+        caption = chanwe_caption("Source: mtcars")
+    ) +
+    theme_chanwe() +
+    theme(panel.grid.major.y = element_blank(), axis.text.y = element_blank(), axis.title.y = element_blank())
+```
+
+##### Facets
+
+```{r}
+#| label: form-facets
+#| fig-height: 4.6
+ggplot(mt, aes(wt, mpg, color = cyl)) +
+    geom_point(size = 2.0) +
+    facet_wrap(~am) +
+    scale_color_chanwe_d() +
+    labs(
+        title = chanwe_title("Faceted by transmission", eyebrow = "FORM - FACETS"),
+        subtitle = chanwe_subtitle("Strip labels in JetBrains Mono Thin"),
+        x = "Weight",
+        y = "MPG",
+        color = "Cyl",
+        caption = chanwe_caption("Source: mtcars")
+    ) +
+    theme_chanwe()
+```
+
+# Typst Tables
+
+`chanwe_kbl()` generates native Typst — no HTML-to-PDF translation. Both
+densities, every surface, per-column formatting and coloring, stubs,
+totals, highlights and vertical rules.
+
+## Surfaces
+
+##### white-ivory · default
+
+```{r}
+#| label: tbl-ivory
+chanwe_kbl(
+    fleet8,
+    title = "bg · white-ivory",
+    subtitle = "density · spacious",
+    eyebrow = "TABLE · SPACIOUS · WHITE-IVORY",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    stub = "model",
+    bg = "white-ivory",
+    fmt = fmt_fleet
+)
+```
+
+##### white
+
+```{r}
+#| label: tbl-white
+chanwe_kbl(
+    fleet8,
+    title = "bg · white",
+    subtitle = "density · spacious",
+    eyebrow = "TABLE · SPACIOUS · WHITE",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    stub = "model",
+    bg = "white",
+    fmt = fmt_fleet
+)
+```
+
+##### beige · top_border = FALSE
+
+```{r}
+#| label: tbl-beige
+chanwe_kbl(
+    fleet8,
+    title = "bg · beige",
+    subtitle = "top_border = FALSE",
+    eyebrow = "TABLE · SPACIOUS · BEIGE",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    stub = "model",
+    bg = "beige",
+    top_border = FALSE,
+    fmt = fmt_fleet
+)
+```
+
+##### gray · padding 0
+
+```{r}
+#| label: tbl-gray
+chanwe_kbl(
+    fleet8,
+    title = "bg · gray",
+    subtitle = "padding = 0  ·  top_border = FALSE",
+    eyebrow = "TABLE · SPACIOUS · GRAY",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    stub = "model",
+    bg = "gray",
+    padding = 0,
+    top_border = FALSE,
+    fmt = fmt_fleet
+)
+```
+
+##### metallic
+
+```{r}
+#| label: tbl-metallic
+chanwe_kbl(
+    fleet8,
+    title = "bg · metallic",
+    subtitle = "density · spacious",
+    eyebrow = "TABLE · SPACIOUS · METALLIC",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    stub = "model",
+    bg = "metallic",
+    fmt = fmt_fleet
+)
+```
+
+## Densities and column widths
+
+```{r}
+#| label: tbl-spacious-summary
+chanwe_kbl(
+    cyl_summary |> select(-sd_mpg),
+    title = "Fleet summary by cylinder count",
+    subtitle = "Spacious density - the presentation default",
+    eyebrow = "TABLES - SPACIOUS",
+    caption = "Source: mtcars",
+    col_labels = c(cyl = "Cylinders", avg_mpg = "Avg MPG", avg_hp = "Avg HP", avg_wt = "Avg weight", n = "Vehicles"),
+    fmt = list(
+        avg_mpg = function(x) sprintf("%.1f", x),
+        avg_hp = function(x) sprintf("%.0f", x),
+        avg_wt = function(x) sprintf("%.2f", x)
+    ),
+    density = "spacious"
+)
+```
+
+```{r}
+#| label: tbl-compact
+chanwe_kbl(
+    head(mt |> select(model, mpg, cyl, hp, wt, am), 8),
+    title = "Vehicle detail",
+    subtitle = "Compact density for dense reporting tables - explicit col_widths",
+    eyebrow = "TABLES - COMPACT",
+    caption = "Source: mtcars",
+    col_labels = c(model = "Model", mpg = "MPG", cyl = "Cyl", hp = "HP", wt = "Weight", am = "Transmission"),
+    col_widths = c("2.2fr", "1fr", "0.8fr", "1fr", "1.1fr", "1.6fr"),
+    fmt = list(
+        mpg = function(x) sprintf("%.1f", x),
+        wt = function(x) sprintf("%.2f", x),
+        hp = function(x) sprintf("%.0f", x)
+    ),
+    stub = "model",
+    density = "compact",
+    bg = "beige"
+)
+```
+
+## Totals, highlights and rules
+
+```{r}
+#| label: tbl-totals
+chanwe_kbl(
+    region_rev,
+    title = "Revenue by region",
+    subtitle = "Total row via n_total; QoQ column highlighted and signed; vline separates quarters from the delta",
+    eyebrow = "TABLES - TOTALS + HIGHLIGHT",
+    caption = "Source: finance close - simulated",
+    col_labels = c(region = "Region", q1 = "Q1 USD K", q2 = "Q2 USD K", delta = "QoQ %"),
+    stub = "region",
+    fmt = list(
+        q1 = function(x) formatC(x, format = "f", digits = 1, big.mark = ","),
+        q2 = function(x) formatC(x, format = "f", digits = 1, big.mark = ","),
+        delta = function(x) sprintf("%+.1f%%", x)
+    ),
+    col_colors = list(delta = chanwe_col_signed()),
+    n_total = 1,
+    highlight_cols = 4,
+    vlines = 3,
+    bg = "white-ivory"
+)
+```
+
+## Header variants
+
+##### Title only
+
+```{r}
+#| label: tbl-title-only
+chanwe_kbl(
+    fleet8,
+    title = "title only · no subtitle",
+    eyebrow = "TABLE · COMPACT HERO",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    stub = "model",
+    bg = "metallic",
+    fmt = fmt_fleet
+)
+```
+
+##### Title only · zone-highlight
+
+:::: {.zone-highlight color="metallic" above="-2"}
+
+```{r}
+#| label: tbl-title-only-zone
+chanwe_kbl(
+    fleet8,
+    title = "title only · zone-highlight",
+    eyebrow = "TABLE · COMPACT HERO",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    stub = "model",
+    bg = "transparent",
+    fmt = fmt_fleet
+)
+```
+
+::::
+
+##### No title · no subtitle
+
+```{r}
+#| label: tbl-no-header
+chanwe_kbl(
+    fleet8,
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    stub = "model",
+    bg = "metallic",
+    fmt = fmt_fleet
+)
+```
+
+##### No title · no subtitle · zone-highlight
+
+:::: {.zone-highlight color="metallic" above="-2"}
+
+```{r}
+#| label: tbl-no-header-zone
+chanwe_kbl(
+    fleet8,
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    stub = "model",
+    bg = "transparent",
+    fmt = fmt_fleet
+)
+```
+
+::::
+
+::: {.chanwe-callout kind="success" eyebrow="ONE SYSTEM" title="The same tokens, everywhere"}
+The QoQ columns above, the KPI arrows and the diverging heatmap poles are
+the exact same three hexes — `chanwe_palette("signed")`. Change them once
+and every chart, table and report follows.
+:::

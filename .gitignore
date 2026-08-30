@@ -70,3 +70,5 @@ rsconnect/
 # review document render outputs (source temp.qmd is tracked)
 /temp.html
 /temp_files/
+/chanwer-showcase-html.html
+/chanwer-showcase-html_files/

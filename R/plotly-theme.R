@@ -81,8 +81,13 @@ chanwe_plotly <- function(
     title_html <- paste(parts, collapse = "<br>")
   }
 
+  # Bottom margin is built in pixel bands so nothing overlaps or clips:
+  # ticks + axis title (48) | caption (30) | legend (34, container-anchored).
   top <- if (is.null(title_html)) 24 else 96
-  bottom <- 44 + (if (isTRUE(legend)) 36 else 0) + (if (is.null(caption)) 0 else 24)
+  base_b <- 48
+  cap_h <- if (is.null(caption)) 0 else 30
+  leg_h <- if (isTRUE(legend)) 34 else 0
+  bottom <- base_b + cap_h + leg_h
 
   args <- list(
     p,
@@ -96,8 +101,9 @@ chanwe_plotly <- function(
       orientation = "h",
       x = 1,
       xanchor = "right",
-      y = -0.14,
-      yanchor = "top",
+      yref = "container",
+      y = 0,
+      yanchor = "bottom",
       font = ax_font
     ),
     hovermode = hovermode,
@@ -159,7 +165,7 @@ chanwe_plotly <- function(
       y = 0,
       xanchor = "left",
       yanchor = "top",
-      yshift = -(bottom - 8),
+      yshift = -(base_b + 12),
       showarrow = FALSE,
       font = list(family = .cw_font_mono, size = 10, color = tk$fg_muted)
     )

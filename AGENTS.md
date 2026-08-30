@@ -34,7 +34,9 @@ look.
 - If the user is styling a table, start in `R/kbl-theme.R`.
 - If the user needs colors or reporting tokens, start in `R/palette.R`.
 - If the user is rendering a Quarto or Typst example, inspect
-  `chanwe-report-typst-showcase.qmd` and `_extensions/chanwe-report/`.
+  `chanwer-showcase-pdf.qmd` (static, chanwe-report-typst) or
+  `chanwer-showcase-html.qmd` (static + interactive HTML) and
+  `_extensions/chanwe-report/`.
 
 ## ggplot2 Notes
 
@@ -65,7 +67,10 @@ look.
 - For Typst/PDF output, prefer PNG-backed plot rendering:
   - `dev: ragg_png`
   - `fig-format: png`
-- The main reference example is `chanwe-report-typst-showcase.qmd`.
+- The main reference examples are `chanwer-showcase-pdf.qmd` (every static
+  pattern: ggplot2 + `chanwe_kbl()`) and `chanwer-showcase-html.qmd` (the
+  same plus `chanwe_gt()`, `chanwe_plotly()`, `chanwe_reactable()`).
+  `gt.qmd`, `chanwer-examples.qmd` and `temp.qmd` are their predecessors.
 - The Quarto extension lives under `_extensions/chanwe-report/`
   (template, filters, fonts, assets).
 
