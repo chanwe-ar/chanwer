@@ -33,7 +33,9 @@ test_that("theme_chanwe honors layout parameters", {
 
   expect_identical(th$legend.position, "none")
   expect_equal(as.numeric(th$plot.margin), rep(18, 4))
-  expect_equal(th$plot.title$size, 10 * 1.50)
+  expect_equal(th$plot.title$size, 10 * 1.85)
+  expect_equal(th$plot.title$lineheight, 1.0)
+  expect_identical(th$plot.title$eyebrow_colour, "#FD3810")
   expect_equal(th$plot.subtitle$size, 10 * 0.9)
 })
 
@@ -80,8 +82,8 @@ test_that("sequential palettes are named, light-to-dark, and gated", {
   }
 
   # green and vermillion end in the signed poles for a readable dark end
-  expect_identical(chanwe_seq_pal("green")[[6]], "#147705")
-  expect_identical(chanwe_seq_pal("vermillion")[[6]], "#CC1914")
+  expect_identical(rev(chanwe_seq_pal("green"))[[1]], "#147705")
+  expect_identical(rev(chanwe_seq_pal("vermillion"))[[1]], "#CC1914")
 
   # reverse flips, raw vectors pass through
   expect_identical(chanwe_seq_pal("blue", reverse = TRUE), rev(chanwe_seq_pal("blue")))

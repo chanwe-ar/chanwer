@@ -18,7 +18,7 @@ theme_chanwe(
 )
 }
 \arguments{
-\item{base_text_size}{Base text size in points. Default \code{6.75}. Title scales at ×1.50, subtitle ×0.90, eyebrow ×0.55.}
+\item{base_text_size}{Base text size in points. Default \code{6.75}. Title scales at ×1.85, subtitle ×0.90, eyebrow ×0.62.}
 
 \item{base_family}{Base font family for body text. Default \code{"Satoshi"}.}
 
@@ -80,10 +80,12 @@ brand-consistent color palettes.
 }
 
 
-Eyebrows and the caption \verb{//} prefix use the text-accessible primary
-variant (\code{typst-primary-text}), which passes WCAG 4.5:1 small-text
-contrast on every brand surface; rules and glyphs keep the display
-primary.
+The eyebrow renders in the brand primary (\code{typst-primary}, \verb{#FD3810});
+the caption \verb{//} prefix uses the text-accessible primary variant
+(\code{typst-primary-text}), which passes WCAG 4.5:1 small-text contrast on
+every brand surface. The title is set at 1.85x the base size with a
+1.0 line-height so the header, subtitle/KPI block and chart read as
+three distinct levels.
 
 Call \code{\link[=chanwe_load_fonts]{chanwe_load_fonts()}} once per session to register the custom font
 families. \code{theme_chanwe()} calls it automatically.

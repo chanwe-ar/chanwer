@@ -1,0 +1,999 @@
+---
+title: "chanwer — current vs. proposed"
+subtitle: "Static plots, interactive plots, tables and document chrome, side by side. Left column: what ships today. Right column: the design/aesthetic changes proposed from the Apple design foundations (typography, hierarchy, feedback, materials, reduced motion)."
+author: "Alejandro Abraham"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-location: right
+    number-sections: false
+    css: inst/quarto/chanwe-reporting.scss
+    grid:
+      body-width: 1180px
+      sidebar-width: 220px
+      margin-width: 230px
+    embed-resources: false
+execute:
+  echo: false
+  warning: false
+  message: false
+knitr:
+  opts_chunk:
+    dev: ragg_png
+    fig.width: 5.3
+    fig.height: 3.9
+    dpi: 220
+    out.width: "100%"
+---
+
+```{r}
+#| label: setup
+#| include: false
+devtools::load_all(".", quiet = TRUE)
+chanwe_load_fonts()
+knitr::opts_chunk$set(dev = "ragg_png")
+
+library(ggplot2)
+library(dplyr)
+
+set.seed(7)
+
+# ── tokens used by the proposals (all already exist in chanwer) ─────────────
+tk <- chanwe_get_colors()
+INK <- tk[["typst-ink"]] # #0F0F0F
+FG <- tk[["typst-fg"]] # #211F1C
+MUTED <- tk[["typst-fg-muted"]] # #71706C
+SUBTLE <- tk[["typst-fg-subtle"]] # #928D86
+PRIMARY <- tk[["typst-primary"]] # #FD3810
+PRIMARY_TXT <- tk[["typst-primary-text"]] # #C52C0C
+N100 <- tk[["typst-neutral-100"]]
+N200 <- tk[["typst-neutral-200"]]
+N300 <- tk[["typst-neutral-300"]]
+POS <- tk[["signed-positive"]]
+NEG <- tk[["signed-negative"]]
+CHART <- unname(chanwe_palette("chart"))
+base <- 6.75
+
+# ── data ────────────────────────────────────────────────────────────────────
+mt <- tibble::as_tibble(mtcars, rownames = "model") |>
+    mutate(
+        cyl = factor(cyl),
+        hp_band = cut(
+            hp,
+            breaks = c(-Inf, 110, 180, Inf),
+            labels = c("Low", "Mid", "High")
+        )
+    )
+
+months <- seq(as.Date("2025-09-01"), by = "month", length.out = 12)
+segs <- c("Retail", "Wholesale", "Online")
+rev_df <- expand.grid(
+    month = months,
+    segment = segs,
+    stringsAsFactors = FALSE
+) |>
+    arrange(segment, month) |>
+    group_by(segment) |>
+    mutate(
+        revenue = round(
+            c(Retail = 18, Wholesale = 12, Online = 7)[segment] +
+                cumsum(rnorm(12, 0.6, 1.1)),
+            2
+        )
+    ) |>
+    ungroup()
+rev_last <- rev_df |> group_by(segment) |> slice_max(month, n = 1) |> ungroup()
+
+# Push overlapping end-labels apart (data units) — used by the direct-label charts
+spread_labels <- function(y, gap) {
+    o <- order(y)
+    ys <- y[o]
+    for (i in seq_along(ys)[-1]) {
+        if (ys[i] - ys[i - 1] < gap) ys[i] <- ys[i - 1] + gap
+    }
+    y[o] <- ys
+    y
+}
+rev_last <- rev_last |> mutate(y_lab = spread_labels(revenue, 1.5))
+
+by_cyl <- mt |>
+    group_by(cyl) |>
+    summarise(mpg = mean(mpg), n = n(), .groups = "drop")
+
+fleet <- mt |>
+    select(model, mpg, hp, wt, cyl) |>
+    slice_head(n = 8) |>
+    mutate(delta = round(rnorm(8, 0, 6), 1))
+
+# ── static theme ─────────────────────────────────────────────────────────────
+# Decision (v2.3.0): only the header change shipped — title 1.85x base with
+# 1.0 leading and the eyebrow in the brand primary. Axes, ticks, grid, legend
+# and margins stay as they were. theme_chanwe() now IS the proposal, so the
+# right-hand cells call it directly; the alias keeps the chunks readable.
+theme_chanwe_pro <- function(...) theme_chanwe(...)
+
+kpi <- chanwe_kpi(
+    num = "45,91",
+    label = "USD MM",
+    period = "05·MAY·2026",
+    mtc1_num = "0,19%",
+    mtc1_label = "WoW",
+    mtc1_direction = "+",
+    mtc2_num = "3,17%",
+    mtc2_label = "MoM",
+    mtc2_direction = "-",
+    mtc3_num = "17,78%",
+    mtc3_label = "YoY",
+    mtc3_direction = "+"
+)
+
+# The gt / reactable / plotly proposals shipped as chanwe_gt(),
+# chanwe_reactable() and chanwe_plotly() (v2.3.0); the right-hand cells below
+# call the package functions.
+
+MONO <- "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace"
+SANS <- "Satoshi, 'DM Sans', system-ui, -apple-system, sans-serif"
+DISPLAY <- "Archivo, system-ui, sans-serif"
+```
+
+```{=html}
+<style>
+/* ────────────────────────────────────────────────────────────────────────
+   PROPOSED STYLESHEET
+   Scoped to `.proposed` (right-hand comparison cells) and to `.pro`
+   (whole page, via the toggle button). Everything here is a candidate for
+   inst/quarto/chanwe-reporting.scss.
+   ──────────────────────────────────────────────────────────────────────── */
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap");
+
+:root {
+  /* Align the HTML tokens with the Typst report contract (same literals
+     chanwe-report-typst uses) instead of a parallel palette. */
+  --cw-primary: #FD3810;
+  --cw-primary-text: #C52C0C;   /* 4.5:1 on every brand surface — for small text */
+  --cw-ink: #0F0F0F;
+  --cw-fg: #211F1C;
+  --cw-fg-muted: #71706C;
+  --cw-fg-subtle: #928D86;
+  --cw-n100: #F5F5F5;
+  --cw-n200: #E8E8E8;
+  --cw-n300: #D4D4D4;
+  --cw-n700: #525252;
+  --cw-n900: #1F1F1F;
+  --cw-info: #0758E5;
+  --cw-tip: #00A047;
+  --cw-warning: #EB9113;
+  --cw-caution: #FC5300;
+  --cw-danger: #CC1914;
+  --cw-sans: Satoshi, "DM Sans", system-ui, -apple-system, sans-serif;
+  --cw-display: Archivo, system-ui, sans-serif;
+  --cw-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --cw-serif: "Cormorant Garamond", Georgia, serif;
+  --cw-radius: 4px;
+  --cw-ease: cubic-bezier(.2, .8, .2, 1);   /* critically-damped feel, no overshoot */
+}
+
+/* ── comparison scaffold (not part of the proposal) ─────────────────────── */
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem 2rem; margin: 1.2rem 0 2.4rem; align-items: start; }
+@media (max-width: 960px) { .cmp { grid-template-columns: 1fr; } }
+.cmp-col { min-width: 0; }
+.cmp-col > .tag { display: inline-block; font: 500 10px/1 var(--cw-mono); letter-spacing: .18em; text-transform: uppercase;
+  color: #6D6D6D; border: 1px solid #DDD; border-radius: 3px; padding: 5px 8px; margin-bottom: .8rem; }
+.cmp-col > .tag.tag-pro { color: var(--cw-primary-text); border-color: var(--cw-primary); }
+.cmp-col img { display: block; }
+.why { font-size: .92rem; color: #5B5B5B; border-left: 2px solid var(--cw-primary); padding: .1rem 0 .1rem 1rem; margin: 0 0 1.4rem; }
+.why b { color: var(--cw-ink); font-weight: 600; }
+.why code { font-size: .82em; }
+
+/* ── type: size-specific tracking & leading (mirrors the Typst template) ── */
+:is(.proposed, .pro) { font-family: var(--cw-sans); color: var(--cw-fg); }
+:is(.proposed, .pro) p, :is(.proposed, .pro) li { color: var(--cw-fg); line-height: 1.6; letter-spacing: 0; }
+:is(.proposed, .pro) h1, .pro .title { font: 600 2.25rem/1.05 var(--cw-display); letter-spacing: -0.025em; color: var(--cw-n900); }
+:is(.proposed, .pro) h2 { font: 600 1.6rem/1.12 var(--cw-display); letter-spacing: -0.015em; color: var(--cw-n900); border-bottom: 1px solid var(--cw-n300); padding-bottom: .35rem; }
+:is(.proposed, .pro) h3 { font: 600 1.25rem/1.2 var(--cw-display); letter-spacing: -0.01em; color: var(--cw-n900); }
+:is(.proposed, .pro) h4, :is(.proposed, .pro) h5 { font: 500 .72rem/1.3 var(--cw-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--cw-fg-subtle); }
+:is(.proposed, .pro) em, :is(.proposed, .pro) i { font-family: var(--cw-serif); font-weight: 400; font-size: 1.08em; color: #484848; }
+:is(.proposed, .pro) a { color: var(--cw-primary-text); font-weight: 500; text-decoration: underline; text-decoration-color: var(--cw-primary); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+:is(.proposed, .pro) figcaption, :is(.proposed, .pro) .caption { font: 400 .78rem/1.45 var(--cw-mono); letter-spacing: .01em; color: var(--cw-fg-muted) !important; }
+.pro .subtitle { font-family: var(--cw-sans); color: var(--cw-fg-muted); line-height: 1.5; }
+.pro .quarto-title-meta-heading { font: 500 .68rem/1 var(--cw-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--cw-fg-subtle); }
+.pro code { font-family: var(--cw-mono); }
+.pro pre, .pro div.sourceCode { background: var(--cw-n100) !important; border: 1px solid var(--cw-n200); border-left: 2px solid var(--cw-primary); border-radius: var(--cw-radius); }
+.pro :not(pre) > code { background: var(--cw-n100); border: 1px solid var(--cw-n200); color: var(--cw-n700); }
+.pro .header-section-number { color: var(--cw-primary-text); }
+
+/* ── type specimen (demo only: replicates each stylesheet's heading rules) ─ */
+.spec p { margin: 0 0 .55rem; }
+.spec .s-h1 { font: 900 2.25rem/1.15 "DM Sans", system-ui, sans-serif; color: #101010; }
+.spec .s-h2 { font: 900 1.6rem/1.15 "DM Sans", system-ui, sans-serif; color: #101010; }
+.spec .s-h3 { font: 900 1.25rem/1.15 "DM Sans", system-ui, sans-serif; color: #101010; }
+.spec .s-eyebrow { font: 700 .9rem/1.15 "DM Sans", system-ui, sans-serif; color: #101010; }
+.spec .s-body { font: 400 1rem/1.62 "DM Sans", system-ui, sans-serif; color: #5B5B5B; }
+.spec .s-cap { font: 400 .9rem/1.4 "DM Sans", system-ui, sans-serif; color: #6D6D6D; }
+.proposed .spec .s-h1 { font: 600 2.25rem/1.05 var(--cw-display); letter-spacing: -0.025em; color: var(--cw-n900); }
+.proposed .spec .s-h2 { font: 600 1.6rem/1.12 var(--cw-display); letter-spacing: -0.015em; color: var(--cw-n900); }
+.proposed .spec .s-h3 { font: 600 1.25rem/1.2 var(--cw-display); letter-spacing: -0.01em; color: var(--cw-n900); }
+.proposed .spec .s-eyebrow { font: 500 .72rem/1.3 var(--cw-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--cw-fg-subtle); }
+.proposed .spec .s-body { font: 400 1rem/1.6 var(--cw-sans); letter-spacing: 0; color: var(--cw-fg); }
+.proposed .spec .s-cap { font: 400 .78rem/1.45 var(--cw-mono); letter-spacing: .01em; color: var(--cw-fg-muted); }
+.spec .s-nums { font-variant-numeric: tabular-nums; }
+
+/* ── callouts: hairline + 2px accent rule + rotated-square glyph (Typst) ── */
+:is(.proposed, .pro) .callout { --cw-accent: var(--cw-ink); background: #fff !important; border: 1px solid var(--cw-n300) !important; border-left: 2px solid var(--cw-accent) !important; border-radius: var(--cw-radius); }
+:is(.proposed, .pro) .callout-note { --cw-accent: var(--cw-info); }
+:is(.proposed, .pro) .callout-tip { --cw-accent: var(--cw-tip); }
+:is(.proposed, .pro) .callout-warning { --cw-accent: var(--cw-warning); }
+:is(.proposed, .pro) .callout-caution { --cw-accent: var(--cw-caution); }
+:is(.proposed, .pro) .callout-important { --cw-accent: var(--cw-danger); }
+:is(.proposed, .pro) .callout > .callout-header, :is(.proposed, .pro) .callout .callout-header { background: transparent !important; border-bottom: 0 !important; padding: .7rem 1rem 0 1rem !important; }
+:is(.proposed, .pro) .callout .callout-title-container { font: 500 .7rem/1.3 var(--cw-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--cw-ink); display: flex; align-items: center; }
+:is(.proposed, .pro) .callout .callout-title-container::before { content: ''; display: inline-block; width: 7px; height: 7px; background: var(--cw-accent); transform: rotate(45deg); margin: 0 10px 0 1px; flex: none; }
+:is(.proposed, .pro) .callout .callout-icon-container { display: none !important; }
+:is(.proposed, .pro) .callout .callout-body-container, :is(.proposed, .pro) .callout .callout-body { padding: .35rem 1rem .8rem 1rem !important; }
+:is(.proposed, .pro) .callout p { margin-bottom: 0; }
+/* the left-hand "current" cells must keep the current look even when the page toggle is on */
+.pro .cmp-col:not(.proposed) .callout { --cw-accent: initial; background: revert !important; border: revert !important; border-left: revert !important; border-radius: revert; }
+.pro .cmp-col:not(.proposed) .callout .callout-header { background: revert !important; border-bottom: revert !important; padding: revert !important; }
+.pro .cmp-col:not(.proposed) .callout .callout-title-container { font: revert; letter-spacing: revert; text-transform: revert; color: revert; display: revert; }
+.pro .cmp-col:not(.proposed) .callout .callout-title-container::before { content: none; }
+.pro .cmp-col:not(.proposed) .callout .callout-icon-container { display: revert !important; }
+.pro .cmp-col:not(.proposed) .callout .callout-body-container, .pro .cmp-col:not(.proposed) .callout .callout-body { padding: revert !important; }
+
+/* ── feedback on press, not release (§1) ──────────────────────────────────── */
+:is(.proposed, .pro) :is(button, .btn, .nav-link, .callout-header, .rt-page-button, .rt-th, .rt-sort-header, .code-fold-btn, .quarto-title-block a) {
+  transition: transform 100ms var(--cw-ease), background-color 120ms var(--cw-ease), color 120ms var(--cw-ease);
+}
+:is(.proposed, .pro) :is(button, .btn, .rt-page-button):active { transform: scale(.96); }
+:is(.proposed, .pro) .callout.callout-collapse .callout-header:active { transform: translateY(1px); }
+.pro #TOC a { transition: color 120ms var(--cw-ease), transform 120ms var(--cw-ease); }
+.pro #TOC a:active { transform: translateX(2px); }
+
+/* ── translucent chrome (§12): TOC as a material, scroll-edge instead of a rule */
+.pro #TOC, .pro nav[role="doc-toc"] { background: rgba(255,255,255,.62); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); border-left: 0 !important; border-radius: var(--cw-radius); padding: .6rem .8rem; }
+.pro #TOC h2, .pro nav[role="doc-toc"] h2 { font: 500 .66rem/1 var(--cw-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--cw-fg-subtle); border: 0; padding: 0 0 .5rem; }
+.pro #TOC a { color: var(--cw-fg-muted); font-size: .86rem; border-left: 1px solid transparent !important; }
+.pro #TOC a.active { color: var(--cw-ink); border-left-color: var(--cw-primary) !important; }
+
+/* material demo (self-contained) */
+.demo-scroll { position: relative; height: 230px; overflow: auto; border: 1px solid var(--cw-n300); border-radius: var(--cw-radius); background: #fff; }
+.demo-bar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; font: 500 12px/1 var(--cw-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--cw-ink); background: #fff; border-bottom: 1px solid #DDD; }
+.demo-bar .dot { width: 8px; height: 8px; background: var(--cw-primary); transform: rotate(45deg); display: inline-block; margin-right: 10px; }
+.demo-bar .demo-btn { font: inherit; letter-spacing: inherit; text-transform: inherit; padding: 6px 10px; border: 1px solid var(--cw-n300); border-radius: 3px; background: #fff; color: var(--cw-ink); cursor: pointer; }
+.demo-body { padding: 12px 14px 20px; font: 400 13px/1.55 var(--cw-sans); color: var(--cw-fg); }
+.demo-kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 8px 0 14px; }
+.demo-kpi div { background: linear-gradient(135deg, #FD3810, #F5C0B6); color: #fff; border-radius: 4px; padding: 14px 12px; font: 600 20px/1 var(--cw-display); letter-spacing: -0.02em; }
+.demo-kpi span { display: block; font: 500 9px/1 var(--cw-mono); letter-spacing: .18em; text-transform: uppercase; margin-top: 8px; opacity: .9; }
+.proposed .demo-bar { background: rgba(255,255,255,.6); backdrop-filter: blur(18px) saturate(180%); -webkit-backdrop-filter: blur(18px) saturate(180%); border-bottom: 0; box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
+.proposed .demo-bar::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 16px; background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,0)); pointer-events: none; }
+.proposed .demo-bar .demo-btn { background: rgba(255,255,255,.7); border-color: rgba(15,15,15,.18); transition: transform 100ms var(--cw-ease), background-color 120ms var(--cw-ease); }
+.proposed .demo-bar .demo-btn:active { transform: scale(.95); background: #fff; }
+
+/* ── reactable: the current SCSS reaches in with !important; override it ── */
+.proposed .reactable .rt-th { background: rgba(255,255,255,.72) !important; backdrop-filter: blur(12px) saturate(160%); -webkit-backdrop-filter: blur(12px) saturate(160%); }
+.proposed .reactable .rt-th-inner { padding-top: 9px !important; padding-bottom: 9px !important; }
+.proposed .reactable .rt-page-button-current { background: var(--cw-ink) !important; border-color: var(--cw-ink) !important; color: #fff !important; font-weight: 500 !important; }
+.proposed .reactable .rt-tr { transition: background-color 120ms var(--cw-ease); }
+
+/* ── plotly: SVG text accepts letter-spacing — track the display title ──── */
+.proposed .js-plotly-plot .gtitle { letter-spacing: -0.015em; }
+.proposed .js-plotly-plot .legendtext, .proposed .js-plotly-plot .xtick text, .proposed .js-plotly-plot .ytick text { letter-spacing: .02em; }
+.proposed .js-plotly-plot .hoverlayer .hovertext path { stroke: none !important; }
+
+/* ── accessibility signals (§14): three independent preferences ─────────── */
+@media (prefers-reduced-motion: reduce) {
+  :is(.proposed, .pro) *, :is(.proposed, .pro) *::before, :is(.proposed, .pro) *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-iteration-count: 1 !important; }
+  :is(.proposed, .pro) :is(button, .btn, .rt-page-button):active { transform: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .pro #TOC, .pro nav[role="doc-toc"], .proposed .demo-bar, .proposed .reactable .rt-th { background: #fff !important; backdrop-filter: none; -webkit-backdrop-filter: none; border-bottom: 1px solid var(--cw-n300); }
+}
+@media (prefers-contrast: more) {
+  .proposed .callout { border-color: var(--cw-ink) !important; border-width: 1.5px; }
+  .proposed .callout-title-container { color: #000; }
+  :is(.proposed, .pro) a { text-decoration-thickness: 2px; }
+}
+
+/* ── page toggle button ─────────────────────────────────────────────────── */
+.pro-toggle { position: fixed; right: 18px; bottom: 18px; z-index: 50; font: 500 11px/1 var(--cw-mono); letter-spacing: .12em; text-transform: uppercase; color: #fff; background: #0F0F0F; border: 0; border-radius: 999px; padding: 12px 16px; cursor: pointer; box-shadow: 0 6px 24px rgba(0,0,0,.18); transition: transform 100ms var(--cw-ease), background-color 120ms var(--cw-ease); }
+.pro-toggle:hover { background: #232323; }
+.pro-toggle:active { transform: scale(.96); }
+.pro-toggle[aria-pressed="true"] { background: var(--cw-primary); }
+</style>
+```
+
+::: {.callout-note collapse="false"}
+## How to read this document
+Every section pairs the **current** output (left) with the **proposed** version (right). Status after review (v2.3.0): the ggplot2 header (1.85× title, 1.0 leading, brand-orange eyebrow) is now the `theme_chanwe()` default — so the two static columns share a header and differ only in chart-level choices that were *not* adopted (muted axes, no ticks, direct labels, focus bars). The gt, reactable and plotly cells on the right call the shipped `chanwe_gt()`, `chanwe_reactable()` and `chanwe_plotly()`. The callout treatment shipped in the `chanwe-brand` HTML format. The type-scale, translucent-chrome and echarts proposals remain proposals; the floating button applies that stylesheet to this page for review.
+:::
+
+## Type scale
+
+The Typst templates already do size-specific tracking (`-0.025em` at 30pt, `-0.01em` at 19pt, `+0.18em` on 8pt mono caps) with Archivo 600. The HTML stylesheet uses **DM Sans 900** for every heading, one `line-height: 1.15` for `h1`–`h6`, and no `letter-spacing` anywhere — so HTML reports don't look like the PDFs.
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+```{=html}
+<div class="spec">
+<p class="s-h1">Fleet performance review</p>
+<p class="s-h2">Revenue by segment, FY26</p>
+<p class="s-h3">Method and data sources</p>
+<p class="s-eyebrow">Section · Profitability</p>
+<p class="s-body">Retail carried the quarter with <em>steady weekly growth</em>, while wholesale volume softened after the March price revision. Online remains small but is compounding fastest.</p>
+<p class="s-cap s-nums">Source · Motor Trend, 1974 · mtcars dataset · 1,024 rows · 12.40%</p>
+</div>
+```
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+```{=html}
+<div class="spec">
+<p class="s-h1">Fleet performance review</p>
+<p class="s-h2">Revenue by segment, FY26</p>
+<p class="s-h3">Method and data sources</p>
+<p class="s-eyebrow">Section · Profitability</p>
+<p class="s-body">Retail carried the quarter with <em>steady weekly growth</em>, while wholesale volume softened after the March price revision. Online remains small but is compounding fastest.</p>
+<p class="s-cap s-nums">Source · Motor Trend, 1974 · mtcars dataset · 1,024 rows · 12.40%</p>
+</div>
+```
+:::
+:::
+
+::: {.why}
+**What changes.** Satoshi body + Archivo 600 display (the cross-app brand stack, matching Typst and chanwe-ui) instead of DM Sans 900. Tracking scales with size: `-0.025em` / `-0.015em` / `-0.01em` on h1–h3, `0` on body, `+0.18em` on the mono eyebrow. Leading scales inversely: `1.05` → `1.12` → `1.2` → `1.6`. Eyebrows and captions move to JetBrains Mono, and figures get `tabular-nums`. Body text darkens from `#5B5B5B` to the Typst `fg` `#211F1C` (the current gray is 6.1:1 — passes, but reads washed out next to the PDFs). **Why:** *hierarchy is built from weight + size + leading as a set, not size alone; a single letter-spacing value is wrong somewhere.*
+:::
+
+## Static plots — ggplot2
+
+### Scatter with KPI header
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+```{r}
+#| fig-height: 4.7
+ggplot(mt, aes(wt, mpg, color = hp_band)) +
+    geom_point(size = 2.2, alpha = 0.88) +
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 0.7) +
+    scale_color_chanwe_d() +
+    theme_chanwe(bg_color = "white") +
+    labs(
+        title = chanwe_title(
+            "Simple fleet view",
+            eyebrow = "SECTION · EFFICIENCY"
+        ),
+        subtitle = chanwe_subtitle(
+            "Weight against fuel economy, coloured by power band.",
+            kpi = kpi
+        ),
+        caption = chanwe_caption(
+            "Source · Motor Trend, 1974 · mtcars dataset."
+        ),
+        x = "Weight (1000 lb)",
+        y = "Miles per gallon",
+        color = "Power band"
+    )
+```
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+```{r}
+#| fig-height: 4.7
+ggplot(mt, aes(wt, mpg)) +
+    geom_smooth(
+        aes(color = hp_band),
+        method = "lm",
+        formula = y ~ x,
+        se = FALSE,
+        linewidth = 0.55
+    ) +
+    geom_point(
+        aes(fill = hp_band),
+        shape = 21,
+        colour = "white",
+        stroke = 0.35,
+        size = 2.5
+    ) +
+    scale_color_chanwe_d() +
+    scale_fill_chanwe_d() +
+    theme_chanwe_pro(bg_color = "white") +
+    labs(
+        title = chanwe_title(
+            "Simple fleet view",
+            eyebrow = "SECTION · EFFICIENCY"
+        ),
+        subtitle = chanwe_subtitle(
+            "Weight against fuel economy, coloured by power band.",
+            kpi = kpi
+        ),
+        caption = chanwe_caption(
+            "Source · Motor Trend, 1974 · mtcars dataset."
+        ),
+        x = "Weight (1000 lb)",
+        y = "Miles per gallon"
+    )
+```
+:::
+:::
+
+::: {.why}
+**Shipped (v2.3.0):** title 1.5× → 1.85× base with leading 1.1 → 1.0, eyebrow in the brand primary `#FD3810` — both columns now show it because it is the `theme_chanwe()` default. **Not adopted (by decision):** muted axes, removed ticks, legend-title removal, thinner trend lines. What still differs on the right is chart-level code only (white-stroked points, no legend title). Note: ggplot2 has no letter-spacing, so the mono eyebrow can't get the `+0.18em` the Typst and HTML versions have.
+:::
+
+### Line chart — legend vs. direct labels
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+```{r}
+ggplot(rev_df, aes(month, revenue, color = segment)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 1.6) +
+    scale_color_chanwe_d() +
+    scale_x_date(date_labels = "%b") +
+    theme_chanwe(bg_color = "white") +
+    labs(
+        title = chanwe_title(
+            "Monthly revenue by segment",
+            eyebrow = "SECTION · REVENUE"
+        ),
+        subtitle = chanwe_subtitle("Twelve trailing months, USD MM."),
+        caption = chanwe_caption("Source · Internal ledger, simulated."),
+        x = NULL,
+        y = "USD MM",
+        color = "Segment"
+    )
+```
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+```{r}
+ggplot(rev_df, aes(month, revenue, color = segment)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(data = rev_last, size = 1.9) +
+    geom_text(
+        data = rev_last,
+        aes(y = y_lab, label = segment),
+        hjust = 0,
+        nudge_x = 7,
+        family = "JetBrains Mono",
+        size = base * 0.72 / ggplot2::.pt,
+        show.legend = FALSE
+    ) +
+    scale_color_chanwe_d() +
+    scale_x_date(
+        date_labels = "%b",
+        breaks = months[c(2, 5, 8, 11)],
+        expand = expansion(mult = c(0.02, 0.2))
+    ) +
+    coord_cartesian(clip = "off") +
+    theme_chanwe_pro(bg_color = "white", legend_position = "none") +
+    labs(
+        title = chanwe_title(
+            "Monthly revenue by segment",
+            eyebrow = "SECTION · REVENUE"
+        ),
+        subtitle = chanwe_subtitle("Twelve trailing months, USD MM."),
+        caption = chanwe_caption("Source · Internal ledger, simulated."),
+        x = NULL,
+        y = "USD MM"
+    )
+```
+:::
+:::
+
+::: {.why}
+**What changes.** The legend goes; each series is labelled where it ends, and only the terminal point is marked. **Why:** *place a control near what it affects — if you need a label to explain a mapping, the mapping is weak.* A legend forces an eye round-trip per series; a label on the line is the "mapping" principle applied to a chart. Intermediate points are dropped because the line already encodes them (restraint).
+:::
+
+### Bars — encode less, say more
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+```{r}
+ggplot(by_cyl, aes(cyl, mpg, fill = cyl)) +
+    geom_col(width = 0.7) +
+    scale_fill_chanwe_d() +
+    theme_chanwe(bg_color = "white") +
+    labs(
+        title = chanwe_title(
+            "Fuel economy by cylinders",
+            eyebrow = "SECTION · EFFICIENCY"
+        ),
+        subtitle = chanwe_subtitle("Mean miles per gallon."),
+        caption = chanwe_caption(
+            "Source · Motor Trend, 1974 · mtcars dataset."
+        ),
+        x = "Cylinders",
+        y = "Mean MPG",
+        fill = "Cylinders"
+    )
+```
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+```{r}
+ggplot(by_cyl, aes(cyl, mpg)) +
+    geom_col(aes(fill = cyl == "4"), width = 0.62) +
+    geom_text(
+        aes(label = sprintf("%.1f", mpg)),
+        vjust = -0.7,
+        family = "JetBrains Mono",
+        colour = INK,
+        size = base * 0.8 / ggplot2::.pt
+    ) +
+    scale_fill_manual(
+        values = c(`TRUE` = PRIMARY, `FALSE` = N300),
+        guide = "none"
+    ) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.14))) +
+    theme_chanwe_pro(bg_color = "white") +
+    theme(
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.y = element_blank()
+    ) +
+    labs(
+        title = chanwe_title(
+            "Fuel economy by cylinders",
+            eyebrow = "SECTION · EFFICIENCY"
+        ),
+        subtitle = chanwe_subtitle(
+            "Mean miles per gallon. Four-cylinder engines lead by a wide margin."
+        ),
+        caption = chanwe_caption(
+            "Source · Motor Trend, 1974 · mtcars dataset."
+        ),
+        x = "Cylinders"
+    )
+```
+:::
+:::
+
+::: {.why}
+**What changes.** Colour stops double-encoding the x-axis and is spent on one thing: the takeaway bar in brand primary, context bars in `neutral-300`. Values sit on the bars in mono, so the y-axis and gridlines can go. The subtitle states the finding. **Why:** *dim to focus* — the same move Apple uses for modals, applied to marks. Three categorical colours for three bars that are already labelled is decoration; one accent is information.
+:::
+
+## Interactive plots
+
+### plotly — `ggplotly()` vs. a token-driven build
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+```{r}
+p_cur <- ggplot(rev_df, aes(month, revenue, color = segment)) +
+    geom_line(linewidth = 0.8) +
+    geom_point(size = 1.6) +
+    scale_color_chanwe_d() +
+    scale_x_date(date_labels = "%b") +
+    theme_chanwe(bg_color = "white") +
+    labs(
+        title = "Monthly revenue by segment",
+        x = NULL,
+        y = "USD MM",
+        color = "Segment"
+    )
+plotly::ggplotly(p_cur, height = 400)
+```
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+```{r}
+plotly::plot_ly(
+    rev_df,
+    x = ~month,
+    y = ~revenue,
+    color = ~segment,
+    colors = CHART[1:3],
+    type = "scatter",
+    mode = "lines",
+    line = list(width = 2),
+    hovertemplate = "%{y:.2f}<extra>%{fullData.name}</extra>",
+    height = 400
+) |>
+    plotly::add_annotations(
+        data = rev_last,
+        x = ~month,
+        y = ~y_lab,
+        text = ~segment,
+        xanchor = "left",
+        xshift = 8,
+        showarrow = FALSE,
+        font = list(family = MONO, size = 10.5, color = INK)
+    ) |>
+    chanwe_plotly(
+        title = "Monthly revenue by segment",
+        eyebrow = "SECTION · REVENUE",
+        subtitle = "Twelve trailing months, USD MM · hover for exact values",
+        caption = "Source · Internal ledger, simulated."
+    ) |>
+    # chart-specific axis choices layer on top of the helper
+    plotly::layout(
+        xaxis = list(
+            title = list(text = ""),
+            tickformat = "%b",
+            tickvals = months[c(2, 5, 8, 11)],
+            range = c(months[1] - 5, months[12] + 75)
+        ),
+        yaxis = list(title = list(text = "USD MM")),
+        margin = list(r = 90)
+    )
+```
+:::
+:::
+
+::: {.why}
+**Shipped as `chanwe_plotly()` (v2.3.0).** `ggplotly()` drops the chanwe header system (eyebrow, subtitle, KPI, caption), keeps plotly's modebar, right-hand legend, default hover boxes and blue spike-less cursor. `chanwe_plotly()` applies the tokens to any `plot_ly()` object: eyebrow (brand primary `#FD3810`) / title / subtitle as a left-anchored block in Archivo, `//` caption, `hovermode = "x unified"` with an ink hover card in mono, a hairline spike that tracks the cursor, modebar and drag-zoom removed. Direct labels and axis ticks stay chart-level code. **Why:** *feedback must be continuous during the interaction, not just at the end; strip chrome that doesn't earn its place.*
+:::
+
+### echarts4r — motion, focus, reduced motion
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+```{r}
+rev_df |>
+    group_by(segment) |>
+    echarts4r::e_charts(month, height = 400) |>
+    echarts4r::e_line(revenue) |>
+    echarts4r::e_title("Monthly revenue by segment") |>
+    echarts4r::e_tooltip(trigger = "axis")
+```
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+```{r}
+reduced_motion_js <- "
+function(el, x) {
+  var chart = echarts.getInstanceByDom(el);
+  if (!chart || !window.matchMedia) return;
+  var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var apply = function() { chart.setOption({ animation: !mq.matches }); };
+  apply();
+  if (mq.addEventListener) mq.addEventListener('change', apply);
+}"
+
+rev_df |>
+    group_by(segment) |>
+    echarts4r::e_charts(month, height = 400) |>
+    echarts4r::e_line(
+        revenue,
+        showSymbol = FALSE,
+        symbol = "circle",
+        symbolSize = 6,
+        lineStyle = list(width = 2),
+        emphasis = list(focus = "series", lineStyle = list(width = 3)),
+        blur = list(lineStyle = list(opacity = 0.18))
+    ) |>
+    echarts4r::e_color(CHART[1:3]) |>
+    echarts4r::e_title(
+        text = "Monthly revenue by segment",
+        subtext = "Twelve trailing months, USD MM · hover a line to focus it",
+        left = 0,
+        top = 0,
+        textStyle = list(
+            fontFamily = DISPLAY,
+            fontWeight = 600,
+            fontSize = 19,
+            color = INK
+        ),
+        subtextStyle = list(fontFamily = SANS, fontSize = 12, color = MUTED)
+    ) |>
+    echarts4r::e_text_style(fontFamily = SANS, color = MUTED) |>
+    echarts4r::e_x_axis(
+        axisLine = list(show = FALSE),
+        axisTick = list(show = FALSE),
+        axisLabel = list(
+            color = MUTED,
+            fontFamily = MONO,
+            fontSize = 10.5,
+            hideOverlap = TRUE,
+            formatter = "{MMM}"
+        )
+    ) |>
+    echarts4r::e_y_axis(
+        axisLine = list(show = FALSE),
+        axisTick = list(show = FALSE),
+        splitLine = list(lineStyle = list(color = "#ECECEC")),
+        axisLabel = list(color = MUTED, fontFamily = MONO, fontSize = 10.5)
+    ) |>
+    echarts4r::e_grid(
+        left = 0,
+        right = 8,
+        top = 84,
+        bottom = 44,
+        containLabel = TRUE
+    ) |>
+    echarts4r::e_legend(
+        bottom = 0,
+        right = 0,
+        icons = rep("roundRect", 3),
+        itemWidth = 10,
+        itemHeight = 10,
+        itemGap = 18,
+        textStyle = list(color = MUTED, fontFamily = MONO, fontSize = 10.5)
+    ) |>
+    echarts4r::e_tooltip(
+        trigger = "axis",
+        backgroundColor = INK,
+        borderWidth = 0,
+        padding = c(8, 12),
+        transitionDuration = 0.08,
+        textStyle = list(color = "#FFFFFF", fontFamily = MONO, fontSize = 11),
+        axisPointer = list(
+            type = "line",
+            lineStyle = list(color = N300, width = 1)
+        )
+    ) |>
+    echarts4r::e_animation(duration = 420, easing = "cubicOut") |>
+    htmlwidgets::onRender(reduced_motion_js)
+```
+:::
+:::
+
+::: {.why}
+**What changes.** Defaults are 1000ms entry animation, a tooltip that lags the cursor by 400ms, default palette and Microsoft-YaHei-ish type. Proposed: `cubicOut` at 420ms (a critically-damped feel — no overshoot, since nothing here carried momentum), tooltip transition cut to 80ms so it stays glued to the pointer, `emphasis.focus = "series"` so hovering a line *dims the others* (the modal "dim to focus" move), and a `matchMedia('prefers-reduced-motion')` listener that turns animation off — and back on — live. Axis lines and ticks removed; grid and text pick up the tokens. **Why:** *respond instantly, start most UI critically damped, reduced motion means a gentler equivalent, not no feedback.*
+:::
+
+## Tables
+
+### Static — gt
+
+The Typst `chanwe_kbl()` table (Archivo title, mono eyebrow with rule prefix, mono tabular cells, hairline ink rules, `//` source note) is the reference aesthetic; today no HTML equivalent exists, so a `gt()` in an HTML report gets the gt defaults plus the stylesheet's white-row override.
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+```{r}
+gt::gt(fleet, rowname_col = "model") |>
+    gt::tab_header(
+        title = "Fleet overview",
+        subtitle = "Eight models, mtcars — deltas vs. plan."
+    ) |>
+    gt::fmt_number(columns = c(mpg, wt), decimals = 2) |>
+    gt::fmt_number(columns = hp, decimals = 0) |>
+    gt::fmt(columns = delta, fns = function(x) sprintf("%+.1f%%", x)) |>
+    gt::tab_source_note("Source · Motor Trend, 1974 · mtcars dataset.")
+```
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+```{r}
+chanwe_gt(
+    fleet,
+    stub = "model",
+    title = "Fleet overview",
+    eyebrow = "TABLE · FLEET",
+    subtitle = "Eight models, mtcars — deltas vs. plan.",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    signed = "delta"
+) |>
+    gt::cols_label(
+        mpg = "MPG",
+        hp = "HP",
+        wt = "Weight",
+        cyl = "Cyl",
+        delta = "Δ vs plan"
+    ) |>
+    gt::fmt_number(columns = c(mpg, wt), decimals = 2) |>
+    gt::fmt_number(columns = hp, decimals = 0) |>
+    gt::fmt(columns = delta, fns = function(x) sprintf("%+.1f%%", x)) |>
+    gt::cols_align("right", columns = cyl)
+```
+:::
+:::
+
+::: {.why}
+**Shipped as `chanwe_gt()` (v2.3.0).** The `chanwe_kbl()` grammar ported to HTML: eyebrow with rule prefix in the brand primary, Archivo 600 title with `-0.015em`, Satoshi subtitle in `fg-muted`, mono caps column labels at `+0.14em` in `fg-subtle`, mono tabular numerals right-aligned, hairline ink rules top/bottom, striped rows, the `//` source prefix, and `signed = "delta"` coloured by valence (same rule as the Typst tables). Per review, the gray rule under the column labels and the stub's right-hand rule are now a single 1px hairline each (gt's 2px defaults are off). **Why:** *things that look the same must behave the same and live in the same place* — one table grammar across PDF and HTML.
+:::
+
+### Interactive — reactable
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+```{r}
+reactable::reactable(
+    fleet,
+    defaultPageSize = 6,
+    defaultSorted = list(hp = "desc"),
+    defaultColDef = reactable::colDef(minWidth = 64)
+)
+```
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+```{r}
+chanwe_reactable(
+    fleet,
+    title = "Fleet overview",
+    eyebrow = "TABLE · FLEET",
+    subtitle = "Eight models, mtcars — deltas vs. plan.",
+    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
+    signed = "delta",
+    defaultPageSize = 6,
+    defaultSorted = list(hp = "desc"),
+    defaultColDef = reactable::colDef(minWidth = 64),
+    columns = list(
+        model = reactable::colDef(name = "Model", minWidth = 130),
+        mpg = reactable::colDef(
+            name = "MPG",
+            format = reactable::colFormat(digits = 2)
+        ),
+        hp = reactable::colDef(name = "HP"),
+        wt = reactable::colDef(
+            name = "Weight",
+            minWidth = 78,
+            format = reactable::colFormat(digits = 2)
+        ),
+        cyl = reactable::colDef(
+            name = "Cyl",
+            align = "right",
+            style = list(fontFamily = MONO, fontSize = "12px")
+        ),
+        delta = reactable::colDef(
+            name = "Δ vs plan",
+            minWidth = 88,
+            cell = function(v) sprintf("%+.1f%%", v)
+        )
+    )
+)
+```
+:::
+:::
+
+::: {.why}
+**Shipped as `chanwe_reactable()` (v2.3.0).** Same grammar as the gt table so static and interactive tables are indistinguishable at rest — and, per review, the same eyebrow / title / subtitle header block above the table and `//` caption below. Mono caps column labels, mono tabular figures right-aligned, ink rules, `signed = "delta"` valence colours. Interaction craft: header hover darkens (affordance for sort), sort and pagination **press** feedback on `:active` (100ms, no overshoot), row highlight fades in at 120ms, current page on ink, page buttons turn brand orange on hover. `chanwe_reporting_css()` was updated to match (ink current page, orange hover) instead of forcing orange-bold with `!important`. **Why:** *respond on pointer-down; state the same way everywhere; feedback only where it earns its place.* (Both tables get `minWidth = 64` so six columns fit a half-width cell — layout for this comparison only.)
+:::
+
+## Document chrome
+
+### Callouts
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+::: {.callout-note}
+## Note
+Cyan `#11F7E6` tinted header, icon, 1px full border.
+:::
+::: {.callout-tip}
+## Tip
+Green `#1EB508` header tint. This is the p14 accent, not the callout contract colour.
+:::
+::: {.callout-warning}
+## Warning
+Yellow `#F9E710` at 22% — the tint is the only signal.
+:::
+::: {.callout-important}
+## Important
+Magenta `#EB03F2`. Typst renders this callout in vermillion.
+:::
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+::: {.callout-note}
+## Note
+Contract blue `#0758E5` on a 2px left rule and a rotated-square glyph — the `chanwe-glyph` from the Typst template.
+:::
+::: {.callout-tip}
+## Tip
+Contract green `#00A047`. Header is transparent; the accent lives on solid marks, never on text.
+:::
+::: {.callout-warning}
+## Warning
+Contract amber `#EB9113`. Title in mono caps at `+0.14em`, ink, so it stays legible regardless of accent.
+:::
+::: {.callout-important}
+## Important
+Contract vermillion `#CC1914` — the same colour the PDF uses.
+:::
+:::
+:::
+
+::: {.why}
+**Shipped in `chanwe-brand` (HTML format `brand.yml` rules).** HTML callouts adopt the Typst callout contract colours (`typst-info`, `typst-tip`, `typst-warning`, `typst-caution`, `typst-red`) instead of the neon p14 accents, so a `.callout-important` is the same red in the PDF and the browser. (The left column shows `chanwer`'s own `chanwe-reporting.scss` callouts, which were not changed.) Tinted header backgrounds go; the accent moves to a 2px left rule (Typst uses `stroke: (left: 2pt + primary)`) and a rotated-square glyph. Titles become mono caps in ink. **Why:** *put colour on a solid layer, not on translucent foreground text; Familiarity — the same signal must look the same across surfaces.* Under `prefers-contrast: more` the hairline becomes ink at 1.5px.
+:::
+
+### Floating chrome — opaque bar vs. material
+
+Scroll inside each box.
+
+::: {.cmp}
+::: {.cmp-col}
+[CURRENT]{.tag}
+
+```{=html}
+<div class="demo-scroll">
+  <div class="demo-bar"><span><span class="dot"></span>Fleet · Q2</span><button class="demo-btn" type="button">Export</button></div>
+  <div class="demo-body">
+    <div class="demo-kpi"><div>45.9<span>USD MM</span></div><div>+3.2%<span>MoM</span></div><div>+17.8%<span>YoY</span></div></div>
+    <p>Opaque white bar with a 1px border. The content stops dead under it: the strip is consumed, and the header reads as a wall rather than a layer.</p>
+    <p>Retail carried the quarter with steady weekly growth, while wholesale volume softened after the March price revision. Online remains small but is compounding fastest of the three, and is now the second-largest contributor to gross margin.</p>
+    <p>Fleet utilisation rose to 81% on the back of the new dispatch rules, with the heaviest gains in the northern corridor. Maintenance costs per kilometre fell for the third consecutive month.</p>
+    <p>Headcount is flat. Two open roles in analytics remain unfilled; the hiring plan is being revisited with the Q3 budget.</p>
+  </div>
+</div>
+```
+:::
+::: {.cmp-col .proposed}
+[PROPOSED]{.tag .tag-pro}
+
+```{=html}
+<div class="demo-scroll">
+  <div class="demo-bar"><span><span class="dot"></span>Fleet · Q2</span><button class="demo-btn" type="button">Export</button></div>
+  <div class="demo-body">
+    <div class="demo-kpi"><div>45.9<span>USD MM</span></div><div>+3.2%<span>MoM</span></div><div>+17.8%<span>YoY</span></div></div>
+    <p>Translucent material: <code>backdrop-filter: blur(18px) saturate(180%)</code> over 60% white, a bright top edge where light catches it, and a soft scroll-edge fade instead of a divider. Content is visibly <em>underneath</em>, so the bar reads as a layer.</p>
+    <p>Retail carried the quarter with steady weekly growth, while wholesale volume softened after the March price revision. Online remains small but is compounding fastest of the three, and is now the second-largest contributor to gross margin.</p>
+    <p>Fleet utilisation rose to 81% on the back of the new dispatch rules, with the heaviest gains in the northern corridor. Maintenance costs per kilometre fell for the third consecutive month.</p>
+    <p>Headcount is flat. Two open roles in analytics remain unfilled; the hiring plan is being revisited with the Q3 budget. Press the Export button: it responds on pointer-down.</p>
+  </div>
+</div>
+```
+:::
+:::
+
+::: {.why}
+**What changes.** The same treatment is applied to this page's TOC when the toggle is on: `backdrop-filter`, no left border, active item marked by a primary hairline, mono-caps "On this page" heading. `prefers-reduced-transparency` makes it solid white with a hairline again; `prefers-reduced-motion` collapses every transition to 1ms. **Why:** *materials convey hierarchy — a floating functional layer that brings structure without stealing focus; scroll-edge effects, not hard dividers.*
+:::
+
+## Summary — status after review
+
+| Change | Principle | Status |
+|---|---|---|
+| Title 1.85× / leading 1.0, eyebrow in brand primary `#FD3810` | Hierarchy as a set | **Shipped** — `theme_chanwe()` default (`R/ggplot2-theme.R`, `R/ggplot2-elements.R`) |
+| Muted axes, no ticks, tighter legend, direct labels, focus bars | Simplicity · Mapping | **Not adopted** (kept as chart-level patterns in this doc) |
+| `chanwe_gt()` — `chanwe_kbl()` grammar for HTML, 1px stub/header rules | Consistency across surfaces | **Shipped** — `R/gt-theme.R` |
+| `chanwe_reactable()` — header block + caption, ink current page, orange hover | Response · Feedback kinds | **Shipped** — `R/reactable-theme.R`; `chanwe-reporting.scss` pagination rules updated |
+| `chanwe_plotly()` — token layout, unified hover, spikes, no modebar | Continuous feedback · Restraint | **Shipped** — `R/plotly-theme.R` |
+| Callouts: contract colours, 2px rule, glyph, mono-caps title | Familiarity · "colour on solid layers" | **Shipped** — `chanwe-brand/_extensions/chanwe-brand/brand.yml` (HTML rules) |
+| Satoshi/Archivo/JetBrains Mono stack for the HTML stylesheet | Familiarity · Craft | **Partial** — fonts are now loaded by `chanwe-reporting.scss` for the helpers; body/headings still DM Sans |
+| Size-specific tracking + leading on h1–h6, eyebrow, captions | Typography §15 | Proposal (toggle button) |
+| Press feedback, translucent TOC, scroll-edge, `prefers-*` blocks | Response §1 · Materials §12 · Reduced motion §14 | Proposal (toggle button) |
+| echarts tokens, 420ms cubicOut, focus dimming, reduced-motion listener | Springs · Dim to focus · §14 | Proposal |
+
+What the skill does **not** buy this package: spring physics, drag/velocity handoff, rubber-banding, interruptible transitions. Those are for `chanwe-ui`.
+
+```{=html}
+<button id="pro-toggle" class="pro-toggle" type="button" aria-pressed="false">Apply proposed stylesheet to this page</button>
+<script>
+(function () {
+  var b = document.getElementById('pro-toggle');
+  var key = 'chanwer-temp-pro';
+  function set(on) {
+    document.body.classList.toggle('pro', on);
+    b.textContent = on ? 'Proposed stylesheet: on — click to revert' : 'Apply proposed stylesheet to this page';
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    try { localStorage.setItem(key, on ? '1' : '0'); } catch (e) {}
+  }
+  var init = false;
+  try { init = localStorage.getItem(key) === '1'; } catch (e) {}
+  set(init);
+  b.addEventListener('click', function () { set(!document.body.classList.contains('pro')); });
+})();
+</script>
+```

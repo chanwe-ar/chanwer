@@ -67,10 +67,12 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' | Legend text / title | JetBrains Mono | 400 |
 #' | Caption | JetBrains Mono Thin | 100 |
 #'
-#' Eyebrows and the caption `//` prefix use the text-accessible primary
-#' variant (`typst-primary-text`), which passes WCAG 4.5:1 small-text
-#' contrast on every brand surface; rules and glyphs keep the display
-#' primary.
+#' The eyebrow renders in the brand primary (`typst-primary`, `#FD3810`);
+#' the caption `//` prefix uses the text-accessible primary variant
+#' (`typst-primary-text`), which passes WCAG 4.5:1 small-text contrast on
+#' every brand surface. The title is set at 1.85x the base size with a
+#' 1.0 line-height so the header, subtitle/KPI block and chart read as
+#' three distinct levels.
 #'
 #' Call [chanwe_load_fonts()] once per session to register the custom font
 #' families. `theme_chanwe()` calls it automatically.
@@ -84,7 +86,7 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' | `"gray"` | `#EDF0F1` | `#D4D9DB` | `#E3E7E9` |
 #' | `"beige"` | `#F5F1EB` | `#D8D1C7` | `#E3DDD5` |
 #'
-#' @param base_text_size Base text size in points. Default `6.75`. Title scales at ×1.50, subtitle ×0.90, eyebrow ×0.55.
+#' @param base_text_size Base text size in points. Default `6.75`. Title scales at ×1.85, subtitle ×0.90, eyebrow ×0.62.
 #' @param base_family Base font family for body text. Default `"Satoshi"`.
 #' @param base_lineheight Base line-height multiplier. Default `1.60`.
 #' @param legend_position Legend position string passed to
@@ -247,11 +249,15 @@ theme_chanwe <- function(
   title_element <- new_element_chanwe_title(
     family = title_family,
     face = title_face,
-    size = base_text_size * 1.50,
+    # Display size: more contrast against the subtitle/KPI block so the
+    # header reads as its own level (hierarchy = weight + size + leading).
+    size = base_text_size * 1.85,
     colour = colors[["typst-ink"]],
     eyebrow_family = mono_family,
     eyebrow_size = base_text_size * 0.62,
-    eyebrow_colour = colors[["typst-primary-text"]],
+    # Eyebrow in the brand primary (#FD3810) by request; the `//` caption
+    # prefix keeps the text-accessible darkening.
+    eyebrow_colour = colors[["typst-primary"]],
     ink_colour = colors[["typst-ink"]],
     top_pad = if (compact_title) 4 else 8
   )

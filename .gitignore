@@ -66,3 +66,7 @@ rsconnect/
 /.luarc.json
 .DS_Store
 .DS_Store
+
+# review document render outputs (source temp.qmd is tracked)
+/temp.html
+/temp_files/

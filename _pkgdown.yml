@@ -28,3 +28,8 @@ reference:
     contents:
       - chanwe_kbl
       - chanwe_col_signed
+  - title: HTML Tables and Charts
+    contents:
+      - chanwe_gt
+      - chanwe_reactable
+      - chanwe_plotly

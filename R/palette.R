@@ -1,11 +1,11 @@
 # Brand color tokens -------------------------------------------------------
 
 .chanwe_colors <- c(
-  # Editorial 8-color chart palette — p15 family primaries (shade -01).
-  # Slot order is CVD-validated (worst adjacent pair ΔE 17.5 under
-  # protan/deutan simulation; ≥ 8 is the target): mustard and ink sit last
+  # Editorial 8-color chart palette - p15 family primaries (shade -01).
+  # Slot order is CVD-validated (worst adjacent pair dE 17.5 under
+  # protan/deutan simulation; >= 8 is the target): mustard and ink sit last
   # because they break the categorical lightness/chroma gates, so charts
-  # with ≤ 6 series never reach them. Do not re-order without re-running
+  # with <= 6 series never reach them. Do not re-order without re-running
   # the palette validator.
   "chart-coral"   = "#EE5524",
   "chart-blue"    = "#0C48ED",
@@ -15,10 +15,10 @@
   "chart-magenta" = "#EB03F2",
   "chart-mustard" = "#E8B400",
   "chart-ink"     = "#141414",
-  # Signed tokens — the canonical positive/negative/neutral for KPI arrows,
+  # Signed tokens - the canonical positive/negative/neutral for KPI arrows,
   # table deltas, and diverging-scale poles. Hue-true darkenings of the
-  # brand families the manual designates (GREEN·POSITIVE, VERMILLION·ALERT,
-  # INK·NEUTRAL ANCHOR), stepped down until they clear WCAG 4.5:1 small-text
+  # brand families the manual designates (GREEN.POSITIVE, VERMILLION.ALERT,
+  # INK.NEUTRAL ANCHOR), stepped down until they clear WCAG 4.5:1 small-text
   # contrast on all five brand surfaces (white, white-ivory, metallic,
   # gray, beige). The raw ramp poles do not: #1EB508 tops out at 2.7:1.
   "signed-positive" = "#147705",
@@ -64,7 +64,7 @@
   "p14-green-soft" = "#C9FFC0",
   "p14-red-strong" = "#F40C0C",
   "p14-red-soft" = "#F9A7A7",
-  # p15 — full 5-shade ramps (dark → light) for 11 semantic families
+  # p15 - full 5-shade ramps (dark -> light) for 11 semantic families
   "p15-coral-01" = "#EE5524", "p15-coral-02" = "#F37548",
   "p15-coral-03" = "#F79676", "p15-coral-04" = "#FBB89F",
   "p15-coral-05" = "#FDD9C8",
@@ -98,7 +98,7 @@
   "p15-ink-01" = "#141414", "p15-ink-02" = "#3D3D3D",
   "p15-ink-03" = "#666666", "p15-ink-04" = "#8F8F8F",
   "p15-ink-05" = "#B8B8B8",
-  # mb — main brand palette (orange · dark · beige, 100–950 scale)
+  # mb - main brand palette (orange . dark . beige, 100-950 scale)
   "mb-orange-100" = "#F8DDD9", "mb-orange-200" = "#F6CFC7",
   "mb-orange-300" = "#F5C0B6", "mb-orange-400" = "#F2A393",
   "mb-orange-500" = "#F09482", "mb-orange-600" = "#EF8670",
@@ -116,8 +116,8 @@
   "typst-primary"     = "#FD3810",
   # Text-accessible darkening of typst-primary: same hue, stepped down until
   # it clears WCAG 4.5:1 small-text contrast on every brand surface (4.90 on
-  # gray, 5.62 on white). Use it wherever the primary paints SMALL text —
-  # eyebrows, caption prefixes — and keep typst-primary for rules, glyphs,
+  # gray, 5.62 on white). Use it wherever the primary paints SMALL text -
+  # eyebrows, caption prefixes - and keep typst-primary for rules, glyphs,
   # and large display accents (which only need 3:1).
   "typst-primary-text" = "#C52C0C",
   "typst-ink"         = "#0F0F0F",
@@ -135,7 +135,7 @@
   "typst-warning"     = "#EB9113",
   "typst-info"        = "#0758E5",
   # Callout accents used by the Typst extensions (chanwe-elements.typ keeps
-  # the same literals — they are part of the Quarto callout contract).
+  # the same literals - they are part of the Quarto callout contract).
   "typst-tip"         = "#00A047",
   "typst-caution"     = "#FC5300"
 )
@@ -154,7 +154,7 @@
   neutral    = "signed-neutral"
 )
 
-# Editorial 8-color chart palette — p15 family primaries (shade -01).
+# Editorial 8-color chart palette - p15 family primaries (shade -01).
 # Same CVD-validated slot order as the chart-* tokens above.
 .chanwe_chart_colors <- c(
   "chart-coral"    = "#EE5524",
@@ -221,7 +221,7 @@ chanwe_get_signed <- function() {
   )
 }
 
-# Sequential ramps for the continuous scales — light → dark, one brand hue
+# Sequential ramps for the continuous scales - light -> dark, one brand hue
 # each. Built from the p15 5-shade ramps; green and vermillion get their
 # dark pole extended with the matching signed token so the strong end
 # clears 3:1 mark contrast on the brand surfaces. The light pole is clamped
@@ -253,15 +253,15 @@ chanwe_get_signed <- function() {
   )
 }
 
-# Diverging ramp: negative (vermillion arm) → neutral midpoint → positive
-# (green arm), per the brand roles VERMILLION·ALERT / GREEN·POSITIVE.
+# Diverging ramp: negative (vermillion arm) -> neutral midpoint -> positive
+# (green arm), per the brand roles VERMILLION.ALERT / GREEN.POSITIVE.
 # Poles are the signed tokens; arm steps are p15 shades chosen so lightness
 # is monotone from the midpoint out to each pole (green-05 is lighter than
 # the midpoint and is skipped for that reason).
 #
 # cvd = TRUE swaps the positive arm for the brand's structural blue family
-# (pole = typst-info). Red↔green is the canonical deuteranopia trap; when
-# the audience includes red-green CVD readers, the vermillion↔blue variant
+# (pole = typst-info). Red<->green is the canonical deuteranopia trap; when
+# the audience includes red-green CVD readers, the vermillion<->blue variant
 # keeps polarity legible while both arms stay brand families.
 .chanwe_div_ramp <- function(cvd = FALSE) {
   cols <- .chanwe_colors
@@ -374,7 +374,7 @@ chanwe_brand_tokens <- function() {
       code_left_rule = semantic[["primary"]],
       caption_color = chanwe_get_colors()[["typst-fg-subtle"]],
       # Mirrors the callout accents rendered by chanwe-elements.typ in the
-      # Typst extensions — keep the two in sync.
+      # Typst extensions - keep the two in sync.
       callouts = c(
         note = chanwe_get_colors()[["typst-info"]],
         info = chanwe_get_colors()[["typst-info"]],
@@ -414,7 +414,7 @@ chanwe_preview_palette <- function(palette = "all") {
   }
 
   title_label <- paste0(
-    "Chanwe palette · ",
+    "Chanwe palette \u00b7 ",
     if (is.null(palette)) "all" else palette
   )
 

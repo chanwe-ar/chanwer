@@ -91,6 +91,6 @@ test_that("chanwe_brand_tokens carries semantic mapping and structure", {
   expect_identical(tokens$typography$family, "Satoshi")
   expect_named(
     tokens$reporting$callouts,
-    c("note", "info", "success", "warning", "important", "caution", "alert")
+    c("note", "info", "tip", "success", "warning", "important", "caution", "alert")
   )
 })

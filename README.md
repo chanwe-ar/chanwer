@@ -36,6 +36,9 @@ devtools::install(".")
   the diverging negative/neutral/positive scale.
 - `chanwe_kbl()` — native Typst table generator for Quarto PDF reports,
   with `chanwe_col_signed()` for positive/negative value coloring.
+- `chanwe_gt()`, `chanwe_reactable()`, `chanwe_plotly()` — the same header
+  grammar (eyebrow / title / subtitle / `//` caption) and signed-value
+  coloring for HTML tables and interactive charts.
 - `chanwe_load_fonts()` — registers the brand fonts with `systemfonts`.
 - `chanwe_reporting_css()` — bundled SCSS for Quarto HTML output.
 - `chanwe_brand_tokens()` and `chanwe_preview_palette()` — utilities.
@@ -244,7 +247,53 @@ execute:
 
 The stylesheet enforces code blocks with a light background and orange
 left rule, semantic callout headers, smaller muted captions, and orange
-ToC/section-number accents.
+ToC/section-number accents. It also loads the brand web fonts (Satoshi,
+Archivo, JetBrains Mono) used by the HTML table and chart helpers below.
+
+### HTML tables and interactive charts
+
+`chanwe_gt()`, `chanwe_reactable()` and `chanwe_plotly()` port the
+`chanwe_kbl()` header grammar to HTML output. All three return the
+underlying object (`gt_tbl`, `reactable` widget, `plotly` widget) so the
+library's own verbs can be piped afterwards.
+
+```r
+df <- data.frame(
+  metric = c("Revenue", "EBITDA", "Net income"),
+  value = c(45.9, 12.3, 8.1),
+  delta = c(12.4, -3.1, 5.8)
+)
+
+# Static table (gt): striped rows, thin stub/header rules, signed deltas
+chanwe_gt(df,
+  title = "Quarterly deltas", eyebrow = "TABLE · P&L",
+  subtitle = "USD MM and change vs. plan.",
+  caption = "Source · Internal ledger.",
+  stub = "metric", signed = "delta"
+) |>
+  gt::fmt(columns = "delta", fns = function(x) sprintf("%+.1f%%", x))
+
+# Interactive table (reactable): same header, ink current page, orange hover
+chanwe_reactable(df,
+  title = "Quarterly deltas", eyebrow = "TABLE · P&L",
+  caption = "Source · Internal ledger.",
+  signed = "delta", defaultPageSize = 10
+)
+
+# Interactive chart (plotly): header block, unified ink hover card, no modebar
+plotly::plot_ly(mtcars, x = ~wt, y = ~mpg, color = ~factor(cyl),
+  colors = unname(chanwe_palette("chart"))[1:3],
+  type = "scatter", mode = "markers"
+) |>
+  chanwe_plotly(
+    title = "Fleet overview", eyebrow = "SECTION · EFFICIENCY",
+    subtitle = "Weight against fuel economy.",
+    caption = "Source · Motor Trend, 1974."
+  )
+```
+
+`signed` columns are coloured by valence with the canonical signed tokens;
+pass `smaller_is_better = TRUE` for metrics where a negative delta is good.
 
 For Typst/PDF output, use PNG-backed plot rendering for consistent font
 handling:

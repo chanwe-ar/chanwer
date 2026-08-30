@@ -73,7 +73,7 @@ new_element_chanwe_title <- function(
       hjust = hjust,
       vjust = vjust,
       angle = 0,
-      lineheight = 1.1,
+      lineheight = 1.0, # tight leading at display size (Typst h1 uses 1.05)
       margin = ggplot2::margin(0, 0, 2, 0),
       debug = FALSE,
       inherit.blank = inherit.blank,

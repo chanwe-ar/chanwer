@@ -25,3 +25,7 @@
 ^NEWS\.md$
 ^README\.md$
 ^AGENTS\.md$
+^temp\.qmd$
+^temp\.html$
+^temp_files$
+^\.impeccable$
