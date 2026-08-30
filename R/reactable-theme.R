@@ -74,6 +74,9 @@ chanwe_reactable <- function(
   )
 
   # Column defaults: numbers right-aligned in mono, text left in Satoshi.
+  # Text cells stay at body weight and colour (400, fg) — the same as the
+  # chanwe_gt() body — so a table of labels reads as data, not as a wall of
+  # medium-weight ink. Emphasis belongs to the header block and signed cells.
   cols <- list()
   for (nm in names(data)) {
     cols[[nm]] <- if (is.numeric(data[[nm]])) {
@@ -85,7 +88,7 @@ chanwe_reactable <- function(
     } else {
       reactable::colDef(
         align = "left",
-        style = list(fontFamily = .cw_font_sans, fontWeight = 500, color = tk$ink)
+        style = list(fontFamily = .cw_font_sans, fontWeight = 400, color = tk$fg)
       )
     }
   }
