@@ -70,7 +70,6 @@ look.
 - The main reference examples are `chanwer-showcase-pdf.qmd` (every static
   pattern: ggplot2 + `chanwe_kbl()`) and `chanwer-showcase-html.qmd` (the
   same plus `chanwe_gt()`, `chanwe_plotly()`, `chanwe_reactable()`).
-  `gt.qmd`, `chanwer-examples.qmd` and `temp.qmd` are their predecessors.
 - The Quarto extension lives under `_extensions/chanwe-report/`
   (template, filters, fonts, assets).
 
