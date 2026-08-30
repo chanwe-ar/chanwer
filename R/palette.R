@@ -24,7 +24,7 @@
   "signed-positive" = "#147705",
   "signed-negative" = "#CC1914",
   "signed-neutral"  = "#666666",
-  "brand-orange" = "#E94B2B",
+  "brand-orange" = "#FD3810",
   "brand-black" = "#101010",
   "brand-white" = "#F7F7F7",
   "brand-pure-white" = "#FFFFFF",

@@ -123,7 +123,7 @@ chanwe_gt <- function(
     column_labels.border.top.width = gt::px(1),
     column_labels.border.top.color = tk$ink,
     column_labels.border.bottom.style = "solid",
-    column_labels.border.bottom.width = gt::px(1),
+    column_labels.border.bottom.width = gt::px(0.5),
     column_labels.border.bottom.color = tk$n300,
     column_labels.padding = gt::px(8),
     table_body.border.top.style = "none",
@@ -156,14 +156,19 @@ chanwe_gt <- function(
       "  letter-spacing:-0.015em; color:%3$s; }",
       "#%1$s .gt_subtitle { font: 400 13px/1.45 %10$s !important;",
       "  color:%4$s; padding-top:4px !important; }",
-      "#%1$s .gt_col_heading { font: 500 10px/1.2 %8$s !important;",
-      "  letter-spacing:.14em; text-transform:uppercase; color:%5$s; }",
+      # Column labels match chanwe_reactable(): sharp brand orange accent,
+      # regular weight
+      "#%1$s .gt_col_heading { font: 400 10px/1.2 %8$s !important;",
+      "  letter-spacing:.14em; text-transform:uppercase; color:%2$s; }",
       "#%1$s .gt_row { font-variant-numeric: tabular-nums; }",
       "#%1$s .gt_row.gt_right { font-family:%8$s; font-size:12px; }",
       "#%1$s .gt_stub { color:%3$s; font-weight:500; }",
       "#%1$s .gt_sourcenote { font: 400 10.5px/1.4 %8$s !important;",
       "  color:%4$s; }",
       "#%1$s .gt_sourcenote::before { content:'// '; color:%11$s; }",
+      # hairline above the source note, matching the reactable caption
+      # (no source_notes.border.top.* in gt::tab_options)
+      "#%1$s .gt_sourcenotes td { border-top:0.5px solid %12$s !important; }",
       "#%1$s tbody tr:nth-child(even) > td, #%1$s tbody tr:nth-child(even) > th",
       "  { background:%6$s !important; }",
       "#%1$s tbody tr > td, #%1$s tbody tr > th",
@@ -175,7 +180,7 @@ chanwe_gt <- function(
       sep = "\n"
     ),
     id, tk$accent, tk$ink, tk$fg_muted, tk$fg_subtle, tk$n100, tk$n200,
-    .cw_font_mono, .cw_font_display, .cw_font_sans, tk$accent
+    .cw_font_mono, .cw_font_display, .cw_font_sans, tk$accent, tk$n300
   )
   g <- gt::opt_css(g, css)
 

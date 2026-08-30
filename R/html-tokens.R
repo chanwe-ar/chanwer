@@ -26,7 +26,9 @@ chanwe_html_tokens <- function() {
     fg_subtle = tk[["typst-fg-subtle"]],
     primary = tk[["typst-primary"]],
     primary_text = tk[["typst-primary-text"]],
-    primary_active = tk[["brand-orange"]],
+    # pressed state one shade darker than the primary, mirroring the HTML
+    # stylesheet's --cw-color-primary-active (brand-orange-950)
+    primary_active = tk[["mb-orange-950"]],
     # eyebrows and the `//` caption prefix: the brand orange used for HTML
     # section numbers, shared with theme_chanwe() and chanwe_kbl()
     accent = tk[["brand-orange"]],
@@ -62,16 +64,34 @@ chanwe_signed_color <- function(x, tk, smaller_is_better = FALSE) {
 # Inline-styled header block (eyebrow / title / subtitle) as an htmltools tag.
 # Used by chanwe_reactable(); chanwe_gt() builds the same structure inside the
 # gt heading instead. Returns NULL when there is nothing to show.
-chanwe_html_header_tag <- function(title = NULL, subtitle = NULL, eyebrow = NULL) {
+#
+# When `bg` is given the block carries the table background and the ink rule
+# on its own top edge, so the widget reads as one card: rule, header, table.
+# The 12px side inset matches the reactable cellPadding ("10px 12px") so the
+# texts align with cell content.
+chanwe_html_header_tag <- function(
+  title = NULL,
+  subtitle = NULL,
+  eyebrow = NULL,
+  bg = NULL
+) {
   if (is.null(title) && is.null(subtitle) && is.null(eyebrow)) {
     return(NULL)
   }
   chanwe_require_package("htmltools")
   tk <- chanwe_html_tokens()
   tags <- htmltools::tags
+  style <- if (is.null(bg)) {
+    "padding: 4px 0 12px 0;"
+  } else {
+    sprintf(
+      "background:%s; border-top:1px solid %s; padding: 10px 12px 12px;",
+      bg, tk$ink
+    )
+  }
   tags$div(
     class = "chanwe-html-header",
-    style = "padding: 4px 0 12px 0;",
+    style = style,
     if (!is.null(eyebrow)) {
       tags$div(
         class = "chanwe-eyebrow",
@@ -114,19 +134,31 @@ chanwe_html_header_tag <- function(title = NULL, subtitle = NULL, eyebrow = NULL
 }
 
 # `//`-prefixed source line as an htmltools tag (chanwe_caption() for HTML).
-chanwe_html_caption_tag <- function(caption) {
+# As with chanwe_html_header_tag(), a `bg` puts the line on the table
+# background with the 12px side inset so the widget reads as one card.
+chanwe_html_caption_tag <- function(caption, bg = NULL) {
   if (is.null(caption)) {
     return(NULL)
   }
   chanwe_require_package("htmltools")
   tk <- chanwe_html_tokens()
   tags <- htmltools::tags
+  base_style <- sprintf(
+    "font: 400 10.5px/1.4 %s; color:%s;",
+    .cw_font_mono, tk$fg_muted
+  )
+  style <- if (is.null(bg)) {
+    paste(base_style, "padding: 8px 0 0;")
+  } else {
+    # hairline above the caption: same neutral rule as under the column labels
+    paste(base_style, sprintf(
+      "background:%s; border-top:0.5px solid %s; padding: 12px 12px 10px;",
+      bg, tk$n300
+    ))
+  }
   tags$div(
     class = "chanwe-html-caption",
-    style = sprintf(
-      "font: 400 10.5px/1.4 %s; color:%s; padding: 8px 0 0;",
-      .cw_font_mono, tk$fg_muted
-    ),
+    style = style,
     tags$span(style = sprintf("color:%s;", tk$accent), "//"),
     " ",
     caption

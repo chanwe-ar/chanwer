@@ -68,7 +68,7 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' | Caption | JetBrains Mono | 400 |
 #'
 #' The eyebrow and the caption `//` prefix render in the brand orange
-#' (`brand-orange`, `#E94B2B`) -- the same accent the HTML stylesheet uses
+#' (`brand-orange`, `#FD3810`) -- the same accent the HTML stylesheet uses
 #' for section numbers and that the table helpers use for their eyebrows.
 #' The title is set at 1.85x the base size with a 1.0 line-height so the
 #' header, subtitle/KPI block and chart read as three distinct levels.
@@ -256,7 +256,7 @@ theme_chanwe <- function(
     colour = colors[["typst-ink"]],
     eyebrow_family = mono_family,
     eyebrow_size = base_text_size * 0.62,
-    # Eyebrow and the `//` caption prefix share the brand orange (#E94B2B,
+    # Eyebrow and the `//` caption prefix share the brand orange (#FD3810,
     # the HTML section-number accent) so charts, tables and document chrome
     # carry one accent.
     eyebrow_colour = colors[["brand-orange"]],

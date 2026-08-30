@@ -126,30 +126,39 @@ chanwe_reactable <- function(
     highlightColor = tk$n100,
     cellPadding = "10px 12px",
     style = list(fontFamily = .cw_font_sans, fontSize = "13px"),
+    # Ink rule above the column labels — with a header block the widget gets
+    # two rules, one on the header's top edge and this one, same as chanwe_gt()
     tableStyle = list(borderTop = paste("1px solid", tk$ink)),
+    # Column labels take the sharp brand orange accent (same token as the
+    # eyebrow and the `//` caption prefix); hover still darkens to ink.
     headerStyle = list(
       fontFamily = .cw_font_mono,
       fontSize = "10px",
-      fontWeight = 500,
+      fontWeight = 400,
       letterSpacing = ".14em",
       textTransform = "uppercase",
-      color = tk$fg_subtle,
-      borderBottom = paste("1px solid", tk$n300),
+      color = tk$accent,
+      borderBottom = paste("0.5px solid", tk$n300),
       transition = paste("color 120ms", ease),
       "&:hover" = list(color = tk$ink),
       "&:active" = list(transform = "translateY(1px)")
     ),
     rowStyle = list(transition = paste("background-color 120ms", ease)),
+    # The pagination bar carries the table background itself — the theme's
+    # backgroundColor does not reach it — with the same 12px side inset as
+    # the cells and the header block.
     paginationStyle = list(
       fontFamily = .cw_font_mono,
-      fontSize = "11px",
+      fontSize = "10px",
       color = tk$fg_muted,
+      backgroundColor = bg,
       borderTop = paste("1px solid", tk$ink),
-      padding = "10px 0 0"
+      padding = "6px 12px"
     ),
+    # flat page buttons: squared corners, tight padding
     pageButtonStyle = list(
-      borderRadius = "4px",
-      padding = "5px 9px",
+      borderRadius = "0",
+      padding = "3px 8px",
       transition = paste0(
         "transform 100ms ", ease, ", background-color 120ms ", ease,
         ", color 120ms ", ease
@@ -176,11 +185,11 @@ chanwe_reactable <- function(
 
   x <- do.call(reactable::reactable, c(list(data), dots))
 
-  hdr <- chanwe_html_header_tag(title, subtitle, eyebrow)
+  hdr <- chanwe_html_header_tag(title, subtitle, eyebrow, bg = bg)
   if (!is.null(hdr)) {
     x <- htmlwidgets::prependContent(x, hdr)
   }
-  cap <- chanwe_html_caption_tag(caption)
+  cap <- chanwe_html_caption_tag(caption, bg = bg)
   if (!is.null(cap)) {
     x <- htmlwidgets::appendContent(x, cap)
   }

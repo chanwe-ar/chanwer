@@ -6,7 +6,7 @@ test_that("chanwe_palette('all') returns the full named color vector", {
   expect_true(all(grepl("^#[0-9A-Fa-f]{6}$", pal)))
 
   # Core brand anchors
-  expect_identical(pal[["brand-orange"]], "#E94B2B")
+  expect_identical(pal[["brand-orange"]], "#FD3810")
   expect_identical(pal[["brand-black"]], "#101010")
   expect_identical(pal[["typst-primary"]], "#FD3810")
   expect_identical(pal[["typst-ink"]], "#0F0F0F")
