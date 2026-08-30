@@ -1092,7 +1092,9 @@ defaults:
         font-style: italic;
         font-weight: 300;
         line-height: 0.72;
-        vertical-align: -0.18em;
+        /* Baseline-align so the title text sits at the bottom of the numeral,
+           matching the Typst H1 grid (bottom/baseline alignment). */
+        vertical-align: baseline;
       }
 
       main.content h2 .header-section-number,
