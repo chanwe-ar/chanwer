@@ -93,11 +93,11 @@ families. \code{theme_chanwe()} calls it automatically.
 
 \subsection{Background variants}{\tabular{llll}{
    Name \tab Hex \tab Major grid \tab Minor grid \cr
-   \code{"metallic"} \tab \verb{#F7F7F7} \tab \verb{#E4E4E4} \tab \verb{#EFEFEF} \cr
-   \code{"white-ivory"} \tab \verb{#FAF9F7} \tab \verb{#ECEAE6} \tab \verb{#F1F0ED} \cr
-   \code{"white"} \tab \verb{#FFFFFF} \tab \verb{#E8E8E8} \tab \verb{#EEEEEE} \cr
-   \code{"gray"} \tab \verb{#EDF0F1} \tab \verb{#D4D9DB} \tab \verb{#E3E7E9} \cr
-   \code{"beige"} \tab \verb{#F5F1EB} \tab \verb{#D8D1C7} \tab \verb{#E3DDD5} \cr
+   \code{"metallic"} \tab \verb{#F7F7F7} \tab \verb{#D8D8D8} \tab \verb{#EFEFEF} \cr
+   \code{"white-ivory"} \tab \verb{#FAF9F7} \tab \verb{#C6C3BC} \tab \verb{#E2E0DA} \cr
+   \code{"white"} \tab \verb{#FFFFFF} \tab \verb{#DCDCDC} \tab \verb{#F7F7F7} \cr
+   \code{"gray"} \tab \verb{#EDF0F1} \tab \verb{#C6CCCF} \tab \verb{#E3E7E9} \cr
+   \code{"beige"} \tab \verb{#F5F1EB} \tab \verb{#AFA79B} \tab \verb{#CCC5BA} \cr
 }
 
 }

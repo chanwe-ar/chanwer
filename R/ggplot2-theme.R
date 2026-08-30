@@ -80,11 +80,11 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' ## Background variants
 #' | Name | Hex | Major grid | Minor grid |
 #' |------|-----|------------|------------|
-#' | `"metallic"` | `#F7F7F7` | `#E4E4E4` | `#EFEFEF` |
-#' | `"white-ivory"` | `#FAF9F7` | `#ECEAE6` | `#F1F0ED` |
-#' | `"white"` | `#FFFFFF` | `#E8E8E8` | `#EEEEEE` |
-#' | `"gray"` | `#EDF0F1` | `#D4D9DB` | `#E3E7E9` |
-#' | `"beige"` | `#F5F1EB` | `#D8D1C7` | `#E3DDD5` |
+#' | `"metallic"` | `#F7F7F7` | `#D8D8D8` | `#EFEFEF` |
+#' | `"white-ivory"` | `#FAF9F7` | `#C6C3BC` | `#E2E0DA` |
+#' | `"white"` | `#FFFFFF` | `#DCDCDC` | `#F7F7F7` |
+#' | `"gray"` | `#EDF0F1` | `#C6CCCF` | `#E3E7E9` |
+#' | `"beige"` | `#F5F1EB` | `#AFA79B` | `#CCC5BA` |
 #'
 #' @param base_text_size Base text size in points. Default `6.75`. Title scales at ×1.85, subtitle ×0.90, eyebrow ×0.62.
 #' @param base_family Base font family for body text. Default `"Satoshi"`.
@@ -204,14 +204,16 @@ theme_chanwe <- function(
   bg_color <- chanwe_resolve_bg(bg_color)
   colors <- chanwe_get_colors()
   surface_fill <- bg_color
+  # Major grid: one step darker than the surface so the lines register
+  # without competing with the marks (paired with a 0.1 linewidth below).
   grid_color <- switch(
     bg_color,
-    "#F7F7F7" = "#E4E4E4",
-    "#FAF9F7" = "#D0CEC8",
-    "#FFFFFF" = "#E9E9E9",
-    "#EDF0F1" = "#D4D9DB",
-    "#F5F1EB" = "#BAB3A8",
-    "#C4C4C4"
+    "#F7F7F7" = "#D8D8D8",
+    "#FAF9F7" = "#C6C3BC",
+    "#FFFFFF" = "#DCDCDC",
+    "#EDF0F1" = "#C6CCCF",
+    "#F5F1EB" = "#AFA79B",
+    "#B8B8B8"
   )
   grid_color_minor <- switch(
     bg_color,
@@ -330,12 +332,12 @@ theme_chanwe <- function(
       axis.line.y = ggplot2::element_blank(),
       axis.ticks = ggplot2::element_line(
         color = grid_color,
-        linewidth = 0.07
+        linewidth = 0.1
       ),
       panel.grid.major = ggplot2::element_blank(),
       panel.grid.major.y = ggplot2::element_line(
         color = grid_color,
-        linewidth = 0.07
+        linewidth = 0.1
       ),
       panel.grid.major.x = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),

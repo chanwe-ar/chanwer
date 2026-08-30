@@ -303,10 +303,12 @@ chanwe_kbl <- function(
     )
   }
   bg_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
+  # Row dividers one step darker than before (neutral-200 read as invisible
+  # on the light surfaces); the metallic/silver surface needs the darker step.
   row_divider_color <- if (!is.null(bg) && tolower(bg) %in% c("metallic", "silver")) {
-    tokens[["typst-neutral-300"]]
+    tokens[["brand-silver"]]
   } else {
-    tokens[["typst-neutral-200"]]
+    tokens[["typst-neutral-300"]]
   }
 
   # code builder
@@ -455,7 +457,7 @@ chanwe_kbl <- function(
       )
     }
     if (i < nr && !is_total) {
-      p('    table.hline(stroke: 0.3pt + rgb("', row_divider_color, '")),')
+      p('    table.hline(stroke: 0.4pt + rgb("', row_divider_color, '")),')
     }
   }
 

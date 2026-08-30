@@ -130,7 +130,7 @@ chanwe_gt <- function(
     table_body.border.bottom.style = "none",
     table_body.hlines.style = "solid",
     table_body.hlines.width = gt::px(1),
-    table_body.hlines.color = tk$n200,
+    table_body.hlines.color = tk$n300,
     # thin stub divider (gt default is 2px)
     stub.border.style = "solid",
     stub.border.width = gt::px(1),
