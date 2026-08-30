@@ -43,7 +43,12 @@ function Meta(meta)
   local seen = {}
 
   if meta.categories ~= nil then
-    if meta.categories.t == "MetaList" then
+    -- MetaList values reach Lua as plain lists (`.t` is nil in modern
+    -- Pandoc), and this filter can run twice when the format and the
+    -- project both register it: detecting the list via pandoc.utils.type
+    -- keeps the pass idempotent instead of stringifying the whole list
+    -- into one concatenated category.
+    if pandoc.utils.type(meta.categories) == "List" then
       for _, item in ipairs(meta.categories) do
         local category_text = meta_to_string(item)
         add_unique_category(categories, seen, category_text)

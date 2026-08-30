@@ -1,14 +1,16 @@
 meta:
   name: Chanwe
   chart-palette-order:
+    # Neon accents (cyan/magenta/yellow) sit at the tail so short series
+    # stay within the restrained brand core.
     - brand-red
     - p14-blue-strong
-    - p14-cyan-strong
     - p14-green-strong
-    - p14-yellow-strong
-    - p14-magenta-strong
-    - p14-red-strong
     - brand-gray
+    - p14-red-strong
+    - p14-yellow-strong
+    - p14-cyan-strong
+    - p14-magenta-strong
 
 logo:
   small: assets/Logo_Negro.png
@@ -246,12 +248,14 @@ typography:
 
   link:
     color: primary
-    weight: 700
+    weight: 500
 
 defaults:
   bootstrap:
     defaults:
-      root-font-size: 91%
+      # Explicit root. Quarto's default is 17px; the former `root-font-size: 94%`
+      # was not a Bootstrap variable and had no effect. 13.5px base renders 14.3px.
+      font-size-root: 17px
       body-line-height: 1.62
       border-radius: 4px
       border-radius-sm: 4px
@@ -277,6 +281,11 @@ defaults:
         --cw-color-primary-active: #{$brand-orange-950};
         --cw-color-primary-light: #{$brand-orange-500};
         --cw-color-primary-subtle: #{rgba($brand-primary, 0.10)};
+        /* Primary for running text only (link hover): 5.0:1 on page-bg where #FD3810 is 3.3:1.
+           Eyebrows, rules, glyphs and dots stay on --cw-color-primary. */
+        --cw-color-primary-text: #C52C0C;
+        /* Critically damped feel: fast out, no overshoot. Used by every transition. */
+        --cw-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 
         --cw-color-ink: #{$brand-ink};
         --cw-color-fg: #{$brand-fg};
@@ -432,9 +441,12 @@ defaults:
 
       .quarto-title-block .quarto-title-meta-contents {
         padding-bottom: 0;
-        font-family: var(--cw-font-display);
+        /* Body face at 500: the title is the only element in the display face,
+           so weight + size + face carry the hierarchy. */
+        font-family: var(--cw-font-sans);
         font-size: 0.92rem;
-        font-weight: 600;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
         letter-spacing: 0;
         text-transform: none;
         color: var(--cw-color-fg) !important;
@@ -556,7 +568,8 @@ defaults:
         font-family: var(--cw-font-display);
         font-size: clamp(2.4rem, 4.7vw, 4.25rem);
         font-weight: 600 !important;
-        line-height: 0.96;
+        /* 1.0, not 0.96: accents and descenders of two-line Spanish titles touch at 0.96 */
+        line-height: 1;
         color: var(--cw-color-neutral-900) !important;
       }
 
@@ -695,10 +708,28 @@ defaults:
         }
       }
 
-      /* Content links */
-      main.content a:not(.nav-link):not(.anchorjs-link),
+      /* Content links: ink text, brand orange on the underline (colour on a solid
+         mark, not on 3.3:1 body text). Affordance is visible at rest. */
+      main.content a:not(.nav-link, .anchorjs-link, .code-copy-button, .quarto-category, .footnote-ref, .footnote-back),
       main.content a.quarto-xref {
-        color: var(--cw-color-primary);
+        color: var(--cw-color-fg);
+        font-weight: 500;
+        text-decoration: underline;
+        text-decoration-color: var(--cw-color-primary);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.18em;
+        transition: color 120ms var(--cw-ease), text-decoration-color 120ms var(--cw-ease);
+      }
+      main.content a:not(.nav-link, .anchorjs-link, .code-copy-button, .quarto-category, .footnote-ref, .footnote-back):hover,
+      main.content a.quarto-xref:hover {
+        color: var(--cw-color-primary-text);
+        text-decoration-thickness: 2px;
+      }
+      main.content a:not(.nav-link, .anchorjs-link, .code-copy-button, .quarto-category, .footnote-ref, .footnote-back):focus-visible,
+      main.content a.quarto-xref:focus-visible {
+        outline: 2px solid var(--cw-color-primary);
+        outline-offset: 2px;
+        border-radius: 2px;
       }
 
       h1, h2, h3, h4, h5, h6,
@@ -779,7 +810,8 @@ defaults:
       .callout .callout-body,
       .callout .callout-body-container {
         background-color: #FFFFFF !important;
-        color: var(--cw-color-text-secondary) !important;
+        /* fg, not text-secondary: a callout is the paragraph most meant to be read */
+        color: var(--cw-color-fg) !important;
         font-size: 0.94rem;
         line-height: 1.58;
       }
@@ -791,14 +823,25 @@ defaults:
       }
       .callout .callout-body-container p,
       .callout .callout-body-container li {
-        color: var(--cw-color-text-secondary) !important;
+        color: var(--cw-color-fg) !important;
       }
       .callout .callout-body-container a {
         color: var(--chanwe-blue-strong) !important;
       }
-      @media (prefers-contrast: more) {
-        .callout { border-color: var(--cw-color-ink) !important; }
-        .callout .callout-title-container { color: #000000; }
+      /* Collapsible callouts: respond on press; open on the critically damped curve */
+      .callout > .callout-header[data-bs-toggle] {
+        cursor: pointer;
+        transition: transform 100ms var(--cw-ease);
+      }
+      .callout > .callout-header[data-bs-toggle]:active {
+        transform: translateY(1px);
+      }
+      .callout .callout-toggle,
+      .callout .callout-toggle::before {
+        transition: transform 160ms var(--cw-ease);
+      }
+      .callout .collapsing {
+        transition: height 220ms var(--cw-ease);
       }
 
 
@@ -821,7 +864,9 @@ defaults:
       }
 
       .quarto-title-banner .quarto-title .title {
-        letter-spacing: 0;
+        /* Display size wants negative tracking (the Typst covers use -0.025em too) */
+        letter-spacing: -0.025em;
+        font-optical-sizing: auto;
         text-wrap: balance;
         font-weight: 600 !important;
       }
@@ -880,39 +925,55 @@ defaults:
       main.content .chanwe-pill {
         display: inline-flex;
         align-items: center;
-        min-height: 1.85rem;
-        border-radius: 999px;
         line-height: 1.1;
         white-space: nowrap;
       }
 
+      /* Label = the banner eyebrow (22pt rule + mono caps, brand orange), not a pill:
+         the values are the content of the row, the label should not out-shout them. */
       main.content .chanwe-pill-label {
-        padding: 0.28rem 0.62rem;
-        border: 1px solid var(--cw-color-primary);
-        background: var(--cw-color-primary-subtle);
+        padding: 0;
+        margin-right: 0.3rem;
+        border: 0;
+        background: transparent;
         color: var(--cw-color-primary);
         font-family: var(--cw-font-mono);
-        font-size: 0.58rem;
-        font-weight: 600;
-        letter-spacing: 0.14em;
+        font-size: 0.6rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
       }
 
+      main.content .chanwe-pill-label::before {
+        content: "";
+        display: inline-block;
+        flex: none;
+        width: 22pt;
+        height: 0.75pt;
+        margin-right: 0.45rem;
+        background: var(--cw-color-primary);
+      }
+
+      /* One radius language: 4px like the banner keyword pills, callouts, code and figures */
       main.content .chanwe-pill {
-        padding: 0.3rem 0.68rem;
-        border: 1px solid var(--cw-color-border-subtle);
+        padding: 0.28rem 0.6rem;
+        border: 1px solid var(--cw-color-border-default);
+        border-radius: 4px;
         background: var(--cw-color-neutral-100);
-        color: var(--cw-color-neutral-900);
+        color: var(--cw-color-fg);
         font-family: var(--cw-font-sans);
-        font-size: 0.82rem;
-        font-weight: 600;
+        font-size: 0.8rem;
+        font-weight: 500;
         letter-spacing: 0;
       }
 
       main.content .chanwe-pill-accent {
+        /* Outline chip, not a solid ink block: status metadata should not
+           be the highest-contrast element in the banner. */
         border-color: var(--cw-color-ink);
-        background: var(--cw-color-ink);
-        color: var(--cw-color-text-inverse);
+        background: transparent;
+        color: var(--cw-color-ink);
+        font-weight: 600;
       }
 
       main.content ul,
@@ -922,12 +983,14 @@ defaults:
         margin-bottom: 1.3rem;
       }
 
+      /* Tracking is size-specific (tighter as type grows) and leading tracks size
+         inversely — the same scale the Typst templates use. */
       main.content h1,
       main.content h2,
       main.content h3,
       main.content h4 {
         color: var(--cw-color-neutral-900);
-        letter-spacing: 0;
+        font-optical-sizing: auto;
         text-wrap: balance;
       }
 
@@ -935,17 +998,28 @@ defaults:
         margin-top: 3rem;
         margin-bottom: 2rem;
         padding-top: 1rem;
+        line-height: 1.05;
+        letter-spacing: -0.025em;
       }
 
 
       main.content h2 {
         margin-top: 3.25rem;
         margin-bottom: 0.95rem;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
       }
 
       main.content h3 {
         margin-top: 2.6rem;
         margin-bottom: 0.95rem;
+        line-height: 1.18;
+        letter-spacing: -0.012em;
+      }
+
+      main.content h4 {
+        line-height: 1.25;
+        letter-spacing: -0.005em;
       }
 
       main.content h2.chanwe-area-heading {
@@ -1043,8 +1117,9 @@ defaults:
         text-transform: uppercase;
       }
 
-      main.content h5::before,
-      main.content h6::before {
+      /* Dot prefix on h5 only: h6 stays plain so dense documents don't
+         become a field of orange dots. */
+      main.content h5::before {
         content: "";
         display: inline-block;
         width: 0.38rem;
@@ -1108,31 +1183,56 @@ defaults:
           z-index: 30;
         }
 
+        /* Content-height card, not a viewport-tall column */
         body:not(.floating):not(.docked) #quarto-margin-sidebar nav[role="doc-toc"] {
           box-sizing: border-box;
-          height: 100%;
-          max-height: none;
+          height: auto;
+          max-height: 100%;
           overflow-y: auto;
           overscroll-behavior: contain;
           scrollbar-width: thin;
         }
       }
 
+      /* TOC as a material: a translucent layer floating over the document.
+         Content is visibly underneath; no ink border. */
       nav[role="doc-toc"] {
-        border: 1px solid var(--cw-color-ink);
-        border-radius: 0;
-        background: var(--cw-color-neutral-0);
-        backdrop-filter: none;
-        padding: 0.7rem 0.75rem;
+        border: 0;
+        border-radius: 4px;
+        background: rgba(251, 251, 251, 0.72);
+        backdrop-filter: blur(16px) saturate(160%);
+        -webkit-backdrop-filter: blur(16px) saturate(160%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 1px 0 rgba(15, 15, 15, 0.06);
+        padding: 0.8rem 0.85rem;
+      }
+
+      nav[role="doc-toc"] #toc-title,
+      nav[role="doc-toc"] h2 {
+        margin: 0 0 0.6rem;
+        padding: 0 0.34rem;
+        border: 0;
+        font-family: var(--cw-font-mono);
+        font-size: 0.6rem;
+        font-weight: 500 !important;
+        line-height: 1;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--cw-color-fg-subtle);
       }
 
       nav[role="doc-toc"] .nav-link {
-        border-left: 2px solid transparent;
+        border-left: 1px solid transparent;
         margin: 0.1rem 0;
         border-radius: 0;
         padding: 0.16rem 0.45rem 0.16rem 0.34rem;
         font-size: 0.82rem;
         line-height: 1.25;
+        color: var(--cw-color-fg-muted);
+        transition: color 120ms var(--cw-ease), transform 100ms var(--cw-ease);
+      }
+
+      nav[role="doc-toc"] .nav-link:active {
+        transform: translateX(2px);
       }
 
       nav[role="doc-toc"] ul {
@@ -1171,14 +1271,24 @@ defaults:
 
       nav[role="doc-toc"] .nav-link:hover {
         background: transparent;
-        color: var(--cw-color-text-primary);
+        color: var(--cw-color-ink);
       }
 
+      /* Quarto sets the active colour with !important; ink text, primary hairline */
       .sidebar nav[role="doc-toc"] .nav-link.active,
       nav[role="doc-toc"] .nav-link.active {
-        border-left-color: var(--cw-color-ink);
+        border-left-color: var(--cw-color-primary) !important;
         background: transparent;
-        font-weight: 700;
+        color: var(--cw-color-ink) !important;
+        font-weight: 600;
+      }
+
+      /* Code-copy button answers the press */
+      .code-copy-button {
+        transition: transform 100ms var(--cw-ease), opacity 120ms var(--cw-ease);
+      }
+      .code-copy-button:active {
+        transform: scale(0.92);
       }
 
 
@@ -1193,6 +1303,8 @@ defaults:
       }
 
 
+      /* Tables: the chanwe_gt() / chanwe_kbl() grammar — mono-caps column labels,
+         hairline rows, tabular figures — so markdown, gt and Typst tables read as one. */
       table {
         border-collapse: separate;
         border-spacing: 0;
@@ -1200,16 +1312,74 @@ defaults:
         border-radius: 0;
         border-top: 1px solid var(--cw-color-border-strong);
         border-bottom: 1px solid var(--cw-color-border-strong);
+        font-variant-numeric: tabular-nums;
       }
 
+      /* `main.content` prefix: Bootstrap's `.table > :not(caption) > * > *` (0,1,1)
+         otherwise outranks `table thead th` for colour and padding. */
+      main.content table thead th,
       table thead th {
         background: transparent;
-        color: var(--cw-color-ink);
+        color: var(--cw-color-fg-subtle);
         border-top: 0 !important;
         border-bottom: 1px solid var(--cw-color-border-strong) !important;
-        font-family: var(--cw-font-display);
-        font-size: 0.78rem;
-        font-weight: 400;
+        font-family: var(--cw-font-mono);
+        font-size: 0.64rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        vertical-align: bottom;
+        padding-top: 0.55rem;
+        padding-bottom: 0.5rem;
+      }
+
+      main.content table tbody td,
+      table tbody td {
+        border-bottom: 1px solid var(--cw-color-border-subtle);
+        padding: 0.55rem 0.5rem;
+        vertical-align: top;
+      }
+
+      main.content table tbody tr:last-child td,
+      table tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      /* Priority badges (.chanwe-priority-must / -should / -could / -future):
+         mono caps in ink; the level colour lives on the glyph, never on the text. */
+      .chanwe-priority {
+        --cw-priority-level: var(--cw-color-fg-subtle);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.2rem 0.5rem 0.18rem;
+        border: 1px solid var(--cw-color-border-default);
+        border-radius: 4px;
+        background: #FFFFFF;
+        color: var(--cw-color-ink);
+        font-family: var(--cw-font-mono);
+        font-size: 0.6rem;
+        font-weight: 500;
+        line-height: 1.2;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .chanwe-priority::before {
+        content: "";
+        flex: none;
+        width: 6px;
+        height: 6px;
+        background: var(--cw-priority-level);
+        transform: rotate(45deg);
+      }
+      .chanwe-priority-must { --cw-priority-level: var(--cw-color-primary); }
+      .chanwe-priority-should { --cw-priority-level: var(--cw-color-callout-note); }
+      .chanwe-priority-could { --cw-priority-level: var(--cw-color-callout-tip); }
+      .chanwe-priority-future {
+        --cw-priority-level: var(--cw-color-fg-subtle);
+        border-style: dashed;
+        color: var(--cw-color-fg-muted);
       }
 
       table tbody tr:nth-child(even) {
@@ -1373,28 +1543,44 @@ defaults:
       }
 
 
+      /* Tabsets: feedback on press (100ms), colour on 120ms, hover only darkens */
       .panel-tabset > .nav-tabs {
-        border-bottom: 1px solid var(--cw-color-border-subtle);
+        border-bottom: 1px solid var(--cw-color-border-default);
+        gap: 0.3rem;
       }
 
       .panel-tabset > .nav-tabs .nav-link {
         border: 0;
-        border-bottom: 3px solid transparent;
-        font-weight: 700;
-        color: var(--cw-color-text-secondary);
-        padding-left: 0.4rem;
-        padding-right: 0.4rem;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        border-radius: 0;
+        padding: 0.5rem 0.55rem 0.55rem;
+        background: transparent;
+        font-weight: 500;
+        color: var(--cw-color-fg-muted);
+        transition: color 120ms var(--cw-ease), border-color 120ms var(--cw-ease), transform 100ms var(--cw-ease);
       }
 
       .panel-tabset > .nav-tabs .nav-link:hover {
-        color: var(--cw-color-text-primary);
-        background: var(--cw-color-primary-subtle);
+        color: var(--cw-color-ink);
+        background: transparent;
+        border-color: transparent;
+      }
+
+      .panel-tabset > .nav-tabs .nav-link:active {
+        transform: translateY(1px);
       }
 
       .panel-tabset > .nav-tabs .nav-link.active {
-        color: var(--cw-color-text-primary);
+        color: var(--cw-color-ink);
+        font-weight: 600;
         border-bottom-color: var(--cw-color-primary);
         background: transparent;
+      }
+
+      .panel-tabset > .nav-tabs .nav-link:focus-visible {
+        outline: 2px solid var(--cw-color-primary);
+        outline-offset: -2px;
       }
 
 
@@ -1676,6 +1862,46 @@ defaults:
           margin-top: 0;
           text-align: left;
           font-size: 1.18rem;
+        }
+      }
+
+      /* Accessibility signals — three independent preferences.
+         Reduced motion is a gentler equivalent, not no feedback. */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          transition-duration: 1ms !important;
+          animation-duration: 1ms !important;
+          animation-iteration-count: 1 !important;
+        }
+        a:active, button:active, .nav-link:active, .callout-header:active {
+          transform: none !important;
+        }
+      }
+
+      @media (prefers-reduced-transparency: reduce) {
+        nav[role="doc-toc"] {
+          background: var(--cw-color-neutral-0) !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          border: 1px solid var(--cw-color-border-default) !important;
+          box-shadow: none;
+        }
+      }
+
+      @media (prefers-contrast: more) {
+        .callout { border-color: var(--cw-color-ink) !important; }
+        .callout .callout-title-container { color: #000000; }
+        .chanwe-priority,
+        main.content .chanwe-pill { border-color: var(--cw-color-ink); }
+        main.content a:not(.nav-link, .anchorjs-link, .code-copy-button, .quarto-category, .footnote-ref, .footnote-back) {
+          color: var(--cw-color-ink);
+          text-decoration-thickness: 2px;
+        }
+        nav[role="doc-toc"] {
+          background: var(--cw-color-neutral-0) !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          border: 1px solid var(--cw-color-ink) !important;
         }
       }
 
