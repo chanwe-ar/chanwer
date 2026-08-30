@@ -1,0 +1,110 @@
+/* chanwe-brand · book-toc.css
+   Single right-side TOC for Quarto books: hides the left sidebar on
+   desktop and styles the merged book navigation that book-toc.html
+   builds inside #TOC (parts, chapters, and the current chapter's
+   sections nested in place). Pair with book-toc.html. */
+
+@media (min-width: 992px) {
+  .chanwe-toc-merged #quarto-sidebar,
+  .chanwe-toc-merged .quarto-secondary-nav {
+    display: none !important;
+  }
+}
+
+/* the merged navigation */
+#chanwe-book-toc {
+  margin-top: 0.35rem;
+}
+#chanwe-book-toc ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+#chanwe-book-toc .sidebar-item-container {
+  display: block;
+}
+#chanwe-book-toc a.sidebar-link {
+  display: block;
+  text-decoration: none;
+  color: #211f1c;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  padding: 0.14rem 0;
+}
+#chanwe-book-toc a.sidebar-link:hover {
+  color: #fd3810;
+}
+#chanwe-book-toc a.sidebar-link.active {
+  color: #fd3810;
+  font-weight: 600;
+}
+#chanwe-book-toc .chapter-number {
+  color: #fd3810;
+  font-variant-numeric: tabular-nums;
+  margin-right: 0.1rem;
+}
+
+/* part labels */
+#chanwe-book-toc > ul > li.sidebar-item-section > .sidebar-item-container a.sidebar-link {
+  font-family: "JetBrains Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #928d86;
+  margin-top: 0.9rem;
+  padding-bottom: 0.28rem;
+  border-bottom: 1px solid #e8e8e8;
+}
+#chanwe-book-toc > ul > li.sidebar-item-section > .sidebar-item-container a.sidebar-link:hover {
+  color: #fd3810;
+}
+
+/* chapters inside a part: always visible, no bootstrap collapse */
+#chanwe-book-toc .sidebar-section {
+  display: block !important;
+  height: auto !important;
+  padding-left: 0;
+}
+
+/* the current chapter's page sections, nested in place */
+#chanwe-book-toc .chanwe-cur-sections {
+  border-left: 2px solid rgba(253, 56, 16, 0.35);
+  margin: 0.2rem 0 0.45rem 0.3rem;
+  padding-left: 0.6rem;
+}
+#chanwe-book-toc .chanwe-cur-sections ul {
+  list-style: none;
+  padding-left: 0.7rem;
+  margin: 0;
+}
+#chanwe-book-toc .chanwe-cur-sections > ul {
+  padding-left: 0;
+}
+#chanwe-book-toc .chanwe-cur-sections a {
+  display: block;
+  text-decoration: none;
+  color: #71706c;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  padding: 0.1rem 0;
+}
+#chanwe-book-toc .chanwe-cur-sections a:hover,
+#chanwe-book-toc .chanwe-cur-sections a.active {
+  color: #fd3810;
+}
+#chanwe-book-toc .chanwe-cur-sections .header-section-number {
+  color: #928d86;
+  margin-right: 0.15rem;
+}
+/* quarto's toc scrollspy inline-hides uls outside the active trail;
+   the section list must always show (its sub-levels stay managed
+   by quarto, expanding as you scroll) */
+#chanwe-book-toc .chanwe-cur-sections > ul {
+  display: block !important;
+}
+
+/* relocated search */
+#quarto-margin-sidebar > #quarto-search {
+  margin-bottom: 0.75rem;
+}

@@ -1,0 +1,49 @@
+.quarto-title-banner .quarto-title .title::before {
+  background: url("Logo_Negro.svg") left center / contain no-repeat;
+}
+
+.quarto-title-banner .quarto-title.has-chanwe-title-logo .title::before {
+  content: none;
+  display: none;
+}
+
+.quarto-title-banner .quarto-title .chanwe-title-logo {
+  display: block;
+  width: min(180px, 50vw);
+  height: 38px;
+  max-height: 38px;
+  background: url("Logo_Negro.svg") left center / contain no-repeat;
+  margin: clamp(0.45rem, 1vw, 0.85rem) 0 0;
+}
+
+.chapter-cover-media.chapter-cover-media-default {
+  background-image: url("bg_mountains.jpg");
+}
+
+.chapter-cover-content::before {
+  background: url("Logo_Negro.svg") left center / contain no-repeat;
+}
+
+.chanwe-footer-logo-mark {
+  display: block;
+  width: 136px;
+  max-width: 42vw;
+  height: 31px;
+  background: url("Logo_Blanco.svg") left center / contain no-repeat;
+}
+
+@media (max-width: 980px) {
+  .quarto-title-banner .quarto-title .chanwe-title-logo {
+    width: min(170px, 62vw);
+    max-height: 38px;
+    margin-top: 0.45rem;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .chanwe-footer-logo-mark {
+    width: 102px;
+    height: 24px;
+  }
+}

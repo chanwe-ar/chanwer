@@ -1,0 +1,76 @@
+{
+  "schema": "chanwe-colors/v1",
+  "name": "chanwe-brand-colors",
+  "colors": [
+    {
+      "internal_name": "brand-orange",
+      "code": "#FD3810",
+      "aliases": ["brand-red", "primary", "p13-orange-01"]
+    },
+    {
+      "internal_name": "brand-black",
+      "code": "#101010",
+      "aliases": ["dark-950", "p13-gray-01"]
+    },
+    {
+      "internal_name": "brand-charcoal-green",
+      "code": "#313534",
+      "aliases": []
+    },
+    {
+      "internal_name": "brand-gray-light",
+      "code": "#DADADA",
+      "aliases": []
+    },
+    {
+      "internal_name": "brand-paper",
+      "code": "#F7F7F7",
+      "aliases": ["cw-color-paper", "paper", "second-page-bg"]
+    },
+    {
+      "internal_name": "dark-800",
+      "code": "#353535",
+      "aliases": ["p13-gray-03"]
+    },
+    {
+      "internal_name": "dark-500",
+      "code": "#6D6D6D",
+      "aliases": ["p13-gray-06"]
+    },
+    {
+      "internal_name": "dark-300",
+      "code": "#A5A5A5",
+      "aliases": ["p13-gray-08"]
+    },
+    {
+      "internal_name": "dark-100",
+      "code": "#CACACA",
+      "aliases": ["p13-gray-10"]
+    },
+    {
+      "internal_name": "brand-orange-deep",
+      "code": "#E74B2B",
+      "aliases": []
+    },
+    {
+      "internal_name": "orange-800",
+      "code": "#EC684E",
+      "aliases": ["p13-orange-03"]
+    },
+    {
+      "internal_name": "orange-600",
+      "code": "#EF8670",
+      "aliases": ["p13-orange-05"]
+    },
+    {
+      "internal_name": "orange-400",
+      "code": "#F2A393",
+      "aliases": ["p13-orange-07"]
+    },
+    {
+      "internal_name": "orange-200",
+      "code": "#F6CFC7",
+      "aliases": ["p13-orange-09"]
+    }
+  ]
+}

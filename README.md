@@ -233,6 +233,11 @@ Useful arguments:
 
 ## Quarto usage (HTML)
 
+The recommended container for HTML reports is the `chanwe-brand-html`
+format bundled under `_extensions/chanwe-brand/` (synced from the
+`chanwe-brand` repo); `chanwer-showcase-html.qmd` is the reference. For a
+plain `html` document, the package stylesheet gives the same accents:
+
 ```yaml
 ---
 title: "ChanWe Report"

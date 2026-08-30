@@ -1,0 +1,1689 @@
+meta:
+  name: Chanwe
+  chart-palette-order:
+    - brand-red
+    - p14-blue-strong
+    - p14-cyan-strong
+    - p14-green-strong
+    - p14-yellow-strong
+    - p14-magenta-strong
+    - p14-red-strong
+    - brand-gray
+
+logo:
+  small: assets/Logo_Negro.png
+  medium: assets/Logo_Negro.png
+  large: assets/Logo_Negro.png
+
+color:
+  palette:
+    brand-red: "#FD3810"
+    brand-orange: "#FD3810"
+    brand-black: "#0F0F0F"
+    brand-white: "#FBFBFB"
+    brand-pure-white: "#FFFFFF"
+    brand-paper: "#F7F7F7"
+    brand-beige: "#F5F1EB"
+    brand-beige-soft: "#ECE5D9"
+    brand-gray: "#71706C"
+    brand-silver: "#D4D4D4"
+    cw-color-primary-hover: "#EE5524"
+    cw-color-primary-active: "#E94B2B"
+    cw-color-primary-light: "#F09482"
+    cw-color-primary-subtle: "#FD38101A"
+    cw-color-ink: "#0F0F0F"
+    cw-color-fg: "#211F1C"
+    cw-color-fg-muted: "#71706C"
+    cw-color-fg-subtle: "#928D86"
+    cw-color-neutral-900: "#1F1F1F"
+    cw-color-neutral-700: "#525252"
+    cw-color-neutral-500: "#71706C"
+    cw-color-neutral-400: "#928D86"
+    cw-color-neutral-300: "#D4D4D4"
+    cw-color-neutral-200: "#E8E8E8"
+    cw-color-neutral-100: "#F5F5F5"
+    cw-color-neutral-0: "#FBFBFB"
+    cw-color-bg: "#FBFBFB"
+    cw-color-paper: "#F7F7F7"
+    cw-color-surface: "#FBFBFB"
+    cw-color-bg-inverse: "#0F0F0F"
+    cw-color-surface-inverse: "#0F0F0F"
+    cw-color-text-primary: "#211F1C"
+    cw-color-text-secondary: "#71706C"
+    cw-color-text-muted: "#928D86"
+    cw-color-text-inverse: "#FBFBFB"
+    cw-color-text-inverse-muted: "#929292"
+    cw-color-border-subtle: "#1F1F1F1A"
+    cw-color-border-default: "#D4D4D4"
+    cw-color-border-strong: "#1F1F1F"
+    cw-color-border-inverse: "#2A2A2A"
+    cw-color-border-inverse-strong: "#3A3A3A"
+    cw-color-code-bg: "#EDF0F1"
+    cw-color-status-success: "#1EB508"
+    cw-color-status-success-bg: "#98E0A2"
+    cw-color-status-error: "#D32F2F"
+    cw-color-status-error-bg: "#FDECEA"
+    cw-color-status-warning: "#F9E710"
+    cw-color-status-warning-bg: "#FFF8B8"
+    cw-color-status-info: "#0C48ED"
+    cw-color-status-info-bg: "#B8CEFF"
+    # Typst callout contract (chanwe-elements.typ): same five colours in PDF and HTML.
+    cw-color-callout-important: "#CC1914"
+    cw-color-callout-note: "#0758E5"
+    cw-color-callout-tip: "#00A047"
+    cw-color-callout-warning: "#EB9113"
+    cw-color-callout-caution: "#FC5300"
+
+    # Exact aliases used by the live chanwe-report Typst template.
+    # Keeping names and values aligned lets Typst read brand.yml without a visual change.
+    paper: "#F7F7F7"
+    ink: "#0F0F0F"
+    fg: "#211F1C"
+    fg-muted: "#71706C"
+    fg-subtle: "#928D86"
+    primary: "#FD3810"
+    primary-dark: "#EE5524"
+    primary-soft: "#FD38101A"
+    beige: "#F5F1EB"
+    neutral-100: "#F5F5F5"
+    neutral-200: "#E8E8E8"
+    neutral-300: "#D4D4D4"
+    neutral-700: "#525252"
+    neutral-900: "#1F1F1F"
+    border: "#1F1F1F1A"
+    page-bg: "#FBFBFB"
+    second-page-bg: "#F7F7F7"
+    code-bg: "#EDF0F1"
+    emphasis: "#484848"
+
+    # Exact aliases for the live chanwe-report main_brand ramps.
+    orange-100: "#F8DDD9"
+    orange-200: "#F6CFC7"
+    orange-300: "#F5C0B6"
+    orange-400: "#F2A393"
+    orange-500: "#F09482"
+    orange-600: "#EF8670"
+    orange-700: "#ED775F"
+    orange-800: "#EC684E"
+    orange-900: "#EA5A3C"
+    orange-950: "#E94B2B"
+    dark-100: "#CACACA"
+    dark-200: "#B8B8B8"
+    dark-300: "#A5A5A5"
+    dark-400: "#929292"
+    dark-500: "#6D6D6D"
+    dark-600: "#5B5B5B"
+    dark-700: "#484848"
+    dark-800: "#353535"
+    dark-900: "#232323"
+    dark-950: "#101010"
+    beige-100: "#F6F1EB"
+    beige-200: "#ECE5D9"
+    beige-300: "#E2DBD0"
+    beige-400: "#D9D2C6"
+    beige-500: "#CFC8BD"
+
+    # Manual de marca page 13 secondary ramps
+    p13-orange-01: "#FD3810"
+    p13-orange-02: "#EA5A3C"
+    p13-orange-03: "#EC684E"
+    p13-orange-04: "#ED775F"
+    p13-orange-05: "#EF8670"
+    p13-orange-06: "#EE9782"
+    p13-orange-07: "#F2A393"
+    p13-orange-08: "#F5C0B6"
+    p13-orange-09: "#F6CFC7"
+    p13-orange-10: "#F6D4C7"
+    p13-gray-01: "#101010"
+    p13-gray-02: "#232323"
+    p13-gray-03: "#353535"
+    p13-gray-04: "#484848"
+    p13-gray-05: "#6E6E6E"
+    p13-gray-06: "#6D6D6D"
+    p13-gray-07: "#929292"
+    p13-gray-08: "#A5A5A5"
+    p13-gray-09: "#B8B8B8"
+    p13-gray-10: "#CACACA"
+
+    # Manual de marca page 14 accents
+    p14-yellow-strong: "#F9E710"
+    p14-yellow-soft: "#FFF8B8"
+    p14-cyan-strong: "#11F7E6"
+    p14-cyan-soft: "#B6FFF8"
+    p14-blue-strong: "#0C48ED"
+    p14-blue-soft: "#B8CEFF"
+    p14-magenta-strong: "#EB03F2"
+    p14-magenta-soft: "#FDCFFF"
+    p14-green-strong: "#1EB508"
+    p14-green-soft: "#C9FFC0"
+    p14-red-strong: "#D32F2F"
+    p14-red-soft: "#FDECEA"
+
+  foreground: fg-muted
+  background: cw-color-bg
+  primary: primary
+  secondary: fg
+  success: p14-green-strong
+  warning: p14-yellow-strong
+  danger: cw-color-status-error
+  info: p14-blue-strong
+
+typography:
+  fonts:
+    - family: Archivo
+      source: file
+      files:
+        - path: assets/fonts/archivo/Archivo-Light.ttf
+          weight: 300
+        - path: assets/fonts/archivo/Archivo-Regular.ttf
+          weight: 400
+        - path: assets/fonts/archivo/Archivo-Medium.ttf
+          weight: 500
+        - path: assets/fonts/archivo/Archivo-SemiBold.ttf
+          weight: 600
+        - path: assets/fonts/archivo/Archivo-Bold.ttf
+          weight: 700
+        - path: assets/fonts/archivo/Archivo-ExtraBold.ttf
+          weight: 800
+    - family: Satoshi
+      source: file
+      files:
+        - path: assets/fonts/satoshi/Satoshi-Light.ttf
+          weight: 300
+        - path: assets/fonts/satoshi/Satoshi-Regular.ttf
+          weight: 400
+        - path: assets/fonts/satoshi/Satoshi-Italic.ttf
+          weight: 400
+          style: italic
+        - path: assets/fonts/satoshi/Satoshi-Medium.ttf
+          weight: 500
+        - path: assets/fonts/satoshi/Satoshi-SemiBold.ttf
+          weight: 600
+        - path: assets/fonts/satoshi/Satoshi-Bold.ttf
+          weight: 700
+        - path: assets/fonts/satoshi/Satoshi-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - path: assets/fonts/satoshi/Satoshi-Black.ttf
+          weight: 900
+    - family: Cormorant Garamond
+      source: file
+      files:
+        - path: assets/fonts/cormorant-garamond/CormorantGaramond-Italic-wght.ttf
+          weight: 300
+          style: italic
+        - path: assets/fonts/cormorant-garamond/CormorantGaramond-Italic-wght.ttf
+          weight: 400
+          style: italic
+        - path: assets/fonts/cormorant-garamond/CormorantGaramond-Italic-wght.ttf
+          weight: 500
+          style: italic
+        - path: assets/fonts/cormorant-garamond/CormorantGaramond-Italic-wght.ttf
+          weight: 600
+          style: italic
+        - path: assets/fonts/cormorant-garamond/CormorantGaramond-Italic-wght.ttf
+          weight: 700
+          style: italic
+    - family: JetBrains Mono
+      source: file
+      files:
+        - path: assets/fonts/jetbrains/JetBrainsMono-Regular.ttf
+          weight: 400
+        - path: assets/fonts/jetbrains/JetBrainsMono-Medium.ttf
+          weight: 500
+        - path: assets/fonts/jetbrains/JetBrainsMono-Bold.ttf
+          weight: 700
+  base:
+    family: Satoshi
+    size: 13.5px
+    line-height: 1.62
+
+  headings:
+    family: Archivo
+    weight: 600
+    line-height: 1.15
+    color: secondary
+
+  link:
+    color: primary
+    weight: 700
+
+defaults:
+  bootstrap:
+    defaults:
+      root-font-size: 91%
+      body-line-height: 1.62
+      border-radius: 4px
+      border-radius-sm: 4px
+      border-radius-lg: 4px
+      btn-font-weight: 600
+      btn-border-radius: 4px
+      link-decoration: none
+      link-hover-decoration: underline
+      nav-link-font-weight: 600
+      headings-font-weight: 600
+      headings-font-family: "Archivo"
+      h1-font-size: 2.5rem
+      h2-font-size: 2rem
+      h3-font-size: 1.6rem
+      h4-font-size: 1.22rem
+      h5-font-size: 1.05rem
+      h6-font-size: 0.92rem
+
+    rules: |
+      :root {
+        --cw-color-primary: #{$brand-primary};
+        --cw-color-primary-hover: #{$brand-primary-dark};
+        --cw-color-primary-active: #{$brand-orange-950};
+        --cw-color-primary-light: #{$brand-orange-500};
+        --cw-color-primary-subtle: #{rgba($brand-primary, 0.10)};
+
+        --cw-color-ink: #{$brand-ink};
+        --cw-color-fg: #{$brand-fg};
+        --cw-color-fg-muted: #{$brand-fg-muted};
+        --cw-color-fg-subtle: #{$brand-fg-subtle};
+
+        --cw-color-neutral-900: #{$brand-neutral-900};
+        --cw-color-neutral-700: #{$brand-neutral-700};
+        --cw-color-neutral-500: #{$brand-fg-muted};
+        --cw-color-neutral-400: #{$brand-fg-subtle};
+        --cw-color-neutral-300: #{$brand-neutral-300};
+        --cw-color-neutral-200: #{$brand-neutral-200};
+        --cw-color-neutral-100: #{$brand-neutral-100};
+        --cw-color-neutral-0: #{$brand-page-bg};
+
+        --cw-color-bg: #{$brand-page-bg};
+        --cw-color-paper: #{$brand-paper};
+        --cw-color-beige: #{$brand-beige};
+        --cw-color-surface: #{$brand-page-bg};
+        --cw-color-bg-inverse: #{$brand-ink};
+        --cw-color-surface-inverse: #{$brand-ink};
+
+        --cw-color-text-primary: #{$brand-fg};
+        --cw-color-text-secondary: #{$brand-fg-muted};
+        --cw-color-text-muted: #{$brand-fg-subtle};
+        --cw-color-text-inverse: #{$brand-page-bg};
+        --cw-color-text-inverse-muted: #{$brand-dark-400};
+
+        --cw-color-border-subtle: #{rgba($brand-neutral-900, 0.10)};
+        --cw-color-border-default: #{$brand-neutral-300};
+        --cw-color-border-strong: #{$brand-neutral-900};
+        --cw-color-border-inverse: #{$brand-cw-color-border-inverse};
+        --cw-color-border-inverse-strong: #{$brand-cw-color-border-inverse-strong};
+        --cw-color-code-bg: #{$brand-code-bg};
+
+        --cw-color-status-success: #{$brand-p14-green-strong};
+        --cw-color-status-success-bg: #{$brand-cw-color-status-success-bg};
+        --cw-color-status-error: #{$brand-p14-red-strong};
+        --cw-color-status-error-bg: #{$brand-p14-red-soft};
+        --cw-color-status-warning: #{$brand-p14-yellow-strong};
+        --cw-color-status-warning-bg: #{$brand-p14-yellow-soft};
+        --cw-color-status-info: #{$brand-p14-blue-strong};
+        --cw-color-status-info-bg: #{$brand-p14-blue-soft};
+        --cw-color-callout-important: #{$brand-cw-color-callout-important};
+        --cw-color-callout-note: #{$brand-cw-color-callout-note};
+        --cw-color-callout-tip: #{$brand-cw-color-callout-tip};
+        --cw-color-callout-warning: #{$brand-cw-color-callout-warning};
+        --cw-color-callout-caution: #{$brand-cw-color-callout-caution};
+
+        --chanwe-primary: var(--cw-color-primary);
+        --chanwe-ink: var(--cw-color-ink);
+        --chanwe-paper: var(--cw-color-paper);
+        --chanwe-muted: var(--cw-color-neutral-100);
+        --cw-font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+        --cw-font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+        --cw-font-sans: "Satoshi", "Inter", "Helvetica Neue", Arial, sans-serif;
+        --cw-font-mono: "JetBrains Mono", Menlo, "Courier New", monospace;
+        --cw-logo-negro-image: none;
+        --chanwe-yellow-strong: var(--cw-color-status-warning);
+        --chanwe-yellow-soft: var(--cw-color-status-warning-bg);
+        --chanwe-cyan-strong: #{$brand-p14-cyan-strong};
+        --chanwe-cyan-soft: #{$brand-p14-cyan-soft};
+        --chanwe-blue-strong: var(--cw-color-status-info);
+        --chanwe-blue-soft: var(--cw-color-status-info-bg);
+        --chanwe-magenta-strong: #{$brand-p14-magenta-strong};
+        --chanwe-magenta-soft: #{$brand-p14-magenta-soft};
+        --chanwe-green-strong: var(--cw-color-status-success);
+        --chanwe-green-soft: #{$brand-p14-green-soft};
+        --chanwe-red-strong: var(--cw-color-status-error);
+        --chanwe-red-soft: var(--cw-color-status-error-bg);
+      }
+
+
+      /* Title banner: HTML analogue of the report cover */
+      .quarto-title-banner,
+      .quarto-title-block .quarto-title-banner {
+        background: var(--cw-color-paper) !important;
+        background-image: none !important;
+        color: var(--cw-color-fg) !important;
+        position: relative;
+        overflow: hidden;
+        min-height: clamp(21rem, 38vw, 34rem);
+        padding: 0;
+        border-bottom: 1px solid var(--cw-color-border-strong);
+      }
+
+      .quarto-title-banner::before {
+        content: "";
+        position: absolute;
+        left: clamp(1.5rem, 7vw, 7.5rem);
+        top: clamp(0.75rem, 1.8vw, 1.35rem);
+        width: min(5.5rem, 15vw);
+        height: 2px;
+        border-radius: 0;
+        background: var(--cw-color-primary);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .quarto-title-banner::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: min(35vw, 34rem);
+        background-color: var(--cw-color-ink);
+        background-image: url("_extensions/chanwe-brand/assets/hero-img.svg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        border-left: 1px solid var(--cw-color-border-strong);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .quarto-title-banner .quarto-title,
+      .quarto-title-block .quarto-title-meta,
+      .quarto-title-banner .subtitle,
+      .quarto-title-banner .title {
+        position: relative;
+        z-index: 2;
+        color: var(--cw-color-fg) !important;
+        text-align: left !important;
+      }
+
+      .quarto-title-block .quarto-title-meta {
+        background: transparent;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+        align-items: start;
+        gap: 0.9rem 1.3rem;
+        width: min(48rem, 100%);
+        margin: clamp(2rem, 4vw, 3.4rem) 0 0;
+        padding: clamp(1.1rem, 2.4vw, 1.6rem) 0 0;
+        border-top: 1px solid var(--cw-color-border-subtle);
+      }
+
+      .quarto-title-block .quarto-title-meta-heading {
+        display: block;
+        font-family: var(--cw-font-mono);
+        font-size: 0.58rem;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--cw-color-fg-subtle);
+        margin-bottom: 0.18rem;
+      }
+
+      #title-block-header .keywords {
+        display: none !important;
+      }
+
+      .quarto-title-block .quarto-title-meta-contents {
+        padding-bottom: 0;
+        font-family: var(--cw-font-display);
+        font-size: 0.92rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        text-transform: none;
+        color: var(--cw-color-fg) !important;
+        opacity: 1;
+      }
+
+      .quarto-title-banner .quarto-title {
+        grid-column: screen-start / screen-end;
+        width: 100%;
+        max-width: none;
+        min-height: clamp(21rem, 38vw, 34rem);
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        padding: clamp(1.6rem, 3vw, 3rem) min(38vw, 36rem) clamp(1.8rem, 3.6vw, 3.4rem) clamp(1.5rem, 7vw, 7.5rem);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .quarto-title-banner .quarto-title .chanwe-banner-bottom {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      .quarto-title-banner .quarto-title .chanwe-keywords {
+        margin-top: 1rem;
+        padding-top: 0;
+      }
+
+      .quarto-title-banner .quarto-categories {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start !important;
+        gap: 0.45rem;
+        margin-top: 0;
+        margin-bottom: clamp(1.25rem, 2vw, 2rem);
+      }
+
+      .quarto-title-banner .quarto-categories.chanwe-top-pills {
+        margin-top: clamp(2rem, 3vw, 2.8rem);
+        margin-bottom: clamp(0.75rem, 1.4vw, 1.15rem);
+      }
+
+      .quarto-title-banner .quarto-title > .quarto-categories .quarto-category,
+      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category {
+        background: transparent !important;
+        color: var(--cw-color-primary) !important;
+        border: 0 !important;
+        outline: none !important;
+        box-shadow: none !important;
+        opacity: 1 !important;
+        border-radius: 0;
+        font-family: var(--cw-font-mono);
+        font-size: 0.65rem;
+        line-height: 1.2;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding: 0;
+        text-decoration: none !important;
+      }
+
+      .quarto-title-banner .quarto-title > .quarto-categories::before,
+      .quarto-title-banner .quarto-categories.chanwe-top-pills::before {
+        content: "";
+        display: inline-block;
+        width: 22pt;
+        height: 0.75pt;
+        margin: 0.36rem 0.45rem 0 0;
+        background: var(--cw-color-primary);
+      }
+
+      .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(1),
+      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(1),
+      .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(2),
+      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(2) {
+        background: transparent !important;
+        color: var(--cw-color-primary) !important;
+      }
+
+      .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:hover,
+      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:hover {
+        border: 0 !important;
+        outline: none !important;
+        box-shadow: none !important;
+        filter: none !important;
+        opacity: 1 !important;
+      }
+
+      .quarto-title-banner .quarto-title .chanwe-keyword-pills {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start !important;
+        gap: 0.45rem;
+        margin: 0;
+      }
+
+      .quarto-title-banner .quarto-title .chanwe-keyword-pills .quarto-category {
+        background: var(--cw-color-neutral-100) !important;
+        color: var(--cw-color-fg-muted) !important;
+        border: 1px solid var(--cw-color-border-subtle) !important;
+        outline: none !important;
+        box-shadow: none !important;
+        opacity: 1 !important;
+        border-radius: 4px;
+        font-family: var(--cw-font-mono);
+        font-size: 0.58rem;
+        line-height: 1.2;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        padding: 0.22rem 0.5rem;
+        text-decoration: none !important;
+      }
+
+      .quarto-title-banner .quarto-title .title {
+        max-width: min(58rem, 56vw);
+        font-family: var(--cw-font-display);
+        font-size: clamp(2.4rem, 4.7vw, 4.25rem);
+        font-weight: 600 !important;
+        line-height: 0.96;
+        color: var(--cw-color-neutral-900) !important;
+      }
+
+      .quarto-title-banner .quarto-title .title::before {
+        content: "";
+        display: block;
+        width: min(180px, 50vw);
+        height: 38px;
+        margin: clamp(2rem, 3.8vw, 3.25rem) 0 clamp(2rem, 3.4vw, 3rem);
+        background: url("_extensions/chanwe-brand/assets/Logo_Negro.svg") left center / contain no-repeat;
+      }
+
+      .quarto-title-banner .quarto-title .title::after {
+        content: "";
+        display: inline-block;
+        width: 0.34em;
+        height: 0.34em;
+        margin-left: 0.12em;
+        border-radius: 50%;
+        background: var(--cw-color-primary);
+        vertical-align: -0.04em;
+      }
+
+      .quarto-title-banner .quarto-title.has-chanwe-title-logo .title::before {
+        content: none;
+        display: none;
+      }
+
+      .quarto-title-banner .quarto-title .chanwe-title-logo {
+        display: block;
+        width: min(180px, 50vw);
+        height: 38px;
+        max-height: 38px;
+        background: url("_extensions/chanwe-brand/assets/Logo_Negro.svg") left center / contain no-repeat;
+        margin: clamp(0.45rem, 1vw, 0.85rem) 0 0;
+      }
+
+      .quarto-title-banner .chanwe-title-logo + .quarto-categories.chanwe-top-pills {
+        margin-top: clamp(3.5rem, 6vw, 7rem);
+      }
+
+      .quarto-title-banner .subtitle {
+        max-width: min(40rem, 48vw);
+        margin-top: clamp(0.85rem, 1.7vw, 1.35rem);
+        font-family: var(--cw-font-serif);
+        font-size: clamp(1rem, 1.5vw, 1.38rem);
+        font-style: italic;
+        font-weight: 300 !important;
+        line-height: 1.24;
+        color: #484848 !important;
+        opacity: 1;
+      }
+
+      @media (max-width: 980px) {
+        .quarto-title-banner {
+          min-height: 0;
+        }
+        .quarto-title-banner::after {
+          position: relative;
+          grid-column: screen-start / screen-end;
+          grid-row: 2;
+          display: block;
+          left: auto;
+          right: auto;
+          top: auto;
+          bottom: auto;
+          width: auto;
+          height: 12rem;
+          margin: 0;
+          border-left: 0;
+          border-top: 1px solid var(--cw-color-border-strong);
+        }
+        .quarto-title-banner .quarto-title {
+          grid-row: 1;
+          min-height: 0;
+          max-width: 100%;
+          padding: 2rem 1.35rem 2.3rem;
+        }
+        .quarto-title-banner .quarto-title .title {
+          max-width: 100%;
+          font-size: clamp(2.15rem, 10.5vw, 3.1rem);
+        }
+        .quarto-title-banner .quarto-title .title::before,
+        .quarto-title-banner .quarto-title .chanwe-title-logo {
+          width: min(170px, 62vw);
+          max-height: 38px;
+        }
+        .quarto-title-banner .quarto-title .title::before {
+          margin-top: 2.2rem;
+          margin-bottom: 2rem;
+        }
+        .quarto-title-banner .quarto-title .chanwe-title-logo {
+          margin-top: 0.45rem;
+          margin-bottom: 0;
+        }
+        .quarto-title-banner .subtitle {
+          max-width: 100%;
+          font-size: 1rem;
+          line-height: 1.32;
+        }
+        .quarto-title-banner .quarto-categories {
+          margin-bottom: 1.1rem;
+        }
+        .quarto-title-banner .quarto-categories.chanwe-top-pills {
+          margin-bottom: 0.85rem;
+        }
+        .quarto-title-banner .chanwe-title-logo + .quarto-categories.chanwe-top-pills {
+          margin-top: 3.05rem;
+        }
+        .quarto-title-block .quarto-title-meta {
+          grid-template-columns: 1fr;
+          gap: 0.65rem;
+          margin-top: 1.5rem;
+          padding-top: 1rem;
+        }
+        .quarto-title-block .quarto-title-meta-contents {
+          padding-bottom: 0;
+        }
+        .quarto-title-banner .quarto-title .chanwe-keywords {
+          margin-top: 0.9rem;
+        }
+        .quarto-title-banner .quarto-title .chanwe-keyword-pills .quarto-category {
+          font-size: 0.56rem;
+          padding: 0.18rem 0.42rem;
+        }
+        main.content section#references,
+        main.content #refs,
+        main.content .references.csl-bib-body {
+          padding-left: 0.9rem;
+          padding-right: 0.9rem;
+        }
+        main.content section.footnotes,
+        main.content #footnotes,
+        main.content [role="doc-endnotes"] {
+          padding-left: 1.1rem;
+        }
+      }
+
+      /* Content links */
+      main.content a:not(.nav-link):not(.anchorjs-link),
+      main.content a.quarto-xref {
+        color: var(--cw-color-primary);
+      }
+
+      h1, h2, h3, h4, h5, h6,
+      .h1, .h2, .h3, .h4, .h5, .h6 {
+        font-family: var(--cw-font-display);
+        font-weight: 600 !important;
+      }
+
+      /* Highlighted text (.mark) */
+      mark, .mark {
+        background-color: var(--cw-color-primary-subtle);
+        color: var(--cw-color-primary-active);
+        font-weight: 600;
+        padding: 0.08rem 0.32rem;
+        border-radius: 4px;
+      }
+
+      /* Inline code */
+      :not(pre) > code:not(.sourceCode),
+      p code:not(.sourceCode),
+      li code:not(.sourceCode),
+      td code:not(.sourceCode) {
+        background: var(--cw-color-code-bg);
+        color: var(--cw-color-neutral-700);
+        border-radius: 4px;
+        font-family: var(--cw-font-mono);
+        font-size: 0.85em;
+        padding: 0.08rem 0.32rem;
+      }
+
+      /* Callouts: Typst callout-contract colours on a 2px left rule and a
+         rotated-square glyph (the chanwe-glyph); transparent header with the
+         title in mono caps, ink. Colour lives on solid marks, never on text. */
+      .callout {
+        --cw-callout-accent: var(--cw-color-ink);
+        background-color: #FFFFFF !important;
+        border: 1px solid var(--cw-color-border-default) !important;
+        border-left: 2px solid var(--cw-callout-accent) !important;
+        border-radius: 4px;
+      }
+      .callout.callout-note,
+      .callout.callout-info { --cw-callout-accent: var(--cw-color-callout-note); }
+      .callout.callout-tip,
+      .callout.callout-success { --cw-callout-accent: var(--cw-color-callout-tip); }
+      .callout.callout-warning { --cw-callout-accent: var(--cw-color-callout-warning); }
+      .callout.callout-important { --cw-callout-accent: var(--cw-color-callout-important); }
+      .callout.callout-caution,
+      .callout.callout-alert { --cw-callout-accent: var(--cw-color-callout-caution); }
+
+      .callout > .callout-header {
+        background: transparent !important;
+        border-bottom: 0 !important;
+        padding: 0.75rem 1.2rem 0 !important;
+      }
+      .callout .callout-title-container {
+        display: flex;
+        align-items: center;
+        font-family: var(--cw-font-mono);
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--cw-color-ink);
+      }
+      .callout .callout-title-container::before {
+        content: "";
+        display: inline-block;
+        flex: none;
+        width: 7px;
+        height: 7px;
+        margin: 0 10px 0 1px;
+        background: var(--cw-callout-accent);
+        transform: rotate(45deg);
+      }
+      .callout .callout-icon-container {
+        display: none !important;
+      }
+      .callout .callout-body,
+      .callout .callout-body-container {
+        background-color: #FFFFFF !important;
+        color: var(--cw-color-text-secondary) !important;
+        font-size: 0.94rem;
+        line-height: 1.58;
+      }
+      .callout .callout-body {
+        padding: 0 !important;
+      }
+      .callout .callout-body-container {
+        padding: 0.45rem 1.2rem 1rem !important;
+      }
+      .callout .callout-body-container p,
+      .callout .callout-body-container li {
+        color: var(--cw-color-text-secondary) !important;
+      }
+      .callout .callout-body-container a {
+        color: var(--chanwe-blue-strong) !important;
+      }
+      @media (prefers-contrast: more) {
+        .callout { border-color: var(--cw-color-ink) !important; }
+        .callout .callout-title-container { color: #000000; }
+      }
+
+
+      /* Bootstrap alert blocks aligned with the same palette */
+      .alert-info { border-color: var(--chanwe-cyan-strong) !important; background-color: var(--chanwe-cyan-soft) !important; color: var(--cw-color-neutral-900) !important; }
+      .alert-success { border-color: var(--chanwe-green-strong) !important; background-color: var(--chanwe-green-soft) !important; color: var(--cw-color-neutral-900) !important; }
+      .alert-warning { border-color: var(--chanwe-yellow-strong) !important; background-color: var(--chanwe-yellow-soft) !important; color: var(--cw-color-neutral-900) !important; }
+      .alert-danger { border-color: var(--chanwe-red-strong) !important; background-color: var(--chanwe-red-soft) !important; color: var(--cw-color-neutral-900) !important; }
+
+      /* Premium editorial skin */
+      body {
+        background: var(--cw-color-bg);
+        color: var(--cw-color-fg);
+        font-family: var(--cw-font-sans);
+      }
+
+
+      .quarto-title-banner {
+        border-bottom: 0;
+      }
+
+      .quarto-title-banner .quarto-title .title {
+        letter-spacing: 0;
+        text-wrap: balance;
+        font-weight: 600 !important;
+      }
+
+      .page-columns .content {
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding: clamp(2.2rem, 3vw, 3.8rem) clamp(1rem, 2vw, 2rem);
+      }
+
+
+      main.content .cell,
+      main.content .quarto-figure,
+      main.content .table-responsive,
+      main.content .panel-tabset {
+        margin-top: 1.8rem;
+        margin-bottom: 1.8rem;
+      }
+
+      main.content .callout {
+        margin-top: 2.4rem;
+        margin-bottom: 2.4rem;
+      }
+
+      main.content p {
+        margin-bottom: 1.15rem;
+      }
+
+      main.content .chanwe-document-pills {
+        display: flex;
+        flex-direction: column;
+        gap: 0.72rem;
+        margin: 0.15rem 0 2.35rem;
+        padding-bottom: 1.35rem;
+        border-bottom: 1px solid var(--cw-color-border-subtle);
+      }
+
+      main.content .chanwe-document-pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      main.content .chanwe-document-pill-row p {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.45rem;
+        margin: 0;
+      }
+
+      main.content .chanwe-pill-label,
+      main.content .chanwe-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 1.85rem;
+        border-radius: 999px;
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+
+      main.content .chanwe-pill-label {
+        padding: 0.28rem 0.62rem;
+        border: 1px solid var(--cw-color-primary);
+        background: var(--cw-color-primary-subtle);
+        color: var(--cw-color-primary);
+        font-family: var(--cw-font-mono);
+        font-size: 0.58rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      main.content .chanwe-pill {
+        padding: 0.3rem 0.68rem;
+        border: 1px solid var(--cw-color-border-subtle);
+        background: var(--cw-color-neutral-100);
+        color: var(--cw-color-neutral-900);
+        font-family: var(--cw-font-sans);
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+
+      main.content .chanwe-pill-accent {
+        border-color: var(--cw-color-ink);
+        background: var(--cw-color-ink);
+        color: var(--cw-color-text-inverse);
+      }
+
+      main.content ul,
+      main.content ol,
+      main.content dl {
+        margin-top: 0.65rem;
+        margin-bottom: 1.3rem;
+      }
+
+      main.content h1,
+      main.content h2,
+      main.content h3,
+      main.content h4 {
+        color: var(--cw-color-neutral-900);
+        letter-spacing: 0;
+        text-wrap: balance;
+      }
+
+      main.content h1 {
+        margin-top: 3rem;
+        margin-bottom: 2rem;
+        padding-top: 1rem;
+      }
+
+
+      main.content h2 {
+        margin-top: 3.25rem;
+        margin-bottom: 0.95rem;
+      }
+
+      main.content h3 {
+        margin-top: 2.6rem;
+        margin-bottom: 0.95rem;
+      }
+
+      main.content h2.chanwe-area-heading {
+        margin-top: clamp(4rem, 7vw, 6.2rem);
+        margin-bottom: 1.6rem;
+        padding: 0.9rem 1.15rem 1rem;
+        border: 0;
+        border-left: 6px solid var(--cw-color-primary);
+        border-radius: 4px;
+        background: var(--cw-color-ink);
+        color: var(--cw-color-text-inverse) !important;
+        font-size: clamp(1.2rem, 1.8vw, 1.65rem);
+        line-height: 1.08;
+      }
+
+      main.content h2.chanwe-area-heading .header-section-number {
+        color: var(--cw-color-primary) !important;
+        font-family: var(--cw-font-display);
+        font-size: 0.95em;
+        font-weight: 700;
+        line-height: 1;
+        margin-right: 0.5rem;
+        vertical-align: 0;
+      }
+
+      main.content h4,
+      main.content h5,
+      main.content h6 {
+        margin-top: 2rem;
+        margin-bottom: 0.7rem;
+      }
+
+      main.content section#references,
+      main.content #refs,
+      main.content .references.csl-bib-body {
+        padding-left: clamp(1.25rem, 3.2vw, 3.4rem);
+        padding-right: clamp(1.25rem, 3.2vw, 3.4rem);
+      }
+
+      main.content section.footnotes,
+      main.content #footnotes,
+      main.content [role="doc-endnotes"] {
+        padding-left: clamp(1.5rem, 4vw, 4.2rem);
+      }
+
+      main.content h1::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 1px;
+        margin-top: 0.72rem;
+        border-radius: 0;
+        background: var(--cw-color-border-strong);
+      }
+
+      main.content h1 .header-section-number,
+      main.content h2 .header-section-number,
+      main.content h3 .header-section-number,
+      main.content h4 .header-section-number,
+      main.content h5 .header-section-number,
+      main.content h6 .header-section-number {
+        color: var(--cw-color-primary) !important;
+        display: inline-block;
+        margin-right: 0.34em;
+      }
+
+      main.content h1 .header-section-number {
+        font-family: var(--cw-font-serif);
+        font-size: 2.1em;
+        font-style: italic;
+        font-weight: 300;
+        line-height: 0.72;
+        vertical-align: -0.18em;
+      }
+
+      main.content h2 .header-section-number,
+      main.content h3 .header-section-number {
+        font-family: var(--cw-font-mono);
+        font-weight: 300;
+        letter-spacing: 0;
+      }
+
+      main.content h4 .header-section-number {
+        font-family: var(--cw-font-serif);
+        font-style: italic;
+        font-weight: 300;
+      }
+
+      main.content h5,
+      main.content h6 {
+        font-family: var(--cw-font-mono);
+        font-size: 0.78rem;
+        font-weight: 500 !important;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      main.content h5::before,
+      main.content h6::before {
+        content: "";
+        display: inline-block;
+        width: 0.38rem;
+        height: 0.38rem;
+        margin-right: 0.45rem;
+        border-radius: 50%;
+        background: var(--cw-color-primary);
+        vertical-align: 0.03em;
+      }
+
+      main.content h5::after,
+      main.content h6::after {
+        content: "";
+        display: block;
+        height: 1px;
+        margin-top: 0.6rem;
+        background: var(--cw-color-border-default);
+      }
+
+      .chanwe-heading-preview {
+        display: grid;
+        gap: 0.62rem;
+        padding: 1rem 0;
+      }
+
+      .chanwe-heading-preview-row {
+        font-family: var(--cw-font-display);
+        color: var(--cw-color-text-primary);
+        line-height: 1.1;
+        font-weight: 600;
+      }
+
+      .chanwe-heading-preview-row span {
+        color: var(--cw-color-primary);
+        display: inline-block;
+        margin-right: 0.32rem;
+      }
+
+      .chanwe-heading-preview-h1 { font-size: 2.25rem; }
+      .chanwe-heading-preview-h2 {
+        font-size: 1.72rem;
+        padding-bottom: 0.32rem;
+        border-bottom: 1px solid rgba(39, 39, 39, 0.15);
+      }
+      .chanwe-heading-preview-h3 { font-size: 1.38rem; }
+      .chanwe-heading-preview-h4 { font-size: 1.08rem; }
+      .chanwe-heading-preview-h5 { font-size: 0.96rem; }
+      .chanwe-heading-preview-h6 {
+        font-size: 0.86rem;
+        color: var(--cw-color-text-muted);
+      }
+
+      @media (min-width: 1200px) {
+        body:not(.floating):not(.docked) #quarto-margin-sidebar {
+          position: fixed;
+          top: clamp(1rem, 3.2vh, 2rem);
+          right: clamp(1rem, 2.5vw, 2.25rem);
+          bottom: clamp(1rem, 3.2vh, 2rem);
+          width: clamp(210px, 17vw, 280px);
+          padding: 0;
+          z-index: 30;
+        }
+
+        body:not(.floating):not(.docked) #quarto-margin-sidebar nav[role="doc-toc"] {
+          box-sizing: border-box;
+          height: 100%;
+          max-height: none;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          scrollbar-width: thin;
+        }
+      }
+
+      nav[role="doc-toc"] {
+        border: 1px solid var(--cw-color-ink);
+        border-radius: 0;
+        background: var(--cw-color-neutral-0);
+        backdrop-filter: none;
+        padding: 0.7rem 0.75rem;
+      }
+
+      nav[role="doc-toc"] .nav-link {
+        border-left: 2px solid transparent;
+        margin: 0.1rem 0;
+        border-radius: 0;
+        padding: 0.16rem 0.45rem 0.16rem 0.34rem;
+        font-size: 0.82rem;
+        line-height: 1.25;
+      }
+
+      nav[role="doc-toc"] ul {
+        padding-left: 0;
+        margin-left: 0;
+        list-style: none;
+      }
+
+      nav[role="doc-toc"] ul ul {
+        display: none;
+        margin-top: 0.12rem;
+        margin-bottom: 0.22rem;
+        padding-left: 0.9rem;
+      }
+
+      nav[role="doc-toc"] li:has(> .nav-link.active) > ul,
+      nav[role="doc-toc"] li:has(> ul .nav-link.active) > ul {
+        display: block;
+      }
+
+      nav[role="doc-toc"] ul ul .nav-link {
+        padding-top: 0.12rem;
+        padding-bottom: 0.12rem;
+        font-size: 0.76rem;
+        line-height: 1.22;
+        color: var(--cw-color-text-muted);
+      }
+
+      nav[role="doc-toc"] .header-section-number {
+        color: var(--cw-color-primary) !important;
+        display: inline-block;
+        margin-right: 0.36rem;
+        font-size: 0.84em;
+        font-weight: 400 !important;
+      }
+
+      nav[role="doc-toc"] .nav-link:hover {
+        background: transparent;
+        color: var(--cw-color-text-primary);
+      }
+
+      .sidebar nav[role="doc-toc"] .nav-link.active,
+      nav[role="doc-toc"] .nav-link.active {
+        border-left-color: var(--cw-color-ink);
+        background: transparent;
+        font-weight: 700;
+      }
+
+
+      pre,
+      pre.sourceCode,
+      div.sourceCode pre {
+        background-color: var(--cw-color-code-bg) !important;
+        border-left: 1pt solid var(--cw-color-primary) !important;
+        border-radius: 0 !important;
+        box-shadow: none;
+        font-family: var(--cw-font-mono);
+      }
+
+
+      table {
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        border-radius: 0;
+        border-top: 1px solid var(--cw-color-border-strong);
+        border-bottom: 1px solid var(--cw-color-border-strong);
+      }
+
+      table thead th {
+        background: transparent;
+        color: var(--cw-color-ink);
+        border-top: 0 !important;
+        border-bottom: 1px solid var(--cw-color-border-strong) !important;
+        font-family: var(--cw-font-display);
+        font-size: 0.78rem;
+        font-weight: 400;
+      }
+
+      table tbody tr:nth-child(even) {
+        background: transparent !important;
+      }
+
+      .table-striped > tbody > tr:nth-of-type(odd) > *,
+      .table-striped > tbody > tr:nth-of-type(even) > * {
+        background-color: var(--cw-color-neutral-0) !important;
+      }
+
+
+      blockquote {
+        border-left: 2pt solid var(--cw-color-primary);
+        background: transparent;
+        border-radius: 0;
+        color: var(--cw-color-fg-muted);
+        font-family: var(--cw-font-serif);
+        font-size: 1.18rem;
+        font-style: italic;
+        font-weight: 300;
+        line-height: 1.58;
+        padding-left: 1.5rem;
+      }
+
+      /* Great Quote — full-bleed dark block */
+      .great-quote {
+        background: var(--cw-color-surface-inverse);
+        color: var(--cw-color-text-inverse);
+        font-family: var(--cw-font-serif);
+        font-style: italic;
+        font-weight: 300;
+        font-size: clamp(2rem, 4vw, 3.6rem);
+        line-height: 1.08;
+        padding: clamp(3.2rem, 7vw, 6rem) clamp(1.6rem, 7vw, 6rem);
+        margin-top: 3.6rem;
+        margin-bottom: 3.6rem;
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+      }
+      .great-quote::before {
+        content: "VERBATIM";
+        display: block;
+        max-width: 760px;
+        margin: 0 auto 1.4rem;
+        padding-left: 2.1rem;
+        color: var(--cw-color-primary);
+        font-family: var(--cw-font-mono);
+        font-size: 0.72rem;
+        font-style: normal;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        background: linear-gradient(var(--cw-color-primary), var(--cw-color-primary)) left 0.45em / 22pt 1px no-repeat;
+      }
+      .great-quote p {
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 0.6rem;
+      }
+      .great-quote p:last-child {
+        margin-bottom: 0;
+      }
+
+      /* Chapter cover — HTML section divider */
+      .chapter-cover {
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin: 3.8rem -50vw;
+        background: var(--cw-color-paper);
+        border-top: 1px solid var(--cw-color-border-strong);
+        border-bottom: 1px solid var(--cw-color-border-strong);
+      }
+
+      .chapter-cover-media {
+        min-height: clamp(13rem, 30vw, 22rem);
+        background-size: cover;
+        background-position: center;
+        position: relative;
+      }
+
+      .chapter-cover-media::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(16, 16, 16, 0.62), rgba(16, 16, 16, 0.16)),
+          linear-gradient(0deg, rgba(16, 16, 16, 0.3), rgba(16, 16, 16, 0));
+      }
+
+      .chapter-cover-content {
+        max-width: min(920px, calc(100vw - 2.4rem));
+        margin: 0 auto;
+        padding: clamp(2.2rem, 5vw, 4.8rem) 0;
+      }
+
+      .chapter-cover-content::before {
+        content: "";
+        display: block;
+        width: 128px;
+        height: 32px;
+        margin-bottom: 1.5rem;
+        background: url("_extensions/chanwe-brand/assets/Logo_Negro.svg") left center / contain no-repeat;
+      }
+
+      .chapter-cover-title {
+        margin: 0 0 1rem !important;
+        color: var(--cw-color-text-primary) !important;
+        font-size: clamp(2rem, 6vw, 4.7rem);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .chapter-cover-title::after {
+        content: "";
+        display: block;
+        width: 82px;
+        height: 4px;
+        margin-top: 1.2rem;
+        border-radius: 4px;
+        background: var(--cw-color-primary);
+      }
+
+      .chapter-cover-content p {
+        max-width: 700px;
+        color: var(--cw-color-text-secondary);
+        font-size: 1.06rem;
+        line-height: 1.68;
+      }
+
+      @media (max-width: 980px) {
+        .great-quote {
+          font-size: 1.08rem;
+          line-height: 1.85;
+          padding: 1.8rem 1.6rem;
+        }
+        .chapter-cover {
+          margin-top: 2.7rem;
+          margin-bottom: 2.7rem;
+        }
+        .chapter-cover-media {
+          min-height: 11rem;
+        }
+        .chapter-cover-content {
+          max-width: calc(100vw - 2rem);
+          padding-top: 2rem;
+          padding-bottom: 2.3rem;
+        }
+        .chapter-cover-content::before {
+          width: 104px;
+          height: 26px;
+          margin-bottom: 1.1rem;
+        }
+      }
+
+
+      .panel-tabset > .nav-tabs {
+        border-bottom: 1px solid var(--cw-color-border-subtle);
+      }
+
+      .panel-tabset > .nav-tabs .nav-link {
+        border: 0;
+        border-bottom: 3px solid transparent;
+        font-weight: 700;
+        color: var(--cw-color-text-secondary);
+        padding-left: 0.4rem;
+        padding-right: 0.4rem;
+      }
+
+      .panel-tabset > .nav-tabs .nav-link:hover {
+        color: var(--cw-color-text-primary);
+        background: var(--cw-color-primary-subtle);
+      }
+
+      .panel-tabset > .nav-tabs .nav-link.active {
+        color: var(--cw-color-text-primary);
+        border-bottom-color: var(--cw-color-primary);
+        background: transparent;
+      }
+
+
+      img,
+      .quarto-figure img {
+        border-radius: 4px;
+        box-shadow: none;
+      }
+
+
+      .quarto-figure figcaption,
+      .figure-caption,
+      .panel-caption,
+      table caption {
+        color: var(--cw-color-text-muted);
+        font-size: 0.86rem;
+        font-weight: 500;
+      }
+
+      /* Figure-local editorial footer + alt-footer frame */
+      main.content .chanwe-figure {
+        width: 100%;
+        margin: clamp(2.4rem, 4vw, 4rem) 0;
+        break-inside: avoid;
+      }
+
+      main.content .chanwe-figure-footer,
+      main.content .chanwe-figure-alt-footer {
+        display: grid;
+        align-items: center;
+        column-gap: clamp(1.25rem, 3vw, 3.5rem);
+      }
+
+      main.content .chanwe-figure-footer {
+        grid-template-columns: minmax(12rem, 5fr) minmax(16rem, 7fr);
+        padding: 0 0 0.45rem;
+        border-bottom: 1px solid var(--cw-color-ink);
+      }
+
+      main.content .chanwe-figure-footer-left,
+      main.content .chanwe-figure-footer-right,
+      main.content .chanwe-figure-alt-footer-left,
+      main.content .chanwe-figure-alt-footer-right {
+        min-width: 0;
+      }
+
+      main.content .chanwe-figure-footer-left p,
+      main.content .chanwe-figure-footer-right p,
+      main.content .chanwe-figure-alt-footer-left p,
+      main.content .chanwe-figure-alt-footer-right p {
+        margin: 0;
+      }
+
+      main.content .chanwe-figure-footer-left,
+      main.content .chanwe-figure-footer-left p {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+      }
+
+      main.content .chanwe-figure-footer-dash {
+        display: inline-block;
+        flex: 0 0 2.35rem;
+        width: 2.35rem;
+        height: 3px;
+        background: var(--cw-color-primary);
+      }
+
+      main.content .chanwe-figure-footer-label {
+        color: var(--cw-color-ink);
+        font-family: var(--cw-font-mono);
+        font-size: 0.72rem;
+        font-weight: 500;
+        line-height: 1.3;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      main.content .chanwe-figure-footer-right {
+        color: var(--cw-color-text-muted);
+        font-size: 0.9rem;
+        font-weight: 400;
+        line-height: 1.35;
+        text-align: right;
+      }
+
+      main.content .chanwe-figure-footer-right strong,
+      main.content .chanwe-figure-alt-footer-right strong {
+        color: var(--cw-color-ink);
+        font-weight: 700;
+      }
+
+      main.content .chanwe-figure-body {
+        width: 100%;
+        padding: clamp(0.55rem, 1vw, 0.85rem) 0;
+      }
+
+      main.content .chanwe-figure-body > :first-child,
+      main.content .chanwe-figure-body .quarto-figure {
+        margin-top: 0;
+      }
+
+      main.content .chanwe-figure-body > :last-child,
+      main.content .chanwe-figure-body .quarto-figure {
+        margin-bottom: 0;
+      }
+
+      main.content .chanwe-figure-body img {
+        border-radius: 0;
+      }
+
+      main.content .chanwe-figure-body figcaption {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      main.content .chanwe-figure-alt-footer {
+        grid-template-columns: auto minmax(0, 1fr);
+        padding: 0.5rem 0 0;
+        border-top: 1px solid var(--cw-color-ink);
+      }
+
+      main.content .chanwe-figure-alt-footer-left {
+        justify-self: start;
+        padding: 0.45rem 1.05rem 0.425rem;
+        background: var(--cw-color-primary);
+        color: var(--cw-color-text-inverse);
+        font-family: var(--cw-font-mono);
+        font-size: 0.56rem;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      main.content .chanwe-figure-alt-footer-right {
+        color: var(--cw-color-text-muted);
+        font-size: 0.88rem;
+        font-weight: 400;
+        line-height: 1.45;
+      }
+
+      @media (max-width: 680px) {
+        main.content .chanwe-figure-footer,
+        main.content .chanwe-figure-alt-footer {
+          grid-template-columns: 1fr;
+          row-gap: 0.5rem;
+        }
+
+        main.content .chanwe-figure-footer-right {
+          text-align: left;
+        }
+      }
+
+
+      @media (max-width: 980px) {
+        .page-columns .content {
+          border-radius: 4px;
+          padding: 1.55rem;
+        }
+      }
+
+      @media (min-width: 992px) {
+        body:not(.floating):not(.docked) .page-columns {
+          grid-template-columns:
+            [screen-start] 1.5em
+            [screen-start-inset] 4fr
+            [page-start page-start-inset] 30px
+            [body-start-outset] 30px
+            [body-start] 2rem
+            [body-content-start] minmax(680px, calc(1100px - 4rem))
+            [body-content-end] 2rem
+            [body-end] 30px
+            [body-end-outset] minmax(120px, 240px)
+            [page-end-inset] 30px
+            [page-end] 4fr
+            [screen-end-inset] 1.5em
+            [screen-end];
+        }
+      }
+
+      /* Document footer */
+      .chanwe-document-footer {
+        display: grid;
+        grid-template-columns: minmax(12rem, 1fr) auto;
+        align-items: center;
+        column-gap: clamp(1.5rem, 4vw, 4rem);
+        min-height: 148px;
+        margin: clamp(2.6rem, 3.2vw, 3.8rem) 0 clamp(1.1rem, 1.8vw, 1.8rem);
+        padding: clamp(1.2rem, 2.2vw, 1.9rem) clamp(1rem, 2.8vw, 2.4rem);
+        box-sizing: border-box;
+        background: var(--cw-color-bg-inverse);
+        color: var(--cw-color-text-inverse);
+      }
+
+      .chanwe-footer-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-self: start;
+        min-width: 0;
+      }
+
+      .chanwe-footer-rule {
+        display: block;
+        width: 50px;
+        height: 2px;
+        margin-bottom: 1.18rem;
+        background: var(--cw-color-primary);
+      }
+
+      .chanwe-footer-logo-mark {
+        display: block;
+        width: 136px;
+        max-width: 42vw;
+        height: 31px;
+        background: url("_extensions/chanwe-brand/assets/Logo_Blanco.svg") left center / contain no-repeat;
+      }
+
+      .chanwe-footer-contact {
+        display: flex;
+        flex-direction: column;
+        gap: 0.28rem;
+        margin-top: 1.18rem;
+        color: var(--cw-color-text-inverse);
+        font-family: var(--cw-font-sans);
+        font-size: 0.68rem;
+        font-weight: 400;
+        line-height: 1.48;
+        letter-spacing: 0.015em;
+      }
+
+      .chanwe-footer-tagline {
+        align-self: start;
+        justify-self: end;
+        margin-top: calc(1.18rem + 2px);
+        text-align: right;
+        color: var(--cw-color-text-inverse);
+        font-family: var(--cw-font-serif);
+        font-size: clamp(1.15rem, 1.9vw, 1.55rem);
+        font-style: italic;
+        font-weight: 300;
+        line-height: 1.06;
+      }
+
+      .chanwe-footer-tagline-accent {
+        color: var(--cw-color-primary);
+      }
+
+      @media (max-width: 980px) {
+        .chanwe-document-footer {
+          grid-template-columns: 1fr;
+          justify-items: start;
+          gap: 1rem;
+          min-height: 0;
+          margin: 2.1rem 0 1rem;
+          padding: 1.35rem 0.9rem 1.45rem;
+        }
+
+        .chanwe-footer-logo-mark {
+          width: 102px;
+          height: 24px;
+        }
+
+        .chanwe-footer-contact {
+          font-size: 0.56rem;
+        }
+
+        .chanwe-footer-tagline {
+          align-self: auto;
+          justify-self: start;
+          margin-top: 0;
+          text-align: left;
+          font-size: 1.18rem;
+        }
+      }
+
+  quarto:
+    format:
+      html:
+        title-block-banner: true
+        toc: true
+        toc-depth: 3
+        respect-user-color-scheme: false
+        embed-resources: true

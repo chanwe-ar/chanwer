@@ -1,0 +1,48 @@
+<script>
+// chanwe-brand · book-toc — one TOC on the right for Quarto books.
+// Clones the book navigation (parts + chapters) out of the left sidebar
+// into the right-margin TOC, nesting the current page's section list
+// under the active chapter, then hides the left sidebar (desktop only).
+// Pair with book-toc.css.
+document.addEventListener("DOMContentLoaded", function () {
+  if (!window.matchMedia("(min-width: 992px)").matches) return;
+  var srcUl = document.querySelector("#quarto-sidebar .sidebar-menu-container > ul");
+  var toc = document.getElementById("TOC");
+  var margin = document.getElementById("quarto-margin-sidebar");
+  if (!srcUl || !toc || !margin) return;
+
+  var clone = srcUl.cloneNode(true);
+  // no duplicate ids, no bootstrap collapse machinery in the clone
+  clone.querySelectorAll("[id]").forEach(function (e) { e.removeAttribute("id"); });
+  clone.querySelectorAll(".sidebar-item-toggle").forEach(function (e) { e.remove(); });
+  clone.querySelectorAll("[data-bs-toggle]").forEach(function (e) {
+    e.removeAttribute("data-bs-toggle");
+    e.removeAttribute("data-bs-target");
+  });
+  clone.querySelectorAll("ul.collapse").forEach(function (e) {
+    e.classList.remove("collapse");
+  });
+
+  // nest the live page-section list under the active chapter, so
+  // quarto's scrollspy keeps driving it
+  var active = clone.querySelector("a.sidebar-link.active");
+  var pageUl = toc.querySelector(":scope > ul");
+  if (active && pageUl) {
+    var holder = document.createElement("div");
+    holder.className = "chanwe-cur-sections";
+    holder.appendChild(pageUl);
+    active.closest("li").appendChild(holder);
+  }
+
+  var nav = document.createElement("nav");
+  nav.id = "chanwe-book-toc";
+  nav.setAttribute("aria-label", "Book navigation");
+  nav.appendChild(clone);
+  toc.appendChild(nav);
+
+  // bring the search box along, then retire the left sidebar
+  var search = document.getElementById("quarto-search");
+  if (search) margin.insertBefore(search, margin.firstChild);
+  document.documentElement.classList.add("chanwe-toc-merged");
+});
+</script>
