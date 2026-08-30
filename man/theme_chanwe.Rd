@@ -80,12 +80,11 @@ brand-consistent color palettes.
 }
 
 
-The eyebrow renders in the brand primary (\code{typst-primary}, \verb{#FD3810});
-the caption \verb{//} prefix uses the text-accessible primary variant
-(\code{typst-primary-text}), which passes WCAG 4.5:1 small-text contrast on
-every brand surface. The title is set at 1.85x the base size with a
-1.0 line-height so the header, subtitle/KPI block and chart read as
-three distinct levels.
+The eyebrow and the caption \verb{//} prefix render in the brand orange
+(\code{brand-orange}, \verb{#E94B2B}) -- the same accent the HTML stylesheet uses
+for section numbers and that the table helpers use for their eyebrows.
+The title is set at 1.85x the base size with a 1.0 line-height so the
+header, subtitle/KPI block and chart read as three distinct levels.
 
 Call \code{\link[=chanwe_load_fonts]{chanwe_load_fonts()}} once per session to register the custom font
 families. \code{theme_chanwe()} calls it automatically.

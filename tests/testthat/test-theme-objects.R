@@ -35,7 +35,8 @@ test_that("theme_chanwe honors layout parameters", {
   expect_equal(as.numeric(th$plot.margin), rep(18, 4))
   expect_equal(th$plot.title$size, 10 * 1.85)
   expect_equal(th$plot.title$lineheight, 1.0)
-  expect_identical(th$plot.title$eyebrow_colour, "#FD3810")
+  expect_identical(th$plot.title$eyebrow_colour, "#E94B2B")
+  expect_identical(th$plot.caption$primary_colour, "#E94B2B")
   expect_equal(th$plot.subtitle$size, 10 * 0.9)
 })
 

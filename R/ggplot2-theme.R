@@ -67,12 +67,11 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' | Legend text / title | JetBrains Mono | 400 |
 #' | Caption | JetBrains Mono | 400 |
 #'
-#' The eyebrow renders in the brand primary (`typst-primary`, `#FD3810`);
-#' the caption `//` prefix uses the text-accessible primary variant
-#' (`typst-primary-text`), which passes WCAG 4.5:1 small-text contrast on
-#' every brand surface. The title is set at 1.85x the base size with a
-#' 1.0 line-height so the header, subtitle/KPI block and chart read as
-#' three distinct levels.
+#' The eyebrow and the caption `//` prefix render in the brand orange
+#' (`brand-orange`, `#E94B2B`) -- the same accent the HTML stylesheet uses
+#' for section numbers and that the table helpers use for their eyebrows.
+#' The title is set at 1.85x the base size with a 1.0 line-height so the
+#' header, subtitle/KPI block and chart read as three distinct levels.
 #'
 #' Call [chanwe_load_fonts()] once per session to register the custom font
 #' families. `theme_chanwe()` calls it automatically.
@@ -257,9 +256,10 @@ theme_chanwe <- function(
     colour = colors[["typst-ink"]],
     eyebrow_family = mono_family,
     eyebrow_size = base_text_size * 0.62,
-    # Eyebrow in the brand primary (#FD3810) by request; the `//` caption
-    # prefix keeps the text-accessible darkening.
-    eyebrow_colour = colors[["typst-primary"]],
+    # Eyebrow and the `//` caption prefix share the brand orange (#E94B2B,
+    # the HTML section-number accent) so charts, tables and document chrome
+    # carry one accent.
+    eyebrow_colour = colors[["brand-orange"]],
     ink_colour = colors[["typst-ink"]],
     top_pad = if (compact_title) 4 else 8
   )
@@ -300,7 +300,7 @@ theme_chanwe <- function(
         mono_thin_family = mono_thin_family,
         size = base_text_size * 0.70,
         colour = colors[["typst-ink"]],
-        primary_colour = colors[["typst-primary-text"]],
+        primary_colour = colors[["brand-orange"]],
         ink_colour = colors[["typst-ink"]]
       ),
       # Axis titles and tick labels at 0.825x base (25% up from 0.66x).

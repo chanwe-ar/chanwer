@@ -80,7 +80,7 @@ test_that("chanwe_plotly applies the chanwe layout and config", {
 
   b <- plotly::plotly_build(p)
   expect_match(b$x$layout$title$text, "SECTION")
-  expect_match(b$x$layout$title$text, "#FD3810")
+  expect_match(b$x$layout$title$text, "#E94B2B")
   expect_identical(b$x$layout$hovermode, "x unified")
   expect_false(b$x$config$displayModeBar)
   expect_true(any(vapply(p$dependencies, function(d) d$name == "chanwe-fonts", logical(1))))

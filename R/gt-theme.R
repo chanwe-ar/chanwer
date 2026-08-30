@@ -174,8 +174,8 @@ chanwe_gt <- function(
       "  #%1$s tbody tr > td, #%1$s tbody tr > th { transition: none; } }",
       sep = "\n"
     ),
-    id, tk$primary, tk$ink, tk$fg_muted, tk$fg_subtle, tk$n100, tk$n200,
-    .cw_font_mono, .cw_font_display, .cw_font_sans, tk$primary_text
+    id, tk$accent, tk$ink, tk$fg_muted, tk$fg_subtle, tk$n100, tk$n200,
+    .cw_font_mono, .cw_font_display, .cw_font_sans, tk$accent
   )
   g <- gt::opt_css(g, css)
 

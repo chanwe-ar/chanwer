@@ -347,7 +347,7 @@ chanwe_kbl <- function(
           ", weak: false)",
           '#chanwe-eyebrow(with-rule: true, size: ',
           eyebrow_pt,
-          ', color: rgb("', tokens[["typst-primary-text"]], '"))[',
+          ', color: rgb("', tokens[["brand-orange"]], '"))[',
           esc(eyebrow),
           ']',
           "#v(-6pt, weak: false)"
@@ -476,7 +476,7 @@ chanwe_kbl <- function(
       '#text(font: "JetBrains Mono", size: ',
       note_pt,
       ', fill: _t.ink)[',
-      '#text(fill: rgb("', tokens[["typst-primary-text"]], '"))[/\\/]#h(4pt)',
+      '#text(fill: rgb("', tokens[["brand-orange"]], '"))[/\\/]#h(4pt)',
       esc(caption),
       ']],'
     )

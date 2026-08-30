@@ -27,6 +27,9 @@ chanwe_html_tokens <- function() {
     primary = tk[["typst-primary"]],
     primary_text = tk[["typst-primary-text"]],
     primary_active = tk[["brand-orange"]],
+    # eyebrows and the `//` caption prefix: the brand orange used for HTML
+    # section numbers, shared with theme_chanwe() and chanwe_kbl()
+    accent = tk[["brand-orange"]],
     n100 = tk[["typst-neutral-100"]],
     n200 = tk[["typst-neutral-200"]],
     n300 = tk[["typst-neutral-300"]],
@@ -78,11 +81,11 @@ chanwe_html_header_tag <- function(title = NULL, subtitle = NULL, eyebrow = NULL
             "font: 500 10px/1.2 %s; letter-spacing:.18em; ",
             "text-transform:uppercase; color:%s; margin-bottom:8px;"
           ),
-          .cw_font_mono, tk$primary
+          .cw_font_mono, tk$accent
         ),
         tags$span(style = sprintf(
           "display:inline-block; width:22px; height:1px; background:%s;",
-          tk$primary
+          tk$accent
         )),
         eyebrow
       )
@@ -124,7 +127,7 @@ chanwe_html_caption_tag <- function(caption) {
       "font: 400 10.5px/1.4 %s; color:%s; padding: 8px 0 0;",
       .cw_font_mono, tk$fg_muted
     ),
-    tags$span(style = sprintf("color:%s;", tk$primary_text), "//"),
+    tags$span(style = sprintf("color:%s;", tk$accent), "//"),
     " ",
     caption
   )

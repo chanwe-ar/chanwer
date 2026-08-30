@@ -62,7 +62,7 @@ chanwe_plotly <- function(
       if (!is.null(eyebrow)) {
         sprintf(
           "<span style='font-size:10px;color:%s'>\u2014\u2014 %s</span>",
-          tk$primary, chanwe_html_escape(eyebrow)
+          tk$accent, chanwe_html_escape(eyebrow)
         )
       },
       if (!is.null(title)) {
@@ -157,7 +157,7 @@ chanwe_plotly <- function(
       p,
       text = sprintf(
         "<span style='color:%s'>//</span>  %s",
-        tk$primary_text, chanwe_html_escape(caption)
+        tk$accent, chanwe_html_escape(caption)
       ),
       xref = "paper",
       yref = "paper",
