@@ -478,7 +478,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
         color = "HP band",
-     re a   caption = chanwe_caption("Source: Motor Trend, 1974")
+        caption = chanwe_caption("Source: Motor Trend, 1974")
     )
 ```
 
