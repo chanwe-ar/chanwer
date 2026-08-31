@@ -1,6 +1,6 @@
 ---
 title: "chanwer Showcase"
-subtitle: "Every palette, scale, header treatment, surface, chart form and table pattern in the chanwer R package — static (ggplot2, gt) and interactive (plotly, reactable) — in one HTML document."
+subtitle: "Every palette, scale, header treatment, surface, chart form and table pattern in the chanwer R package — static (ggplot2, gt) and interactive (plotly, highcharter, reactable) — in one HTML document."
 author: "Alejandro Abraham"
 date: today
 lang: en
@@ -166,7 +166,7 @@ fmt_pct <- function(x) sprintf("%+.1f%%", x)
 
 ::: {.callout-note}
 ## How this document is organised
-Sections 1–6 are the **static** system (ggplot2 via `theme_chanwe()`), rendered as PNG. Sections 7–9 are the **HTML-native** counterparts: `chanwe_gt()` for static tables, `chanwe_plotly()` for interactive charts, `chanwe_reactable()` for interactive tables — all sharing the same header grammar (eyebrow / title / subtitle / `//` caption) and signed tokens. Every chunk's code is folded under **Code**. The PDF-only patterns (`chanwe_kbl()`, zone highlights, inset figures) live in `chanwer-showcase-pdf.qmd`.
+Sections 1–6 are the **static** system (ggplot2 via `theme_chanwe()`), rendered as PNG. Sections 7–10 are the **HTML-native** counterparts: `chanwe_gt()` for static tables, `chanwe_plotly()` and `chanwe_highchart()` for interactive charts, `chanwe_reactable()` for interactive tables — all sharing the same header grammar (eyebrow / title / subtitle / `//` caption) and signed tokens. Every chunk's code is folded under **Code**. The PDF-only patterns (`chanwe_kbl()`, zone highlights, inset figures) live in `chanwer-showcase-pdf.qmd`.
 :::
 
 # The Color System
@@ -1284,6 +1284,80 @@ plotly::plot_ly(
             showticklabels = FALSE
         ),
         bargap = 0.38
+    )
+```
+
+# Interactive Charts — `chanwe_highchart()`
+
+`chanwe_highchart()` applies the same header grammar and chart chrome as
+`chanwe_plotly()` to any `highcharter` object: Archivo title block, mono
+axis ticks, no axis lines, hairline y-grid, ink tooltip, no exporting menu
+or credits. Pass `chanwe_palette("chart")` to `hc_colors()` (or let
+`chanwe_highchart()` do it) for discrete colour.
+
+## Line with legend
+
+```{r}
+#| label: hc-line
+highcharter::hchart(
+    rev_df,
+    "line",
+    highcharter::hcaes(x = month, y = revenue, group = segment)
+) |>
+    highcharter::hc_yAxis(title = list(text = "USD MM")) |>
+    chanwe_highchart(
+        title = "Monthly revenue by segment",
+        eyebrow = "HIGHCHARTS · LINE",
+        subtitle = "Twelve trailing months, USD MM · shared tooltip across series",
+        caption = "Source: internal ledger, simulated",
+        legend = TRUE
+    )
+```
+
+## Column, one accent + gray context
+
+```{r}
+#| label: hc-column
+highcharter::highchart() |>
+    highcharter::hc_add_series(
+        name = "Mean MPG",
+        type = "column",
+        data = Map(
+            function(y, col) list(y = y, color = col),
+            cyl_summary$avg_mpg,
+            c(chanwe_palette("semantic")[["primary"]], "#D4D4D4", "#D4D4D4")
+        ),
+        dataLabels = list(
+            enabled = TRUE,
+            format = "{y:.1f}",
+            # Highcharts checks every fontFamily against the document's
+            # loaded stylesheets via a `link[href='<fontFamily>']` selector;
+            # MONO's single-quoted 'JetBrains Mono' fallback breaks that
+            # selector and blanks the whole chart, so double-quote it here
+            # instead (harmless CSS, and chanwe_highchart() does the same
+            # internally for its own axis/legend/tooltip fonts).
+            style = list(
+                fontFamily = '"JetBrains Mono", ui-monospace, monospace',
+                fontSize = "11px",
+                color = "#0F0F0F",
+                textOutline = "none"
+            )
+        ),
+        showInLegend = FALSE
+    ) |>
+    highcharter::hc_xAxis(
+        categories = as.character(cyl_summary$cyl),
+        title = list(text = "Cylinders")
+    ) |>
+    highcharter::hc_yAxis(
+        title = list(text = "Mean MPG"),
+        labels = list(enabled = FALSE)
+    ) |>
+    chanwe_highchart(
+        title = "Fuel economy by cylinders",
+        eyebrow = "HIGHCHARTS · COLUMN",
+        subtitle = "One accent, gray context",
+        caption = "Source: Motor Trend, 1974"
     )
 ```
 

@@ -81,7 +81,7 @@ brand-consistent color palettes.
 
 
 The eyebrow and the caption \verb{//} prefix render in the brand orange
-(\code{brand-orange}, \verb{#E94B2B}) -- the same accent the HTML stylesheet uses
+(\code{brand-orange}, \verb{#FD3810}) -- the same accent the HTML stylesheet uses
 for section numbers and that the table helpers use for their eyebrows.
 The title is set at 1.85x the base size with a 1.0 line-height so the
 header, subtitle/KPI block and chart read as three distinct levels.

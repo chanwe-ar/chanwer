@@ -33,3 +33,4 @@ reference:
       - chanwe_gt
       - chanwe_reactable
       - chanwe_plotly
+      - chanwe_highchart
