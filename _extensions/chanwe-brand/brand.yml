@@ -70,11 +70,11 @@ color:
     cw-color-status-info: "#0C48ED"
     cw-color-status-info-bg: "#B8CEFF"
     # Typst callout contract (chanwe-elements.typ): same five colours in PDF and HTML.
-    cw-color-callout-important: "#CC1914"
+    cw-color-callout-important: "#FD3810"
     cw-color-callout-note: "#0758E5"
     cw-color-callout-tip: "#00A047"
     cw-color-callout-warning: "#EB9113"
-    cw-color-callout-caution: "#FC5300"
+    cw-color-callout-caution: "#7C3AED"
 
     # Exact aliases used by the live chanwe-report Typst template.
     # Keeping names and values aligned lets Typst read brand.yml without a visual change.
@@ -319,7 +319,9 @@ defaults:
         --cw-color-border-strong: #{$brand-neutral-900};
         --cw-color-border-inverse: #{$brand-cw-color-border-inverse};
         --cw-color-border-inverse-strong: #{$brand-cw-color-border-inverse-strong};
-        --cw-color-code-bg: #{$brand-code-bg};
+        /* Neutral-100, not the cooler brand-code-bg: code reads as part of the
+           same warm surface language as callouts and tables, not a stray blue-gray. */
+        --cw-color-code-bg: #{$brand-neutral-100};
 
         --cw-color-status-success: #{$brand-p14-green-strong};
         --cw-color-status-success-bg: #{$brand-cw-color-status-success-bg};
@@ -795,14 +797,11 @@ defaults:
         color: var(--cw-color-ink);
       }
       .callout .callout-title-container::before {
-        content: "";
+        content: "//";
         display: inline-block;
         flex: none;
-        width: 7px;
-        height: 7px;
-        margin: 0 10px 0 1px;
-        background: var(--cw-callout-accent);
-        transform: rotate(45deg);
+        margin: 0 8px 0 1px;
+        color: var(--cw-callout-accent);
       }
       .callout .callout-icon-container {
         display: none !important;
@@ -1294,14 +1293,121 @@ defaults:
       }
 
 
+      /* Code as a card, not a flat fill: same hairline-border + 4px-radius +
+         colour-on-the-left-edge language as callouts and tables. */
       pre,
       pre.sourceCode,
       div.sourceCode pre {
         background-color: var(--cw-color-code-bg) !important;
-        border-left: 1pt solid var(--cw-color-primary) !important;
-        border-radius: 0 !important;
+        border: 1px solid var(--cw-color-border-default) !important;
+        border-left: 2px solid var(--cw-color-primary) !important;
+        border-radius: 4px !important;
         box-shadow: none;
         font-family: var(--cw-font-mono);
+      }
+
+      /* Code-fold ("Code" toggle): unstyled by Quarto/the browser by default —
+         an eyebrow-style header bar attached to the code card below it, reusing
+         the callout's "//" glyph instead of the native disclosure arrow. */
+      details.code-fold {
+        margin: 1.7rem 0;
+      }
+      details.code-fold > summary {
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        margin-bottom: -1px;
+        padding: 0.42rem 0.75rem;
+        list-style: none;
+        border: 1px solid var(--cw-color-border-default);
+        border-left: 2px solid var(--cw-color-primary);
+        border-radius: 4px 4px 0 0;
+        background: var(--cw-color-code-bg);
+        color: var(--cw-color-fg-muted);
+        font-family: var(--cw-font-mono);
+        font-size: 0.68rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        transition: color 120ms var(--cw-ease), border-color 120ms var(--cw-ease);
+      }
+      details.code-fold > summary::-webkit-details-marker {
+        display: none;
+      }
+      details.code-fold > summary::before {
+        content: "//";
+        display: inline-block;
+        flex: none;
+        margin: 0 8px 0 1px;
+        color: var(--cw-color-primary);
+      }
+      details.code-fold > summary:hover {
+        color: var(--cw-color-ink);
+      }
+      details.code-fold > summary:focus-visible {
+        outline: 2px solid var(--cw-color-primary);
+        outline-offset: 2px;
+      }
+      details.code-fold[open] > summary {
+        border-bottom-color: transparent;
+      }
+      details.code-fold[open] > summary + * pre,
+      details.code-fold[open] > summary + * pre.sourceCode {
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        margin-top: 0;
+      }
+
+      /* Syntax highlighting: the chanwe palette in place of Quarto's default
+         teal/indigo "arrow" theme, so code reads as part of the same document.
+         Quarto's per-token rules (code span.kw etc.) hardcode literal hex, not
+         the --quarto-hl-* variables they also emit, so those must be overridden
+         directly — same selector, later in the cascade wins. */
+      code span.kw,
+      code span.cf,
+      code span.ot {
+        color: var(--cw-color-ink);
+      }
+      code span.fu {
+        color: var(--cw-color-primary-text);
+      }
+      code span.st,
+      code span.ss,
+      code span.ch,
+      code span.vs {
+        color: var(--cw-color-callout-tip);
+      }
+      code span.at,
+      code span.im {
+        color: var(--cw-color-callout-note);
+      }
+      code span.dt,
+      code span.dv,
+      code span.bn,
+      code span.fl,
+      code span.cn {
+        color: var(--cw-color-callout-warning);
+      }
+      code span.va {
+        color: var(--cw-color-fg);
+      }
+      code span.op,
+      code span.sc {
+        color: var(--cw-color-fg-muted);
+      }
+      code span.co,
+      code span.cv,
+      code span.an,
+      code span.do,
+      code span.in,
+      code span.wa {
+        color: var(--cw-color-fg-subtle);
+      }
+      code span.er,
+      code span.al,
+      code span.pp {
+        color: var(--cw-color-status-error);
       }
 
 
