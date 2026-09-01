@@ -35,7 +35,7 @@ chanwe:
   abstract-eyebrow: "TLDR;"
   abstract-title: "Static Reference"
   abstract-takeaway: "One color system and one header grammar, mapped to every chart and table: the same tokens drive eyebrows, KPI arrows, table deltas, and this document."
-  abstract-text: "This showcase covers every static output in the chanwer package: palette previews, categorical / ordinal / sequential / diverging scales, the signed positive-negative system with its KPI scoreboard, all header treatments (eyebrow, subtitle, note, KPI, title-only, no header line, compact and spacious), all five brand surfaces plus transparent, framed variants, the chart forms (scatter, bar, line, area, distribution, error bars, heatmap, facets), and every chanwe_kbl() pattern — surfaces, densities, totals, highlights, vertical rules, signed deltas, title-only and header-less tables. The interactive counterparts (gt, plotly, reactable) live in chanwer-showcase-html.qmd."
+  abstract-text: "This showcase covers every static output in the chanwer package: palette previews, categorical / ordinal / sequential / diverging scales, the signed positive-negative system with its KPI scoreboard, all header treatments (eyebrow, subtitle, note, KPI, title-only, no header line, compact and spacious), all five brand surfaces plus transparent, framed variants, the chart forms (scatter, bar, line, area, distribution, error bars, heatmap, facets), and every chanwe_kbl() pattern — surfaces, densities, totals, highlights, vertical rules, signed deltas, title-only and header-less tables. The interactive counterparts (gt, highcharter, reactable) live in chanwer-showcase-html.qmd."
   abstract-status: "Stable · Internal"
   abstract-show:
     - document

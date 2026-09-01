@@ -70,18 +70,3 @@ test_that("chanwe_reactable returns a widget with header and caption", {
 
   expect_error(chanwe_reactable(fleet, signed = "nope"), "not found")
 })
-
-test_that("chanwe_plotly applies the chanwe layout and config", {
-  skip_if_not_installed("plotly")
-
-  p <- plotly::plot_ly(fleet, x = ~model, y = ~mpg, type = "bar")
-  p <- chanwe_plotly(p, title = "Fleet", eyebrow = "SECTION", caption = "Source")
-  expect_s3_class(p, "plotly")
-
-  b <- plotly::plotly_build(p)
-  expect_match(b$x$layout$title$text, "SECTION")
-  expect_match(b$x$layout$title$text, "#FD3810")
-  expect_identical(b$x$layout$hovermode, "x unified")
-  expect_false(b$x$config$displayModeBar)
-  expect_true(any(vapply(p$dependencies, function(d) d$name == "chanwe-fonts", logical(1))))
-})

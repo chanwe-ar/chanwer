@@ -631,7 +631,7 @@ heightDetails.cw_subtitle_tree <- function(x) {
   top <- 16 # top padding: space between chart bottom and the separator line
   bot <- 4 # bottom padding
   tln_h <- 0.4 # top separator line (always drawn)
-  gap1 <- 5 # gap between caption text and the separator line above
+  gap1 <- 8 # gap between caption text and the separator line above
   gap2 <- if (x$draw_bottom) 4 else 0
   bln_h <- if (x$draw_bottom) 0.3 else 0
   total <- bot + bln_h + gap2 + c_h + gap1 + tln_h + top

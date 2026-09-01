@@ -1,5 +1,5 @@
 # Shared building blocks for the HTML helpers: chanwe_gt(), chanwe_reactable()
-# and chanwe_plotly(). They port the chanwe_kbl() header grammar (eyebrow /
+# and chanwe_highchart(). They port the chanwe_kbl() header grammar (eyebrow /
 # title / subtitle / `//` caption) to browser output so a table or chart
 # looks the same in a Quarto HTML report as it does in the Typst PDF.
 #
@@ -144,8 +144,8 @@ chanwe_html_caption_tag <- function(caption, bg = NULL) {
   tk <- chanwe_html_tokens()
   tags <- htmltools::tags
   base_style <- sprintf(
-    "font: 400 10.5px/1.4 %s; color:%s;",
-    .cw_font_mono, tk$fg_muted
+    "font: 300 10.5px/1.4 %s; color:%s;",
+    .cw_font_mono, tk$ink
   )
   style <- if (is.null(bg)) {
     paste(base_style, "padding: 8px 0 0;")

@@ -23,8 +23,8 @@ one \code{useHTML} chart title.}
 
 \item{caption}{Source note rendered bottom-left with a \verb{//} prefix.}
 
-\item{legend}{Logical. Show the legend (vertical, top-right)? Default
-\code{FALSE}.}
+\item{legend}{Logical. Show the legend (vertical, right, centered on the
+plot body)? Default \code{FALSE}.}
 
 \item{height}{Widget height in pixels, passed to
 \code{highcharter::hc_size()} -- needed because \code{hc_chart(height = )} alone
@@ -43,7 +43,15 @@ Applies the Chanwe header grammar and chart chrome to an existing
 \code{highcharter} object: eyebrow / title / subtitle block anchored top-left
 in Archivo, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
 ticks, hairline y-grid, an ink tooltip in mono, no exporting menu or
-credits, and an optional \verb{//}-prefixed caption.
+credits, and an optional \verb{//}-prefixed caption in ink, not muted gray.
+The y-axis title moves into the top-left corner of the plot area,
+rotated 90 degrees, on the same vertical line as the tick numbers rather
+than sitting to the left of them; the x-axis title stays on its own row
+below the tick labels but flushes right against the plot area's right
+edge instead of centering under the axis. A hairline divider closes off
+the header (below the subtitle) and opens the caption (above the \verb{//}
+line), each spanning from the header/caption's own left edge to the
+plot area's right edge, in a light neutral gray.
 }
 \details{
 Discrete colours are not changed by this function -- the chart palette

@@ -298,7 +298,7 @@ theme_chanwe <- function(
       plot.caption = new_element_chanwe_caption(
         family = mono_family,
         mono_thin_family = mono_thin_family,
-        size = base_text_size * 0.70,
+        size = base_text_size * 0.77,
         colour = colors[["typst-ink"]],
         primary_colour = colors[["brand-orange"]],
         ink_colour = colors[["typst-ink"]]

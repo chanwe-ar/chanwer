@@ -10,9 +10,9 @@ Description: Brand-consistent themes, color palettes, and utilities for
     ChanWe reporting workflows. Provides an editorial ggplot2 theme with
     custom title, subtitle, KPI-scoreboard, and caption elements, discrete
     and continuous color scales, a native Typst table generator for Quarto
-    PDF reports, matching gt, reactable and plotly helpers for HTML output,
-    font registration helpers, and Quarto-ready styling tokens for HTML and
-    Typst outputs.
+    PDF reports, matching gt, reactable and highcharter helpers for HTML
+    output, font registration helpers, and Quarto-ready styling tokens for
+    HTML and Typst outputs.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -34,7 +34,6 @@ Suggests:
     htmltools,
     htmlwidgets,
     knitr,
-    plotly,
     reactable,
     systemfonts,
     testthat (>= 3.0.0)

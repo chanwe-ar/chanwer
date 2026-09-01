@@ -58,9 +58,10 @@ A \code{gt_tbl} object.
 The HTML counterpart of \code{\link[=chanwe_kbl]{chanwe_kbl()}}: a \code{gt} table styled with the
 Chanwe header grammar -- mono-caps eyebrow with an orange rule prefix,
 Archivo title, Satoshi subtitle, mono-caps column labels, JetBrains Mono
-tabular figures right-aligned, hairline ink rules above and below the
-table, a thin neutral rule under the column labels and to the right of
-the stub, striped rows, and a \verb{//}-prefixed source note.
+tabular figures right-aligned, a hairline ink rule above the table, a
+thin neutral rule under the column labels and to the right of the stub,
+flat rows (an n100 tint on hover, matching \code{\link[=chanwe_reactable]{chanwe_reactable()}}, no
+zebra striping), and a \verb{//}-prefixed source note.
 }
 \details{
 The function returns a regular \code{gt_tbl}, so every \code{gt} verb

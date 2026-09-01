@@ -1,6 +1,6 @@
 ---
 title: "chanwer Showcase"
-subtitle: "Every palette, scale, header treatment, surface, chart form and table pattern in the chanwer R package — static (ggplot2, gt) and interactive (plotly, highcharter, reactable) — in one HTML document."
+subtitle: "Every palette, scale, header treatment, surface, chart form and table pattern in the chanwer R package — static (ggplot2, gt) and interactive (highcharter, reactable) — in one HTML document."
 author: "Alejandro Abraham"
 date: today
 lang: en
@@ -166,7 +166,7 @@ fmt_pct <- function(x) sprintf("%+.1f%%", x)
 
 ::: {.callout-note}
 ## How this document is organised
-Sections 1–6 are the **static** system (ggplot2 via `theme_chanwe()`), rendered as PNG. Sections 7–10 are the **HTML-native** counterparts: `chanwe_gt()` for static tables, `chanwe_plotly()` and `chanwe_highchart()` for interactive charts, `chanwe_reactable()` for interactive tables — all sharing the same header grammar (eyebrow / title / subtitle / `//` caption) and signed tokens. Every chunk's code is folded under **Code**. The PDF-only patterns (`chanwe_kbl()`, zone highlights, inset figures) live in `chanwer-showcase-pdf.qmd`.
+Sections 1–6 are the **static** system (ggplot2 via `theme_chanwe()`), rendered as PNG. Sections 7–9 are the **HTML-native** counterparts: `chanwe_gt()` for static tables, `chanwe_highchart()` for interactive charts, `chanwe_reactable()` for interactive tables — all sharing the same header grammar (eyebrow / title / subtitle / `//` caption) and signed tokens. Every chunk's code is folded under **Code**. The PDF-only patterns (`chanwe_kbl()`, zone highlights, inset figures) live in `chanwer-showcase-pdf.qmd`.
 :::
 
 # The Color System
@@ -1168,132 +1168,13 @@ chanwe_gt(
 
 :::
 
-# Interactive Charts — `chanwe_plotly()`
-
-`chanwe_plotly()` applies the header grammar and chart chrome to any
-`plot_ly()` object: Archivo title block, mono axis ticks, no axis lines,
-hairline y-grid, ink hover card, cursor spike, no modebar or drag-zoom.
-Pass `colors = chanwe_palette("chart")` to `plot_ly()` for discrete colour.
-
-## Scatter with legend
-
-```{r}
-#| label: plotly-scatter
-plotly::plot_ly(
-    mt,
-    x = ~wt,
-    y = ~mpg,
-    color = ~hp_band,
-    colors = unname(chart)[1:3],
-    type = "scatter",
-    mode = "markers",
-    marker = list(size = 9, opacity = 0.9),
-    text = ~model,
-    hovertemplate = "%{text}<br>%{x:.2f} · %{y:.1f} mpg<extra>%{fullData.name}</extra>",
-    height = 460
-) |>
-    chanwe_plotly(
-        title = "Fuel economy by weight",
-        eyebrow = "PLOTLY · SCATTER",
-        subtitle = "Hover any point - one card, no modebar",
-        caption = "Source: Motor Trend, 1974",
-        legend = TRUE,
-        hovermode = "closest"
-    ) |>
-    plotly::layout(
-        xaxis = list(title = list(text = "Weight (1000 lbs)")),
-        yaxis = list(title = list(text = "MPG"))
-    )
-```
-
-## Line with direct labels
-
-```{r}
-#| label: plotly-line
-plotly::plot_ly(
-    rev_df,
-    x = ~month,
-    y = ~revenue,
-    color = ~segment,
-    colors = unname(chart)[1:3],
-    type = "scatter",
-    mode = "lines",
-    line = list(width = 2),
-    hovertemplate = "%{y:.2f}<extra>%{fullData.name}</extra>",
-    height = 440
-) |>
-    plotly::add_annotations(
-        data = rev_last,
-        x = ~month,
-        y = ~y_lab,
-        text = ~segment,
-        xanchor = "left",
-        xshift = 8,
-        showarrow = FALSE,
-        font = list(family = MONO, size = 10.5, color = "#0F0F0F")
-    ) |>
-    chanwe_plotly(
-        title = "Monthly revenue by segment",
-        eyebrow = "PLOTLY · LINE",
-        subtitle = "Twelve trailing months, USD MM · unified hover across series",
-        caption = "Source: internal ledger, simulated"
-    ) |>
-    plotly::layout(
-        xaxis = list(
-            title = list(text = ""),
-            tickformat = "%b",
-            tickvals = months[c(2, 5, 8, 11)],
-            range = c(months[1] - 5, months[12] + 75)
-        ),
-        yaxis = list(title = list(text = "USD MM")),
-        margin = list(r = 90)
-    )
-```
-
-## Bars
-
-```{r}
-#| label: plotly-bars
-plotly::plot_ly(
-    cyl_summary,
-    x = ~cyl,
-    y = ~avg_mpg,
-    type = "bar",
-    marker = list(
-        color = c(chanwe_palette("semantic")[["primary"]], "#D4D4D4", "#D4D4D4")
-    ),
-    text = ~ sprintf("%.1f", avg_mpg),
-    textposition = "outside",
-    cliponaxis = FALSE,
-    textfont = list(family = MONO, size = 11, color = "#0F0F0F"),
-    hovertemplate = "%{y:.1f} mpg<extra></extra>",
-    height = 420
-) |>
-    chanwe_plotly(
-        title = "Fuel economy by cylinders",
-        eyebrow = "PLOTLY · FOCUS BAR",
-        subtitle = "One accent, gray context",
-        caption = "Source: Motor Trend, 1974",
-        hovermode = "x"
-    ) |>
-    plotly::layout(
-        xaxis = list(title = list(text = "Cylinders")),
-        yaxis = list(
-            title = list(text = "Mean MPG"),
-            showgrid = FALSE,
-            showticklabels = FALSE
-        ),
-        bargap = 0.38
-    )
-```
-
 # Interactive Charts — `chanwe_highchart()`
 
-`chanwe_highchart()` applies the same header grammar and chart chrome as
-`chanwe_plotly()` to any `highcharter` object: Archivo title block, mono
-axis ticks, no axis lines, hairline y-grid, ink tooltip, no exporting menu
-or credits. Pass `chanwe_palette("chart")` to `hc_colors()` (or let
-`chanwe_highchart()` do it) for discrete colour.
+`chanwe_highchart()` applies the header grammar and chart chrome to any
+`highcharter` object: Archivo title block, mono axis ticks, no axis lines,
+hairline y-grid, ink tooltip, no exporting menu or credits. Pass
+`chanwe_palette("chart")` to `hc_colors()` (or let `chanwe_highchart()` do
+it) for discrete colour.
 
 ## Line with legend
 

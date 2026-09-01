@@ -361,11 +361,20 @@ defaults:
       }
 
 
-      /* Title banner: HTML analogue of the report cover */
+      /* Title banner: HTML analogue of the report cover.
+         Background is the story-covers four-layer texture
+         (assets/brand/story-covers/background-texture.md): two crosshatch
+         tramas at coprime steps — the ~1280px preset, 18/31px — plus the
+         light and shadow radials, on the whitened #FBFBFB base the Typst
+         covers use. The shorthand also suppresses Quarto's banner image. */
       .quarto-title-banner,
       .quarto-title-block .quarto-title-banner {
-        background: var(--cw-color-paper) !important;
-        background-image: none !important;
+        background:
+          radial-gradient(120% 70% at 82% 8%, rgba(255,255,255,.9) 0%, rgba(255,255,255,0) 58%),
+          radial-gradient(90% 60% at 12% 96%, rgba(20,20,26,.05) 0%, rgba(20,20,26,0) 60%),
+          repeating-linear-gradient(147deg, rgba(20,20,26,.036) 0 1px, rgba(20,20,26,0) 1px 18px),
+          repeating-linear-gradient(57deg, rgba(20,20,26,.022) 0 1px, rgba(20,20,26,0) 1px 31px),
+          #FBFBFB !important;
         color: var(--cw-color-fg) !important;
         position: relative;
         overflow: hidden;
@@ -412,6 +421,17 @@ defaults:
         z-index: 2;
         color: var(--cw-color-fg) !important;
         text-align: left !important;
+      }
+
+      /* The title block spans the full banner width (screen-start/end) at
+         z-index 2 — its transparent right-side padding would otherwise sit
+         over the floating TOC and swallow its clicks. Let pointer events
+         pass through the empty box; children stay interactive. */
+      .quarto-title-banner .quarto-title {
+        pointer-events: none;
+      }
+      .quarto-title-banner .quarto-title > * {
+        pointer-events: auto;
       }
 
       .quarto-title-block .quarto-title-meta {
@@ -482,6 +502,9 @@ defaults:
       .quarto-title-banner .quarto-categories {
         display: flex;
         flex-wrap: wrap;
+        /* center, not stretch: the subject pill must sit on the tab's
+           vertical center, not hang from its top edge */
+        align-items: center;
         justify-content: flex-start !important;
         gap: 0.45rem;
         margin-top: 0;
@@ -512,22 +535,33 @@ defaults:
         text-decoration: none !important;
       }
 
+      /* Masthead accent tab: the first top pill sits in the story-covers
+         tab (solid FD3810, white mono caps, light and small like the Typst
+         cover tabs) and replaces the 22pt eyebrow rule as the row's anchor;
+         the remaining pills stay plain mono caps. Square corners: the tab
+         is a solid mark of the cover system, not a keyword pill. */
       .quarto-title-banner .quarto-title > .quarto-categories::before,
       .quarto-title-banner .quarto-categories.chanwe-top-pills::before {
-        content: "";
-        display: inline-block;
-        width: 22pt;
-        height: 0.75pt;
-        margin: 0.36rem 0.45rem 0 0;
-        background: var(--cw-color-primary);
+        content: none;
       }
 
       .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(1),
-      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(1),
+      .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(1) {
+        background: var(--cw-color-primary) !important;
+        color: #FFFFFF !important;
+        border-radius: 0;
+        padding: 0.3rem 0.55rem;
+        font-size: 0.6rem;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+      }
+
       .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(2),
       .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(2) {
         background: transparent !important;
         color: var(--cw-color-primary) !important;
+        /* breathing room between the subject and the topic tab */
+        margin-left: 0.4rem;
       }
 
       .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:hover,
@@ -1181,7 +1215,10 @@ defaults:
           bottom: clamp(1rem, 3.2vh, 2rem);
           width: clamp(210px, 17vw, 280px);
           padding: 0;
-          z-index: 30;
+          /* !important: quarto.js re-stamps the sidebar's z-index to 1,
+             which drops it under the banner title block (z-index 2) and
+             makes the TOC unclickable over the cover. */
+          z-index: 30 !important;
         }
 
         /* Content-height card, not a viewport-tall column */
@@ -1877,8 +1914,10 @@ defaults:
         }
       }
 
-      /* Document footer */
+      /* Document footer — ink variant of the story-covers texture
+         (same 18/31px steps as the title banner). */
       .chanwe-document-footer {
+        position: relative;
         display: grid;
         grid-template-columns: minmax(12rem, 1fr) auto;
         align-items: center;
@@ -1887,8 +1926,28 @@ defaults:
         margin: clamp(2.6rem, 3.2vw, 3.8rem) 0 clamp(1.1rem, 1.8vw, 1.8rem);
         padding: clamp(1.2rem, 2.2vw, 1.9rem) clamp(1rem, 2.8vw, 2.4rem);
         box-sizing: border-box;
-        background: var(--cw-color-bg-inverse);
+        background:
+          radial-gradient(120% 70% at 82% 8%, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 58%),
+          radial-gradient(90% 60% at 12% 96%, rgba(0,0,0,.55) 0%, rgba(0,0,0,0) 60%),
+          repeating-linear-gradient(147deg, rgba(255,255,255,.05) 0 1px, rgba(255,255,255,0) 1px 18px),
+          repeating-linear-gradient(57deg, rgba(255,255,255,.03) 0 1px, rgba(255,255,255,0) 1px 31px),
+          var(--cw-color-bg-inverse);
         color: var(--cw-color-text-inverse);
+      }
+
+      /* Topic tab at the bottom of the right column, matching the banner
+         masthead tab. */
+      .chanwe-footer-topic {
+        margin-top: 1rem;
+        background: var(--cw-color-primary);
+        color: #FFFFFF;
+        font-family: var(--cw-font-mono);
+        font-size: 0.6rem;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        line-height: 1.2;
+        padding: 0.3rem 0.55rem;
       }
 
       .chanwe-footer-brand {
@@ -1928,9 +1987,19 @@ defaults:
         letter-spacing: 0.015em;
       }
 
-      .chanwe-footer-tagline {
-        align-self: start;
+      /* Right column stretches to the brand column's height: tagline on
+         top, topic tab flush with the bottom of the last contact line. */
+      .chanwe-footer-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: space-between;
+        align-self: stretch;
         justify-self: end;
+        min-width: 0;
+      }
+
+      .chanwe-footer-tagline {
         margin-top: calc(1.18rem + 2px);
         text-align: right;
         color: var(--cw-color-text-inverse);
@@ -1964,12 +2033,22 @@ defaults:
           font-size: 0.56rem;
         }
 
-        .chanwe-footer-tagline {
+        .chanwe-footer-right {
+          align-items: flex-start;
+          justify-content: flex-start;
           align-self: auto;
           justify-self: start;
+          gap: 0.9rem;
+        }
+
+        .chanwe-footer-tagline {
           margin-top: 0;
           text-align: left;
           font-size: 1.18rem;
+        }
+
+        .chanwe-footer-topic {
+          margin-top: 0;
         }
       }
 

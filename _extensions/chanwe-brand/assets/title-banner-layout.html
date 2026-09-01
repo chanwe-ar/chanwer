@@ -48,8 +48,27 @@ document.addEventListener("DOMContentLoaded", function () {
     tagline.appendChild(strategy);
     tagline.appendChild(codo);
 
+    // Right column: tagline on top, topic tab at the bottom — the column
+    // stretches to the brand column's height so the tab's bottom lines up
+    // with the last contact line and its right edge with the tagline.
+    var right = document.createElement("div");
+    right.className = "chanwe-footer-right";
+    right.appendChild(tagline);
+
+    // Topic tab mirroring the banner masthead tab (the first top pill
+    // carries the document topic).
+    var topicPill = document.querySelector(
+      ".quarto-title-banner .quarto-categories .quarto-category"
+    );
+    if (topicPill && topicPill.textContent.trim() !== "") {
+      var topic = document.createElement("div");
+      topic.className = "chanwe-footer-topic";
+      topic.textContent = topicPill.textContent.trim();
+      right.appendChild(topic);
+    }
+
     footer.appendChild(brand);
-    footer.appendChild(tagline);
+    footer.appendChild(right);
     document.body.appendChild(footer);
   }
 

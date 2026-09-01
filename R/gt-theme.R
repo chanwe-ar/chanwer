@@ -3,9 +3,10 @@
 #' The HTML counterpart of [chanwe_kbl()]: a `gt` table styled with the
 #' Chanwe header grammar -- mono-caps eyebrow with an orange rule prefix,
 #' Archivo title, Satoshi subtitle, mono-caps column labels, JetBrains Mono
-#' tabular figures right-aligned, hairline ink rules above and below the
-#' table, a thin neutral rule under the column labels and to the right of
-#' the stub, striped rows, and a `//`-prefixed source note.
+#' tabular figures right-aligned, a hairline ink rule above the table, a
+#' thin neutral rule under the column labels and to the right of the stub,
+#' flat rows (an n100 tint on hover, matching [chanwe_reactable()], no
+#' zebra striping), and a `//`-prefixed source note.
 #'
 #' The function returns a regular `gt_tbl`, so every `gt` verb
 #' (`gt::fmt_number()`, `gt::cols_label()`, `gt::tab_style()`, ...) can be
@@ -110,15 +111,19 @@ chanwe_gt <- function(
     heading.padding = gt::px(6),
     heading.border.bottom.style = "none",
     heading.border.lr.style = "none",
-    # hairline ink rules above and below the whole table
+    # hairline ink rule above the whole table only -- gt's own bottom table
+    # border is off; the source note's top hairline (in the CSS block below)
+    # already closes the table off without a second heavy rule under it
     table.border.top.style = "solid",
     table.border.top.width = gt::px(1),
     table.border.top.color = tk$ink,
-    table.border.bottom.style = "solid",
-    table.border.bottom.width = gt::px(1),
-    table.border.bottom.color = tk$ink,
+    table.border.bottom.style = "none",
     # ink rule between the heading and the column labels; a single thin
-    # neutral rule under the labels (gt's default 2px body-top rule is off)
+    # neutral rule under the labels (gt's default 2px body-top rule is off).
+    # The bottom one is restated !important in the CSS block below -- the
+    # chanwe-brand extension has its own generic `thead th { border-bottom:
+    # ... !important }` rule for plain markdown tables that otherwise wins
+    # over this and repaints it ink instead of neutral.
     column_labels.border.top.style = "solid",
     column_labels.border.top.width = gt::px(1),
     column_labels.border.top.color = tk$ink,
@@ -126,60 +131,77 @@ chanwe_gt <- function(
     column_labels.border.bottom.width = gt::px(0.5),
     column_labels.border.bottom.color = tk$n300,
     column_labels.padding = gt::px(8),
+    column_labels.padding.horizontal = gt::px(12),
     table_body.border.top.style = "none",
     table_body.border.bottom.style = "none",
     table_body.hlines.style = "solid",
-    table_body.hlines.width = gt::px(1),
-    table_body.hlines.color = tk$n300,
+    table_body.hlines.width = gt::px(0.5),
+    table_body.hlines.color = tk$n200,
     # thin stub divider (gt default is 2px)
     stub.border.style = "solid",
     stub.border.width = gt::px(1),
     stub.border.color = tk$n300,
     data_row.padding = gt::px(row_pad),
-    row.striping.include_table_body = TRUE,
-    row.striping.include_stub = TRUE,
-    row.striping.background_color = tk$n100,
+    data_row.padding.horizontal = gt::px(12),
+    # no zebra striping -- flat rows with an n100 hover tint, matching
+    # chanwe_reactable()'s highlightColor
+    row.striping.include_table_body = FALSE,
+    row.striping.include_stub = FALSE,
     source_notes.padding = gt::px(8),
+    source_notes.padding.horizontal = gt::px(12),
     source_notes.border.bottom.style = "none"
   )
 
   css <- sprintf(
     paste(
-      "#%1$s .gt_heading { padding: 4px 0 12px 0 !important; }",
-      "#%1$s .chanwe-eyebrow { display:block; font: 500 10px/1.2 %8$s;",
+      # Same padding as chanwe_reactable()'s header block
+      # (chanwe_html_header_tag() with a bg): 10px top / 12px sides / 12px
+      # bottom -- the header text lines up with the data cells' 12px inset
+      # and gets enough top clearance from the table's own top rule.
+      "#%1$s .gt_heading { padding: 10px 12px 12px !important; }",
+      "#%1$s .chanwe-eyebrow { display:block; font: 500 10px/1.2 %6$s;",
       "  letter-spacing:.18em; text-transform:uppercase; color:%2$s;",
       "  margin-bottom:8px; }",
       "#%1$s .chanwe-eyebrow::before { content:''; display:inline-block;",
       "  width:22px; height:1px; background:%2$s; vertical-align:middle;",
       "  margin-right:8px; }",
-      "#%1$s .chanwe-title { font: 600 20px/1.1 %9$s;",
+      "#%1$s .chanwe-title { font: 600 20px/1.1 %7$s;",
       "  letter-spacing:-0.015em; color:%3$s; }",
-      "#%1$s .gt_subtitle { font: 400 13px/1.45 %10$s !important;",
+      "#%1$s .gt_subtitle { font: 400 13px/1.45 %8$s !important;",
       "  color:%4$s; padding-top:4px !important; }",
       # Column labels match chanwe_reactable(): sharp brand orange accent,
       # regular weight
-      "#%1$s .gt_col_heading { font: 400 10px/1.2 %8$s !important;",
+      "#%1$s .gt_col_heading { font: 400 10px/1.2 %6$s !important;",
       "  letter-spacing:.14em; text-transform:uppercase; color:%2$s; }",
+      # chanwe-brand's generic `thead th { border-bottom: ... !important }`
+      # (for plain markdown tables) otherwise wins over column_labels.border
+      # .bottom.* above and repaints this ink instead of neutral
+      "#%1$s thead th { border-bottom:0.5px solid %10$s !important; }",
       "#%1$s .gt_row { font-variant-numeric: tabular-nums; }",
-      "#%1$s .gt_row.gt_right { font-family:%8$s; font-size:12px; }",
+      "#%1$s .gt_row.gt_right { font-family:%6$s; font-size:12px; }",
       "#%1$s .gt_stub { color:%3$s; font-weight:500; }",
-      "#%1$s .gt_sourcenote { font: 400 10.5px/1.4 %8$s !important;",
-      "  color:%4$s; }",
-      "#%1$s .gt_sourcenote::before { content:'// '; color:%11$s; }",
+      "#%1$s .gt_sourcenote { font: 300 10.5px/1.4 %6$s !important;",
+      "  color:%3$s; }",
+      "#%1$s .gt_sourcenote::before { content:'// '; color:%9$s; }",
       # hairline above the source note, matching the reactable caption
       # (no source_notes.border.top.* in gt::tab_options)
-      "#%1$s .gt_sourcenotes td { border-top:0.5px solid %12$s !important; }",
-      "#%1$s tbody tr:nth-child(even) > td, #%1$s tbody tr:nth-child(even) > th",
-      "  { background:%6$s !important; }",
+      "#%1$s .gt_sourcenotes td { border-top:0.5px solid %10$s !important; }",
+      # No zebra striping -- flat rows (transparent over the table
+      # background), same n100 hover tint as chanwe_reactable()'s
+      # highlightColor. Quarto wraps gt tables in Bootstrap's own
+      # .table-striped class (separate from gt's native row.striping option,
+      # already off above); Bootstrap paints it with an inset box-shadow,
+      # not background-color, so that's what has to be neutralised here.
       "#%1$s tbody tr > td, #%1$s tbody tr > th",
-      "  { transition: background-color 120ms ease-out; }",
+      "  { background:transparent !important; box-shadow:none !important;",
+      "    transition: background-color 120ms ease-out; }",
       "#%1$s tbody tr:hover > td, #%1$s tbody tr:hover > th",
-      "  { background:%7$s !important; }",
+      "  { background:%5$s !important; }",
       "@media (prefers-reduced-motion: reduce) {",
       "  #%1$s tbody tr > td, #%1$s tbody tr > th { transition: none; } }",
       sep = "\n"
     ),
-    id, tk$accent, tk$ink, tk$fg_muted, tk$fg_subtle, tk$n100, tk$n200,
+    id, tk$accent, tk$ink, tk$fg_muted, tk$n100,
     .cw_font_mono, .cw_font_display, .cw_font_sans, tk$accent, tk$n300
   )
   g <- gt::opt_css(g, css)
