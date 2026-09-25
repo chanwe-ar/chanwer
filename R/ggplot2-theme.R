@@ -58,7 +58,7 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' ## Typography
 #' | Element | Font | Weight |
 #' |---------|------|--------|
-#' | Title (with eyebrow) | Archivo | 400 |
+#' | Title (with eyebrow) | Schibsted Grotesk | 400 |
 #' | Subtitle | Satoshi | 400 |
 #' | Subtitle note / KPI hero | Cormorant Garamond | italic |
 #' | Axis text | Satoshi | 400 |
@@ -228,7 +228,7 @@ theme_chanwe <- function(
   has_systemfonts <- requireNamespace("systemfonts", quietly = TRUE)
   reg <- if (has_systemfonts) systemfonts::registry_fonts()$family else character(0)
   sys <- if (has_systemfonts) systemfonts::system_fonts()$family else character(0)
-  title_family <- "Archivo"
+  title_family <- "Schibsted Grotesk"
   title_face <- "plain"
   subtitle_family <- "Satoshi"
   italic_family <- if ("Cormorant Garamond" %in% reg) {
@@ -410,7 +410,7 @@ theme_chanwe <- function(
 #' orange, prefixed by `──────`. Rendering is handled by the custom title
 #' element installed by [theme_chanwe()] — no extra packages are required.
 #'
-#' @param text Main title string. Rendered in Archivo Black by [theme_chanwe()].
+#' @param text Main title string. Rendered in Schibsted Grotesk ExtraBold by [theme_chanwe()].
 #' @param eyebrow Optional short label above the title, e.g.
 #'   `"SECTION · PROFITABILITY"`. Displayed in orange mono caps.
 #'

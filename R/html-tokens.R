@@ -3,13 +3,13 @@
 # title / subtitle / `//` caption) to browser output so a table or chart
 # looks the same in a Quarto HTML report as it does in the Typst PDF.
 #
-# Font stacks mirror the Typst templates: Archivo for display, Satoshi for
+# Font stacks mirror the Typst templates: Schibsted Grotesk for display, Satoshi for
 # body text, JetBrains Mono for eyebrows, column labels and figures. Every
 # stack falls back to the current HTML stylesheet face (DM Sans) and then to
 # the platform UI font.
 
 .cw_font_sans <- "Satoshi, 'DM Sans', system-ui, -apple-system, sans-serif"
-.cw_font_display <- "Archivo, system-ui, sans-serif"
+.cw_font_display <- "Schibsted Grotesk, system-ui, sans-serif"
 .cw_font_mono <- paste0(
   "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace"
 )
@@ -165,7 +165,7 @@ chanwe_html_caption_tag <- function(caption, bg = NULL) {
   )
 }
 
-# Web-font dependency (Satoshi from Fontshare; Archivo + JetBrains Mono from
+# Web-font dependency (Satoshi from Fontshare; Schibsted Grotesk + JetBrains Mono from
 # Google Fonts) attached to the htmlwidgets so the helpers render with the
 # brand faces even when chanwe_reporting_css() is not loaded. Quarto requires
 # widget dependencies to be disk-based, so the CDN links are injected through
@@ -186,7 +186,7 @@ chanwe_html_fonts_dependency <- function() {
         '<link rel="stylesheet" href="https://api.fontshare.com/v2/css',
         '?f%5B%5D=satoshi@400,500,700&amp;display=swap">',
         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2',
-        '?family=Archivo:wght@500;600;700',
+        '?family=Schibsted+Grotesk:wght@500;600;700',
         '&amp;family=JetBrains+Mono:wght@300;400;500&amp;display=swap">'
       )
     )

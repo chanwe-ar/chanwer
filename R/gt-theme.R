@@ -2,7 +2,7 @@
 #'
 #' The HTML counterpart of [chanwe_kbl()]: a `gt` table styled with the
 #' Chanwe header grammar -- mono-caps eyebrow with an orange rule prefix,
-#' Archivo title, Satoshi subtitle, mono-caps column labels, JetBrains Mono
+#' Schibsted Grotesk title, Satoshi subtitle, mono-caps column labels, JetBrains Mono
 #' tabular figures right-aligned, a hairline ink rule above the table, a
 #' thin neutral rule under the column labels and to the right of the stub,
 #' flat rows (an n100 tint on hover, matching [chanwe_reactable()], no
@@ -16,7 +16,7 @@
 #' page. Load them with [chanwe_reporting_css()] in Quarto HTML documents.
 #'
 #' @param data A data frame or tibble.
-#' @param title Table title (Archivo, 20px).
+#' @param title Table title (Schibsted Grotesk, 20px).
 #' @param subtitle Subtitle line rendered below the title.
 #' @param eyebrow Small mono-caps label with an orange rule prefix, rendered
 #'   above the title.
