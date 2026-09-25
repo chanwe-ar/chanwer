@@ -50,7 +50,7 @@
 # ─── element constructors ────────────────────────────────────────────────────
 
 new_element_chanwe_title <- function(
-  family = "Archivo",
+  family = "Schibsted Grotesk",
   face = "bold",
   size = 18,
   colour = "#1A1A1A",
@@ -182,7 +182,7 @@ new_element_chanwe_caption <- function(
 #                = margin[3] from element — 2pt normally, 20pt when no subtitle.
 #   [bottom line] optional 0.4pt separator (draw_bottom_line=TRUE, no-subtitle mode).
 #                 positioned at bot−5pt from bottom so 15pt of bot sits below it.
-#   t_h          title text (Archivo)
+#   t_h          title text (Schibsted Grotesk)
 #   gap1         space between title and eyebrow (6pt, only when has_ey)
 #   ey_h         eyebrow text (JetBrains Mono, only when has_ey)
 #   top          top padding above eyebrow: top_pad (4pt compact / 8pt spacious)
@@ -723,7 +723,7 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
   title_text <- if (has_eyebrow) parts[2L] else parts[1L]
 
   title_gp <- grid::gpar(
-    fontfamily = element$family %||_% "Archivo",
+    fontfamily = element$family %||_% "Schibsted Grotesk",
     fontsize = element$size %||_% 18,
     fontface = element$face %||_% "bold",
     col = element$colour %||_% ink

@@ -41,7 +41,7 @@ The modified \code{highcharter} object.
 \description{
 Applies the Chanwe header grammar and chart chrome to an existing
 \code{highcharter} object: eyebrow / title / subtitle block anchored top-left
-in Archivo, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
+in Schibsted Grotesk, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
 ticks, hairline y-grid, an ink tooltip in mono, no exporting menu or
 credits, and an optional \verb{//}-prefixed caption in ink, not muted gray.
 The y-axis title moves into the top-left corner of the plot area,

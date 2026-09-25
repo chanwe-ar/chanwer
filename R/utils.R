@@ -6,11 +6,12 @@
 #'
 #' Registered families:
 #' - `"Satoshi"` — Regular / Bold / Italic / BoldItalic
-#' - `"Archivo"` — Regular / Bold / Italic / BoldItalic
-#' - `"Archivo Medium"` — plain face = Medium (500); italic face = MediumItalic
-#' - `"Archivo SemiBold"` — plain face = SemiBold (600); used by [chanwe_title()]
-#' - `"Archivo ExtraBold"` — plain face = ExtraBold (800)
-#' - `".chanwe-subtitle"` — plain face = Archivo Light (300)
+#' - `"Schibsted Grotesk"` — Regular / Bold (the display face; upright only)
+#' - `"Schibsted Grotesk Medium"` — plain face = Medium (500)
+#' - `"Schibsted Grotesk SemiBold"` — plain face = SemiBold (600); used by [chanwe_title()]
+#' - `"Schibsted Grotesk ExtraBold"` — plain face = ExtraBold (800)
+#' - `".chanwe-subtitle"` — plain face = Schibsted Grotesk Regular (400), its
+#'   lightest weight
 #' - `"Fraunces 9pt"` — Regular / Bold / Italic / BoldItalic
 #' - `"Cormorant Garamond"` — variable font; used by the KPI hero value and subtitle notes
 #' - `"JetBrains Mono"` — Regular / Bold / Italic / BoldItalic
@@ -84,11 +85,9 @@ chanwe_load_fonts <- function(path = NULL) {
     italic     = "Satoshi-Italic.ttf",
     bolditalic = "Satoshi-BoldItalic.ttf"
   )
-  .reg("Archivo",
-    plain      = "Archivo-Regular.ttf",
-    bold       = "Archivo-Bold.ttf",
-    italic     = "Archivo-Italic.ttf",
-    bolditalic = "Archivo-BoldItalic.ttf"
+  .reg("Schibsted Grotesk",
+    plain      = "SchibstedGrotesk-Regular.ttf",
+    bold       = "SchibstedGrotesk-Bold.ttf"
   )
   .reg("Fraunces 9pt",
     plain      = "Fraunces9pt-Regular.ttf",
@@ -96,12 +95,24 @@ chanwe_load_fonts <- function(path = NULL) {
     italic     = "Fraunces9pt-Italic.ttf",
     bolditalic = "Fraunces9pt-BoldItalic.ttf"
   )
-  .reg("Cormorant Garamond",
-    plain      = "CormorantGaramond[wght].ttf",
-    bold       = "CormorantGaramond[wght].ttf",
-    italic     = "CormorantGaramond-Italic[wght].ttf",
-    bolditalic = "CormorantGaramond-Italic[wght].ttf"
-  )
+  # Cormorant ships two ways: as a variable font, or as static OTFs (the way
+  # the chanwe-report extension carries it). Whichever is there is used; with
+  # neither, the KPI value silently fell back to Times.
+  if (file.exists(file.path(path, "CormorantGaramond[wght].ttf"))) {
+    .reg("Cormorant Garamond",
+      plain      = "CormorantGaramond[wght].ttf",
+      bold       = "CormorantGaramond[wght].ttf",
+      italic     = "CormorantGaramond-Italic[wght].ttf",
+      bolditalic = "CormorantGaramond-Italic[wght].ttf"
+    )
+  } else {
+    .reg("Cormorant Garamond",
+      plain      = "CormorantGaramond-Regular.otf",
+      bold       = "CormorantGaramond-Bold.otf",
+      italic     = "CormorantGaramond-Italic.otf",
+      bolditalic = "CormorantGaramond-BoldItalic.otf"
+    )
+  }
 
   # Fraunces 9pt weight variants — each as its own family so they can be
   # referenced by name (systemfonts only snaps to 400/700 from the base family)
@@ -146,66 +157,23 @@ chanwe_load_fonts <- function(path = NULL) {
     bolditalic = "JetBrainsMono-ExtraLightItalic.ttf"
   )
 
-  # Archivo Medium (500) — registered as its own family; used by the KPI hero value.
-  archivo_medium        <- file.path(path, "Archivo-Medium.ttf")
-  archivo_medium_italic <- file.path(path, "Archivo-MediumItalic.ttf")
-  if (file.exists(archivo_medium)) {
-    tryCatch(
-      systemfonts::register_font(
-        name       = "Archivo Medium",
-        plain      = archivo_medium,
-        italic     = if (file.exists(archivo_medium_italic)) archivo_medium_italic else NULL
-      ),
-      error = function(e) NULL
-    )
+  # The display face at each weight, each registered as its own family:
+  # systemfonts only snaps to the 400 / 700 of the base family, and gridtext
+  # resolves a face by CSS font-family name (dot-prefixed names fail there).
+  .display <- function(name, file) {
+    f <- file.path(path, file)
+    if (file.exists(f)) {
+      tryCatch(systemfonts::register_font(name = name, plain = f), error = function(e) NULL)
+    }
   }
-
-  # Archivo SemiBold (600) — registered as its own family so gridtext resolves it
-  # via font-family lookup. Weight 600 alone won't work since systemfonts only
-  # snaps to registered weights (400 / 700 from the main "Archivo" registration).
-  archivo_semibold        <- file.path(path, "Archivo-SemiBold.ttf")
-  archivo_semibold_italic <- file.path(path, "Archivo-SemiBoldItalic.ttf")
-  if (file.exists(archivo_semibold)) {
-    tryCatch(
-      systemfonts::register_font(
-        name   = "Archivo SemiBold",
-        plain  = archivo_semibold,
-        italic = if (file.exists(archivo_semibold_italic)) archivo_semibold_italic else NULL
-      ),
-      error = function(e) NULL
-    )
-  }
-
-  # .chanwe-title: Archivo ExtraBold (800) baked as plain face for element_markdown.
-  # "Archivo ExtraBold": same file registered under its typographic family name
-  # so gridtext can resolve it via CSS font-family lookup (dot-prefixed names fail).
-  archivo_extrabold <- file.path(path, "Archivo-ExtraBold.ttf")
-  archivo_title <- if (file.exists(archivo_extrabold)) archivo_extrabold else file.path(path, "Archivo-Bold.ttf")
-  if (file.exists(archivo_title)) {
-    tryCatch(
-      systemfonts::register_font(name = ".chanwe-title", plain = archivo_title),
-      error = function(e) NULL
-    )
-    tryCatch(
-      systemfonts::register_font(name = "Archivo ExtraBold", plain = archivo_title),
-      error = function(e) NULL
-    )
-  }
-
-  # .chanwe-subtitle / "Archivo Light": Archivo Light (300) — one step above ExtraLight (200),
-  # baked as the plain face for reliable weight rendering.
-  archivo_light <- file.path(path, "Archivo-Light.ttf")
-  archivo_subtitle <- if (file.exists(archivo_light)) archivo_light else file.path(path, "Archivo-ExtraLight.ttf")
-  if (file.exists(archivo_subtitle)) {
-    tryCatch(
-      systemfonts::register_font(name = ".chanwe-subtitle", plain = archivo_subtitle),
-      error = function(e) NULL
-    )
-    tryCatch(
-      systemfonts::register_font(name = "Archivo Light", plain = archivo_subtitle),
-      error = function(e) NULL
-    )
-  }
+  .display("Schibsted Grotesk Medium", "SchibstedGrotesk-Medium.ttf")      # KPI hero value
+  .display("Schibsted Grotesk SemiBold", "SchibstedGrotesk-SemiBold.ttf")  # chanwe_title()
+  .display("Schibsted Grotesk ExtraBold", "SchibstedGrotesk-ExtraBold.ttf")
+  .display(".chanwe-title", "SchibstedGrotesk-ExtraBold.ttf")
+  # Schibsted has no Light: the subtitle takes its lightest weight, Regular.
+  .display("Schibsted Grotesk Light", "SchibstedGrotesk-Regular.ttf")
+  .display(".chanwe-subtitle", "SchibstedGrotesk-Regular.ttf")
+  rm(.display)
 
   options(chanwer.fonts_loaded = TRUE)
   invisible(path)

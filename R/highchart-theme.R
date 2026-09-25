@@ -2,7 +2,7 @@
 #'
 #' Applies the Chanwe header grammar and chart chrome to an existing
 #' `highcharter` object: eyebrow / title / subtitle block anchored top-left
-#' in Archivo, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
+#' in Schibsted Grotesk, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
 #' ticks, hairline y-grid, an ink tooltip in mono, no exporting menu or
 #' credits, and an optional `//`-prefixed caption in ink, not muted gray.
 #' The y-axis title moves into the top-left corner of the plot area,

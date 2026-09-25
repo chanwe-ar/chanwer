@@ -1,7 +1,7 @@
 #' Chanwe Table via Native Typst Output
 #'
 #' Generates a styled Typst table directly from a data frame, bypassing the
-#' HTML→Pandoc→Typst pipeline. Archivo title, Satoshi subtitle, JetBrains
+#' HTML→Pandoc→Typst pipeline. Schibsted Grotesk title, Satoshi subtitle, JetBrains
 #' Mono column headers and data cells (mono keeps figures tabular so numeric
 #' columns align digit-for-digit), thin ink divider lines. No CSS
 #' translation losses.
@@ -356,7 +356,7 @@ chanwe_kbl <- function(
       if (!is.null(title)) {
         inner <- paste0(
           inner,
-          '#text(font: "Archivo", size: ',
+          '#text(font: "Schibsted Grotesk", size: ',
           title_pt,
           ', fill: _t.ink, weight: "medium")[',
           esc(title),

@@ -69,7 +69,7 @@ brand-consistent color palettes.
 \details{
 \subsection{Typography}{\tabular{lll}{
    Element \tab Font \tab Weight \cr
-   Title (with eyebrow) \tab Archivo \tab 400 \cr
+   Title (with eyebrow) \tab Schibsted Grotesk \tab 400 \cr
    Subtitle \tab Satoshi \tab 400 \cr
    Subtitle note / KPI hero \tab Cormorant Garamond \tab italic \cr
    Axis text \tab Satoshi \tab 400 \cr

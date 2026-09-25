@@ -7,7 +7,7 @@
 chanwe_title(text, eyebrow = NULL)
 }
 \arguments{
-\item{text}{Main title string. Rendered in Archivo Black by \code{\link[=theme_chanwe]{theme_chanwe()}}.}
+\item{text}{Main title string. Rendered in Schibsted Grotesk ExtraBold by \code{\link[=theme_chanwe]{theme_chanwe()}}.}
 
 \item{eyebrow}{Optional short label above the title, e.g.
 \code{"SECTION · PROFITABILITY"}. Displayed in orange mono caps.}

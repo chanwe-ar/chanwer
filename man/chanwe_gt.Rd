@@ -21,7 +21,7 @@ chanwe_gt(
 \arguments{
 \item{data}{A data frame or tibble.}
 
-\item{title}{Table title (Archivo, 20px).}
+\item{title}{Table title (Schibsted Grotesk, 20px).}
 
 \item{subtitle}{Subtitle line rendered below the title.}
 
@@ -57,7 +57,7 @@ A \code{gt_tbl} object.
 \description{
 The HTML counterpart of \code{\link[=chanwe_kbl]{chanwe_kbl()}}: a \code{gt} table styled with the
 Chanwe header grammar -- mono-caps eyebrow with an orange rule prefix,
-Archivo title, Satoshi subtitle, mono-caps column labels, JetBrains Mono
+Schibsted Grotesk title, Satoshi subtitle, mono-caps column labels, JetBrains Mono
 tabular figures right-aligned, a hairline ink rule above the table, a
 thin neutral rule under the column labels and to the right of the stub,
 flat rows (an n100 tint on hover, matching \code{\link[=chanwe_reactable]{chanwe_reactable()}}, no

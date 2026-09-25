@@ -145,7 +145,7 @@ Works in Quarto documents rendered with \code{format: chanwe-report-typst}.
 }
 \description{
 Generates a styled Typst table directly from a data frame, bypassing the
-HTML→Pandoc→Typst pipeline. Archivo title, Satoshi subtitle, JetBrains
+HTML→Pandoc→Typst pipeline. Schibsted Grotesk title, Satoshi subtitle, JetBrains
 Mono column headers and data cells (mono keeps figures tabular so numeric
 columns align digit-for-digit), thin ink divider lines. No CSS
 translation losses.

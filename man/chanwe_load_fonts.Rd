@@ -24,11 +24,11 @@ Call once per session before creating plots with \code{\link[=theme_chanwe]{them
 Registered families:
 \itemize{
 \item \code{"Satoshi"} — Regular / Bold / Italic / BoldItalic
-\item \code{"Archivo"} — Regular / Bold / Italic / BoldItalic
-\item \code{"Archivo Medium"} — plain face = Medium (500); italic face = MediumItalic
-\item \code{"Archivo SemiBold"} — plain face = SemiBold (600); used by \code{\link[=chanwe_title]{chanwe_title()}}
-\item \code{"Archivo ExtraBold"} — plain face = ExtraBold (800)
-\item \code{".chanwe-subtitle"} — plain face = Archivo Light (300)
+\item \code{"Schibsted Grotesk"} — Regular / Bold (the display face; upright only)
+\item \code{"Schibsted Grotesk Medium"} — plain face = Medium (500)
+\item \code{"Schibsted Grotesk SemiBold"} — plain face = SemiBold (600); used by \code{\link[=chanwe_title]{chanwe_title()}}
+\item \code{"Schibsted Grotesk ExtraBold"} — plain face = ExtraBold (800)
+\item \code{".chanwe-subtitle"} — plain face = Schibsted Grotesk Regular (400), its lightest weight
 \item \code{"Fraunces 9pt"} — Regular / Bold / Italic / BoldItalic
 \item \code{"Cormorant Garamond"} — variable font; used by the KPI hero value and subtitle notes
 \item \code{"JetBrains Mono"} — Regular / Bold / Italic / BoldItalic
