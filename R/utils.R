@@ -103,12 +103,23 @@ chanwe_load_fonts <- function(path = NULL) {
     plain  = "InstrumentSerif-Regular.ttf",
     italic = "InstrumentSerif-Italic.ttf"
   )
-  .reg("Cormorant Garamond",
-    plain      = "CormorantGaramond-Regular.otf",
-    bold       = "CormorantGaramond-Bold.otf",
-    italic     = "CormorantGaramond-Italic.otf",
-    bolditalic = "CormorantGaramond-BoldItalic.otf"
-  )
+  # Cormorant ships two ways: as a variable font, or as static OTFs (the way
+  # the chanwe-report extension carries it). Whichever is there is used.
+  if (file.exists(file.path(path, "CormorantGaramond[wght].ttf"))) {
+    .reg("Cormorant Garamond",
+      plain      = "CormorantGaramond[wght].ttf",
+      bold       = "CormorantGaramond[wght].ttf",
+      italic     = "CormorantGaramond-Italic[wght].ttf",
+      bolditalic = "CormorantGaramond-Italic[wght].ttf"
+    )
+  } else {
+    .reg("Cormorant Garamond",
+      plain      = "CormorantGaramond-Regular.otf",
+      bold       = "CormorantGaramond-Bold.otf",
+      italic     = "CormorantGaramond-Italic.otf",
+      bolditalic = "CormorantGaramond-BoldItalic.otf"
+    )
+  }
 
   .reg("JetBrains Mono",
     plain      = "JetBrainsMono-Regular.ttf",
