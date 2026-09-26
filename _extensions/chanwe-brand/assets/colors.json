@@ -1,76 +1,406 @@
 {
-  "schema": "chanwe-colors/v1",
+  "schema": "chanwe-colors/v2",
   "name": "chanwe-brand-colors",
+  "source": "../brand.yml",
+  "color_space": "srgb",
+  "primary": {
+    "token": "primary",
+    "code": "#FD3810"
+  },
   "colors": [
     {
-      "internal_name": "brand-orange",
+      "internal_name": "primary",
       "code": "#FD3810",
-      "aliases": ["brand-red", "primary", "p13-orange-01"]
+      "aliases": [
+        "primary-text",
+        "primary-active",
+        "callout-important"
+      ]
     },
     {
-      "internal_name": "brand-black",
-      "code": "#101010",
-      "aliases": ["dark-950", "p13-gray-01"]
+      "internal_name": "ink",
+      "code": "#111319",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "brand-charcoal-green",
-      "code": "#313534",
-      "aliases": []
+      "internal_name": "ink-soft",
+      "code": "#37393F",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "brand-gray-light",
-      "code": "#DADADA",
-      "aliases": []
+      "internal_name": "ink-fg",
+      "code": "#64748B",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "brand-paper",
-      "code": "#F7F7F7",
-      "aliases": ["cw-color-paper", "paper", "second-page-bg"]
+      "internal_name": "ink-subtle",
+      "code": "#646464",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "dark-800",
+      "internal_name": "rule-ink",
+      "code": "#434D5D",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "fg",
+      "code": "#111319",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "body-fg",
+      "code": "#475569",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "fg-muted",
+      "code": "#475569",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "fg-subtle",
+      "code": "#8A94A6",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "emphasis",
+      "code": "#484848",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "paper",
+      "code": "#F8FAFC",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "callout-surface",
+      "code": "#F8FAFC",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "surface-sunken",
+      "code": "#F1F5F9",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "surface-slate",
+      "code": "#EBF0F6",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "callout-header",
+      "code": "#EBF0F6",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "pure-white",
+      "code": "#FFFFFF",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "pure-black",
+      "code": "#000000",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "rule",
+      "code": "#E2E8F0",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "rule-cool",
+      "code": "#C6CDD6",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "border-cool",
+      "code": "#CFD6DF",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "border",
+      "code": "#1113191A",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "neutral-300",
+      "code": "#D4D4D4",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "neutral-700",
+      "code": "#525252",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "chart-blue",
+      "code": "#007AFF",
+      "aliases": [
+        "callout-note"
+      ]
+    },
+    {
+      "internal_name": "chart-green",
+      "code": "#34C759",
+      "aliases": [
+        "callout-do"
+      ]
+    },
+    {
+      "internal_name": "chart-indigo",
+      "code": "#5856D6",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "chart-orange",
+      "code": "#FF9500",
+      "aliases": [
+        "callout-warning"
+      ]
+    },
+    {
+      "internal_name": "chart-red",
+      "code": "#FF3B30",
+      "aliases": [
+        "callout-dont"
+      ]
+    },
+    {
+      "internal_name": "chart-teal",
+      "code": "#00C7BE",
+      "aliases": [
+        "callout-tip"
+      ]
+    },
+    {
+      "internal_name": "chart-purple",
+      "code": "#AF52DE",
+      "aliases": [
+        "callout-caution"
+      ]
+    },
+    {
+      "internal_name": "research-muted",
+      "code": "#99999E",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "kpi-green",
+      "code": "#147705",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "kpi-red",
+      "code": "#CC1914",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "exec-status-good",
+      "code": "#15803D",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "exec-status-regular",
+      "code": "#D97706",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "exec-status-bad",
+      "code": "#CC1914",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "code-keyword",
+      "code": "#FD3810",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "code-string",
+      "code": "#15803D",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "code-number",
+      "code": "#7C3AED",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "code-operator",
+      "code": "#0758E5",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "code-function",
+      "code": "#475569",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "code-type",
       "code": "#353535",
-      "aliases": ["p13-gray-03"]
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "dark-500",
-      "code": "#6D6D6D",
-      "aliases": ["p13-gray-06"]
+      "internal_name": "code-comment",
+      "code": "#928D86",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "dark-300",
-      "code": "#A5A5A5",
-      "aliases": ["p13-gray-08"]
+      "internal_name": "status-success",
+      "code": "#1EB508",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "dark-100",
-      "code": "#CACACA",
-      "aliases": ["p13-gray-10"]
+      "internal_name": "status-success-soft",
+      "code": "#C9FFC0",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "brand-orange-deep",
-      "code": "#E74B2B",
-      "aliases": []
+      "internal_name": "status-error",
+      "code": "#D32F2F",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "orange-800",
-      "code": "#EC684E",
-      "aliases": ["p13-orange-03"]
+      "internal_name": "status-error-bg",
+      "code": "#FDECEA",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "orange-600",
-      "code": "#EF8670",
-      "aliases": ["p13-orange-05"]
+      "internal_name": "status-warning",
+      "code": "#F9E710",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "orange-400",
-      "code": "#F2A393",
-      "aliases": ["p13-orange-07"]
+      "internal_name": "status-warning-bg",
+      "code": "#FFF8B8",
+      "aliases": [
+
+      ]
     },
     {
-      "internal_name": "orange-200",
-      "code": "#F6CFC7",
-      "aliases": ["p13-orange-09"]
+      "internal_name": "status-info",
+      "code": "#0C48ED",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "status-info-bg",
+      "code": "#B8CEFF",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "chart-cyan",
+      "code": "#11F7E6",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "chart-cyan-soft",
+      "code": "#B6FFF8",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "chart-magenta",
+      "code": "#EB03F2",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "chart-gray",
+      "code": "#71706C",
+      "aliases": [
+
+      ]
     }
   ]
 }

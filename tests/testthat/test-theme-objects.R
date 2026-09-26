@@ -13,12 +13,12 @@ test_that("theme_chanwe returns a theme with the ChanWe custom elements", {
 test_that("theme_chanwe background variants resolve to brand surfaces", {
   th_default <- theme_chanwe()
   th_white <- theme_chanwe(bg_color = "white")
-  th_beige <- theme_chanwe(bg_color = "beige")
+  th_slate <- theme_chanwe(bg_color = "slate")
   th_hex <- theme_chanwe(bg_color = "#123456")
 
-  expect_identical(th_default$plot.background$fill, "#F7F7F7")
+  expect_identical(th_default$plot.background$fill, "#F8FAFC")
   expect_identical(th_white$plot.background$fill, "#FFFFFF")
-  expect_identical(th_beige$plot.background$fill, "#F5F1EB")
+  expect_identical(th_slate$plot.background$fill, "#EBF0F6")
   expect_identical(th_hex$plot.background$fill, "#123456")
   expect_identical(th_white$panel.background$fill, "#FFFFFF")
   expect_identical(th_white$legend.background$fill, "#FFFFFF")
@@ -74,13 +74,16 @@ test_that("discrete palette accepts group names, raw vectors, and reverse", {
 
 test_that("sequential palettes are named, light-to-dark, and gated", {
   ramps <- c(
-    "orange", "coral", "blue", "teal", "green",
-    "vermillion", "magenta", "violet", "mustard", "ink"
+    "orange", "blue", "indigo", "teal", "green", "amber",
+    "red", "vermillion", "purple", "violet", "mustard", "ink"
   )
   for (r in ramps) {
     values <- chanwe_seq_pal(r)
     expect_true(length(values) >= 3, info = r)
   }
+  # series-hue ramps pass through the hue itself
+  expect_true("#007AFF" %in% chanwe_seq_pal("blue"))
+  expect_identical(chanwe_seq_pal("vermillion"), chanwe_seq_pal("red"))
 
   # green and vermillion end in the signed poles for a readable dark end
   expect_identical(rev(chanwe_seq_pal("green"))[[1]], "#147705")
@@ -90,20 +93,22 @@ test_that("sequential palettes are named, light-to-dark, and gated", {
   expect_identical(chanwe_seq_pal("blue", reverse = TRUE), rev(chanwe_seq_pal("blue")))
   expect_identical(chanwe_seq_pal(c("#111111", "#999999")), c("#111111", "#999999"))
 
-  # yellow and cyan are deliberately not sequential ramps
+  # the neon families are not sequential ramps
   expect_error(chanwe_seq_pal("yellow"), "must be one of")
   expect_error(chanwe_seq_pal("cyan"), "must be one of")
+  expect_error(chanwe_seq_pal("magenta"), "must be one of")
 
   expect_s3_class(scale_color_chanwe_c(palette = "teal"), "ScaleContinuous")
   expect_s3_class(scale_fill_chanwe_c(palette = "green"), "ScaleContinuous")
 })
 
-test_that("diverging scale runs vermillion -> neutral -> green with signed poles", {
+test_that("diverging scale runs red -> neutral -> green with signed poles", {
   ramp <- .chanwe_div_ramp()
 
   expect_identical(ramp[[1]], "#CC1914")
   expect_identical(ramp[[length(ramp)]], "#147705")
-  expect_true("#E8E8E8" %in% ramp)
+  expect_true("#E2E8F0" %in% ramp)
+  expect_true(all(c("#FF3B30", "#34C759") %in% ramp))
 
   expect_s3_class(scale_color_chanwe_div(), "ScaleContinuous")
   expect_s3_class(scale_fill_chanwe_div(), "ScaleContinuous")
@@ -115,7 +120,7 @@ test_that("chanwe_col_signed maps sign to the canonical tokens", {
   out <- fn(c(2.5, -1.25, 0, NA))
 
   expect_identical(out, c(
-    'rgb("#147705")', 'rgb("#CC1914")', 'rgb("#666666")', 'rgb("#666666")'
+    'rgb("#147705")', 'rgb("#CC1914")', 'rgb("#475569")', 'rgb("#475569")'
   ))
 
   # flip = TRUE for smaller-is-better metrics

@@ -1,37 +1,108 @@
 # Brand color tokens -------------------------------------------------------
 
+# Mirror of `color.palette` in _extensions/chanwe-brand/brand.yml - the
+# source of truth. brand.yml is not installed with the package, so the values
+# are copied by hand: edit brand.yml in chanwe-brand first, sync the
+# extension, then update this table. Aliases (`primary-text`,
+# `primary-active` -> `primary`) are resolved to their hex.
+.chanwe_brand_colors <- c(
+  # The accent: one orange
+  "primary"          = "#FD3810",
+  "primary-text"     = "#FD3810",
+  "primary-active"   = "#FD3810",
+  # Obsidian and what sits on it
+  "ink"              = "#111319",
+  "ink-soft"         = "#37393F",
+  "ink-fg"           = "#64748B",
+  "ink-subtle"       = "#646464",
+  "rule-ink"         = "#434D5D",
+  # Type
+  "fg"               = "#111319",
+  "body-fg"          = "#475569",
+  "fg-muted"         = "#475569",
+  "fg-subtle"        = "#8A94A6",
+  "emphasis"         = "#484848",
+  # The series hues (Apple-HIG-calibrated): the chart series and the
+  # callout roles share them; `primary` is the eighth member.
+  "chart-blue"       = "#007AFF",
+  "chart-green"      = "#34C759",
+  "chart-indigo"     = "#5856D6",
+  "chart-orange"     = "#FF9500",
+  "chart-red"        = "#FF3B30",
+  "chart-teal"       = "#00C7BE",
+  "chart-purple"     = "#AF52DE",
+  # Paper and slate surfaces
+  "paper"            = "#F8FAFC",
+  "callout-surface"  = "#F8FAFC",
+  "surface-sunken"   = "#F1F5F9",
+  "surface-slate"    = "#EBF0F6",
+  "callout-header"   = "#EBF0F6",
+  "pure-white"       = "#FFFFFF",
+  "pure-black"       = "#000000",
+  # Hairlines
+  "rule"             = "#E2E8F0",
+  "rule-cool"        = "#C6CDD6",
+  "border-cool"      = "#CFD6DF",
+  "border"           = "#1113191A",
+  "neutral-300"      = "#D4D4D4",
+  "neutral-700"      = "#525252",
+  # Callouts - every one a series hue
+  "callout-note"      = "#007AFF", # chart-blue
+  "callout-tip"       = "#00C7BE", # chart-teal
+  "callout-warning"   = "#FF9500", # chart-orange
+  "callout-important" = "#FD3810", # primary
+  "callout-caution"   = "#AF52DE", # chart-purple
+  "callout-do"        = "#34C759", # chart-green
+  "callout-dont"      = "#FF3B30", # chart-red
+  # Report semaphores
+  "research-muted"      = "#99999E",
+  "kpi-green"           = "#147705",
+  "kpi-red"             = "#CC1914",
+  "exec-status-good"    = "#15803D",
+  "exec-status-regular" = "#D97706",
+  "exec-status-bad"     = "#CC1914",
+  # Code highlighting
+  "code-keyword"     = "#FD3810",
+  "code-string"      = "#15803D",
+  "code-number"      = "#7C3AED",
+  "code-operator"    = "#0758E5",
+  "code-function"    = "#475569",
+  "code-type"        = "#353535",
+  "code-comment"     = "#928D86",
+  # HTML statuses (semantic chrome, not series colours) and the legacy
+  # chart accents - cyan, magenta and gray are no longer in the series
+  "status-success"      = "#1EB508",
+  "status-success-soft" = "#C9FFC0",
+  "status-error"        = "#D32F2F",
+  "status-error-bg"     = "#FDECEA",
+  "status-warning"      = "#F9E710",
+  "status-warning-bg"   = "#FFF8B8",
+  "status-info"         = "#0C48ED",
+  "status-info-bg"      = "#B8CEFF",
+  "chart-cyan"          = "#11F7E6",
+  "chart-cyan-soft"     = "#B6FFF8",
+  "chart-magenta"       = "#EB03F2",
+  "chart-gray"          = "#71706C"
+)
+
 .chanwe_colors <- c(
-  # Editorial 8-color chart palette - p15 family primaries (shade -01).
-  # Slot order is CVD-validated (worst adjacent pair dE 17.5 under
-  # protan/deutan simulation; >= 8 is the target): mustard and ink sit last
-  # because they break the categorical lightness/chroma gates, so charts
-  # with <= 6 series never reach them. Do not re-order without re-running
-  # the palette validator.
-  "chart-coral"   = "#EE5524",
-  "chart-blue"    = "#0C48ED",
-  "chart-teal"    = "#14A4B8",
-  "chart-green"   = "#1EB508",
-  "chart-violet"  = "#9B2E8F",
-  "chart-magenta" = "#EB03F2",
-  "chart-mustard" = "#E8B400",
-  "chart-ink"     = "#141414",
+  .chanwe_brand_colors,
   # Signed tokens - the canonical positive/negative/neutral for KPI arrows,
-  # table deltas, and diverging-scale poles. Hue-true darkenings of the
-  # brand families the manual designates (GREEN.POSITIVE, VERMILLION.ALERT,
-  # INK.NEUTRAL ANCHOR), stepped down until they clear WCAG 4.5:1 small-text
-  # contrast on all five brand surfaces (white, white-ivory, metallic,
-  # gray, beige). The raw ramp poles do not: #1EB508 tops out at 2.7:1.
+  # table deltas, and diverging-scale poles. Positive and negative are the
+  # brand's kpi-green / kpi-red, which clear WCAG 4.5:1 small-text contrast
+  # on every brand surface (the raw status-success #1EB508 tops out at
+  # 2.7:1); neutral is the slate fg-muted.
   "signed-positive" = "#147705",
   "signed-negative" = "#CC1914",
-  "signed-neutral"  = "#666666",
-  "brand-orange" = "#FD3810",
-  "brand-black" = "#101010",
-  "brand-white" = "#F7F7F7",
-  "brand-pure-white" = "#FFFFFF",
-  "brand-beige" = "#F8F8F8",
-  "brand-beige-soft" = "#EEEEEE",
-  "brand-gray" = "#6B6B6B",
-  "brand-silver" = "#C9C9C9",
+  "signed-neutral"  = "#475569",
+  # Legacy chanwer names, resolved to brand.yml per the v1 -> v2 migration
+  # in _extensions/chanwe-brand/assets/COLORS.md.
+  "brand-orange" = "#FD3810",     # primary
+  "brand-black" = "#111319",      # ink
+  "brand-white" = "#F8FAFC",      # paper
+  "brand-pure-white" = "#FFFFFF", # pure-white
+  "brand-gray" = "#71706C",       # chart-gray
+  "brand-silver" = "#D4D4D4",     # neutral-300
   "p13-orange-01" = "#E94B2B",
   "p13-orange-02" = "#EA5A3C",
   "p13-orange-03" = "#EC684E",
@@ -98,7 +169,7 @@
   "p15-ink-01" = "#141414", "p15-ink-02" = "#3D3D3D",
   "p15-ink-03" = "#666666", "p15-ink-04" = "#8F8F8F",
   "p15-ink-05" = "#B8B8B8",
-  # mb - main brand palette (orange . dark . beige, 100-950 scale)
+  # mb - main brand palette (orange . dark, 100-950 scale)
   "mb-orange-100" = "#F8DDD9", "mb-orange-200" = "#F6CFC7",
   "mb-orange-300" = "#F5C0B6", "mb-orange-400" = "#F2A393",
   "mb-orange-500" = "#F09482", "mb-orange-600" = "#EF8670",
@@ -109,72 +180,68 @@
   "mb-dark-500" = "#6D6D6D", "mb-dark-600" = "#5B5B5B",
   "mb-dark-700" = "#484848", "mb-dark-800" = "#353535",
   "mb-dark-900" = "#232323", "mb-dark-950" = "#101010",
-  "mb-beige-100" = "#F6F1EB", "mb-beige-200" = "#ECE5D9",
-  "mb-beige-300" = "#E2DBD0", "mb-beige-400" = "#D9D2C6",
-  "mb-beige-500" = "#CFC8BD",
-  # chanwe-report-typst report system tokens
-  "typst-primary"     = "#FD3810",
-  # Text-accessible darkening of typst-primary: same hue, stepped down until
-  # it clears WCAG 4.5:1 small-text contrast on every brand surface (4.90 on
-  # gray, 5.62 on white). Use it wherever the primary paints SMALL text -
-  # eyebrows, caption prefixes - and keep typst-primary for rules, glyphs,
-  # and large display accents (which only need 3:1).
-  "typst-primary-text" = "#C52C0C",
-  "typst-ink"         = "#0F0F0F",
-  "typst-fg"          = "#211F1C",
-  "typst-fg-muted"    = "#71706C",
-  "typst-fg-subtle"   = "#928D86",
-  "typst-neutral-100" = "#F5F5F5",
-  "typst-neutral-200" = "#E8E8E8",
-  "typst-neutral-300" = "#D4D4D4",
-  "typst-neutral-700" = "#525252",
-  "typst-neutral-900" = "#1F1F1F",
-  "typst-white"       = "#FFFFFF",
-  "typst-green"       = "#15803D",
-  "typst-red"         = "#CC1914",
-  "typst-warning"     = "#EB9113",
-  "typst-info"        = "#0758E5",
-  # Callout accents used by the Typst extensions (chanwe-elements.typ keeps
-  # the same literals - they are part of the Quarto callout contract).
-  "typst-tip"         = "#00A047",
-  "typst-caution"     = "#FC5300"
+  # chanwe-report-typst token names used across the helpers, resolved to
+  # their brand.yml roles.
+  "typst-primary"      = "#FD3810", # primary
+  # brand.yml retired the darker text orange (#C52C0C): one orange, so the
+  # small-text accent is primary itself.
+  "typst-primary-text" = "#FD3810", # primary-text -> primary
+  "typst-ink"          = "#111319", # ink
+  "typst-fg"           = "#111319", # fg
+  "typst-fg-muted"     = "#475569", # fg-muted
+  "typst-fg-subtle"    = "#8A94A6", # fg-subtle
+  "typst-neutral-100"  = "#F1F5F9", # surface-sunken
+  "typst-neutral-200"  = "#E2E8F0", # rule
+  "typst-neutral-300"  = "#D4D4D4", # neutral-300
+  "typst-neutral-700"  = "#525252", # neutral-700
+  "typst-neutral-900"  = "#111319", # ink
+  "typst-white"        = "#FFFFFF", # pure-white
+  "typst-green"        = "#34C759", # callout-do
+  "typst-red"          = "#FF3B30", # callout-dont
+  "typst-warning"      = "#FF9500", # callout-warning
+  "typst-info"         = "#007AFF", # callout-note
+  "typst-tip"          = "#00C7BE", # callout-tip
+  "typst-caution"      = "#AF52DE"  # callout-caution
 )
 
 .chanwe_semantic_names <- c(
-  foreground = "typst-fg",
-  background = "typst-neutral-100",
-  primary    = "typst-primary",
-  secondary  = "typst-ink",
-  success    = "typst-green",
-  warning    = "typst-warning",
-  danger     = "typst-red",
-  info       = "typst-info",
+  foreground = "fg-muted",
+  background = "paper",
+  primary    = "primary",
+  secondary  = "fg",
+  success    = "status-success",
+  warning    = "status-warning",
+  danger     = "status-error",
+  info       = "status-info",
   positive   = "signed-positive",
   negative   = "signed-negative",
   neutral    = "signed-neutral"
 )
 
-# Editorial 8-color chart palette - p15 family primaries (shade -01).
-# Same CVD-validated slot order as the chart-* tokens above.
-.chanwe_chart_colors <- c(
-  "chart-coral"    = "#EE5524",
-  "chart-blue"     = "#0C48ED",
-  "chart-teal"     = "#14A4B8",
-  "chart-green"    = "#1EB508",
-  "chart-violet"   = "#9B2E8F",
-  "chart-magenta"  = "#EB03F2",
-  "chart-mustard"  = "#E8B400",
-  "chart-ink"      = "#141414"
-)
+# Categorical chart palette - brand.yml `meta.chart-palette-order`: the
+# eight series hues. `chart-red` sits last on purpose: it is dE00 5.0 from
+# `primary`, so the two reds only meet in an eight-series chart; the worst
+# pair inside the first seven is dE00 15.3 (blue vs indigo).
+.chanwe_chart_colors <- .chanwe_brand_colors[c(
+  "primary", "chart-blue", "chart-green", "chart-indigo",
+  "chart-orange", "chart-teal", "chart-purple", "chart-red"
+)]
 
 .chanwe_chart_names <- names(.chanwe_chart_colors)
+
+# A sequential ramp as a named palette group, light -> dark: `blue-1` ...
+.chanwe_named_ramp <- function(name) {
+  values <- .chanwe_seq_ramps()[[name]]
+  stats::setNames(values, paste0(name, "-", seq_along(values)))
+}
 
 .chanwe_palette_groups <- function() {
   list(
     core = .chanwe_colors[c(
       "brand-orange", "brand-black", "brand-white", "brand-pure-white",
-      "brand-beige", "brand-beige-soft", "brand-gray", "brand-silver"
+      "brand-gray", "brand-silver"
     )],
+    brand = .chanwe_brand_colors,
     p13_orange = .chanwe_colors[grep("^p13-orange", names(.chanwe_colors))],
     p13_gray = .chanwe_colors[grep("^p13-gray", names(.chanwe_colors))],
     p14_accents = .chanwe_colors[grep("^p14", names(.chanwe_colors))],
@@ -191,7 +258,13 @@
     p15_ink = .chanwe_colors[grep("^p15-ink", names(.chanwe_colors))],
     mb_orange = .chanwe_colors[grep("^mb-orange", names(.chanwe_colors))],
     mb_dark   = .chanwe_colors[grep("^mb-dark",   names(.chanwe_colors))],
-    mb_beige  = .chanwe_colors[grep("^mb-beige",  names(.chanwe_colors))],
+    ramp_blue   = .chanwe_named_ramp("blue"),
+    ramp_indigo = .chanwe_named_ramp("indigo"),
+    ramp_teal   = .chanwe_named_ramp("teal"),
+    ramp_green  = .chanwe_named_ramp("green"),
+    ramp_amber  = .chanwe_named_ramp("amber"),
+    ramp_red    = .chanwe_named_ramp("red"),
+    ramp_purple = .chanwe_named_ramp("purple"),
     semantic = chanwe_get_semantic(),
     signed = chanwe_get_signed(),
     chart = .chanwe_chart_colors
@@ -221,65 +294,79 @@ chanwe_get_signed <- function() {
   )
 }
 
-# Sequential ramps for the continuous scales - light -> dark, one brand hue
-# each. Built from the p15 5-shade ramps; green and vermillion get their
-# dark pole extended with the matching signed token so the strong end
-# clears 3:1 mark contrast on the brand surfaces. The light pole is clamped
-# one step above the family's lightest shade (-04 instead of -05) for the
-# mirror-image reason: the -05 shades all but vanish on the light brand
-# surfaces, so minimum-value marks would carry data invisibly. The full
-# 5-shade ramps stay available via chanwe_palette(). The yellow and cyan
-# families are deliberately absent: their entire ramp is too light to
-# encode magnitude on light surfaces (dark end < 2:1). "orange" is the
-# historical default gradient anchored on the report primary, clamped the
-# same way (light pole -07 instead of -10 on the 10-step p13 scale).
+# Mix `col` with `with` by `t` (0 = col, 1 = with), as an uppercase hex.
+.cw_mix <- function(col, with, t) {
+  a <- grDevices::col2rgb(col)
+  b <- grDevices::col2rgb(with)
+  toupper(grDevices::rgb(t(a * (1 - t) + b * t), maxColorValue = 255))
+}
+
+# Sequential ramps for the continuous scales - light -> dark, one series hue
+# each: two tints of the hue toward white, the hue itself, and a dark pole
+# (the hue stepped toward ink) so the strong end clears 3:1 mark contrast on
+# the light brand surfaces. Green and red end in the signed tokens instead,
+# so magnitude and valence share one pole. The light pole stops at a 65%
+# tint: lighter shades all but vanish on the brand surfaces, so
+# minimum-value marks would carry data invisibly. "orange" is the historical
+# default gradient anchored on the report primary; "mustard" and "ink" keep
+# their p15 ramps (no series hue replaces them). `vermillion` and `violet`
+# are the earlier names of `red` and `purple`.
 .chanwe_seq_ramps <- function() {
   cols <- .chanwe_colors
-  ramp <- function(prefix) {
+  hue_ramp <- function(key, dark = NULL) {
+    h <- cols[[key]]
+    c(
+      .cw_mix(h, "#FFFFFF", 0.65),
+      .cw_mix(h, "#FFFFFF", 0.35),
+      h,
+      if (is.null(dark)) .cw_mix(h, cols[["ink"]], 0.35) else dark
+    )
+  }
+  p15 <- function(prefix) {
     shades <- rev(unname(cols[grep(paste0("^", prefix), names(cols))]))
     shades[-1] # clamp the light pole: drop the -05 shade
   }
+  red <- hue_ramp("chart-red", dark = cols[["signed-negative"]])
+  purple <- hue_ramp("chart-purple")
   list(
-    orange     = unname(cols[c("p13-orange-07", "p13-orange-03", "typst-primary")]),
-    coral      = ramp("p15-coral"),
-    blue       = ramp("p15-blue"),
-    teal       = ramp("p15-teal"),
-    green      = c(ramp("p15-green"), cols[["signed-positive"]]),
-    vermillion = c(ramp("p15-vermillion"), cols[["signed-negative"]]),
-    magenta    = ramp("p15-magenta"),
-    violet     = ramp("p15-violet"),
-    mustard    = ramp("p15-mustard"),
-    ink        = ramp("p15-ink")
+    orange     = unname(cols[c("p13-orange-07", "p13-orange-03", "primary")]),
+    blue       = hue_ramp("chart-blue"),
+    indigo     = hue_ramp("chart-indigo"),
+    teal       = hue_ramp("chart-teal"),
+    green      = hue_ramp("chart-green", dark = cols[["signed-positive"]]),
+    amber      = hue_ramp("chart-orange"),
+    red        = red,
+    vermillion = red,
+    purple     = purple,
+    violet     = purple,
+    mustard    = p15("p15-mustard"),
+    ink        = p15("p15-ink")
   )
 }
 
-# Diverging ramp: negative (vermillion arm) -> neutral midpoint -> positive
-# (green arm), per the brand roles VERMILLION.ALERT / GREEN.POSITIVE.
-# Poles are the signed tokens; arm steps are p15 shades chosen so lightness
-# is monotone from the midpoint out to each pole (green-05 is lighter than
-# the midpoint and is skipped for that reason).
+# Diverging ramp: negative (red arm) -> neutral midpoint -> positive (green
+# arm), built from the series hues. Poles are the signed tokens; each arm
+# runs pole -> hue -> 40% tint -> 70% tint, so lightness is monotone from the
+# `rule` midpoint out to each pole.
 #
-# cvd = TRUE swaps the positive arm for the brand's structural blue family
-# (pole = typst-info). Red<->green is the canonical deuteranopia trap; when
-# the audience includes red-green CVD readers, the vermillion<->blue variant
-# keeps polarity legible while both arms stay brand families.
+# cvd = TRUE swaps the positive arm for chart-blue. Red<->green is the
+# canonical deuteranopia trap; when the audience includes red-green CVD
+# readers, the red<->blue variant keeps polarity legible.
 .chanwe_div_ramp <- function(cvd = FALSE) {
   cols <- .chanwe_colors
+  arm <- function(key) {
+    h <- cols[[key]]
+    c(.cw_mix(h, "#FFFFFF", 0.7), .cw_mix(h, "#FFFFFF", 0.4), h)
+  }
   positive_arm <- if (isTRUE(cvd)) {
-    c(
-      unname(cols[c("p15-blue-04", "p15-blue-03", "p15-blue-01")]),
-      cols[["typst-info"]]
-    )
+    c(arm("chart-blue"), .cw_mix(cols[["chart-blue"]], cols[["ink"]], 0.35))
   } else {
-    c(
-      unname(cols[c("p15-green-04", "p15-green-03", "p15-green-01")]),
-      cols[["signed-positive"]]
-    )
+    c(arm("chart-green"), cols[["signed-positive"]])
   }
   unname(c(
     cols[["signed-negative"]],
-    cols[c("p15-vermillion-01", "p15-vermillion-03", "p15-vermillion-05")],
-    cols[["typst-neutral-200"]],
+    rev(arm("chart-red")),
+    cols[["rule"]],
     positive_arm
   ))
 }
@@ -291,10 +378,13 @@ chanwe_get_signed <- function() {
 #'
 #' @param palette Optional palette selector. Use `NULL` (default) to return
 #'   all colors and grouped palettes. Supported names are `"all"`, `"core"`,
+#'   `"brand"` (the `color.palette` of the chanwe-brand `brand.yml`),
 #'   `"p13_orange"`, `"p13_gray"`, `"p14_accents"`, `"p15_coral"`,
 #'   `"p15_vermillion"`, `"p15_green"`, `"p15_magenta"`, `"p15_blue"`,
 #'   `"p15_yellow"`, `"p15_cyan"`, `"p15_mustard"`, `"p15_violet"`,
-#'   `"p15_teal"`, `"p15_ink"`, `"mb_orange"`, `"mb_dark"`, `"mb_beige"`,
+#'   `"p15_teal"`, `"p15_ink"`, `"mb_orange"`, `"mb_dark"`, the series-hue
+#'   ramps `"ramp_blue"`, `"ramp_indigo"`, `"ramp_teal"`, `"ramp_green"`,
+#'   `"ramp_amber"`, `"ramp_red"`, `"ramp_purple"`,
 #'   `"semantic"`, `"signed"`, and `"chart"`.
 #'
 #' @section Signed colors:
@@ -355,13 +445,17 @@ chanwe_brand_tokens <- function() {
     colors = chanwe_get_colors(),
     semantic = semantic,
     chart_order = chanwe_get_chart(),
+    # brand.yml `typography`
     typography = list(
-      family = "Satoshi",
+      family = "Inter",
+      display_family = "Schibsted Grotesk",
+      mono_family = "JetBrains Mono",
+      serif_family = "Cormorant Garamond",
       base_size = 13.5,
       base_line_height = 1.62,
-      heading_weight = 900,
+      heading_weight = 600,
       heading_line_height = 1.15,
-      link_weight = 600
+      link_weight = 500
     ),
     geometry = list(
       radius_small = 3,
@@ -372,18 +466,17 @@ chanwe_brand_tokens <- function() {
     reporting = list(
       code_background = semantic[["background"]],
       code_left_rule = semantic[["primary"]],
-      caption_color = chanwe_get_colors()[["typst-fg-subtle"]],
-      # Mirrors the callout accents rendered by chanwe-elements.typ in the
-      # Typst extensions - keep the two in sync.
+      caption_color = chanwe_get_colors()[["fg-subtle"]],
+      # brand.yml `callout-*` accents
       callouts = c(
-        note = chanwe_get_colors()[["typst-info"]],
-        info = chanwe_get_colors()[["typst-info"]],
-        tip = chanwe_get_colors()[["typst-tip"]],
-        success = chanwe_get_colors()[["typst-green"]],
-        warning = chanwe_get_colors()[["typst-warning"]],
-        important = chanwe_get_colors()[["typst-red"]],
-        caution = chanwe_get_colors()[["typst-caution"]],
-        alert = chanwe_get_colors()[["typst-red"]]
+        note = chanwe_get_colors()[["callout-note"]],
+        info = chanwe_get_colors()[["callout-note"]],
+        tip = chanwe_get_colors()[["callout-tip"]],
+        success = chanwe_get_colors()[["callout-do"]],
+        warning = chanwe_get_colors()[["callout-warning"]],
+        important = chanwe_get_colors()[["callout-important"]],
+        caution = chanwe_get_colors()[["callout-caution"]],
+        alert = chanwe_get_colors()[["callout-dont"]]
       ),
       section_marker_asset = system.file(
         "assets",
@@ -436,38 +529,38 @@ chanwe_preview_palette <- function(palette = "all") {
   luminance <- 0.299 * rgb[1, ] + 0.587 * rgb[2, ] + 0.114 * rgb[3, ]
   df$label_col <- ifelse(
     luminance < 0.45,
-    chanwe_get_colors()[["typst-white"]],
-    chanwe_get_colors()[["typst-ink"]]
+    chanwe_get_colors()[["pure-white"]],
+    chanwe_get_colors()[["ink"]]
   )
 
   ggplot2::ggplot(df, ggplot2::aes(x = col, y = -row)) +
     ggplot2::geom_tile(
       ggplot2::aes(fill = value),
-      color = chanwe_get_colors()[["typst-white"]],
+      color = chanwe_get_colors()[["pure-white"]],
       linewidth = 0.8,
       width = 0.95,
       height = 0.95
     ) +
     ggplot2::geom_text(
       ggplot2::aes(label = label, color = label_col),
-      family = "Satoshi",
+      family = "Inter",
       size = 3,
       lineheight = 1.1,
       fontface = "bold"
     ) +
     ggplot2::scale_color_identity() +
     ggplot2::scale_fill_identity() +
-    ggplot2::theme_void(base_family = "Satoshi") +
+    ggplot2::theme_void(base_family = "Inter") +
     ggplot2::labs(title = title_label) +
     ggplot2::theme(
       plot.title = ggplot2::element_text(
         hjust = 0,
         size = 14,
         face = "bold",
-        color = chanwe_get_colors()[["typst-ink"]]
+        color = chanwe_get_colors()[["ink"]]
       ),
       plot.background = ggplot2::element_rect(
-        fill = chanwe_get_colors()[["typst-neutral-100"]],
+        fill = chanwe_get_colors()[["paper"]],
         color = NA
       )
     )

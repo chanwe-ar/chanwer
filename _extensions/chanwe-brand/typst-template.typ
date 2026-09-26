@@ -8,25 +8,43 @@
 
 // ---------- Design tokens (as chanwe-publications) -------------
 #let chanwe-tokens = (
-  paper:        rgb("#FBFBFB"),
+  paper:        rgb("#F8FAFC"),
   paper-alt:    rgb("#F7F7F7"),
-  ink:          rgb("#0F0F0F"),
-  fg:           rgb("#211F1C"),
-  fg-muted:     rgb("#71706C"),
-  fg-subtle:    rgb("#928D86"),
+  ink:          rgb("#111319"),
+  // Surfaces that sit ON ink — dark panels and hairlines.
+  ink-panel:    rgb("#25272D"),
+  ink-soft:     rgb("#37393F"),
+  ink-border:   rgb("#4A4C52"),
+  ink-fg:       rgb("#64748B"),
+  ink-subtle:   rgb("#646464"),
+  ink-muted:    rgb("#2A2F39"),
+  ink-muted-soft: rgb("#333A44"),
+  fg:           rgb("#111319"),
+  fg-muted:     rgb("#475569"),
+  fg-subtle:    rgb("#8A94A6"),
+  callout-surface: rgb("#F8FAFC"),
+  surface-raised: rgb("#FFFFFF"),
+  // Hairlines: `rule` warm on paper, `rule-cool` for lede panels.
+  rule:        rgb("#E2E8F0"),
+  rule-cool:   rgb("#C6CDD6"),
+  emphasis:     _t.emphasis,
+  emphasis-soft: rgb("#5B5B5B"),
   primary:      rgb("#FD3810"),
   primary-soft: rgb("#FD38101A"),
-  beige:        rgb("#F5F1EB"),
+  beige:        rgb("#EEF2F7"),
   neutral-200:  rgb("#E8E8E8"),
   neutral-300:  rgb("#D4D4D4"),
   neutral-700:  rgb("#525252"),
   neutral-900:  rgb("#1F1F1F"),
   border:       rgb("#1F1F1F1A"),
-  code-bg:      rgb("#EDF0F1"),
-  band-bg:      rgb("#EDF0F1"),
-  font-display: ("Archivo", "Helvetica Neue", "Arial"),
+  code-bg:      rgb("#F1F5F9"),   // surface-sunken
+  band-bg:      rgb("#EBF0F6"),   // callout-header
+  font-display: ("Schibsted Grotesk", "Helvetica Neue", "Arial"),
   font-serif:   ("Cormorant Garamond", "Georgia", "Times New Roman"),
-  font-sans:    ("Satoshi", "Inter", "Helvetica Neue", "Arial"),
+  // La serif de display: numerales del índice y bajada de contratapa.
+  // Distinta de font-serif, que es la itálica del cuerpo.
+  font-serif-display:   ("Instrument Serif", "Georgia", "Times New Roman"),
+  font-sans:    ("Inter", "Helvetica Neue", "Arial"),
   font-mono:    ("JetBrains Mono", "Menlo", "Courier New"),
 )
 #let _t = chanwe-tokens
@@ -77,7 +95,7 @@
   #v(4mm)
   #set par(leading: 0.5em, justify: false)
   #text(font: _t.font-display, size: 16pt, weight: 600,
-        tracking: -0.01em, fill: white, body)
+        tracking: -0.035em, fill: white, body)
 ]
 
 #let chanwe-mark(body) = highlight(fill: _t.primary-soft,
@@ -246,7 +264,7 @@
           #block[
             #text(
               font: _t.font-display, size: 38pt, weight: 600,
-              tracking: -0.04em, fill: _t.neutral-900, title,
+              tracking: -0.065em, fill: _t.fg, title,
             )#h(3pt)#box(width: 8pt, height: 8pt, baseline: -2pt,
               circle(fill: _t.primary, stroke: none))
           ]
@@ -254,7 +272,7 @@
             v(7mm)
             set par(leading: 0.55em)
             set text(font: _t.font-serif, size: 14pt, weight: 300,
-                     style: "italic", fill: rgb("#484848"))
+                     style: "italic", fill: _t.emphasis)
             subtitle
           }
         ],
@@ -324,6 +342,45 @@
 // =============================================================
 // BACK COVER — full-bleed ink page (as chanwe-publications)
 // =============================================================
+// Campo de puntos de contratapa: trama pareja sobre obsidiana y un foco donde
+// los mismos puntos se encienden. El foco se dibuja punto por punto — un
+// tiling no se puede enmascarar con un degradado.
+#let _chanwe-dot-field(
+  width: 215.9mm,
+  height: 279.4mm,
+  step: 3.8mm,
+  dot: 0.55pt,
+  focus: (0.74, 0.40),
+  focus-radius: 0.34,
+  peak: 75%,
+  base: 72%,
+  color: _t.ink-fg,
+) = {
+  place(top + left, rect(
+    width: width, height: height, stroke: none,
+    fill: tiling(size: (step, step))[
+      #place(dx: step / 2, dy: step / 2, circle(radius: dot, fill: color.transparentize(base)))
+    ],
+  ))
+
+  let fx = focus.at(0) * width / 1mm
+  let fy = focus.at(1) * height / 1mm
+  let r = focus-radius * width / 1mm
+  let s = step / 1mm
+  for i in range(int(width / step)) {
+    for j in range(int(height / step)) {
+      let x = (i + 0.5) * s
+      let y = (j + 0.5) * s
+      let d = calc.sqrt(calc.pow(x - fx, 2) + calc.pow(y - fy, 2))
+      if d >= r { continue }
+      // Caída suave: encendido en el centro, apagado en el borde.
+      let t = calc.pow(1 - d / r, 1.5)
+      place(top + left, dx: x * 1mm, dy: y * 1mm,
+        circle(radius: dot, fill: color.transparentize(100% - t * peak)))
+    }
+  }
+}
+
 #let chanwe-book-back-cover(
   tagline-1: "Less template,",
   tagline-2: "more report.",
@@ -342,12 +399,7 @@
 
   set page(
     paper: "us-letter", margin: 0pt, header: none, footer: none, fill: _t.ink,
-    background: place(top + left, dx: -50mm, dy: -50mm,
-      circle(radius: 110mm,
-        fill: gradient.radial(_t.primary.transparentize(93%), black.transparentize(100%)),
-        stroke: none,
-      )
-    ),
+    background: _chanwe-dot-field(),
     foreground: if cover-edge != none {
       place(right + top, dx: -3mm, dy: 14mm,
         rotate(-90deg, origin: right + horizon,
@@ -366,12 +418,15 @@
     #grid(
       rows: (auto, 1fr, auto),
       row-gutter: 0pt,
-      align(left + top,
-        image(_chanwe-assets + "Logo_Blanco.svg", height: 20.2mm, fit: "contain")),
+      align(left + top, block(width: 100%, spacing: 0pt)[
+        #image(_chanwe-assets + "Logo_Blanco.svg", height: 10.1mm, fit: "contain")
+          #v(11mm)
+          // Filete de acento bajo el wordmark, del mismo grosor que el
+          // eyebrow de la portada.
+          #rect(width: 100%, height: 0.4pt, fill: _t.primary, stroke: none)
+      ]),
       [],
       block[
-        #image(_chanwe-assets + "Estrategia_Color.png", height: 10mm, fit: "contain")
-        #v(12mm)
         #set par(leading: 0.8em, justify: false)
         #text(font: _t.font-serif, style: "italic", size: 40pt,
               weight: 300, fill: white, tagline-1)
@@ -432,7 +487,7 @@
   block[
     #text(
       font: _t.font-display, size: 56pt, weight: 700,
-      tracking: -0.025em, fill: _t.neutral-900, title,
+      tracking: -0.05em, fill: _t.fg, title,
     )
     #box(width: 10pt, height: 10pt, baseline: 0pt,
       circle(fill: _t.primary, stroke: none))
@@ -464,7 +519,7 @@
           )[
             #link(loc)[
               #text(font: _t.font-serif, style: "italic", weight: 300,
-                    size: 20pt, tracking: -0.02em, fill: _t.neutral-900,
+                    size: 20pt, tracking: -0.035em, fill: _t.fg,
                     it.element.body)#text(font: _t.font-serif, style: "italic",
                     weight: 300, size: 20pt, fill: _t.primary, ".")
             ]
@@ -501,8 +556,8 @@
               text(font: _t.font-serif, style: "italic", weight: 300,
                    size: 24pt, fill: _t.primary, _pad2(n)),
               text(font: _t.font-display, size: 16pt, weight: 600,
-                   fill: _t.neutral-900, it.element.body),
-              text(font: _t.font-mono, size: 7pt, tracking: 0.18em,
+                   fill: _t.fg, it.element.body),
+              text(font: _t.font-mono, size: 7pt, tracking: 0.17em,
                    fill: _t.fg-subtle, upper(pages_str)),
             )
           ]
@@ -561,7 +616,7 @@
   back-cover-cols: (),
   section-numbering: "1.1",
   page-bg: none,
-  second-page-bg: rgb("#F7F7F7"),
+  second-page-bg: rgb("#F8FAFC"),
   body,
 ) = {
   let bg = if page-bg != none { page-bg } else { _t.paper }
@@ -595,7 +650,7 @@
     header: chanwe-book-header(doc-id, edition),
     footer: chanwe-book-footer(doc-id, edition),
   )
-  set text(font: _t.font-sans, size: 11pt, fill: _t.fg, lang: "en")
+  set text(font: _t.font-sans, size: 11pt, weight: 300, fill: _t.body-fg, lang: "en")
   set par(leading: 0.85em, justify: false, spacing: 1.0em)
   set heading(numbering: section-numbering)
 
@@ -616,8 +671,8 @@
 
   // ---- inline rules (as chanwe-publications) --------------------
   show emph: it => text(font: _t.font-serif, style: "italic", weight: 300,
-                        fill: rgb("#484848"), it.body)
-  show strong: it => text(weight: 600, fill: rgb("#484848"), it.body)
+                        fill: _t.emphasis, it.body)
+  show strong: it => text(weight: 600, fill: _t.emphasis, it.body)
   show math.equation.where(block: true): it => block(
     width: 100%,
     fill: _t.code-bg,
@@ -681,14 +736,14 @@
           block()[
             #set par(leading: 0.18em)
             #text(font: _t.font-display, size: 30pt, weight: 600,
-                 tracking: -0.025em, fill: _t.neutral-900, it.body)
+                 tracking: -0.05em, fill: _t.fg, it.body)
           ],
         )
       } else {
         block()[
           #set par(leading: 0.18em)
           #text(font: _t.font-display, size: 30pt, weight: 600,
-               tracking: -0.025em, fill: _t.neutral-900, it.body)
+               tracking: -0.05em, fill: _t.fg, it.body)
         ]
       }
       #v(1.5mm)
@@ -698,7 +753,7 @@
   show heading.where(level: 2): it => block(above: 12mm, below: 6mm)[
     #set par(leading: 0.2em)
     #let title = text(font: _t.font-display, size: 19pt, weight: 600,
-                      tracking: -0.01em, fill: _t.neutral-900, it.body)
+                      tracking: -0.035em, fill: _t.fg, it.body)
     #if it.numbering != none {
       grid(
         columns: (auto, 1fr),
@@ -714,7 +769,7 @@
   ]
   show heading.where(level: 3): it => block(above: 10mm, below: 5.5mm)[
     #let title = text(font: _t.font-display, size: 15pt, weight: 600,
-                      tracking: -0.01em, fill: _t.neutral-900, it.body)
+                      tracking: -0.035em, fill: _t.fg, it.body)
     #if it.numbering != none {
       grid(
         columns: (auto, 1fr),
@@ -728,7 +783,7 @@
   ]
   show heading.where(level: 4): it => block(above: 8mm, below: 4mm)[
     #let title = text(font: _t.font-display, size: 13pt, weight: 700,
-                      tracking: -0.01em, fill: _t.neutral-900, it.body)
+                      tracking: -0.035em, fill: _t.fg, it.body)
     #if it.numbering != none {
       grid(
         columns: (auto, 1fr),
@@ -755,7 +810,7 @@
         box(width: 5pt, height: 5pt, radius: 2.5pt, fill: _t.primary, baseline: 0.5pt)
         h(6pt)
         text(font: _t.font-mono, size: 8pt, weight: 500,
-             tracking: 0.18em, fill: _t.neutral-900, upper(it.body))
+             tracking: 0.18em, fill: _t.fg, upper(it.body))
       },
       3mm,
       line(length: 100%, stroke: 0.5pt + _t.neutral-300),

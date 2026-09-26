@@ -7,13 +7,22 @@
   display: none;
 }
 
+/* El wordmark del campo editorial se fue al riel de obsidiana, como en la
+   portada del reporte. Esta hoja existe para que los `url()` se resuelvan
+   relativos a assets/ y queden embebidos, asi que la regla que lo oculta
+   tiene que vivir aca tambien: es la que gana el cascade. */
 .quarto-title-banner .quarto-title .chanwe-title-logo {
-  display: block;
-  width: min(180px, 50vw);
-  height: 38px;
-  max-height: 38px;
-  background: url("Logo_Negro.svg") left center / contain no-repeat;
-  margin: clamp(0.45rem, 1vw, 0.85rem) 0 0;
+  display: none;
+}
+
+/* Los assets entran como token, no como regla: si esta hoja declarara el
+   `background-image` del arte, pisaria la lista de capas del shorthand de
+   brand.yml y se llevaria puesto el velo. Aca solo se resuelve la ruta;
+   la composicion sigue viviendo en brand.yml. */
+:root {
+  --cw-cover-art: url("bg_mountains.jpg");
+  --cw-wordmark-cool: url("Logo_Gris.svg");
+  --cw-contact-qr: url("contact-qr.svg");
 }
 
 .chapter-cover-media.chapter-cover-media-default {
@@ -24,21 +33,15 @@
   background: url("Logo_Negro.svg") left center / contain no-repeat;
 }
 
+/* El wordmark del pie va en `Logo_Gris.svg` (rule-cool), como el de la
+   contratapa y el del riel: sobre obsidiana el blanco puro queda reservado
+   para el papel de la tarjeta del QR. */
 .chanwe-footer-logo-mark {
   display: block;
   width: 136px;
   max-width: 42vw;
   height: 31px;
-  background: url("Logo_Blanco.svg") left center / contain no-repeat;
-}
-
-@media (max-width: 980px) {
-  .quarto-title-banner .quarto-title .chanwe-title-logo {
-    width: min(170px, 62vw);
-    max-height: 38px;
-    margin-top: 0.45rem;
-    margin-bottom: 0;
-  }
+  background: var(--cw-wordmark-cool) left center / contain no-repeat;
 }
 
 @media (max-width: 640px) {

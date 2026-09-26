@@ -7,32 +7,37 @@
 chanwe_load_fonts(path = NULL)
 }
 \arguments{
-\item{path}{Directory containing the TTF files. Defaults to the fonts
-bundled with any installed Chanwe Quarto extension, searched relative to
-the working directory: \verb{_extensions/chanwe-report/fonts} first, then
-\verb{_extensions/chanwe-publications/fonts}.}
+\item{path}{Directory containing the font files. Defaults to the fonts
+bundled with the chanwe-report Quarto extension, searched relative to the
+working directory (\verb{_extensions/chanwe-report/fonts}).}
 }
 \value{
 Invisibly, the resolved fonts directory path.
 }
 \description{
-Registers all Chanwe font families with \code{\link[systemfonts:register_font]{systemfonts::register_font()}},
-making them available to the ragg and svglite devices and to ggplot2.
-Call once per session before creating plots with \code{\link[=theme_chanwe]{theme_chanwe()}}.
+Registers the brand font families declared in the chanwe-brand
+\code{brand.yml} with \code{\link[systemfonts:register_font]{systemfonts::register_font()}}, making them available to
+the ragg and svglite devices and to ggplot2. Call once per session before
+creating plots with \code{\link[=theme_chanwe]{theme_chanwe()}}.
 }
 \details{
 Registered families:
 \itemize{
-\item \code{"Satoshi"} — Regular / Bold / Italic / BoldItalic
-\item \code{"Archivo"} — Regular / Bold / Italic / BoldItalic
-\item \code{"Archivo Medium"} — plain face = Medium (500); italic face = MediumItalic
-\item \code{"Archivo SemiBold"} — plain face = SemiBold (600); used by \code{\link[=chanwe_title]{chanwe_title()}}
-\item \code{"Archivo ExtraBold"} — plain face = ExtraBold (800)
-\item \code{".chanwe-subtitle"} — plain face = Archivo Light (300)
-\item \code{"Fraunces 9pt"} — Regular / Bold / Italic / BoldItalic
-\item \code{"Cormorant Garamond"} — variable font; used by the KPI hero value and subtitle notes
+\item \code{"Inter"} — body text; Regular / Bold / Italic / BoldItalic
+\item \code{"Inter Light"} — plain face = Light (300), the brand body weight
+\item \code{"Inter Medium"} — plain face = Medium (500)
+\item \code{"Schibsted Grotesk"} — display; Regular / Bold
+\item \code{"Schibsted Grotesk Medium"} — plain face = Medium (500)
+\item \code{"Schibsted Grotesk SemiBold"} — plain face = SemiBold (600), the brand
+display weight; used by \code{\link[=chanwe_title]{chanwe_title()}}
+\item \code{"Instrument Serif"} — Regular / Italic
+\item \code{"Cormorant Garamond"} — Regular / Bold / Italic / BoldItalic; used by
+the KPI hero value and subtitle notes
 \item \code{"JetBrains Mono"} — Regular / Bold / Italic / BoldItalic
-\item \code{"JetBrains Mono Thin"} — plain face = Thin (100); used by axis titles / facet labels
+\item \code{"JetBrains Mono Medium"} — plain face = Medium (500); used by the
+caption stamp
+\item \code{"JetBrains Mono Thin"} — plain face = Thin (100); used by axis titles /
+facet labels
 }
 }
 \examples{

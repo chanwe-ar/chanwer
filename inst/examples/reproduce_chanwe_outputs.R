@@ -38,7 +38,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
   geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
   # facet_wrap(~am) +
   scale_color_chanwe_d() +
-  theme_chanwe(bg_color = "beige") +
+  theme_chanwe(bg_color = "slate") +
   labs(
     title = chanwe_title(
       "Performance profile by transmission",
@@ -56,7 +56,7 @@ ggplot(mt, aes(wt, mpg, color = hp_band)) +
 #   geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
 #   # facet_wrap(~am) +
 #   scale_color_chanwe_d() +
-#   theme_chanwe(bg_color = "gray", plot_borders = "none") +
+#   theme_chanwe(bg_color = "slate", plot_borders = "none") +
 #   labs(
 #     title = chanwe_title(
 #       "Performance profile by transmission",
@@ -92,7 +92,7 @@ pdf_preview(
     geom_point(size = 2.2, alpha = 0.88) +
     geom_smooth(method = "lm", se = FALSE, linewidth = 0.7) +
     scale_color_chanwe_d() +
-    theme_chanwe(bg_color = "beige") +
+    theme_chanwe(bg_color = "slate") +
     labs(
       title = chanwe_title(
         "Performance profile by transmission",

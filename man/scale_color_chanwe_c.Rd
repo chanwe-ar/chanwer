@@ -31,11 +31,11 @@ brand family from \code{\link[=chanwe_palette]{chanwe_palette()}}.
 }
 \details{
 Available palettes: \code{"orange"} (default — the report primary gradient),
-\code{"coral"}, \code{"blue"}, \code{"teal"}, \code{"green"}, \code{"vermillion"}, \code{"magenta"},
-\code{"violet"}, \code{"mustard"}, and \code{"ink"}. The green and vermillion ramps end
-in the signed positive/negative tokens so their dark pole stays readable;
-the brand's yellow and cyan families are deliberately not offered — their
-entire ramp is too light to encode magnitude on the brand surfaces.
+the series-hue ramps \code{"blue"}, \code{"indigo"}, \code{"teal"}, \code{"green"},
+\code{"amber"}, \code{"red"} and \code{"purple"} (\code{"vermillion"} and \code{"violet"} are
+their earlier names), plus \code{"mustard"} and \code{"ink"}. The green and red
+ramps end in the signed positive/negative tokens so their dark pole
+stays readable.
 
 For polarity (values diverging around zero) use
 \code{\link[=scale_color_chanwe_div]{scale_color_chanwe_div()}} instead.

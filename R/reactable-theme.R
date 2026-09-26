@@ -2,8 +2,8 @@
 #'
 #' An interactive `reactable` styled with the same header grammar as
 #' [chanwe_gt()] and [chanwe_kbl()]: eyebrow / title / subtitle block above
-#' the table, `//`-prefixed caption below, mono-caps column labels, JetBrains
-#' Mono tabular figures right-aligned, hairline ink rules, optional valence
+#' the table, orange stamp caption below, mono-caps column labels, JetBrains
+#' Mono tabular figures right-aligned, hairline slate rules, optional valence
 #' colouring for signed columns.
 #'
 #' Interaction states follow the brand: the sortable header darkens on hover,
@@ -13,7 +13,7 @@
 #'
 #' @param data A data frame or tibble.
 #' @param title,subtitle,eyebrow Header block rendered above the table.
-#' @param caption Source note rendered below the table with a `//` prefix.
+#' @param caption Source note rendered below the table as the orange stamp.
 #' @param signed Optional character vector of column names coloured by
 #'   valence (positive green, negative vermillion, zero/NA neutral).
 #' @param smaller_is_better Logical. Flip the valence mapping for `signed`
@@ -73,7 +73,7 @@ chanwe_reactable <- function(
     fontVariantNumeric = "tabular-nums"
   )
 
-  # Column defaults: numbers right-aligned in mono, text left in Satoshi.
+  # Column defaults: numbers right-aligned in mono, text left in Inter.
   # Text cells stay at body weight and colour (400, fg) — the same as the
   # chanwe_gt() body — so a table of labels reads as data, not as a wall of
   # medium-weight ink. Emphasis belongs to the header block and signed cells.
@@ -122,15 +122,15 @@ chanwe_reactable <- function(
   theme <- reactable::reactableTheme(
     color = tk$fg,
     backgroundColor = bg,
-    borderColor = tk$n200,
+    borderColor = tk$rule_row,
     highlightColor = tk$n100,
     cellPadding = "10px 12px",
     style = list(fontFamily = .cw_font_sans, fontSize = "13px"),
-    # Ink rule above the column labels — with a header block the widget gets
+    # Slate rule above the column labels — with a header block the widget gets
     # two rules, one on the header's top edge and this one, same as chanwe_gt()
-    tableStyle = list(borderTop = paste("1px solid", tk$ink)),
+    tableStyle = list(borderTop = paste("1px solid", tk$rule)),
     # Column labels take the sharp brand orange accent (same token as the
-    # eyebrow and the `//` caption prefix); hover still darkens to ink.
+    # eyebrow and the caption stamp); hover still darkens to ink.
     headerStyle = list(
       fontFamily = .cw_font_mono,
       fontSize = "10px",
@@ -138,7 +138,7 @@ chanwe_reactable <- function(
       letterSpacing = ".14em",
       textTransform = "uppercase",
       color = tk$accent,
-      borderBottom = paste("0.5px solid", tk$n300),
+      borderBottom = paste("0.5px solid", tk$rule),
       transition = paste("color 120ms", ease),
       "&:hover" = list(color = tk$ink),
       "&:active" = list(transform = "translateY(1px)")
@@ -152,7 +152,7 @@ chanwe_reactable <- function(
       fontSize = "10px",
       color = tk$fg_muted,
       backgroundColor = bg,
-      borderTop = paste("1px solid", tk$ink),
+      borderTop = paste("1px solid", tk$rule),
       padding = "6px 12px"
     ),
     # flat page buttons: squared corners, tight padding

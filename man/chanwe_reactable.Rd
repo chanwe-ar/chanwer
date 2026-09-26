@@ -22,7 +22,7 @@ chanwe_reactable(
 
 \item{title, subtitle, eyebrow}{Header block rendered above the table.}
 
-\item{caption}{Source note rendered below the table with a \verb{//} prefix.}
+\item{caption}{Source note rendered below the table as the orange stamp.}
 
 \item{signed}{Optional character vector of column names coloured by
 valence (positive green, negative vermillion, zero/NA neutral).}
@@ -47,8 +47,8 @@ An \code{htmlwidget} of class \code{reactable}.
 \description{
 An interactive \code{reactable} styled with the same header grammar as
 \code{\link[=chanwe_gt]{chanwe_gt()}} and \code{\link[=chanwe_kbl]{chanwe_kbl()}}: eyebrow / title / subtitle block above
-the table, \verb{//}-prefixed caption below, mono-caps column labels, JetBrains
-Mono tabular figures right-aligned, hairline ink rules, optional valence
+the table, orange stamp caption below, mono-caps column labels, JetBrains
+Mono tabular figures right-aligned, hairline slate rules, optional valence
 colouring for signed columns.
 }
 \details{

@@ -50,16 +50,17 @@
 # ─── element constructors ────────────────────────────────────────────────────
 
 new_element_chanwe_title <- function(
-  family = "Archivo",
+  family = "Schibsted Grotesk SemiBold",
   face = "bold",
   size = 18,
-  colour = "#1A1A1A",
+  colour = "#111319",
   hjust = 0,
   vjust = 1,
   eyebrow_family = "JetBrains Mono",
   eyebrow_size = 6,
-  eyebrow_colour = "#FB3D0E",
-  ink_colour = "#1A1A1A",
+  eyebrow_colour = "#FD3810",
+  ink_colour = "#111319",
+  rule_colour = "#CFD6DF",
   draw_bottom_line = FALSE,
   top_pad = 8,
   inherit.blank = FALSE
@@ -81,6 +82,7 @@ new_element_chanwe_title <- function(
       eyebrow_size = eyebrow_size,
       eyebrow_colour = eyebrow_colour,
       ink_colour = ink_colour,
+      rule_colour = rule_colour,
       draw_bottom_line = draw_bottom_line,
       top_pad = top_pad
     ),
@@ -89,16 +91,17 @@ new_element_chanwe_title <- function(
 }
 
 new_element_chanwe_subtitle <- function(
-  family = "Satoshi",
+  family = "Inter",
   italic_family = "Cormorant Garamond",
   size = 9,
-  colour = "#555555",
+  colour = "#475569",
   hjust = 0,
   vjust = 1,
-  ink_colour = "#1A1A1A",
+  ink_colour = "#111319",
+  rule_colour = "#CFD6DF",
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
-  kpi_label_colour = "#AEABA6",
+  kpi_label_colour = "#8A94A6",
   gap_ln = 6,
   sub_bot = 20,
   sub_top = 3,
@@ -119,6 +122,7 @@ new_element_chanwe_subtitle <- function(
       debug = FALSE,
       inherit.blank = inherit.blank,
       ink_colour = ink_colour,
+      rule_colour = rule_colour,
       italic_family = italic_family,
       mono_family = mono_family,
       mono_thin_family = mono_thin_family,
@@ -136,11 +140,12 @@ new_element_chanwe_caption <- function(
   family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
   size = 7,
-  colour = "#555555",
+  colour = "#475569",
   hjust = 0,
   vjust = 1,
-  primary_colour = "#FB3D0E",
-  ink_colour = "#1A1A1A",
+  primary_colour = "#FD3810",
+  ink_colour = "#111319",
+  rule_colour = "#CFD6DF",
   inherit.blank = FALSE
 ) {
   structure(
@@ -158,7 +163,8 @@ new_element_chanwe_caption <- function(
       debug = FALSE,
       inherit.blank = inherit.blank,
       primary_colour = primary_colour,
-      ink_colour = ink_colour
+      ink_colour = ink_colour,
+      rule_colour = rule_colour
     ),
     class = c("element_chanwe_caption", "element_text", "element")
   )
@@ -182,13 +188,13 @@ new_element_chanwe_caption <- function(
 #                = margin[3] from element — 2pt normally, 20pt when no subtitle.
 #   [bottom line] optional 0.4pt separator (draw_bottom_line=TRUE, no-subtitle mode).
 #                 positioned at bot−5pt from bottom so 15pt of bot sits below it.
-#   t_h          title text (Archivo)
+#   t_h          title text (Schibsted Grotesk)
 #   gap1         space between title and eyebrow (6pt, only when has_ey)
 #   ey_h         eyebrow text (JetBrains Mono, only when has_ey)
 #   top          top padding above eyebrow: top_pad (4pt compact / 8pt spacious)
 #                or 0 when there is no eyebrow
 #   gap2         gap between eyebrow/title and the top border line (draw_top)
-#   [top line]   optional 0.1pt border (draw_top, from plot_borders option)
+#   [top line]   optional 0.4pt border (draw_top, from plot_borders option)
 #
 # ── Subtitle grob layout (bottom → top) ──────────────────────────────────────
 #
@@ -200,7 +206,7 @@ new_element_chanwe_caption <- function(
 #     gap_n        gap between note and separator (3pt, only when has_n)
 #     n_h          note text (italic Cormorant Garamond, only when has_n)
 #     gap_ln       gap between subtitle text and separator (6pt compact / 14pt spacious)
-#     s_h          subtitle text (Satoshi)
+#     s_h          subtitle text (Inter)
 #     top (5pt)
 #
 #   MODE B — text + KPI scoreboard:
@@ -224,7 +230,8 @@ new_element_chanwe_caption <- function(
   ink_col,
   margin_bottom = 2,
   draw_bottom_line = FALSE,
-  top_pad = 8
+  top_pad = 8,
+  rule_col = ink_col
 ) {
   grid::gTree(
     title_text = title_text,
@@ -233,6 +240,7 @@ new_element_chanwe_caption <- function(
     title_gp = title_gp,
     eyebrow_gp = eyebrow_gp,
     ink_col = ink_col,
+    rule_col = rule_col,
     margin_bottom = margin_bottom,
     draw_bottom_line = draw_bottom_line,
     top_pad = top_pad,
@@ -308,7 +316,7 @@ makeContent.cw_title_tree <- function(x) {
       grid::linesGrob(
         x = grid::unit(c(0, 1), "npc"),
         y = grid::unit(c(line_y, line_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.1, lend = "square")
+        gp = grid::gpar(col = x$rule_col, lwd = 0.4, lend = "square")
       )
     )
   }
@@ -318,7 +326,7 @@ makeContent.cw_title_tree <- function(x) {
       grid::linesGrob(
         x = grid::unit(c(0, 1), "npc"),
         y = grid::unit(c(bln_y, bln_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.4, lend = "square")
+        gp = grid::gpar(col = x$rule_col, lwd = 0.4, lend = "square")
       )
     )
   }
@@ -345,12 +353,14 @@ heightDetails.cw_title_tree <- function(x) {
   italic_family = "Cormorant Garamond",
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
-  kpi_label_colour = "#AEABA6",
+  kpi_label_colour = "#8A94A6",
   gap_ln = 6,
   sub_bot = 20,
-  sub_top = 3
+  sub_top = 3,
+  rule_col = ink_col
 ) {
   grid::gTree(
+    rule_col = rule_col,
     sub_text = sub_text,
     note_text = note_text,
     draw_middle = draw_middle,
@@ -443,7 +453,7 @@ makeContent.cw_subtitle_tree <- function(x) {
       grid::linesGrob(
         x = grid::unit(c(0, 1), "npc"),
         y = grid::unit(c(line_y, line_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.4, lend = "square")
+        gp = grid::gpar(col = x$rule_col, lwd = 0.4, lend = "square")
       )
     )
   }
@@ -464,7 +474,7 @@ makeContent.cw_subtitle_tree <- function(x) {
     kpi <- x$kpi_data
     mono_fam <- x$mono_family %||_% "JetBrains Mono"
     ink <- x$ink_col
-    fg_muted <- x$kpi_label_colour %||_% chanwe_get_colors()[["typst-fg-muted"]]
+    fg_muted <- x$kpi_label_colour %||_% chanwe_get_colors()[["fg-muted"]]
     # canonical signed tokens — same pair as chanwe_col_signed() and the
     # diverging scale poles
     signed <- chanwe_get_signed()
@@ -485,7 +495,7 @@ makeContent.cw_subtitle_tree <- function(x) {
       grid::linesGrob(
         x = grid::unit(c(0, 1), "npc"),
         y = grid::unit(c(kpi_bot_ln_y, kpi_bot_ln_y), "pt"),
-        gp = grid::gpar(col = x$ink_col, lwd = 0.4, lend = "square")
+        gp = grid::gpar(col = x$rule_col, lwd = 0.4, lend = "square")
       )
     )
 
@@ -613,9 +623,13 @@ heightDetails.cw_subtitle_tree <- function(x) {
   cap_gp,
   pfx_gp,
   sep_gp,
-  ink_col
+  ink_col,
+  rule_col = ink_col,
+  stamp_fill = "#FD3810"
 ) {
   grid::gTree(
+    rule_col = rule_col,
+    stamp_fill = stamp_fill,
     cap_text = cap_text,
     draw_bottom = draw_bottom,
     cap_gp = cap_gp,
@@ -626,17 +640,25 @@ heightDetails.cw_subtitle_tree <- function(x) {
   )
 }
 
+# The caption is the chanwe-report figure-frame stamp: a square orange box
+# with the source line in white mono caps, under a slate hairline.
 .cw_caption_heights <- function(x) {
-  c_h <- .cw_str_h(x$cap_text, x$cap_gp)
+  c_h <- .cw_str_h(toupper(x$cap_text), x$cap_gp)
+  fs <- x$cap_gp$fontsize %||_% 5
+  pad_y <- fs * 0.9 # stamp inset, top and bottom
+  box_h <- c_h + 2 * pad_y
   top <- 16 # top padding: space between chart bottom and the separator line
   bot <- 4 # bottom padding
   tln_h <- 0.4 # top separator line (always drawn)
-  gap1 <- 8 # gap between caption text and the separator line above
+  gap1 <- 6 # gap between the stamp and the separator line above
   gap2 <- if (x$draw_bottom) 4 else 0
   bln_h <- if (x$draw_bottom) 0.3 else 0
-  total <- bot + bln_h + gap2 + c_h + gap1 + tln_h + top
+  total <- bot + bln_h + gap2 + box_h + gap1 + tln_h + top
   list(
     c_h = c_h,
+    pad_y = pad_y,
+    pad_x = fs * 2.2,
+    box_h = box_h,
     top = top,
     bot = bot,
     tln_h = tln_h,
@@ -652,35 +674,34 @@ heightDetails.cw_subtitle_tree <- function(x) {
 makeContent.cw_caption_tree <- function(x) {
   d <- .cw_caption_heights(x)
   # Build from bottom up:
-  # bot | bot_line | gap2 | cap_text | gap1 | top_line | top_pad
+  # bot | bot_line | gap2 | stamp | gap1 | top_line | top_pad
   bln_y <- d$bot + d$bln_h / 2
-  cap_y <- d$bot + d$bln_h + d$gap2 + d$c_h / 2
-  tln_y <- d$bot + d$bln_h + d$gap2 + d$c_h + d$gap1 + d$tln_h / 2
+  box_y <- d$bot + d$bln_h + d$gap2 + d$box_h / 2
+  tln_y <- d$bot + d$bln_h + d$gap2 + d$box_h + d$gap1 + d$tln_h / 2
 
-  # "// " prefix + text on the same row
-  pfx_str <- "//  "
-  pfx_g <- grid::textGrob(
-    pfx_str,
-    x = grid::unit(0, "npc"),
-    y = grid::unit(cap_y, "pt"),
-    just = c("left", "center"),
-    gp = x$pfx_gp
-  )
   cap_g <- grid::textGrob(
-    x$cap_text,
-    x = grid::unit(1, "grobwidth", pfx_g) + grid::unit(3, "pt"),
-    y = grid::unit(cap_y, "pt"),
+    toupper(x$cap_text),
+    x = grid::unit(d$pad_x, "pt"),
+    y = grid::unit(box_y, "pt"),
     just = c("left", "center"),
     gp = x$cap_gp
   )
+  box_g <- grid::rectGrob(
+    x = grid::unit(0, "npc"),
+    y = grid::unit(box_y, "pt"),
+    width = grid::unit(1, "grobwidth", cap_g) + grid::unit(2 * d$pad_x, "pt"),
+    height = grid::unit(d$box_h, "pt"),
+    just = c("left", "center"),
+    gp = grid::gpar(fill = x$stamp_fill, col = NA)
+  )
 
   ch <- grid::gList(
-    pfx_g,
+    box_g,
     cap_g,
     grid::linesGrob(
       x = grid::unit(c(0, 1), "npc"),
       y = grid::unit(c(tln_y, tln_y), "pt"),
-      gp = grid::gpar(col = x$ink_col, lwd = 0.4, lend = "square")
+      gp = grid::gpar(col = x$rule_col, lwd = 0.4, lend = "square")
     )
   )
   if (x$draw_bottom) {
@@ -697,6 +718,7 @@ makeContent.cw_caption_tree <- function(x) {
   }
   grid::setChildren(x, ch)
 }
+
 
 #' @method heightDetails cw_caption_tree
 #' @export
@@ -715,7 +737,7 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
 
   pb <- getOption("chanwer.plot_borders", default = "none")
   draw_top <- pb %in% c("top", "top_bottom", "complete")
-  ink <- element$ink_colour %||_% "#1A1A1A"
+  ink <- element$ink_colour %||_% "#111319"
 
   parts <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
   has_eyebrow <- length(parts) == 2L
@@ -723,7 +745,7 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
   title_text <- if (has_eyebrow) parts[2L] else parts[1L]
 
   title_gp <- grid::gpar(
-    fontfamily = element$family %||_% "Archivo",
+    fontfamily = element$family %||_% "Schibsted Grotesk SemiBold",
     fontsize = element$size %||_% 18,
     fontface = element$face %||_% "bold",
     col = element$colour %||_% ink
@@ -731,14 +753,15 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
   eyebrow_gp <- grid::gpar(
     fontfamily = element$eyebrow_family %||_% "JetBrains Mono",
     fontsize = element$eyebrow_size %||_% 6,
-    col = element$eyebrow_colour %||_% "#FB3D0E"
+    col = element$eyebrow_colour %||_% "#FD3810"
   )
 
   margin_bottom <- as.numeric(element$margin[3L] %||_% 2)
   .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink,
                  margin_bottom = margin_bottom,
                  draw_bottom_line = isTRUE(element$draw_bottom_line),
-                 top_pad = element$top_pad %||_% 8)
+                 top_pad = element$top_pad %||_% 8,
+                 rule_col = element$rule_colour %||_% "#CFD6DF")
 }
 
 #' @method element_grob element_chanwe_subtitle
@@ -748,11 +771,11 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     return(grid::nullGrob())
   }
 
-  ink <- element$ink_colour %||_% "#1A1A1A"
+  ink <- element$ink_colour %||_% "#111319"
   mono_fam <- element$mono_family %||_% "JetBrains Mono"
   mono_thin_fam <- element$mono_thin_family %||_% mono_fam
   italic_fam <- element$italic_family %||_% "Cormorant Garamond"
-  kpi_label_colour <- element$kpi_label_colour %||_% "#AEABA6"
+  kpi_label_colour <- element$kpi_label_colour %||_% "#8A94A6"
 
   parts <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
   sub_text <- parts[1L]
@@ -762,20 +785,20 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
 
   sub_size <- element$size %||_% 9
   sub_gp <- grid::gpar(
-    fontfamily = element$family %||_% "Satoshi",
+    fontfamily = element$family %||_% "Inter",
     fontsize = sub_size,
-    col = element$colour %||_% "#555555"
+    col = element$colour %||_% "#475569"
   )
   note_gp <- grid::gpar(
     fontfamily = italic_fam,
     fontsize = sub_size * 0.85,
     fontface = "italic",
-    col = element$colour %||_% "#555555"
+    col = element$colour %||_% "#475569"
   )
   sep_gp <- grid::gpar(
     fontfamily = mono_fam,
     fontsize = sub_size * 0.65,
-    col = ink
+    col = element$rule_colour %||_% "#CFD6DF"
   )
 
   .cw_subtitle_tree(
@@ -793,7 +816,8 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     kpi_label_colour = kpi_label_colour,
     gap_ln = element$gap_ln %||_% 6,
     sub_bot = element$sub_bot %||_% 20,
-    sub_top = element$sub_top %||_% 3
+    sub_top = element$sub_top %||_% 3,
+    rule_col = element$rule_colour %||_% "#CFD6DF"
   )
 }
 
@@ -806,16 +830,20 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
 
   pb <- getOption("chanwer.plot_borders", default = "none")
   draw_bottom <- pb %in% c("bottom", "top_bottom", "complete")
-  ink <- element$ink_colour %||_% "#1A1A1A"
-  primary <- element$primary_colour %||_% "#FB3D0E"
+  ink <- element$ink_colour %||_% "#111319"
+  primary <- element$primary_colour %||_% "#FD3810"
   cap_size <- element$size %||_% 9
 
-  # Caption text in the regular mono weight: the Thin face (100) reads as
-  # gray even in ink, so the source line was hard to see.
+  rule <- element$rule_colour %||_% "#CFD6DF"
+  # The chanwe-report figure-frame stamp: white mono caps on the primary
+  # orange, in the medium mono weight so the small caps hold on the fill.
+  mono_medium <- element$mono_medium_family %||_% "JetBrains Mono Medium"
+  has_medium <- requireNamespace("systemfonts", quietly = TRUE) &&
+    mono_medium %in% systemfonts::registry_fonts()$family
   cap_gp <- grid::gpar(
-    fontfamily = element$family %||_% "JetBrains Mono",
+    fontfamily = if (has_medium) mono_medium else element$family %||_% "JetBrains Mono",
     fontsize = cap_size,
-    col = element$colour %||_% "#808080"
+    col = element$colour %||_% "#FFFFFF"
   )
   pfx_gp <- grid::gpar(
     fontfamily = element$family %||_% "JetBrains Mono",
@@ -825,7 +853,7 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
   sep_gp <- grid::gpar(
     fontfamily = element$family %||_% "JetBrains Mono",
     fontsize = cap_size,
-    col = ink
+    col = rule
   )
 
   .cw_caption_tree(
@@ -834,7 +862,9 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
     cap_gp,
     pfx_gp,
     sep_gp,
-    ink
+    ink,
+    rule_col = rule,
+    stamp_fill = primary
   )
 }
 

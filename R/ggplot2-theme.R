@@ -5,7 +5,7 @@ chanwe_discrete_pal <- function(palette = "chart", reverse = FALSE) {
   # Ramp groups (one-hue shade scales) sample across the FULL ramp so small
   # n still spans light → dark; categorical groups keep their fixed,
   # CVD-validated slot order and recycle past their length.
-  is_ramp <- is_named_group && grepl("^(p13_|p15_|mb_)", palette[[1L]])
+  is_ramp <- is_named_group && grepl("^(ramp_|p13_|p15_|mb_)", palette[[1L]])
   values <- if (is_named_group) {
     unname(chanwe_palette(palette))
   } else {
@@ -36,8 +36,7 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
       stop(
         "`palette` must be one of: ",
         paste(sprintf("'%s'", names(ramps)), collapse = ", "),
-        " (yellow and cyan are excluded: their ramps are too light to encode",
-        " magnitude on the brand surfaces).",
+        ".",
         call. = FALSE
       )
     }
@@ -58,17 +57,17 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' ## Typography
 #' | Element | Font | Weight |
 #' |---------|------|--------|
-#' | Title (with eyebrow) | Archivo | 400 |
-#' | Subtitle | Satoshi | 400 |
+#' | Title (with eyebrow) | Schibsted Grotesk | 600 |
+#' | Subtitle | Inter | 400 |
 #' | Subtitle note / KPI hero | Cormorant Garamond | italic |
-#' | Axis text | Satoshi | 400 |
+#' | Axis text | Inter | 400 |
 #' | Axis titles | JetBrains Mono | 400 |
 #' | Facet strip labels | JetBrains Mono Thin | 100 |
 #' | Legend text / title | JetBrains Mono | 400 |
-#' | Caption | JetBrains Mono | 400 |
+#' | Caption stamp | JetBrains Mono caps, white on orange | 500 |
 #'
-#' The eyebrow and the caption `//` prefix render in the brand orange
-#' (`brand-orange`, `#FD3810`) -- the same accent the HTML stylesheet uses
+#' The eyebrow and the caption stamp render in the brand orange
+#' (`primary`, `#FD3810`) -- the same accent the HTML stylesheet uses
 #' for section numbers and that the table helpers use for their eyebrows.
 #' The title is set at 1.85x the base size with a 1.0 line-height so the
 #' header, subtitle/KPI block and chart read as three distinct levels.
@@ -77,27 +76,31 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' families. `theme_chanwe()` calls it automatically.
 #'
 #' ## Background variants
-#' | Name | Hex | Major grid | Minor grid |
-#' |------|-----|------------|------------|
-#' | `"metallic"` | `#F7F7F7` | `#D8D8D8` | `#EFEFEF` |
-#' | `"white-ivory"` | `#FAF9F7` | `#C6C3BC` | `#E2E0DA` |
-#' | `"white"` | `#FFFFFF` | `#DCDCDC` | `#F7F7F7` |
-#' | `"gray"` | `#EDF0F1` | `#C6CCCF` | `#E3E7E9` |
-#' | `"beige"` | `#F5F1EB` | `#AFA79B` | `#CCC5BA` |
+#' Every surface is a `brand.yml` token.
+#'
+#' | Name | Token | Hex | Major grid | Minor grid |
+#' |------|-------|-----|------------|------------|
+#' | `"paper"` | `paper` | `#F8FAFC` | `#CFD6DF` | `#EBF0F6` |
+#' | `"white"` | `pure-white` | `#FFFFFF` | `#CFD6DF` | `#F1F5F9` |
+#' | `"sunken"` | `surface-sunken` | `#F1F5F9` | `#C6CDD6` | `#E2E8F0` |
+#' | `"slate"` | `surface-slate` | `#EBF0F6` | `#C6CDD6` | `#E2E8F0` |
+#'
+#' The earlier names still resolve: `"metallic"` and `"white-ivory"` to
+#' `"paper"`, `"gray"` to `"slate"`.
 #'
 #' @param base_text_size Base text size in points. Default `6.75`. Title scales at ×1.85, subtitle ×0.90, eyebrow ×0.62.
-#' @param base_family Base font family for body text. Default `"Satoshi"`.
+#' @param base_family Base font family for body text. Default `"Inter"`.
 #' @param base_lineheight Base line-height multiplier. Default `1.60`.
 #' @param legend_position Legend position string passed to
 #'   `theme(legend.position = )`. Default `"bottom"`.
 #' @param bg_color Background color for the plot surface. Accepts a hex string
-#'   or one of `"metallic"` (default), `"white-ivory"`, `"white"`, `"gray"`,
-#'   `"beige"`, or `"transparent"`.
+#'   or one of `"paper"` (default), `"white"`, `"sunken"`, `"slate"`, or
+#'   `"transparent"`.
 #' @param plot_padding Uniform outer margin in pts applied to all four sides of
 #'   the plot (title, caption, and panel included). Default `10`.
 #'   Pass a single number, e.g. `plot_padding = 18`.
 #' @param plot_borders Controls decorative border lines on the plot frame.
-#'   `"none"` (default) draws no borders. `"top"` adds a thin ink line above
+#'   `"none"` (default) draws no borders. `"top"` adds a thin slate line above
 #'   the title. `"bottom"` adds one below the caption. `"top_bottom"` adds
 #'   both. `"complete"` adds all four sides. Pass `TRUE` as shorthand for
 #'   `"top_bottom"`.
@@ -139,7 +142,7 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #'     top padding above the eyebrow.
 #'   }
 #'   \item{No separator line (`header_line = FALSE`)}{
-#'     Pass `header_line = FALSE` to suppress the thin ink line that closes the
+#'     Pass `header_line = FALSE` to suppress the thin slate line that closes the
 #'     header area. Works in both subtitle and no-subtitle modes. Useful for
 #'     minimal or embedded layouts where the line adds visual noise.
 #'   }
@@ -152,7 +155,7 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' # Plots are assigned; print them to render (requires the brand fonts,
 #' # see chanwe_load_fonts()).
 #'
-#' ## Basic scatter — metallic background, bottom legend
+#' ## Basic scatter — paper background, bottom legend
 #' p1 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
 #'   ggplot2::geom_point(size = 3) +
 #'   scale_color_chanwe_d() +
@@ -163,7 +166,7 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #'   ) +
 #'   theme_chanwe()
 #'
-#' ## With eyebrow, beige background, no legend
+#' ## With eyebrow, slate background, no legend
 #' p2 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
 #'   ggplot2::geom_point(size = 3) +
 #'   scale_color_chanwe_d() +
@@ -172,9 +175,9 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #'     subtitle = "Highway mpg vs vehicle weight",
 #'     caption = chanwe_caption("Source: Motor Trend, 1974")
 #'   ) +
-#'   theme_chanwe(bg_color = "beige", legend_position = "none")
+#'   theme_chanwe(bg_color = "slate", legend_position = "none")
 #'
-#' ## Bar chart — gray background, fill scale
+#' ## Bar chart — white background, fill scale
 #' avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
 #' p3 <- ggplot2::ggplot(avg_mpg,
 #'   ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
@@ -184,13 +187,13 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #'     title = chanwe_title("Average MPG by cylinder count"),
 #'     caption = chanwe_caption("Source: mtcars")
 #'   ) +
-#'   theme_chanwe(bg_color = "gray", legend_position = "none")
+#'   theme_chanwe(bg_color = "white", legend_position = "none")
 theme_chanwe <- function(
   base_text_size = 6.75,
-  base_family = "Satoshi",
+  base_family = "Inter",
   base_lineheight = 1.60,
   legend_position = "bottom",
-  bg_color = "metallic",
+  bg_color = "paper",
   plot_padding = 10,
   plot_borders = "none",
   has_subtitle = TRUE,
@@ -200,37 +203,34 @@ theme_chanwe <- function(
   chanwe_load_fonts()
   options(chanwer.plot_borders = plot_borders)
 
-  bg_color <- chanwe_resolve_bg(bg_color)
   colors <- chanwe_get_colors()
-  surface_fill <- bg_color
   # Major grid: one step darker than the surface so the lines register
   # without competing with the marks (paired with a 0.1 linewidth below).
-  grid_color <- switch(
-    bg_color,
-    "#F7F7F7" = "#D8D8D8",
-    "#FAF9F7" = "#C6C3BC",
-    "#FFFFFF" = "#DCDCDC",
-    "#EDF0F1" = "#C6CCCF",
-    "#F5F1EB" = "#AFA79B",
-    "#B8B8B8"
-  )
-  grid_color_minor <- switch(
-    bg_color,
-    "#F7F7F7" = "#EFEFEF",
-    "#FAF9F7" = "#E2E0DA",
-    "#FFFFFF" = "#F7F7F7",
-    "#EDF0F1" = "#E3E7E9",
-    "#F5F1EB" = "#CCC5BA",
-    "#D6D6D6"
-  )
+  # Raw colours fall back to the rule-cool / rule hairlines.
+  surface <- chanwe_surface_name(bg_color)
+  grid <- if (is.na(surface)) {
+    c(major = colors[["rule-cool"]], minor = colors[["rule"]])
+  } else {
+    .chanwe_surfaces[[surface]]
+  }
+  grid_color <- grid[["major"]]
+  grid_color_minor <- grid[["minor"]]
+  bg_color <- chanwe_resolve_bg(bg_color)
+  surface_fill <- bg_color
   panel_border_element <- ggplot2::element_blank()
 
   has_systemfonts <- requireNamespace("systemfonts", quietly = TRUE)
   reg <- if (has_systemfonts) systemfonts::registry_fonts()$family else character(0)
   sys <- if (has_systemfonts) systemfonts::system_fonts()$family else character(0)
-  title_family <- "Archivo"
+  # Display runs are Schibsted Grotesk at the brand display weight (600),
+  # registered as its own family by chanwe_load_fonts().
+  title_family <- if ("Schibsted Grotesk SemiBold" %in% reg) {
+    "Schibsted Grotesk SemiBold"
+  } else {
+    "Schibsted Grotesk"
+  }
   title_face <- "plain"
-  subtitle_family <- "Satoshi"
+  subtitle_family <- base_family
   italic_family <- if ("Cormorant Garamond" %in% reg) {
     "Cormorant Garamond"
   } else {
@@ -253,28 +253,31 @@ theme_chanwe <- function(
     # Display size: more contrast against the subtitle/KPI block so the
     # header reads as its own level (hierarchy = weight + size + leading).
     size = base_text_size * 1.85,
-    colour = colors[["typst-ink"]],
+    colour = colors[["ink"]],
     eyebrow_family = mono_family,
     eyebrow_size = base_text_size * 0.62,
-    # Eyebrow and the `//` caption prefix share the brand orange (#FD3810,
+    # Eyebrow and the caption stamp share the brand orange (#FD3810,
     # the HTML section-number accent) so charts, tables and document chrome
     # carry one accent.
-    eyebrow_colour = colors[["brand-orange"]],
-    ink_colour = colors[["typst-ink"]],
+    eyebrow_colour = colors[["primary"]],
+    ink_colour = colors[["ink"]],
+    # Header and footer rules in slate, as in the chanwe-report figure frame
+    rule_colour = colors[["border-cool"]],
     top_pad = if (compact_title) 4 else 8
   )
   if (!has_subtitle) {
     title_element$margin <- ggplot2::margin(0, 0, 25, 0)
     title_element$draw_bottom_line <- isTRUE(header_line)
   }
-  kpi_label_colour <- colors[["typst-fg-muted"]]
+  kpi_label_colour <- colors[["fg-muted"]]
 
   subtitle_element <- new_element_chanwe_subtitle(
     family = subtitle_family,
     italic_family = italic_family,
     size = base_text_size * 0.9,
-    colour = colors[["typst-fg-muted"]],
-    ink_colour = colors[["typst-ink"]],
+    colour = colors[["fg-muted"]],
+    ink_colour = colors[["ink"]],
+    rule_colour = colors[["border-cool"]],
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
     kpi_label_colour = kpi_label_colour,
@@ -291,7 +294,7 @@ theme_chanwe <- function(
     ),
     ggplot2::theme(
       text = ggplot2::element_text(
-        color = colors[["typst-fg-muted"]],
+        color = colors[["fg-muted"]],
         lineheight = base_lineheight
       ),
       plot.title = title_element,
@@ -299,19 +302,20 @@ theme_chanwe <- function(
         family = mono_family,
         mono_thin_family = mono_thin_family,
         size = base_text_size * 0.77,
-        colour = colors[["typst-ink"]],
-        primary_colour = colors[["brand-orange"]],
-        ink_colour = colors[["typst-ink"]]
+        colour = colors[["pure-white"]],
+        primary_colour = colors[["primary"]],
+        ink_colour = colors[["ink"]],
+        rule_colour = colors[["border-cool"]]
       ),
       # Axis titles and tick labels at 0.825x base (25% up from 0.66x).
       axis.title = ggplot2::element_text(
         family = mono_family,
-        color = colors[["typst-ink"]],
+        color = colors[["ink"]],
         face = "plain",
         size = base_text_size * 0.825
       ),
       axis.text = ggplot2::element_text(
-        color = colors[["typst-ink"]],
+        color = colors[["ink"]],
         size = base_text_size * 0.825
       ),
       axis.title.x = ggplot2::element_text(
@@ -353,7 +357,7 @@ theme_chanwe <- function(
       ),
       strip.text = ggplot2::element_text(
         family = mono_thin_family,
-        color = colors[["typst-ink"]],
+        color = colors[["ink"]],
         face = "plain",
         size = base_text_size * 1,
         margin = ggplot2::margin(b = 6)
@@ -363,13 +367,13 @@ theme_chanwe <- function(
       legend.box.just = "right",
       legend.title = ggplot2::element_text(
         family = mono_family,
-        color = colors[["typst-fg-muted"]],
+        color = colors[["fg-muted"]],
         face = "plain",
         size = base_text_size * 0.8
       ),
       legend.text = ggplot2::element_text(
         family = mono_family,
-        color = colors[["typst-ink"]],
+        color = colors[["ink"]],
         size = base_text_size * 0.8
       ),
       legend.background = ggplot2::element_rect(
@@ -410,7 +414,7 @@ theme_chanwe <- function(
 #' orange, prefixed by `──────`. Rendering is handled by the custom title
 #' element installed by [theme_chanwe()] — no extra packages are required.
 #'
-#' @param text Main title string. Rendered in Archivo Black by [theme_chanwe()].
+#' @param text Main title string. Rendered in Schibsted Grotesk SemiBold by [theme_chanwe()].
 #' @param eyebrow Optional short label above the title, e.g.
 #'   `"SECTION · PROFITABILITY"`. Displayed in orange mono caps.
 #'
@@ -592,7 +596,7 @@ chanwe_kpi <- function(
 #'
 #' Note: `note` is ignored when `kpi` is supplied — the two do not stack.
 #'
-#' @param text Main subtitle string (Satoshi, muted ink, below the title rule).
+#' @param text Main subtitle string (Inter, muted ink, below the title rule).
 #' @param note Optional smaller italic line rendered below the subtitle, e.g. a
 #'   methodological caveat. Ignored when `kpi` is supplied.
 #' @param kpi KPI panel produced by [chanwe_kpi()]. When provided, a scoreboard
@@ -633,8 +637,9 @@ chanwe_subtitle <- function(text, note = NULL, kpi = NULL) {
 #' Chanwe Caption Helper
 #'
 #' Marks a string for the Chanwe caption treatment: [theme_chanwe()] renders
-#' captions in JetBrains Mono with an orange `//` prefix and a thin separator
-#' line above. Use inside `labs(caption = ...)`. Plain strings passed directly
+#' the caption as the chanwe-report figure stamp -- a square orange box with
+#' the text in white JetBrains Mono caps -- under a thin slate separator
+#' line. Use inside `labs(caption = ...)`. Plain strings passed directly
 #' to `labs(caption = )` receive the same treatment; this helper exists to
 #' keep call sites explicit and future-proof.
 #'
@@ -668,18 +673,17 @@ chanwe_caption <- function(text) {
 #'
 #' ## The default chart palette
 #'
-#' The default `"chart"` palette is the editorial 8-color set in a fixed,
-#' CVD-validated slot order (coral, blue, teal, green, violet, magenta,
-#' mustard, ink — worst adjacent pair \eqn{\Delta}E 17.5 under
-#' protanopia/deuteranopia simulation). Mustard and ink sit in the last two
-#' slots deliberately: charts with up to 6 series never reach them.
-#' For scatter, bubble, and map charts — where any two series can sit side
-#' by side — keep to at most 3 series (the first three slots are validated
-#' all-pairs); fold the rest into "Other" or facet.
+#' The default `"chart"` palette follows `meta.chart-palette-order` in the
+#' chanwe-brand `brand.yml`: the eight series hues, primary orange, blue,
+#' green, indigo, orange, teal, purple, red. Red sits last on purpose: it is
+#' nearly the same colour as the primary, so the two only meet in an
+#' eight-series chart. For scatter, bubble, and map charts — where any two
+#' series can sit side by side — keep to at most 5 series; fold the rest
+#' into "Other" or facet.
 #'
 #' @param palette Palette to draw colors from. Either a group name accepted
 #'   by [chanwe_palette()] (default `"chart"`; ramp groups like
-#'   `"p15_blue"` or `"mb_orange"` work for ordinal series) or a character
+#'   `"ramp_blue"` or `"mb_orange"` work for ordinal series) or a character
 #'   vector of colors to use directly.
 #' @param reverse Reverse the palette order. Default `FALSE`.
 #' @param ... Additional arguments passed to [ggplot2::discrete_scale()],
@@ -699,7 +703,7 @@ chanwe_caption <- function(text) {
 #' avg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
 #' p2 <- ggplot2::ggplot(avg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
 #'   ggplot2::geom_col() +
-#'   scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE) +
+#'   scale_fill_chanwe_d(palette = "ramp_blue", reverse = TRUE) +
 #'   theme_chanwe(legend_position = "none")
 scale_color_chanwe_d <- function(palette = "chart", reverse = FALSE, ...) {
   ggplot2::discrete_scale(
@@ -726,11 +730,11 @@ scale_fill_chanwe_d <- function(palette = "chart", reverse = FALSE, ...) {
 #' brand family from [chanwe_palette()].
 #'
 #' Available palettes: `"orange"` (default — the report primary gradient),
-#' `"coral"`, `"blue"`, `"teal"`, `"green"`, `"vermillion"`, `"magenta"`,
-#' `"violet"`, `"mustard"`, and `"ink"`. The green and vermillion ramps end
-#' in the signed positive/negative tokens so their dark pole stays readable;
-#' the brand's yellow and cyan families are deliberately not offered — their
-#' entire ramp is too light to encode magnitude on the brand surfaces.
+#' the series-hue ramps `"blue"`, `"indigo"`, `"teal"`, `"green"`,
+#' `"amber"`, `"red"` and `"purple"` (`"vermillion"` and `"violet"` are
+#' their earlier names), plus `"mustard"` and `"ink"`. The green and red
+#' ramps end in the signed positive/negative tokens so their dark pole
+#' stays readable.
 #'
 #' For polarity (values diverging around zero) use
 #' [scale_color_chanwe_div()] instead.

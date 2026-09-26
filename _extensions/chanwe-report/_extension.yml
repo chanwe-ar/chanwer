@@ -1,6 +1,6 @@
 title: Chanwe Report
 author: Chanwe Studio
-version: 1.4.0
+version: 2.0.0
 quarto-required: ">=1.9.37"
 contributes:
   formats:
@@ -14,14 +14,23 @@ contributes:
       mainfont: "Inter"
       monofont: "JetBrains Mono"
       fontsize: 10.5pt
+      # Pandoc no colorea: con un estilo activo escribe cada token como un
+      # `raw` en línea y el chip de código en línea los envuelve uno por uno.
+      # El color lo pone Typst —chanwe-filters.lua le entrega el bloque entero
+      # con su lenguaje y el tema chanwe.tmTheme de assets/ pinta los tokens.
       highlight-style: none
       chanwe-assets: "_extensions/chanwe-report/assets/"
       font-paths:
         - fonts
       filters:
+        - chanwe-lists.lua
+        - chanwe-cards.lua
         - chanwe-filters.lua
       template-partials:
         - typst-template.typ
+        - chanwe-cards.typ
+        - chanwe-qr.typ
+        - chanwe-lists.typ
         - typst-show.typ
         - chanwe-cover.typ
         - chanwe-elements.typ

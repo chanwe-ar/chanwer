@@ -1,26 +1,32 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400;1,500;1,600&family=DM+Sans:wght@400;600;700;900&display=swap");
-/* Brand web fonts used by chanwe_gt(), chanwe_reactable() and chanwe_plotly() */
-@import url("https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap");
+/* Brand web fonts (brand.yml `typography`), also used by chanwe_gt(),
+   chanwe_reactable() and chanwe_highchart() */
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Schibsted+Grotesk:wght@500;600;700&family=Cormorant+Garamond:ital,wght@1,300;1,400;1,500;1,600&family=JetBrains+Mono:wght@300;400;500&display=swap");
 
+/* Tokens mirror `color.palette` in the chanwe-brand brand.yml */
 :root {
-  --chanwe-primary: #E94B2B;
-  --chanwe-primary-strong: #FD3810;
-  --chanwe-ink: #101010;
-  --chanwe-body: #5B5B5B;
-  --chanwe-paper: #F7F7F7;
-  --chanwe-white: #FFFFFF;
-  --chanwe-beige: #F8F8F8;
-  --chanwe-beige-soft: #EEEEEE;
-  --chanwe-radius: 0.22rem;
-  --chanwe-radius-sm: 0.16rem;
+  --chanwe-primary: #FD3810;          /* primary */
+  --chanwe-primary-strong: #FD3810;   /* primary-active -> primary */
+  --chanwe-ink: #111319;              /* ink */
+  --chanwe-body: #475569;             /* body-fg */
+  --chanwe-subtle: #8A94A6;           /* fg-subtle */
+  --chanwe-paper: #F8FAFC;            /* paper */
+  --chanwe-sunken: #F1F5F9;           /* surface-sunken */
+  --chanwe-slate: #EBF0F6;            /* surface-slate */
+  --chanwe-rule: #E2E8F0;             /* rule */
+  --chanwe-white: #FFFFFF;            /* pure-white */
+  --chanwe-radius: 4px;
+  --chanwe-radius-sm: 4px;
+  --chanwe-sans-font: Inter, system-ui, sans-serif;
+  --chanwe-display-font: "Schibsted Grotesk", system-ui, sans-serif;
   --chanwe-italic-font: "Cormorant Garamond", Georgia, serif;
+  --chanwe-mono-font: "JetBrains Mono", ui-monospace, monospace;
 
-  --chanwe-info: #11F7E6;
-  --chanwe-success: #1EB508;
-  --chanwe-warning: #F9E710;
-  --chanwe-important: #EB03F2;
-  --chanwe-danger: #F40C0C;
+  --chanwe-info: #007AFF;             /* callout-note: chart-blue */
+  --chanwe-success: #00C7BE;          /* callout-tip: chart-teal */
+  --chanwe-warning: #FF9500;          /* callout-warning: chart-orange */
+  --chanwe-important: #FD3810;        /* callout-important */
+  --chanwe-caution: #AF52DE;          /* callout-caution: chart-purple */
+  --chanwe-danger: #FF3B30;           /* callout-dont: chart-red */
 }
 
 body,
@@ -28,7 +34,7 @@ main,
 .quarto-container,
 .reveal,
 .slide {
-  font-family: "DM Sans", system-ui, sans-serif;
+  font-family: var(--chanwe-sans-font);
   color: var(--chanwe-body);
 }
 
@@ -43,7 +49,7 @@ blockquote {
 
 a {
   color: var(--chanwe-primary);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 em,
@@ -59,9 +65,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "DM Sans", system-ui, sans-serif;
+  font-family: var(--chanwe-display-font);
   color: var(--chanwe-ink);
-  font-weight: 900;
+  font-weight: 600;
   line-height: 1.15;
 }
 
@@ -71,6 +77,7 @@ pre.sourceCode,
 div.sourceCode,
 .cell-output pre,
 code {
+  font-family: var(--chanwe-mono-font);
   border-radius: var(--chanwe-radius-sm);
   box-shadow: none !important;
 }
@@ -79,15 +86,15 @@ pre,
 pre.sourceCode,
 div.sourceCode,
 .cell-output pre {
-  background: var(--chanwe-paper) !important;
-  border: 1px solid var(--chanwe-beige-soft);
+  background: var(--chanwe-slate) !important;
+  border: 1px solid var(--chanwe-rule);
   border-left: 4px solid var(--chanwe-primary);
   padding: 0.9rem 1rem;
 }
 
 :not(pre) > code {
-  background: var(--chanwe-beige);
-  border: 1px solid var(--chanwe-beige-soft);
+  background: var(--chanwe-slate);
+  border: 1px solid var(--chanwe-rule);
   padding: 0.08rem 0.35rem;
 }
 
@@ -146,7 +153,7 @@ figcaption,
 .table-caption,
 .caption,
 .gt_caption {
-  color: #6D6D6D !important;
+  color: var(--chanwe-subtle) !important;
   font-size: 0.9em;
 }
 
@@ -204,13 +211,20 @@ figcaption,
   border-bottom-color: var(--chanwe-important);
 }
 
-.callout.callout-caution,
+.callout.callout-caution {
+  border-color: var(--chanwe-caution);
+}
+
+.callout.callout-caution .callout-header {
+  background: color-mix(in srgb, var(--chanwe-caution) 14%, white);
+  border-bottom-color: var(--chanwe-caution);
+}
+
 .callout.callout-alert,
 .callout.callout-danger {
   border-color: var(--chanwe-danger);
 }
 
-.callout.callout-caution .callout-header,
 .callout.callout-alert .callout-header,
 .callout.callout-danger .callout-header {
   background: color-mix(in srgb, var(--chanwe-danger) 14%, white);

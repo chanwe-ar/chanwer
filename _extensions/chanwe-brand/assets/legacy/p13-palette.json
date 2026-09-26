@@ -1,0 +1,87 @@
+{
+  "name": "chanwe-brand-manual-page-13",
+  "status": "historical-reference-only",
+  "note": "Archived from brand.yml; not part of the active v2 palette.",
+  "colors": [
+    {
+      "internal_name": "p13-orange-01",
+      "code": "#FD3810"
+    },
+    {
+      "internal_name": "p13-orange-02",
+      "code": "#EA5A3C"
+    },
+    {
+      "internal_name": "p13-orange-03",
+      "code": "#EC684E"
+    },
+    {
+      "internal_name": "p13-orange-04",
+      "code": "#ED775F"
+    },
+    {
+      "internal_name": "p13-orange-05",
+      "code": "#EF8670"
+    },
+    {
+      "internal_name": "p13-orange-06",
+      "code": "#EE9782"
+    },
+    {
+      "internal_name": "p13-orange-07",
+      "code": "#F2A393"
+    },
+    {
+      "internal_name": "p13-orange-08",
+      "code": "#F5C0B6"
+    },
+    {
+      "internal_name": "p13-orange-09",
+      "code": "#F6CFC7"
+    },
+    {
+      "internal_name": "p13-orange-10",
+      "code": "#F6D4C7"
+    },
+    {
+      "internal_name": "p13-gray-01",
+      "code": "#101010"
+    },
+    {
+      "internal_name": "p13-gray-02",
+      "code": "#232323"
+    },
+    {
+      "internal_name": "p13-gray-03",
+      "code": "#353535"
+    },
+    {
+      "internal_name": "p13-gray-04",
+      "code": "#484848"
+    },
+    {
+      "internal_name": "p13-gray-05",
+      "code": "#6E6E6E"
+    },
+    {
+      "internal_name": "p13-gray-06",
+      "code": "#6D6D6D"
+    },
+    {
+      "internal_name": "p13-gray-07",
+      "code": "#929292"
+    },
+    {
+      "internal_name": "p13-gray-08",
+      "code": "#A5A5A5"
+    },
+    {
+      "internal_name": "p13-gray-09",
+      "code": "#B8B8B8"
+    },
+    {
+      "internal_name": "p13-gray-10",
+      "code": "#CACACA"
+    }
+  ]
+}

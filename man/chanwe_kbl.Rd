@@ -25,7 +25,7 @@ chanwe_kbl(
   note_size = "5.5pt",
   col_label_top = 0,
   footer_top = 0,
-  bg = "white-ivory",
+  bg = "paper",
   top_border = TRUE,
   header_rule = TRUE,
   padding = 12.5,
@@ -35,7 +35,7 @@ chanwe_kbl(
   total_fill = TRUE,
   vlines = NULL,
   highlight_cols = NULL,
-  highlight_color = "#F5F1EB"
+  highlight_color = "#EBF0F6"
 )
 }
 \arguments{
@@ -96,12 +96,14 @@ pass \code{NULL} for the density-based default (\code{"19pt"} spacious /
 \item{footer_top}{Extra vertical space in pt above the footer note text.
 Default \code{0}.}
 
-\item{bg}{Table background colour. Named shorthand: \code{"white-ivory"}
-(default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
-\code{"gray"} (\code{#EDF0F1}), \code{"metallic"} (\code{#F7F7F7}).
-Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.}
+\item{bg}{Table background colour. Named shorthand for the brand surfaces:
+\code{"paper"} (default, \code{#F8FAFC}), \code{"white"},
+\code{"sunken"} (\code{#F1F5F9}), \code{"slate"} (\code{#EBF0F6}); the
+earlier \code{"white-ivory"}, \code{"metallic"} and \code{"gray"} resolve
+to paper / paper / slate. Or any raw Typst color expression (e.g.
+\code{"rgb(\\\"#EBF0F6\\\")"}). Pass \code{NULL} for transparent.}
 
-\item{top_border}{Logical. Draw a thin ink line above the title cell.
+\item{top_border}{Logical. Draw a slate hairline above the title cell.
 Default \code{TRUE}.}
 
 \item{header_rule}{Logical. Draw the heavier rule between the title block
@@ -137,7 +139,7 @@ vertical divider lines (Typst \code{table.vline} x positions).}
 and data cells get a highlight background fill.}
 
 \item{highlight_color}{Hex color for \code{highlight_cols} fill.
-Default \code{"#F5F1EB"}.}
+Default \code{"#EBF0F6"} (brand \code{surface-slate}).}
 }
 \value{
 A \code{\link[knitr]{asis_output}} containing a raw \code{{=typst}} block.
@@ -145,9 +147,9 @@ Works in Quarto documents rendered with \code{format: chanwe-report-typst}.
 }
 \description{
 Generates a styled Typst table directly from a data frame, bypassing the
-HTML→Pandoc→Typst pipeline. Archivo title, Satoshi subtitle, JetBrains
+HTML→Pandoc→Typst pipeline. Schibsted Grotesk title, Inter subtitle, JetBrains
 Mono column headers and data cells (mono keeps figures tabular so numeric
-columns align digit-for-digit), thin ink divider lines. No CSS
+columns align digit-for-digit), slate hairline rules. No CSS
 translation losses.
 }
 \examples{

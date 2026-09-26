@@ -18,7 +18,7 @@ look.
 - Use `chanwe_title()` when a title needs the orange mono-caps eyebrow.
 - Use `chanwe_subtitle()` when a subtitle needs a note line or a KPI
   scoreboard (`chanwe_kpi()`); plain subtitles need no helper.
-- Use `chanwe_caption()` for the `//`-prefixed source line.
+- Use `chanwe_caption()` for the source line, drawn as the orange caption stamp.
 - Use `scale_color_chanwe_d()` and `scale_fill_chanwe_d()` for discrete
   ChanWe palettes; `_c` variants for continuous orange gradients.
 - Use `chanwe_kbl()` for tables in Quarto Typst PDF reports.
@@ -40,9 +40,13 @@ look.
 
 ## ggplot2 Notes
 
-- `theme_chanwe()` takes `bg_color` (not `background`): `"metallic"`
-  (default), `"white"`, `"white-ivory"`, `"gray"`, `"beige"`,
-  `"transparent"`, or any hex string.
+- `theme_chanwe()` takes `bg_color` (not `background`): `"paper"`
+  (default), `"white"`, `"sunken"`, `"slate"`, `"transparent"`, or any
+  hex string. Every named surface is a `brand.yml` token; beige is
+  retired and errors.
+- Colors and fonts mirror `_extensions/chanwe-brand/brand.yml`
+  (`.chanwe_brand_colors` in `R/palette.R`). Change brand.yml in
+  chanwe-brand first, sync the extension, then update that table.
 - The eyebrow only appears when the title uses
   `chanwe_title(text, eyebrow = ...)`.
 - The header separator rule is drawn by the custom subtitle/title grobs;

@@ -23,6 +23,22 @@ local function markdown_to_typst(value)
   return rendered:gsub("%s+$", "")
 end
 
+-- Escribe el cuerpo de un Div como contenido en línea cuando es un solo
+-- párrafo. Los dos bloques de cita envuelven el cuerpo entre comillas
+-- (`["#body"]`), y un Para deja la comilla de cierre en un renglón aparte
+-- varios milímetros más abajo. Un Plain emite las mismas inlines sin abrir
+-- párrafo, así que la cita y sus dos comillas quedan en una sola tirada.
+-- El resultado va sin espacios en los extremos: la cita se interpola pegada a
+-- sus comillas (`[“#body”]`), y un salto de línea ahí adentro se lee como un
+-- espacio —«“ Un ancla … fiscal. ”»—.
+local function inline_body_to_typst(blocks)
+  if #blocks == 1 and blocks[1].t == "Para" then
+    blocks = pandoc.Blocks({ pandoc.Plain(blocks[1].content) })
+  end
+  local rendered = pandoc.write(pandoc.Pandoc(pandoc.Blocks(blocks)), "typst")
+  return (rendered:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
 local function unwrap_figure_blocks(blocks)
   local body_blocks = pandoc.Blocks({})
   local identifier = ""
@@ -120,16 +136,20 @@ local function Div(el)
     local caption = attr(el, "caption", "")
     local source  = attr(el, "source", "")
     local color   = attr(el, "color", "dark")
-    local inner   = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+    local eyebrow = attr(el, "eyebrow", "")
+    local inner   = inline_body_to_typst(el.content)
 
     local call = string.format('#page-great-quote(\n  color: "%s"', color)
+    if eyebrow ~= "" then
+      call = call .. string.format(',\n  eyebrow: "%s"', escape_typst_str(eyebrow))
+    end
     if caption ~= "" then
       call = call .. string.format(',\n  caption: "%s"', escape_typst_str(caption))
     end
     if source ~= "" then
       call = call .. string.format(',\n  source: "%s"', escape_typst_str(source))
     end
-    call = call .. "\n)[\n" .. inner .. "\n]"
+    call = call .. "\n)[" .. inner .. "]"
 
     return pandoc.RawBlock("typst", call)
   end
@@ -141,16 +161,20 @@ local function Div(el)
     local caption = attr(el, "caption", "")
     local source  = attr(el, "source", "")
     local color   = attr(el, "color", "dark")
-    local inner   = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
+    local eyebrow = attr(el, "eyebrow", "")
+    local inner   = inline_body_to_typst(el.content)
 
     local call = string.format('#inset-great-quote(\n  color: "%s"', color)
+    if eyebrow ~= "" then
+      call = call .. string.format(',\n  eyebrow: "%s"', escape_typst_str(eyebrow))
+    end
     if caption ~= "" then
       call = call .. string.format(',\n  caption: "%s"', escape_typst_str(caption))
     end
     if source ~= "" then
       call = call .. string.format(',\n  source: "%s"', escape_typst_str(source))
     end
-    call = call .. "\n)[\n" .. inner .. "\n]"
+    call = call .. "\n)[" .. inner .. "]"
 
     return pandoc.RawBlock("typst", call)
   end
@@ -196,6 +220,7 @@ local function Div(el)
     local eyebrow  = attr(el, "eyebrow", "")
     local title    = attr(el, "title", "")
     local source   = attr(el, "source", "")
+    local source_label = attr(el, "source-label", "")
     local layout   = attr(el, "layout", "center")
     local position = attr(el, "position", "right")
     local color    = attr(el, "color", "dark")
@@ -237,6 +262,9 @@ local function Div(el)
     if source ~= "" then
       call = call .. string.format('  source: "%s",\n', escape_typst_str(source))
     end
+    if source_label ~= "" then
+      call = call .. string.format('  source-label: "%s",\n', escape_typst_str(source_label))
+    end
     call = call .. "  caption: [\n" .. text_typst .. "\n  ],\n"
     call = call .. ")[\n" .. plot_typst .. "\n]"
 
@@ -244,9 +272,15 @@ local function Div(el)
   end
 
   -- -------------------------------------------------------
-  -- :::: {.kpi-grid cols="4"}
-  --   ::: {.kpi title="..." main="..." unit="..." ...} :::
+  -- :::: {.kpi-grid cols="3"}
+  --   ::: {.kpi title="Inflación" source="IPC · Jun 2026" main="2,1" unit="%"
+  --        unit-note="mensual" delta="−2,7 pp" direction="down"
+  --        secondary="Desde 4,8% en enero."
+  --        series="4.8, 4.2, 3.7, 3.3, 2.6, 2.1"
+  --        from="Ene" state="Desacelera" to="Jun"} :::
   -- ::::
+  -- Todas las claves son opcionales salvo `title` y `main`: sin `delta` no hay
+  -- ficha, sin `series` no hay serie y sin `from`/`state`/`to` no hay pie.
   -- -------------------------------------------------------
   if el.classes:includes("kpi-grid") then
     local cols = attr(el, "cols", "4")
@@ -259,21 +293,51 @@ local function Div(el)
         local main_val        = attr(block, "main",            "")
         local prefix          = attr(block, "prefix",          "")
         local unit            = attr(block, "unit",            "")
+        local unit_note       = attr(block, "unit-note",       "")
+        local source          = attr(block, "source",          "")
         local main_color      = attr(block, "main-color",      "ink")
         local secondary       = attr(block, "secondary",       "")
         local secondary_color = attr(block, "secondary-color", "muted")
         local direction       = attr(block, "direction",       "none")
+        local delta           = attr(block, "delta",           "")
+        local series          = attr(block, "series",          "")
+        local from_label      = attr(block, "from",            "")
+        local state_label     = attr(block, "state",           "")
+        local to_label        = attr(block, "to",              "")
+
+        -- `series="4.8, 4.2, 3.6"` entra como texto y sale como tupla de
+        -- Typst. Se descarta cualquier cosa que no sea un numero para que un
+        -- separador de mas no rompa la compilacion.
+        local nums = {}
+        for piece in string.gmatch(series, "[^,]+") do
+          local n = tonumber((piece:gsub("%s", "")))
+          if n ~= nil then table.insert(nums, tostring(n)) end
+        end
+        local series_arg = "()"
+        if #nums > 0 then
+          series_arg = "(" .. table.concat(nums, ", ") .. ",)"
+        end
 
         local card = string.format(
-          'kpi-card(\n    title: "%s",\n    main: "%s",\n    prefix: "%s",\n    unit: "%s",\n    main-color: "%s",\n    secondary: "%s",\n    secondary-color: "%s",\n    direction: "%s",\n  )',
+          'kpi-card(\n    title: "%s",\n    main: "%s",\n    prefix: "%s",\n    unit: "%s",\n' ..
+          '    unit-note: "%s",\n    source: "%s",\n    main-color: "%s",\n    secondary: "%s",\n' ..
+          '    secondary-color: "%s",\n    direction: "%s",\n    delta: "%s",\n    series: %s,\n' ..
+          '    from-label: "%s",\n    state-label: "%s",\n    to-label: "%s",\n  )',
           escape_typst_str(title),
           escape_typst_str(main_val),
           escape_typst_str(prefix),
           escape_typst_str(unit),
+          escape_typst_str(unit_note),
+          escape_typst_str(source),
           escape_typst_str(main_color),
           escape_typst_str(secondary),
           escape_typst_str(secondary_color),
-          escape_typst_str(direction)
+          escape_typst_str(direction),
+          escape_typst_str(delta),
+          series_arg,
+          escape_typst_str(from_label),
+          escape_typst_str(state_label),
+          escape_typst_str(to_label)
         )
         table.insert(cards, card)
       end
@@ -296,27 +360,38 @@ local function Div(el)
   -- -------------------------------------------------------
   if el.classes:includes("great-findings-grid") then
     local color = attr(el, "color", "white")
+    local row_h = attr(el, "row-height", "")
     local parts = {}
 
     for _, block in ipairs(el.content) do
       if block.t == "Div" and block.classes:includes("great-findings") then
         local number = attr(block, "number", "01")
         local title  = attr(block, "title",  "")
+        local topic  = attr(block, "topic",  "")
+        local tlabel = attr(block, "topic-label", "Tema")
         local inner  = pandoc.write(pandoc.Pandoc(pandoc.Blocks(block.content)), "typst")
 
         table.insert(parts, string.format(
-          '#great-findings-item(\n  number: "%s",\n  title: "%s",\n)[\n%s\n]',
+          '(\n  number: "%s",\n  title: "%s",\n  topic: "%s",\n  topic-label: "%s",\n  body: [\n%s\n  ],\n)',
           escape_typst_str(number),
           escape_typst_str(title),
+          escape_typst_str(topic),
+          escape_typst_str(tlabel),
           inner
         ))
       end
     end
 
-    local sep = "\n#line(length: 100%, stroke: 0.5pt + _t.border)\n"
-    local call = string.format('#great-findings-grid(color: "%s")[\n', escape_typst_str(color))
-    call = call .. table.concat(parts, sep)
-    call = call .. "\n]"
+    -- Los ítems van como lista de diccionarios: la grilla los mide, empareja
+    -- las filas a la altura de la más alta y estira el filete naranja con
+    -- ellas. `row-height` (mm) pone un piso.
+    local rh_arg = ""
+    if row_h ~= "" then
+      rh_arg = string.format(', row-height: %smm', escape_typst_str(row_h))
+    end
+    local call = string.format('#great-findings-grid(color: "%s"%s, (\n', escape_typst_str(color), rh_arg)
+    call = call .. table.concat(parts, ",\n")
+    call = call .. ",\n))"
     return pandoc.RawBlock("typst", call)
   end
 
@@ -330,10 +405,14 @@ local function Div(el)
     local inner  = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
 
     local color  = attr(el, "color",  "white")
+    local topic  = attr(el, "topic",  "")
+    local tlabel = attr(el, "topic-label", "Tema")
     local call = string.format(
-      '#great-findings(\n  number: "%s",\n  title: "%s",\n  color: "%s",\n)[\n%s\n]',
+      '#great-findings(\n  number: "%s",\n  title: "%s",\n  topic: "%s",\n  topic-label: "%s",\n  color: "%s",\n)[\n%s\n]',
       escape_typst_str(number),
       escape_typst_str(title),
+      escape_typst_str(topic),
+      escape_typst_str(tlabel),
       escape_typst_str(color),
       inner
     )
@@ -411,10 +490,10 @@ local function Div(el)
   end
 
   -- -------------------------------------------------------
-  -- :::: {.zone-highlight color="beige"}  ...  ::::
+  -- :::: {.zone-highlight color="light"}  ...  ::::
   -- -------------------------------------------------------
   if el.classes:includes("zone-highlight") then
-    local color     = attr(el, "color",      "white")
+    local color     = attr(el, "color",      "light")
     local margin    = attr(el, "margin",     "")
     local above     = attr(el, "above",      "")
     local below     = attr(el, "below",      "")
@@ -453,7 +532,7 @@ local function Div(el)
 
   -- -------------------------------------------------------
   -- :::: {.chanwe-double-exec-summary}
-  --   ::: {.exec-top  eyebrow="…" title="…" takeaway="…" color="beige"
+  --   ::: {.exec-top  eyebrow="…" title="…" takeaway="…" color="light"
   --         left-label-1="…" left-value-1="…" left-sub-1="…" (up to 3)}
   --   ::: {.exec-bottom …}
   -- ::::
@@ -655,4 +734,44 @@ local function Div(el)
 
 end
 
-return {{traverse = "topdown", Div = Div}}
+-- Un booleano `false` en el YAML es falso también para la plantilla de Pandoc:
+-- `$if(chanwe.toc)$ toc: $chanwe.toc$ $endif$` no emite nada con `toc: false`,
+-- así que la opción caía al valor por defecto del formato (`true`) y el
+-- documento traía agenda y contratapa aunque el autor las hubiera apagado.
+-- Convertido a la cadena "false", el `$if` lo ve como valor y lo emite tal
+-- cual: `toc: false,`. Las claves `no-*` son banderas (`no-abstract: true`)
+-- y se dejan como están: ahí `false` tiene que seguir siendo "no emitir".
+local function Meta(meta)
+  local chanwe = meta.chanwe
+  if type(chanwe) ~= "table" then return nil end
+  for key, value in pairs(chanwe) do
+    if value == false and not tostring(key):match("^no%-") then
+      chanwe[key] = pandoc.MetaString("false")
+    end
+  end
+  meta.chanwe = chanwe
+  return meta
+end
+
+-- El bloque de código va entero a Typst, con su lenguaje, para que lo coloree
+-- el resaltador nativo con el tema del formato. Con `highlight-style: none`
+-- el escritor de Pandoc le sacaba el lenguaje al bloque (sin lenguaje no hay
+-- color ni rótulo "# python · N lines"); con un estilo activo, Pandoc lo
+-- coloreaba él y escribía cada token como un `raw` en línea, que el chip de
+-- código en línea envolvía uno por uno. Emitirlo como `#raw(block: true,
+-- lang: …)` esquiva las dos cosas.
+local function typst_string(s)
+  return '"' .. s:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n"):gsub("\t", "\\t") .. '"'
+end
+
+local function CodeBlock(el)
+  local lang = el.classes[1]
+  local call = "#raw(block: true, "
+  if lang ~= nil and lang ~= "" then
+    call = call .. string.format("lang: %s, ", typst_string(lang))
+  end
+  call = call .. typst_string(el.text) .. ")"
+  return pandoc.RawBlock("typst", call)
+end
+
+return {{traverse = "topdown", Meta = Meta, Div = Div, CodeBlock = CodeBlock}}

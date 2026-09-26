@@ -12,7 +12,7 @@ scale_fill_chanwe_d(palette = "chart", reverse = FALSE, ...)
 \arguments{
 \item{palette}{Palette to draw colors from. Either a group name accepted
 by \code{\link[=chanwe_palette]{chanwe_palette()}} (default \code{"chart"}; ramp groups like
-\code{"p15_blue"} or \code{"mb_orange"} work for ordinal series) or a character
+\code{"ramp_blue"} or \code{"mb_orange"} work for ordinal series) or a character
 vector of colors to use directly.}
 
 \item{reverse}{Reverse the palette order. Default \code{FALSE}.}
@@ -34,14 +34,13 @@ text). \code{scale_fill_chanwe_d()} maps to the \code{fill} aesthetic (bars, are
 ribbons).
 \subsection{The default chart palette}{
 
-The default \code{"chart"} palette is the editorial 8-color set in a fixed,
-CVD-validated slot order (coral, blue, teal, green, violet, magenta,
-mustard, ink — worst adjacent pair \eqn{\Delta}E 17.5 under
-protanopia/deuteranopia simulation). Mustard and ink sit in the last two
-slots deliberately: charts with up to 6 series never reach them.
-For scatter, bubble, and map charts — where any two series can sit side
-by side — keep to at most 3 series (the first three slots are validated
-all-pairs); fold the rest into "Other" or facet.
+The default \code{"chart"} palette follows \code{meta.chart-palette-order} in the
+chanwe-brand \code{brand.yml}: the eight series hues, primary orange, blue,
+green, indigo, orange, teal, purple, red. Red sits last on purpose: it is
+nearly the same colour as the primary, so the two only meet in an
+eight-series chart. For scatter, bubble, and map charts — where any two
+series can sit side by side — keep to at most 5 series; fold the rest
+into "Other" or facet.
 }
 }
 \examples{
@@ -55,6 +54,6 @@ p1 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
 avg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
 p2 <- ggplot2::ggplot(avg, ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
   ggplot2::geom_col() +
-  scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE) +
+  scale_fill_chanwe_d(palette = "ramp_blue", reverse = TRUE) +
   theme_chanwe(legend_position = "none")
 }

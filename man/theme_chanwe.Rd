@@ -6,10 +6,10 @@
 \usage{
 theme_chanwe(
   base_text_size = 6.75,
-  base_family = "Satoshi",
+  base_family = "Inter",
   base_lineheight = 1.6,
   legend_position = "bottom",
-  bg_color = "metallic",
+  bg_color = "paper",
   plot_padding = 10,
   plot_borders = "none",
   has_subtitle = TRUE,
@@ -20,7 +20,7 @@ theme_chanwe(
 \arguments{
 \item{base_text_size}{Base text size in points. Default \code{6.75}. Title scales at ×1.85, subtitle ×0.90, eyebrow ×0.62.}
 
-\item{base_family}{Base font family for body text. Default \code{"Satoshi"}.}
+\item{base_family}{Base font family for body text. Default \code{"Inter"}.}
 
 \item{base_lineheight}{Base line-height multiplier. Default \code{1.60}.}
 
@@ -28,15 +28,15 @@ theme_chanwe(
 \code{theme(legend.position = )}. Default \code{"bottom"}.}
 
 \item{bg_color}{Background color for the plot surface. Accepts a hex string
-or one of \code{"metallic"} (default), \code{"white-ivory"}, \code{"white"}, \code{"gray"},
-\code{"beige"}, or \code{"transparent"}.}
+or one of \code{"paper"} (default), \code{"white"}, \code{"sunken"}, \code{"slate"}, or
+\code{"transparent"}.}
 
 \item{plot_padding}{Uniform outer margin in pts applied to all four sides of
 the plot (title, caption, and panel included). Default \code{10}.
 Pass a single number, e.g. \code{plot_padding = 18}.}
 
 \item{plot_borders}{Controls decorative border lines on the plot frame.
-\code{"none"} (default) draws no borders. \code{"top"} adds a thin ink line above
+\code{"none"} (default) draws no borders. \code{"top"} adds a thin slate line above
 the title. \code{"bottom"} adds one below the caption. \code{"top_bottom"} adds
 both. \code{"complete"} adds all four sides. Pass \code{TRUE} as shorthand for
 \code{"top_bottom"}.}
@@ -69,19 +69,19 @@ brand-consistent color palettes.
 \details{
 \subsection{Typography}{\tabular{lll}{
    Element \tab Font \tab Weight \cr
-   Title (with eyebrow) \tab Archivo \tab 400 \cr
-   Subtitle \tab Satoshi \tab 400 \cr
+   Title (with eyebrow) \tab Schibsted Grotesk \tab 600 \cr
+   Subtitle \tab Inter \tab 400 \cr
    Subtitle note / KPI hero \tab Cormorant Garamond \tab italic \cr
-   Axis text \tab Satoshi \tab 400 \cr
+   Axis text \tab Inter \tab 400 \cr
    Axis titles \tab JetBrains Mono \tab 400 \cr
    Facet strip labels \tab JetBrains Mono Thin \tab 100 \cr
    Legend text / title \tab JetBrains Mono \tab 400 \cr
-   Caption \tab JetBrains Mono \tab 400 \cr
+   Caption stamp \tab JetBrains Mono caps, white on orange \tab 500 \cr
 }
 
 
-The eyebrow and the caption \verb{//} prefix render in the brand orange
-(\code{brand-orange}, \verb{#FD3810}) -- the same accent the HTML stylesheet uses
+The eyebrow and the caption stamp render in the brand orange
+(\code{primary}, \verb{#FD3810}) -- the same accent the HTML stylesheet uses
 for section numbers and that the table helpers use for their eyebrows.
 The title is set at 1.85x the base size with a 1.0 line-height so the
 header, subtitle/KPI block and chart read as three distinct levels.
@@ -90,15 +90,19 @@ Call \code{\link[=chanwe_load_fonts]{chanwe_load_fonts()}} once per session to r
 families. \code{theme_chanwe()} calls it automatically.
 }
 
-\subsection{Background variants}{\tabular{llll}{
-   Name \tab Hex \tab Major grid \tab Minor grid \cr
-   \code{"metallic"} \tab \verb{#F7F7F7} \tab \verb{#D8D8D8} \tab \verb{#EFEFEF} \cr
-   \code{"white-ivory"} \tab \verb{#FAF9F7} \tab \verb{#C6C3BC} \tab \verb{#E2E0DA} \cr
-   \code{"white"} \tab \verb{#FFFFFF} \tab \verb{#DCDCDC} \tab \verb{#F7F7F7} \cr
-   \code{"gray"} \tab \verb{#EDF0F1} \tab \verb{#C6CCCF} \tab \verb{#E3E7E9} \cr
-   \code{"beige"} \tab \verb{#F5F1EB} \tab \verb{#AFA79B} \tab \verb{#CCC5BA} \cr
+\subsection{Background variants}{
+
+Every surface is a \code{brand.yml} token.\tabular{lllll}{
+   Name \tab Token \tab Hex \tab Major grid \tab Minor grid \cr
+   \code{"paper"} \tab \code{paper} \tab \verb{#F8FAFC} \tab \verb{#CFD6DF} \tab \verb{#EBF0F6} \cr
+   \code{"white"} \tab \code{pure-white} \tab \verb{#FFFFFF} \tab \verb{#CFD6DF} \tab \verb{#F1F5F9} \cr
+   \code{"sunken"} \tab \code{surface-sunken} \tab \verb{#F1F5F9} \tab \verb{#C6CDD6} \tab \verb{#E2E8F0} \cr
+   \code{"slate"} \tab \code{surface-slate} \tab \verb{#EBF0F6} \tab \verb{#C6CDD6} \tab \verb{#E2E8F0} \cr
 }
 
+
+The earlier names still resolve: \code{"metallic"} and \code{"white-ivory"} to
+\code{"paper"}, \code{"gray"} to \code{"slate"}.
 }
 }
 \section{Header layout modes}{
@@ -127,7 +131,7 @@ weight as the subtitle separator). \code{compact_title} still controls the
 top padding above the eyebrow.
 }
 \item{No separator line (\code{header_line = FALSE})}{
-Pass \code{header_line = FALSE} to suppress the thin ink line that closes the
+Pass \code{header_line = FALSE} to suppress the thin slate line that closes the
 header area. Works in both subtitle and no-subtitle modes. Useful for
 minimal or embedded layouts where the line adds visual noise.
 }
@@ -138,7 +142,7 @@ minimal or embedded layouts where the line adds visual noise.
 # Plots are assigned; print them to render (requires the brand fonts,
 # see chanwe_load_fonts()).
 
-## Basic scatter — metallic background, bottom legend
+## Basic scatter — paper background, bottom legend
 p1 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
   ggplot2::geom_point(size = 3) +
   scale_color_chanwe_d() +
@@ -149,7 +153,7 @@ p1 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
   ) +
   theme_chanwe()
 
-## With eyebrow, beige background, no legend
+## With eyebrow, slate background, no legend
 p2 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
   ggplot2::geom_point(size = 3) +
   scale_color_chanwe_d() +
@@ -158,9 +162,9 @@ p2 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
     subtitle = "Highway mpg vs vehicle weight",
     caption = chanwe_caption("Source: Motor Trend, 1974")
   ) +
-  theme_chanwe(bg_color = "beige", legend_position = "none")
+  theme_chanwe(bg_color = "slate", legend_position = "none")
 
-## Bar chart — gray background, fill scale
+## Bar chart — white background, fill scale
 avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
 p3 <- ggplot2::ggplot(avg_mpg,
   ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
@@ -170,5 +174,5 @@ p3 <- ggplot2::ggplot(avg_mpg,
     title = chanwe_title("Average MPG by cylinder count"),
     caption = chanwe_caption("Source: mtcars")
   ) +
-  theme_chanwe(bg_color = "gray", legend_position = "none")
+  theme_chanwe(bg_color = "white", legend_position = "none")
 }

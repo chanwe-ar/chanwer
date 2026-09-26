@@ -2,15 +2,16 @@
 #'
 #' Applies the Chanwe header grammar and chart chrome to an existing
 #' `highcharter` object: eyebrow / title / subtitle block anchored top-left
-#' in Archivo, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
+#' in Schibsted Grotesk, Inter body font, JetBrains Mono axis ticks, no axis lines or
 #' ticks, hairline y-grid, an ink tooltip in mono, no exporting menu or
-#' credits, and an optional `//`-prefixed caption in ink, not muted gray.
+#' credits, and an optional caption drawn as the chanwe-report figure stamp
+#' (a square orange box with white mono caps) under a slate hairline.
 #' The y-axis title moves into the top-left corner of the plot area,
 #' rotated 90 degrees, on the same vertical line as the tick numbers rather
 #' than sitting to the left of them; the x-axis title stays on its own row
 #' below the tick labels but flushes right against the plot area's right
 #' edge instead of centering under the axis. A hairline divider closes off
-#' the header (below the subtitle) and opens the caption (above the `//`
+#' the header (below the subtitle) and opens the caption (above the stamp
 #' line), each spanning from the header/caption's own left edge to the
 #' plot area's right edge, in a light neutral gray.
 #'
@@ -21,7 +22,7 @@
 #' @param hc A `highcharter` object (from `highcharter::highchart()`).
 #' @param title,subtitle,eyebrow Header block rendered top-left, stacked as
 #'   one `useHTML` chart title.
-#' @param caption Source note rendered bottom-left with a `//` prefix.
+#' @param caption Source note rendered bottom-left as the orange stamp.
 #' @param legend Logical. Show the legend (vertical, right, centered on the
 #'   plot body)? Default `FALSE`.
 #' @param height Widget height in pixels, passed to
@@ -69,10 +70,10 @@ chanwe_highchart <- function(
 
   # Highcharts checks every fontFamily it is given against the document's
   # loaded stylesheets by building a `link[href='<fontFamily>']` selector;
-  # chanwer's shared font stacks single-quote their fallback face (e.g.
-  # `'DM Sans'`), and that embedded quote breaks out of Highcharts' selector
-  # and throws, aborting the chart's render with a blank widget. Double
-  # quotes are equally valid CSS and don't collide with it.
+  # chanwer's mono stack single-quotes its face (`'JetBrains Mono'`), and
+  # that embedded quote breaks out of Highcharts' selector and throws,
+  # aborting the chart's render with a blank widget. Double quotes are
+  # equally valid CSS and don't collide with it.
   hc_sans <- gsub("'", "\"", .cw_font_sans, fixed = TRUE)
   hc_mono <- gsub("'", "\"", .cw_font_mono, fixed = TRUE)
 
@@ -181,7 +182,7 @@ chanwe_highchart <- function(
           "}",
           sep = "\n"
         ),
-        tk$n300
+        tk$rule
       )))
     ) |>
     highcharter::hc_colors(unname(chanwe_palette("chart"))) |>
@@ -228,14 +229,11 @@ chanwe_highchart <- function(
     hc <- hc |>
       highcharter::hc_caption(
         text = sprintf(
-          "<span style='color:%s'>//</span>  %s",
-          tk$accent, chanwe_html_escape(caption)
+          "<span class='chanwe-stamp' style='%s'>%s</span>",
+          chanwe_html_stamp_style(), chanwe_html_escape(caption)
         ),
         useHTML = TRUE, align = "left", margin = caption_margin,
-        style = list(
-          fontFamily = hc_mono, fontSize = "10px", color = tk$ink,
-          fontWeight = "300"
-        )
+        style = list(fontFamily = hc_mono)
       )
   }
 

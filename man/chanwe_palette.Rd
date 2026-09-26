@@ -9,10 +9,13 @@ chanwe_palette(palette = NULL)
 \arguments{
 \item{palette}{Optional palette selector. Use \code{NULL} (default) to return
 all colors and grouped palettes. Supported names are \code{"all"}, \code{"core"},
+\code{"brand"} (the \code{color.palette} of the chanwe-brand \code{brand.yml}),
 \code{"p13_orange"}, \code{"p13_gray"}, \code{"p14_accents"}, \code{"p15_coral"},
 \code{"p15_vermillion"}, \code{"p15_green"}, \code{"p15_magenta"}, \code{"p15_blue"},
 \code{"p15_yellow"}, \code{"p15_cyan"}, \code{"p15_mustard"}, \code{"p15_violet"},
-\code{"p15_teal"}, \code{"p15_ink"}, \code{"mb_orange"}, \code{"mb_dark"}, \code{"mb_beige"},
+\code{"p15_teal"}, \code{"p15_ink"}, \code{"mb_orange"}, \code{"mb_dark"}, the series-hue
+ramps \code{"ramp_blue"}, \code{"ramp_indigo"}, \code{"ramp_teal"}, \code{"ramp_green"},
+\code{"ramp_amber"}, \code{"ramp_red"}, \code{"ramp_purple"},
 \code{"semantic"}, \code{"signed"}, and \code{"chart"}.}
 }
 \value{

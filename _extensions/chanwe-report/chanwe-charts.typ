@@ -49,15 +49,24 @@
   y-max:       1,
   colors:      auto,
 ) = {
+  // `meta.chart-palette-order` de brand.yml, en ese orden. La serie era
+  // monocroma —un acento y tres grises—; ahora son los ocho matices de la
+  // marca. `chart-red` va ultimo a proposito: esta a dE00 5.0 de `primary`,
+  // asi que nada choca hasta que un grafico pide las ocho series. Para
+  // volver a la version monocroma, pasar `colors:` a mano.
   let palette = if colors == auto {
-    (_t.primary, _t.fg-muted, _t.neutral-700, _t.fg-subtle)
+    (_t.primary, _t.chart-blue, _t.chart-green, _t.chart-indigo,
+     _t.chart-orange, _t.chart-teal, _t.chart-purple, _t.chart-red)
   } else { colors }
   let n = if series.len() > 0 { series.first().at(1).len() } else { 0 }
   if n == 0 { return [] }
   let x-step = if n > 1 { width / (n - 1) } else { width }
   let y-range = y-max - y-min
 
-  block(width: width, height: height + 10mm)[
+  // Sin cortar: el gráfico se dibuja con `place` dentro de un bloque de alto
+  // fijo, así que partirlo no reparte el contenido —lo deja colgando fuera de
+  // la caja de texto—. Si no entra, pasa entero a la página siguiente.
+  block(width: width, height: height + 10mm, breakable: false)[
     #place(top + left,
       rect(width: width, height: height,
         fill: none, stroke: 0.5pt + _t.border)

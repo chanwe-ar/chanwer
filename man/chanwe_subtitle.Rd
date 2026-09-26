@@ -7,7 +7,7 @@
 chanwe_subtitle(text, note = NULL, kpi = NULL)
 }
 \arguments{
-\item{text}{Main subtitle string (Satoshi, muted ink, below the title rule).}
+\item{text}{Main subtitle string (Inter, muted ink, below the title rule).}
 
 \item{note}{Optional smaller italic line rendered below the subtitle, e.g. a
 methodological caveat. Ignored when \code{kpi} is supplied.}

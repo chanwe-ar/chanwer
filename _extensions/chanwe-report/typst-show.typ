@@ -16,6 +16,9 @@ $endif$
 $if(by-author)$
   author: "$for(by-author)$$it.name.literal$$sep$, $endfor$",
 $endif$
+$if(lang)$
+  lang: "$lang$",
+$endif$
 $if(date)$
   date: "$date$",
 $endif$
@@ -24,6 +27,9 @@ $if(chanwe.document)$
 $endif$
 $if(chanwe.edition)$
   edition: "$chanwe.edition$",
+$endif$
+$if(chanwe.taggy)$
+  taggy: "$chanwe.taggy$",
 $endif$
 $if(chanwe.volume)$
   volume: "$chanwe.volume$",
@@ -54,9 +60,6 @@ $if(chanwe.wordmark)$
 $endif$
 $if(chanwe.cover)$
   cover: $chanwe.cover$,
-$endif$
-$if(chanwe.cover-dark)$
-  cover-dark: $chanwe.cover-dark$,
 $endif$
 $if(chanwe.no-abstract)$
   abstract: false,
@@ -128,6 +131,33 @@ $if(chanwe.cover-edge)$
 $endif$
 $if(chanwe.cover-edge-color)$
   cover-edge-color: rgb("#$chanwe.cover-edge-color$"),
+$endif$
+$if(chanwe.cover-variant)$
+  cover-variant: "$chanwe.cover-variant$",
+$endif$
+$if(chanwe.cover-dark)$
+  cover-dark: $chanwe.cover-dark$,
+$endif$
+$if(chanwe.publication-period)$
+  publication-period: "$chanwe.publication-period$",
+$endif$
+$if(chanwe.publication-edition)$
+  publication-edition: "$chanwe.publication-edition$",
+$endif$
+$if(chanwe.publication-art)$
+  publication-art: "$chanwe.publication-art$",
+$endif$
+$if(chanwe.publication-audience)$
+  publication-audience: "$chanwe.publication-audience$",
+$endif$
+$if(chanwe.publication-series)$
+  publication-series: "$chanwe.publication-series$",
+$endif$
+$if(chanwe.publication-location)$
+  publication-location: "$chanwe.publication-location$",
+$endif$
+$if(chanwe.publication-copyright)$
+  publication-copyright: "$chanwe.publication-copyright$",
 $endif$
 $if(chanwe.page-bg)$
   page-bg: rgb("#$chanwe.page-bg$"),

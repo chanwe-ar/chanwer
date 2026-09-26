@@ -26,7 +26,7 @@
 #chanwe-book-toc a.sidebar-link {
   display: block;
   text-decoration: none;
-  color: #211f1c;
+  color: #111319;
   font-size: 0.85rem;
   line-height: 1.4;
   padding: 0.14rem 0;
@@ -51,7 +51,7 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #928d86;
+  color: #8a94a6;
   margin-top: 0.9rem;
   padding-bottom: 0.28rem;
   border-bottom: 1px solid #e8e8e8;
@@ -94,7 +94,7 @@
   color: #fd3810;
 }
 #chanwe-book-toc .chanwe-cur-sections .header-section-number {
-  color: #928d86;
+  color: #8a94a6;
   margin-right: 0.15rem;
 }
 /* quarto's toc scrollspy inline-hides uls outside the active trail;

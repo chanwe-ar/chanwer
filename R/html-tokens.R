@@ -1,15 +1,16 @@
 # Shared building blocks for the HTML helpers: chanwe_gt(), chanwe_reactable()
 # and chanwe_highchart(). They port the chanwe_kbl() header grammar (eyebrow /
-# title / subtitle / `//` caption) to browser output so a table or chart
+# title / subtitle / stamp caption) to browser output so a table or chart
 # looks the same in a Quarto HTML report as it does in the Typst PDF.
 #
-# Font stacks mirror the Typst templates: Archivo for display, Satoshi for
-# body text, JetBrains Mono for eyebrows, column labels and figures. Every
-# stack falls back to the current HTML stylesheet face (DM Sans) and then to
-# the platform UI font.
+# Font stacks follow brand.yml `typography`: Schibsted Grotesk for display,
+# Inter for body text, JetBrains Mono for eyebrows, column labels and
+# figures. Every stack falls back to the platform UI font. Multi-word names
+# are left unquoted (valid CSS) so the stacks can sit inside single- or
+# double-quoted style attributes.
 
-.cw_font_sans <- "Satoshi, 'DM Sans', system-ui, -apple-system, sans-serif"
-.cw_font_display <- "Archivo, system-ui, sans-serif"
+.cw_font_sans <- "Inter, system-ui, -apple-system, sans-serif"
+.cw_font_display <- "Schibsted Grotesk, system-ui, sans-serif"
 .cw_font_mono <- paste0(
   "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace"
 )
@@ -20,24 +21,44 @@
 chanwe_html_tokens <- function() {
   tk <- chanwe_get_colors()
   list(
-    ink = tk[["typst-ink"]],
-    fg = tk[["typst-fg"]],
-    fg_muted = tk[["typst-fg-muted"]],
-    fg_subtle = tk[["typst-fg-subtle"]],
-    primary = tk[["typst-primary"]],
-    primary_text = tk[["typst-primary-text"]],
-    # pressed state one shade darker than the primary, mirroring the HTML
-    # stylesheet's --cw-color-primary-active (brand-orange-950)
-    primary_active = tk[["mb-orange-950"]],
-    # eyebrows and the `//` caption prefix: the brand orange used for HTML
+    ink = tk[["ink"]],
+    fg = tk[["fg"]],
+    fg_muted = tk[["fg-muted"]],
+    fg_subtle = tk[["fg-subtle"]],
+    primary = tk[["primary"]],
+    primary_text = tk[["primary-text"]],
+    # pressed state: brand.yml aliases primary-active to primary (one orange)
+    primary_active = tk[["primary-active"]],
+    # eyebrows and the caption stamp: the brand orange used for HTML
     # section numbers, shared with theme_chanwe() and chanwe_kbl()
-    accent = tk[["brand-orange"]],
-    n100 = tk[["typst-neutral-100"]],
-    n200 = tk[["typst-neutral-200"]],
-    n300 = tk[["typst-neutral-300"]],
+    accent = tk[["primary"]],
+    n100 = tk[["surface-sunken"]],
+    n200 = tk[["rule"]],
+    n300 = tk[["neutral-300"]],
+    # Rules follow the chanwe-report figure frame: slate, never ink.
+    # `rule` for the structural lines (above the header, under the column
+    # labels, above the caption), `rule_row` for the lighter row dividers.
+    rule = tk[["border-cool"]],
+    rule_row = tk[["rule"]],
     positive = tk[["signed-positive"]],
     negative = tk[["signed-negative"]],
     neutral = tk[["signed-neutral"]]
+  )
+}
+
+# Inline style of the orange caption stamp (the chanwe-report figure-frame
+# stamp): square primary box, white JetBrains Mono caps. Double quotes only,
+# so it can sit inside a single-quoted style attribute (highcharter).
+chanwe_html_stamp_style <- function() {
+  tk <- chanwe_html_tokens()
+  sprintf(
+    paste0(
+      "display:inline-block; background:%s; color:%s; ",
+      "font: 500 9px/1.2 %s; letter-spacing:.16em; ",
+      "text-transform:uppercase; padding:5px 14px; border-radius:0;"
+    ),
+    tk$primary, chanwe_get_colors()[["pure-white"]],
+    gsub("'", "\"", .cw_font_mono, fixed = TRUE)
   )
 }
 
@@ -65,8 +86,8 @@ chanwe_signed_color <- function(x, tk, smaller_is_better = FALSE) {
 # Used by chanwe_reactable(); chanwe_gt() builds the same structure inside the
 # gt heading instead. Returns NULL when there is nothing to show.
 #
-# When `bg` is given the block carries the table background and the ink rule
-# on its own top edge, so the widget reads as one card: rule, header, table.
+# When `bg` is given the block carries the table background and the slate
+# rule on its own top edge, so the widget reads as one card: rule, header, table.
 # The 12px side inset matches the reactable cellPadding ("10px 12px") so the
 # texts align with cell content.
 chanwe_html_header_tag <- function(
@@ -86,7 +107,7 @@ chanwe_html_header_tag <- function(
   } else {
     sprintf(
       "background:%s; border-top:1px solid %s; padding: 10px 12px 12px;",
-      bg, tk$ink
+      bg, tk$rule
     )
   }
   tags$div(
@@ -133,7 +154,9 @@ chanwe_html_header_tag <- function(
   )
 }
 
-# `//`-prefixed source line as an htmltools tag (chanwe_caption() for HTML).
+# Source line as an htmltools tag (chanwe_caption() for HTML), styled as the
+# chanwe-report figure-frame stamp: a square primary box with white mono caps,
+# under a slate hairline.
 # As with chanwe_html_header_tag(), a `bg` puts the line on the table
 # background with the 12px side inset so the widget reads as one card.
 chanwe_html_caption_tag <- function(caption, bg = NULL) {
@@ -143,29 +166,23 @@ chanwe_html_caption_tag <- function(caption, bg = NULL) {
   chanwe_require_package("htmltools")
   tk <- chanwe_html_tokens()
   tags <- htmltools::tags
-  base_style <- sprintf(
-    "font: 300 10.5px/1.4 %s; color:%s;",
-    .cw_font_mono, tk$ink
-  )
   style <- if (is.null(bg)) {
-    paste(base_style, "padding: 8px 0 0;")
+    "padding: 8px 0 0;"
   } else {
-    # hairline above the caption: same neutral rule as under the column labels
-    paste(base_style, sprintf(
+    # hairline above the caption: same slate rule as under the column labels
+    sprintf(
       "background:%s; border-top:0.5px solid %s; padding: 12px 12px 10px;",
-      bg, tk$n300
-    ))
+      bg, tk$rule
+    )
   }
   tags$div(
     class = "chanwe-html-caption",
     style = style,
-    tags$span(style = sprintf("color:%s;", tk$accent), "//"),
-    " ",
-    caption
+    tags$span(class = "chanwe-stamp", style = chanwe_html_stamp_style(), caption)
   )
 }
 
-# Web-font dependency (Satoshi from Fontshare; Archivo + JetBrains Mono from
+# Web-font dependency (Inter, Schibsted Grotesk and JetBrains Mono from
 # Google Fonts) attached to the htmlwidgets so the helpers render with the
 # brand faces even when chanwe_reporting_css() is not loaded. Quarto requires
 # widget dependencies to be disk-based, so the CDN links are injected through
@@ -179,14 +196,13 @@ chanwe_html_fonts_dependency <- function() {
   list(
     htmltools::htmlDependency(
       name = "chanwe-fonts",
-      version = "1.0.0",
+      version = "2.0.0",
       src = c(file = src),
       all_files = FALSE,
       head = paste0(
-        '<link rel="stylesheet" href="https://api.fontshare.com/v2/css',
-        '?f%5B%5D=satoshi@400,500,700&amp;display=swap">',
         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2',
-        '?family=Archivo:wght@500;600;700',
+        '?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400',
+        '&amp;family=Schibsted+Grotesk:wght@500;600;700',
         '&amp;family=JetBrains+Mono:wght@300;400;500&amp;display=swap">'
       )
     )

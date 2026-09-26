@@ -13,12 +13,17 @@ test_that("palette preview returns ggplot object", {
 
 test_that("chanwe_resolve_bg maps named surfaces to hex", {
   expect_identical(chanwe_resolve_bg("white"), "#FFFFFF")
-  expect_identical(chanwe_resolve_bg("beige"), "#F5F1EB")
-  expect_identical(chanwe_resolve_bg("metallic"), "#F7F7F7")
-  expect_identical(chanwe_resolve_bg("gray"), "#EDF0F1")
-  expect_identical(chanwe_resolve_bg("grey"), "#EDF0F1")
-  expect_identical(chanwe_resolve_bg("white-ivory"), "#FAF9F7")
+  expect_identical(chanwe_resolve_bg("paper"), "#F8FAFC")
+  expect_identical(chanwe_resolve_bg("sunken"), "#F1F5F9")
+  expect_identical(chanwe_resolve_bg("slate"), "#EBF0F6")
+  # pre-slate names resolve to the nearest brand surface
+  expect_identical(chanwe_resolve_bg("metallic"), "#F8FAFC")
+  expect_identical(chanwe_resolve_bg("white-ivory"), "#F8FAFC")
+  expect_identical(chanwe_resolve_bg("gray"), "#EBF0F6")
+  expect_identical(chanwe_resolve_bg("grey"), "#EBF0F6")
   expect_identical(chanwe_resolve_bg("transparent"), "transparent")
+  # beige is retired: an error, not R's own "beige" colour name
+  expect_error(chanwe_resolve_bg("beige"), "retired")
   # hex strings pass through untouched
   expect_identical(chanwe_resolve_bg("#ABCDEF"), "#ABCDEF")
 })

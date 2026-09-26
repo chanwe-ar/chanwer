@@ -166,15 +166,16 @@ fmt_pct <- function(x) sprintf("%+.1f%%", x)
 
 ::: {.callout-note}
 ## How this document is organised
-Sections 1–6 are the **static** system (ggplot2 via `theme_chanwe()`), rendered as PNG. Sections 7–9 are the **HTML-native** counterparts: `chanwe_gt()` for static tables, `chanwe_highchart()` for interactive charts, `chanwe_reactable()` for interactive tables — all sharing the same header grammar (eyebrow / title / subtitle / `//` caption) and signed tokens. Every chunk's code is folded under **Code**. The PDF-only patterns (`chanwe_kbl()`, zone highlights, inset figures) live in `chanwer-showcase-pdf.qmd`.
+Sections 1–6 are the **static** system (ggplot2 via `theme_chanwe()`), rendered as PNG. Sections 7–9 are the **HTML-native** counterparts: `chanwe_gt()` for static tables, `chanwe_highchart()` for interactive charts, `chanwe_reactable()` for interactive tables — all sharing the same header grammar (eyebrow / title / subtitle / stamp caption) and signed tokens. Every chunk's code is folded under **Code**. The PDF-only patterns (`chanwe_kbl()`, zone highlights, inset figures) live in `chanwer-showcase-pdf.qmd`.
 :::
 
 # The Color System
 
 Every color is a named token. `chanwe_palette()` returns the full inventory;
 `chanwe_palette("<group>")` one group; `chanwe_preview_palette("<group>")`
-draws its swatch grid. Coral is the house lead, blue is structural, green
-is positive, vermillion is alert, ink is the neutral anchor.
+draws its swatch grid. The values mirror `color.palette` in the
+chanwe-brand `brand.yml`: orange is the one accent, blue is structural,
+green is positive, red is alert, ink is the neutral anchor.
 
 ## The categorical eight
 
@@ -203,7 +204,7 @@ chanwe_preview_palette("semantic")
 ```{r}
 #| label: preview-teal
 #| fig-height: 2.4
-chanwe_preview_palette("p15_teal")
+chanwe_preview_palette("ramp_teal")
 ```
 
 ```{r}
@@ -278,7 +279,7 @@ ggplot(mpg_drv, aes(y = class, fill = drv)) +
 #| label: ordinal
 ggplot(mt, aes(hp_band, fill = hp_band)) +
     geom_bar(width = 0.55) +
-    scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE) +
+    scale_fill_chanwe_d(palette = "ramp_blue", reverse = TRUE) +
     labs(
         title = chanwe_title(
             "Fleet by horsepower band",
@@ -407,7 +408,7 @@ ggplot(mk, aes(delta, manufacturer, fill = delta)) +
             eyebrow = "DIVERGING - BARS"
         ),
         subtitle = chanwe_subtitle(
-            "Above average in green, below in vermillion"
+            "Above average in green, below in red"
         ),
         x = "Δ MPG",
         y = NULL,
@@ -481,7 +482,7 @@ chanwe_gt(
     bigger,
     title = "Quarterly performance — bigger is better",
     eyebrow = "SIGNED - TABLES",
-    subtitle = "Positive deltas green, negative vermillion.",
+    subtitle = "Positive deltas green, negative red.",
     caption = "Source: finance close, Q1 - simulated",
     stub = "metric",
     signed = c("qoq", "yoy")
@@ -506,9 +507,9 @@ chanwe_gt(
 
 # Header Treatments
 
-The header grammar: mono-caps eyebrow with an orange rule, Archivo title at
-1.85× base, Satoshi subtitle, optional note line or KPI scoreboard, and a
-`//` source caption.
+The header grammar: mono-caps eyebrow with an orange rule, Schibsted Grotesk
+title at 1.85× base, Inter subtitle, optional note line or KPI scoreboard, and an
+orange stamp source caption.
 
 ## Eyebrow · title · subtitle (default)
 
@@ -698,16 +699,17 @@ p_fleet +
 
 # Surfaces and Frames
 
-`theme_chanwe()` exposes five named surfaces plus `"transparent"` and raw
-hex; grid colors adapt per surface.
+`theme_chanwe()` exposes four named surfaces, all `brand.yml` tokens
+(`paper`, `white`, `sunken`, `slate`), plus `"transparent"` and raw hex;
+grid colors adapt per surface.
 
 ::: {layout-ncol=2}
 
 ```{r}
-#| label: bg-metallic
+#| label: bg-paper
 p_fleet +
     labs(
-        title = chanwe_title("metallic · default", eyebrow = "SURFACE"),
+        title = chanwe_title("paper · default", eyebrow = "SURFACE"),
         subtitle = chanwe_subtitle("theme_chanwe()")
     ) +
     theme_chanwe()
@@ -724,35 +726,35 @@ p_fleet +
 ```
 
 ```{r}
-#| label: bg-ivory
+#| label: bg-sunken
 p_fleet +
     labs(
-        title = chanwe_title("white-ivory", eyebrow = "SURFACE"),
-        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "white-ivory")')
+        title = chanwe_title("sunken", eyebrow = "SURFACE"),
+        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "sunken")')
     ) +
-    theme_chanwe(bg_color = "white-ivory")
+    theme_chanwe(bg_color = "sunken")
 ```
 
 ```{r}
-#| label: bg-gray
+#| label: bg-slate
 p_fleet +
     labs(
-        title = chanwe_title("gray", eyebrow = "SURFACE"),
-        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "gray")')
+        title = chanwe_title("slate", eyebrow = "SURFACE"),
+        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "slate")')
     ) +
-    theme_chanwe(bg_color = "gray")
+    theme_chanwe(bg_color = "slate")
 ```
 
 ```{r}
-#| label: bg-beige
+#| label: bg-white-padding
 p_fleet +
     labs(
-        title = chanwe_title("beige · padding 18", eyebrow = "SURFACE"),
+        title = chanwe_title("white · padding 18", eyebrow = "SURFACE"),
         subtitle = chanwe_subtitle(
-            'theme_chanwe(bg_color = "beige", plot_padding = 18)'
+            'theme_chanwe(bg_color = "white", plot_padding = 18)'
         )
     ) +
-    theme_chanwe(bg_color = "beige", plot_padding = 18)
+    theme_chanwe(bg_color = "white", plot_padding = 18)
 ```
 
 ```{r}
@@ -845,7 +847,7 @@ ggplot(rev_df, aes(month, revenue, color = segment)) +
 ```{r}
 #| label: form-area
 ggplot(econ, aes(date, unemploy / 1000)) +
-    geom_area(fill = chart[["chart-coral"]], alpha = 0.85) +
+    geom_area(fill = chart[["primary"]], alpha = 0.85) +
     labs(
         title = chanwe_title("Unemployed persons", eyebrow = "FORM - AREA"),
         subtitle = chanwe_subtitle("Millions, monthly since 2000"),
@@ -968,7 +970,7 @@ ggplot(mt, aes(wt, mpg, color = cyl)) +
 
 The HTML counterpart of `chanwe_kbl()`: same header grammar, mono-caps
 column labels, tabular mono figures, hairline ink rules, 1px stub and
-header rules, striped rows, `//` source note. Returns a `gt_tbl`, so every
+header rules, striped rows, orange stamp source note. Returns a `gt_tbl`, so every
 `gt` verb can be piped after it.
 
 ## Surfaces
@@ -989,16 +991,16 @@ chanwe_gt(
 ```
 
 ```{r}
-#| label: gt-ivory-compact
+#| label: gt-paper-compact
 chanwe_gt(
     fleet |> select(-delta),
-    title = "bg · white-ivory",
-    eyebrow = "TABLE · COMPACT · WHITE-IVORY",
+    title = "bg · paper",
+    eyebrow = "TABLE · COMPACT · PAPER",
     subtitle = "density · compact",
     caption = "Source · Motor Trend, 1974 · mtcars dataset.",
     stub = "model",
     density = "compact",
-    bg = "white-ivory"
+    bg = "paper"
 ) |>
     gt::cols_label(mpg = "MPG", hp = "HP", wt = "Weight", cyl = "Cyl") |>
     gt::fmt_number(columns = c(mpg, wt), decimals = 2) |>
@@ -1008,39 +1010,27 @@ chanwe_gt(
 ::: {layout-ncol=2}
 
 ```{r}
-#| label: gt-metallic
+#| label: gt-sunken
 chanwe_gt(
     fleet |> select(model, mpg, hp) |> slice_head(n = 5),
-    title = "bg · metallic",
-    eyebrow = "TABLE · METALLIC",
+    title = "bg · sunken",
+    eyebrow = "TABLE · SUNKEN",
     stub = "model",
-    bg = "metallic"
+    bg = "sunken"
 ) |>
     gt::cols_label(mpg = "MPG", hp = "HP") |>
     gt::fmt_number(columns = mpg, decimals = 2)
 ```
 
 ```{r}
-#| label: gt-beige
-chanwe_gt(
-    fleet |> select(model, mpg, hp) |> slice_head(n = 5),
-    title = "bg · beige",
-    eyebrow = "TABLE · BEIGE",
-    stub = "model",
-    bg = "beige"
-) |>
-    gt::cols_label(mpg = "MPG", hp = "HP") |>
-    gt::fmt_number(columns = mpg, decimals = 2)
-```
-
 ```{r}
-#| label: gt-gray
+#| label: gt-slate
 chanwe_gt(
     fleet |> select(model, mpg, hp) |> slice_head(n = 5),
-    title = "bg · gray",
-    eyebrow = "TABLE · GRAY",
+    title = "bg · slate",
+    eyebrow = "TABLE · SLATE",
     stub = "model",
-    bg = "gray"
+    bg = "slate"
 ) |>
     gt::cols_label(mpg = "MPG", hp = "HP") |>
     gt::fmt_number(columns = mpg, decimals = 2)
@@ -1171,7 +1161,7 @@ chanwe_gt(
 # Interactive Charts — `chanwe_highchart()`
 
 `chanwe_highchart()` applies the header grammar and chart chrome to any
-`highcharter` object: Archivo title block, mono axis ticks, no axis lines,
+`highcharter` object: Schibsted Grotesk title block, mono axis ticks, no axis lines,
 hairline y-grid, ink tooltip, no exporting menu or credits. Pass
 `chanwe_palette("chart")` to `hc_colors()` (or let `chanwe_highchart()` do
 it) for discrete colour.
@@ -1244,7 +1234,7 @@ highcharter::highchart() |>
 
 # Interactive Tables — `chanwe_reactable()`
 
-Same header grammar as `chanwe_gt()` above the table, `//` caption below;
+Same header grammar as `chanwe_gt()` above the table, orange stamp caption below;
 mono-caps sortable headers, tabular mono figures, ink current page,
 brand-orange hover on page buttons, valence-coloured `signed` columns.
 
@@ -1292,7 +1282,7 @@ chanwe_reactable(
     eyebrow = "REACTABLE · SEARCH + PAGE SIZE",
     subtitle = "All 32 vehicles - type to filter, choose a page size.",
     caption = "Source · Motor Trend, 1974 · mtcars dataset.",
-    bg = "white-ivory",
+    bg = "paper",
     searchable = TRUE,
     showPageSizeOptions = TRUE,
     pageSizeOptions = c(5, 10, 32),

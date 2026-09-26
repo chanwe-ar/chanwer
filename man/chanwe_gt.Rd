@@ -21,14 +21,14 @@ chanwe_gt(
 \arguments{
 \item{data}{A data frame or tibble.}
 
-\item{title}{Table title (Archivo, 20px).}
+\item{title}{Table title (Schibsted Grotesk, 20px).}
 
 \item{subtitle}{Subtitle line rendered below the title.}
 
 \item{eyebrow}{Small mono-caps label with an orange rule prefix, rendered
 above the title.}
 
-\item{caption}{Source note at the bottom, prefixed with \verb{//}.}
+\item{caption}{Source note at the bottom, drawn as the orange stamp.}
 
 \item{stub}{Name of the stub/row-identifier column (passed to
 \code{gt::gt(rowname_col = )}). Rendered left-aligned in ink with a thin
@@ -45,8 +45,8 @@ columns where a negative delta is good (costs, churn). Default \code{FALSE}.}
 \item{density}{\code{"spacious"} (default) or \code{"compact"} row padding.}
 
 \item{bg}{Table background. Named shorthand accepted by \code{\link[=theme_chanwe]{theme_chanwe()}}
-(\code{"white"}, \code{"white-ivory"}, \code{"metallic"}, \code{"gray"}, \code{"beige"},
-\code{"transparent"}) or any hex string. Default \code{"white"}.}
+(\code{"white"}, \code{"paper"}, \code{"sunken"}, \code{"slate"}, \code{"transparent"}) or any
+hex string. Default \code{"white"}.}
 
 \item{id}{Optional HTML id for the table. A random id is generated when
 \code{NULL} so the scoped CSS never leaks between tables.}
@@ -57,11 +57,11 @@ A \code{gt_tbl} object.
 \description{
 The HTML counterpart of \code{\link[=chanwe_kbl]{chanwe_kbl()}}: a \code{gt} table styled with the
 Chanwe header grammar -- mono-caps eyebrow with an orange rule prefix,
-Archivo title, Satoshi subtitle, mono-caps column labels, JetBrains Mono
-tabular figures right-aligned, a hairline ink rule above the table, a
-thin neutral rule under the column labels and to the right of the stub,
+Schibsted Grotesk title, Inter subtitle, mono-caps column labels, JetBrains Mono
+tabular figures right-aligned, a hairline slate rule above the table, a
+thin slate rule under the column labels and to the right of the stub,
 flat rows (an n100 tint on hover, matching \code{\link[=chanwe_reactable]{chanwe_reactable()}}, no
-zebra striping), and a \verb{//}-prefixed source note.
+zebra striping), and the source note as an orange stamp.
 }
 \details{
 The function returns a regular \code{gt_tbl}, so every \code{gt} verb

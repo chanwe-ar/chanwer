@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Chanwe code theme for Typst's native highlighter (`set raw(theme:)`).
+  Hand-mirrored from brand.yml's `code-*` tokens, like the `_t` token table —
+  every colour below is a brand token, never a new literal. If a `code-*`
+  value changes in brand.yml, change it here in the same commit. Keywords,
+  strings, numbers and symbols each get their own hue so the four read apart
+  at a glance:
+
+    code-keyword    #FD3810   keywords (def, if, return, import …)   = primary
+    code-string     #15803D   strings                                = callout-do
+    code-number     #7C3AED   numbers and language constants         = callout-caution
+    code-operator   #0758E5   operators and punctuation ( ) : >= ->  = callout-note
+    code-function   #475569   function and type names (bold)         = fg-muted
+    code-type       #353535   built-in types (float, str)            = fg-neutral
+    code-comment    #928D86   comments (italic) — the pre-slate fg-subtle; brand.yml's
+                              fg-subtle is now #8A94A6, so this is the one code tone
+                              with no other home
+
+  The base text colour is not set here: the block inherits `body-fg` from the
+  report, so plain identifiers read in the same slate as prose.
+-->
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>Chanwe</string>
+  <key>settings</key>
+  <array>
+    <dict>
+      <key>settings</key>
+      <dict/>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Comment</string>
+      <key>scope</key>
+      <string>comment</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#928D86</string>
+        <key>fontStyle</key>
+        <string>italic</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Keyword</string>
+      <key>scope</key>
+      <string>keyword, storage, storage.modifier</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#FD3810</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Operator and punctuation</string>
+      <key>scope</key>
+      <string>keyword.operator, punctuation, meta.function-call.arguments punctuation, meta.function.parameters punctuation</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#0758E5</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>String</string>
+      <key>scope</key>
+      <string>string</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#15803D</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Number and language constant</string>
+      <key>scope</key>
+      <string>constant.numeric, constant.language, constant.character</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#7C3AED</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Function and type name</string>
+      <key>scope</key>
+      <string>entity.name.function, entity.name.type, entity.name.class, variable.function, support.function</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#475569</string>
+        <key>fontStyle</key>
+        <string>bold</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Built-in type</string>
+      <key>scope</key>
+      <string>storage.type, support.type, support.class</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#353535</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>

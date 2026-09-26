@@ -35,7 +35,7 @@ chanwe:
   abstract-eyebrow: "TLDR;"
   abstract-title: "Static Reference"
   abstract-takeaway: "One color system and one header grammar, mapped to every chart and table: the same tokens drive eyebrows, KPI arrows, table deltas, and this document."
-  abstract-text: "This showcase covers every static output in the chanwer package: palette previews, categorical / ordinal / sequential / diverging scales, the signed positive-negative system with its KPI scoreboard, all header treatments (eyebrow, subtitle, note, KPI, title-only, no header line, compact and spacious), all five brand surfaces plus transparent, framed variants, the chart forms (scatter, bar, line, area, distribution, error bars, heatmap, facets), and every chanwe_kbl() pattern — surfaces, densities, totals, highlights, vertical rules, signed deltas, title-only and header-less tables. The interactive counterparts (gt, highcharter, reactable) live in chanwer-showcase-html.qmd."
+  abstract-text: "This showcase covers every static output in the chanwer package: palette previews, categorical / ordinal / sequential / diverging scales, the signed positive-negative system with its KPI scoreboard, all header treatments (eyebrow, subtitle, note, KPI, title-only, no header line, compact and spacious), all four brand surfaces plus transparent, framed variants, the chart forms (scatter, bar, line, area, distribution, error bars, heatmap, facets), and every chanwe_kbl() pattern — surfaces, densities, totals, highlights, vertical rules, signed deltas, title-only and header-less tables. The interactive counterparts (gt, highcharter, reactable) live in chanwer-showcase-html.qmd."
   abstract-status: "Stable · Internal"
   abstract-show:
     - document
@@ -198,19 +198,21 @@ p_fleet <- ggplot(mt, aes(wt, mpg, color = hp_band)) +
 
 Every color in `chanwer` is a named token. `chanwe_palette()` returns the
 full inventory; `chanwe_palette("<group>")` returns one group;
-`chanwe_preview_palette("<group>")` draws its swatch grid.
+`chanwe_preview_palette("<group>")` draws its swatch grid. The values
+mirror `color.palette` in the chanwe-brand `brand.yml`.
 
 ::: {.chanwe-callout kind="note" eyebrow="BRAND ROLES" title="The manual assigns each family a job"}
-Coral is the house lead, blue is structural, green is positive, vermillion
+Orange is the one accent, blue is structural, green is positive, red
 is alert, ink is the neutral anchor. The scales below are built on those
 roles — positive/negative is never an arbitrary red/green pair.
 :::
 
 ## The categorical eight
 
-Fixed, CVD-validated slot order — coral, blue, teal, green, violet,
-magenta, mustard, ink. Mustard and ink sit last deliberately: charts with
-up to six series never reach them.
+The slot order is `meta.chart-palette-order` from `brand.yml` — primary
+orange, blue, green, indigo, orange, teal, purple, red — the eight
+Apple-HIG-calibrated series hues, shared with the callouts. Red sits last:
+it is nearly the primary, so the two only meet in an eight-series chart.
 
 ```{r}
 #| label: preview-chart
@@ -220,9 +222,9 @@ chanwe_preview_palette("chart")
 
 ## The signed trio
 
-Hue-true darkenings of the brand's positive (green), alert (vermillion)
-and neutral (ink) families, stepped until each passes WCAG 4.5:1
-small-text contrast on all five brand surfaces.
+The brand's `kpi-green` and `kpi-red` with the slate `fg-muted` as
+neutral; each passes WCAG 4.5:1 small-text contrast on every brand
+surface.
 
 ```{r}
 #| label: preview-signed
@@ -241,7 +243,7 @@ chanwe_preview_palette("semantic")
 ```{r}
 #| label: preview-teal
 #| fig-height: 2.4
-chanwe_preview_palette("p15_teal")
+chanwe_preview_palette("ramp_teal")
 ```
 
 ```{r}
@@ -319,14 +321,14 @@ ggplot(mpg_drv, aes(y = class, fill = drv)) +
 ## Ordinal: one-hue ramp
 
 When category order carries meaning, use a ramp group so the reader sees
-the order in the color: `scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE)`.
+the order in the color: `scale_fill_chanwe_d(palette = "ramp_blue", reverse = TRUE)`.
 
 ```{r}
 #| label: ordinal
 #| fig-height: 4.0
 ggplot(mt, aes(hp_band, fill = hp_band)) +
     geom_bar(width = 0.55) +
-    scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE) +
+    scale_fill_chanwe_d(palette = "ramp_blue", reverse = TRUE) +
     labs(
         title = chanwe_title(
             "Fleet by horsepower band",
@@ -345,9 +347,9 @@ ggplot(mt, aes(hp_band, fill = hp_band)) +
 ## Sequential
 
 `scale_color_chanwe_c()` / `scale_fill_chanwe_c()` encode magnitude with
-one-hue, light-to-dark brand gradients: `orange` (default), `coral`,
-`blue`, `teal`, `green`, `vermillion`, `magenta`, `violet`, `mustard`,
-`ink`.
+one-hue, light-to-dark gradients built from the series hues: `orange`
+(default), `blue`, `indigo`, `teal`, `green`, `amber`, `red`, `purple`,
+plus `mustard` and `ink`.
 
 ```{r}
 #| label: seq-teal
@@ -393,7 +395,7 @@ ggplot(econ, aes(date, unemp_pct, color = psavert)) +
 
 ## Diverging
 
-`scale_fill_chanwe_div()` encodes polarity — vermillion through a neutral
+`scale_fill_chanwe_div()` encodes polarity — red through a neutral
 midpoint to green, signed tokens at the poles. Give it symmetric limits so
 zero lands on the midpoint.
 
@@ -466,7 +468,7 @@ ggplot(mk, aes(delta, manufacturer, fill = delta)) +
             eyebrow = "DIVERGING - BARS"
         ),
         subtitle = chanwe_subtitle(
-            "Above average in green, below in vermillion"
+            "Above average in green, below in red"
         ),
         x = "Δ MPG",
         y = NULL,
@@ -569,9 +571,9 @@ chanwe_kbl(
 
 # Header Treatments
 
-The header grammar: mono-caps eyebrow with an orange rule, Archivo title at
-1.85x base, Satoshi subtitle, optional note line or KPI scoreboard, and a
-`//` source caption.
+The header grammar: mono-caps eyebrow with an orange rule, Schibsted Grotesk
+title at 1.85x base, Inter subtitle, optional note line or KPI scoreboard, and an
+orange stamp source caption.
 
 ##### Eyebrow · title · subtitle (default)
 
@@ -767,15 +769,15 @@ p_fleet +
 `theme_chanwe()` exposes five named surfaces plus `"transparent"` and raw
 hex; grid colors adapt per surface.
 
-##### metallic · default
+##### paper · default
 
 ```{r}
-#| label: bg-metallic
+#| label: bg-paper
 #| fig-height: 3.8
 p_fleet +
     labs(
         title = chanwe_title(
-            "bg_color · metallic · default",
+            "bg_color · paper · default",
             eyebrow = "SURFACE"
         ),
         subtitle = chanwe_subtitle('theme_chanwe()')
@@ -796,45 +798,45 @@ p_fleet +
     theme_chanwe(bg_color = "white")
 ```
 
-##### white-ivory
+##### sunken
 
 ```{r}
-#| label: bg-ivory
+#| label: bg-sunken
 #| fig-height: 3.8
 p_fleet +
     labs(
-        title = chanwe_title("bg_color · white-ivory", eyebrow = "SURFACE"),
-        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "white-ivory")')
+        title = chanwe_title("bg_color · sunken", eyebrow = "SURFACE"),
+        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "sunken")')
     ) +
-    theme_chanwe(bg_color = "white-ivory")
+    theme_chanwe(bg_color = "sunken")
 ```
 
-##### gray
+##### slate
 
 ```{r}
-#| label: bg-gray
+#| label: bg-slate
 #| fig-height: 3.8
 p_fleet +
     labs(
-        title = chanwe_title("bg_color · gray", eyebrow = "SURFACE"),
-        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "gray")')
+        title = chanwe_title("bg_color · slate", eyebrow = "SURFACE"),
+        subtitle = chanwe_subtitle('theme_chanwe(bg_color = "slate")')
     ) +
-    theme_chanwe(bg_color = "gray")
+    theme_chanwe(bg_color = "slate")
 ```
 
-##### beige · padding 18
+##### white · padding 18
 
 ```{r}
-#| label: bg-beige
+#| label: bg-white-padding
 #| fig-height: 3.8
 p_fleet +
     labs(
-        title = chanwe_title("bg_color · beige", eyebrow = "SURFACE"),
+        title = chanwe_title("bg_color · white", eyebrow = "SURFACE"),
         subtitle = chanwe_subtitle(
-            'theme_chanwe(bg_color = "beige", plot_padding = 18)'
+            'theme_chanwe(bg_color = "white", plot_padding = 18)'
         )
     ) +
-    theme_chanwe(bg_color = "beige", plot_padding = 18)
+    theme_chanwe(bg_color = "white", plot_padding = 18)
 ```
 
 ##### transparent · zone-highlight
@@ -889,7 +891,7 @@ ggplot(mt, aes(wt, mpg)) +
 
 ## Inset figure
 
-::: {.inset-great-figure eyebrow="FY 2025" title="Revenue by Segment" layout="left" position="right" color="beige" source="Data: FY 2025 — valores normalizados"}
+::: {.inset-great-figure eyebrow="FY 2025" title="Revenue by Segment" layout="left" position="right" color="light" source="Data: FY 2025 — valores normalizados"}
 La categoría C presenta el valor más alto del conjunto. Los segmentos A y E muestran rendimiento dentro del rango esperado, mientras que F establece el piso de referencia para el análisis diferencial.
 
 ```{r}
@@ -901,9 +903,11 @@ p_fleet +
             "Faceted by transmission",
             eyebrow = "PLOT · INSET"
         ),
-        subtitle = chanwe_subtitle("title · Archivo  ·  padding · 18pt")
+        subtitle = chanwe_subtitle(
+            "title · Schibsted Grotesk  ·  padding · 18pt"
+        )
     ) +
-    theme_chanwe(bg_color = "beige", plot_padding = 18)
+    theme_chanwe(bg_color = "slate", plot_padding = 18)
 ```
 
 :::
@@ -955,7 +959,7 @@ ggplot(rev_df, aes(month, revenue, color = segment)) +
 #| label: form-area
 #| fig-height: 4.0
 ggplot(econ, aes(date, unemploy / 1000)) +
-    geom_area(fill = chart[["chart-coral"]], alpha = 0.85) +
+    geom_area(fill = chart[["primary"]], alpha = 0.85) +
     labs(
         title = chanwe_title("Unemployed persons", eyebrow = "FORM - AREA"),
         subtitle = chanwe_subtitle("Millions, monthly since 2000"),
@@ -1085,18 +1089,18 @@ totals, highlights and vertical rules.
 
 ## Surfaces
 
-##### white-ivory · default
+##### paper · default
 
 ```{r}
-#| label: tbl-ivory
+#| label: tbl-paper
 chanwe_kbl(
     fleet8,
-    title = "bg · white-ivory",
+    title = "bg · paper",
     subtitle = "density · spacious",
-    eyebrow = "TABLE · SPACIOUS · WHITE-IVORY",
+    eyebrow = "TABLE · SPACIOUS · PAPER",
     caption = "Source · Motor Trend, 1974 · mtcars dataset.",
     stub = "model",
-    bg = "white-ivory",
+    bg = "paper",
     fmt = fmt_fleet
 )
 ```
@@ -1117,53 +1121,37 @@ chanwe_kbl(
 )
 ```
 
-##### beige · top_border = FALSE
+##### sunken · top_border = FALSE
 
 ```{r}
-#| label: tbl-beige
+#| label: tbl-sunken
 chanwe_kbl(
     fleet8,
-    title = "bg · beige",
+    title = "bg · sunken",
     subtitle = "top_border = FALSE",
-    eyebrow = "TABLE · SPACIOUS · BEIGE",
+    eyebrow = "TABLE · SPACIOUS · SUNKEN",
     caption = "Source · Motor Trend, 1974 · mtcars dataset.",
     stub = "model",
-    bg = "beige",
+    bg = "sunken",
     top_border = FALSE,
     fmt = fmt_fleet
 )
 ```
 
-##### gray · padding 0
+##### slate · padding 0
 
 ```{r}
-#| label: tbl-gray
+#| label: tbl-slate
 chanwe_kbl(
     fleet8,
-    title = "bg · gray",
+    title = "bg · slate",
     subtitle = "padding = 0  ·  top_border = FALSE",
-    eyebrow = "TABLE · SPACIOUS · GRAY",
+    eyebrow = "TABLE · SPACIOUS · SLATE",
     caption = "Source · Motor Trend, 1974 · mtcars dataset.",
     stub = "model",
-    bg = "gray",
+    bg = "slate",
     padding = 0,
     top_border = FALSE,
-    fmt = fmt_fleet
-)
-```
-
-##### metallic
-
-```{r}
-#| label: tbl-metallic
-chanwe_kbl(
-    fleet8,
-    title = "bg · metallic",
-    subtitle = "density · spacious",
-    eyebrow = "TABLE · SPACIOUS · METALLIC",
-    caption = "Source · Motor Trend, 1974 · mtcars dataset.",
-    stub = "model",
-    bg = "metallic",
     fmt = fmt_fleet
 )
 ```
@@ -1218,7 +1206,7 @@ chanwe_kbl(
     ),
     stub = "model",
     density = "compact",
-    bg = "beige"
+    bg = "slate"
 )
 ```
 
@@ -1248,7 +1236,7 @@ chanwe_kbl(
     n_total = 1,
     highlight_cols = 4,
     vlines = 3,
-    bg = "white-ivory"
+    bg = "paper"
 )
 ```
 
@@ -1264,7 +1252,7 @@ chanwe_kbl(
     eyebrow = "TABLE · COMPACT HERO",
     caption = "Source · Motor Trend, 1974 · mtcars dataset.",
     stub = "model",
-    bg = "metallic",
+    bg = "paper",
     fmt = fmt_fleet
 )
 ```
@@ -1296,7 +1284,7 @@ chanwe_kbl(
     fleet8,
     caption = "Source · Motor Trend, 1974 · mtcars dataset.",
     stub = "model",
-    bg = "metallic",
+    bg = "paper",
     fmt = fmt_fleet
 )
 ```

@@ -74,11 +74,83 @@ document.addEventListener("DOMContentLoaded", function () {
 
   appendDocumentFooter();
 
+  // El indice se guarda mientras la portada esta a la vista y entra cuando
+  // el banner termina de pasar. La clase la lee el bloque de reglas de
+  // brand.yml; sin JS el indice queda visible, que es el estado seguro.
+  // Solo depende del banner: `#quarto-margin-sidebar` todavia no existe en
+  // DOMContentLoaded —lo arma el JS de Quarto despues—, y condicionar el
+  // listener a que estuviera presente hacia que no se enganchara nunca.
+  var bannerForToc = document.querySelector(".quarto-title-banner");
+  if (bannerForToc) {
+    var syncTocVisibility = function () {
+      var passed = bannerForToc.getBoundingClientRect().bottom <= 24;
+      document.body.classList.toggle("chanwe-toc-visible", passed);
+    };
+    syncTocVisibility();
+    window.addEventListener("scroll", syncTocVisibility, { passive: true });
+    window.addEventListener("resize", syncTocVisibility, { passive: true });
+    window.addEventListener("load", syncTocVisibility);
+  }
+
   var header = document.getElementById("title-block-header");
   if (!header) return;
 
   var titlePanel = header.querySelector(".quarto-title-banner .quarto-title");
   if (!titlePanel) return;
+
+  // ── Andamiaje de portada ────────────────────────────────────────────
+  // El banner es el analogo HTML de la portada research del reporte: riel
+  // de obsidiana a la derecha con el wordmark rotado y la plaza al pie, y
+  // sobre el campo editorial un masthead, el titular con su filete
+  // bermellon y una banda de pie. Lo que la portada resuelve con una
+  // grilla de cuatro bandas en A4, acá se reparte en una banda apaisada.
+  // El riel cuelga de `.quarto-title`, no del banner: el banner es una
+  // grilla, y un hijo absoluto auto-colocado toma como bloque contenedor
+  // su celda de grilla, no el ancho de la hoja. `.quarto-title` abarca de
+  // screen-start a screen-end, asi que `right: 0` cae en el borde real.
+  if (!titlePanel.querySelector(".chanwe-cover-rail")) {
+    var rail = document.createElement("div");
+    rail.className = "chanwe-cover-rail";
+
+    // El QR de contacto vive en el riel, arriba y sobre el mismo eje que el
+    // wordmark. Mismo marco que `chanwe-qr-frame()` en los formatos Typst,
+    // con los colores de la contratapa: sobre obsidiana el filete es blanco
+    // al 16% y la tarjeta, blanco puro —el unico blanco puro que la marca
+    // pone sobre tinta—.
+    var qr = document.createElement("a");
+    qr.className = "chanwe-cover-qr";
+    qr.href = "https://chanwe.com.ar";
+    qr.setAttribute("aria-label", "chanwe.com.ar");
+    var qrCard = document.createElement("span");
+    qrCard.className = "chanwe-cover-qr-card";
+    qr.appendChild(qrCard);
+    rail.appendChild(qr);
+
+    // El wordmark y la plaza son decorativos —los repite el pie del
+    // documento—, pero el riel ya no puede llevar el `aria-hidden`: el QR
+    // es un enlace de verdad y quedaria fuera del arbol accesible.
+    var railMark = document.createElement("span");
+    railMark.className = "chanwe-rail-wordmark";
+    railMark.setAttribute("aria-hidden", "true");
+    rail.appendChild(railMark);
+
+    var railFoot = document.createElement("div");
+    railFoot.className = "chanwe-rail-foot";
+    railFoot.setAttribute("aria-hidden", "true");
+    var railLoc1 = document.createElement("span");
+    railLoc1.textContent = "Mendoza";
+    var railSlash = document.createElement("span");
+    railSlash.className = "chanwe-rail-slash";
+    railSlash.textContent = "/";
+    var railLoc2 = document.createElement("span");
+    railLoc2.textContent = "Argentina";
+    railFoot.appendChild(railLoc1);
+    railFoot.appendChild(railSlash);
+    railFoot.appendChild(railLoc2);
+    rail.appendChild(railFoot);
+
+    titlePanel.appendChild(rail);
+  }
 
   var title = titlePanel.querySelector(".title");
   var titleBlock = title ? title.closest(".quarto-title-block") : null;
@@ -91,6 +163,19 @@ document.addEventListener("DOMContentLoaded", function () {
     titleAnchor.insertAdjacentElement("beforebegin", logo);
     titlePanel.classList.add("has-chanwe-title-logo");
   }
+
+  // El titular y la bajada van dentro de un mismo bloque: en la portada el
+  // filete bermellon es el borde izquierdo de UN bloque, no dos trazos con
+  // un hueco en el medio.
+  var subtitleEl = titlePanel.querySelector(".subtitle");
+  if (title && !titlePanel.querySelector(".chanwe-datum")) {
+    var datum = document.createElement("div");
+    datum.className = "chanwe-datum";
+    title.insertAdjacentElement("beforebegin", datum);
+    datum.appendChild(title);
+    if (subtitleEl) datum.appendChild(subtitleEl);
+  }
+
 
   var topCategories = titlePanel.querySelector(".quarto-categories");
   if (topCategories) {
@@ -125,6 +210,58 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (titleMeta.parentElement !== bottom) {
     bottom.appendChild(titleMeta);
+  }
+
+  // ── Banda de pie del campo editorial: la pastilla de serie en bermellon
+  //    y el sello de barras, como el pie de la portada.
+  if (!titlePanel.querySelector(".chanwe-cover-foot")) {
+    var coverFoot = document.createElement("div");
+    coverFoot.className = "chanwe-cover-foot";
+
+    var series = document.createElement("span");
+    series.className = "chanwe-cover-series";
+    var seriesGlyph = document.createElement("span");
+    seriesGlyph.className = "chanwe-cover-series-glyph";
+    seriesGlyph.textContent = "//";
+    series.appendChild(seriesGlyph);
+    var seriesLabel = document.createElement("span");
+    // La serie se parte por la barra, igual que en la portada: la marca y,
+    // si el documento declara un tema, el tema.
+    var firstPill = titlePanel.querySelector(".quarto-categories .quarto-category");
+    var topic = firstPill ? firstPill.textContent.trim() : "";
+    seriesLabel.textContent = topic ? "Chanwe" : "Chanwe";
+    series.appendChild(seriesLabel);
+    if (topic) {
+      var seriesSlash = document.createElement("span");
+      seriesSlash.className = "chanwe-cover-series-slash";
+      seriesSlash.textContent = "/";
+      series.appendChild(seriesSlash);
+      var seriesTopic = document.createElement("span");
+      seriesTopic.textContent = topic;
+      series.appendChild(seriesTopic);
+    }
+    coverFoot.appendChild(series);
+
+    var stamp = document.createElement("span");
+    stamp.className = "chanwe-cover-stamp";
+    stamp.setAttribute("aria-hidden", "true");
+    coverFoot.appendChild(stamp);
+
+    titlePanel.appendChild(coverFoot);
+  }
+
+  // La losa de metadatos y la banda de pie van juntas al fondo del campo:
+  // en la portada el ledger se apoya sobre el pie, no flota en el medio.
+  // Envolverlas hace que `space-between` reparta entre tres grupos
+  // —masthead, titular, fondo— en vez de cuatro.
+  var coverBottom = titlePanel.querySelector(".chanwe-cover-bottom");
+  if (!coverBottom) {
+    coverBottom = document.createElement("div");
+    coverBottom.className = "chanwe-cover-bottom";
+    bottom.insertAdjacentElement("beforebegin", coverBottom);
+    coverBottom.appendChild(bottom);
+    var footEl = titlePanel.querySelector(".chanwe-cover-foot");
+    if (footEl) coverBottom.appendChild(footEl);
   }
 
   var keywordsHost = bottom.querySelector(".chanwe-keywords");

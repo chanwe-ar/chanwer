@@ -3,7 +3,7 @@
 // =================================================================
 
 #show: doc => chanwe-propuesta(
-  doc-id:        "$if(propuesta.doc-id)$$propuesta.doc-id$$else$CHW · DOC$endif$",
+  doc-id:        "$if(propuesta.doc-id)$$propuesta.doc-id$$else$Estrategia, codo a codo$endif$",
   date:          "$if(propuesta.date)$$propuesta.date$$else$$date$$endif$",
   eyebrow:       "$if(propuesta.eyebrow)$$propuesta.eyebrow$$else$Propuesta Comercial$endif$",
   title:         "$if(propuesta.title)$$propuesta.title$$else$Propuesta$endif$",
@@ -18,6 +18,9 @@ $if(propuesta.lede)$
   lede: [
 $propuesta.lede$
   ],
+$endif$
+$if(lang)$
+  lang:          "$lang$",
 $endif$
 $if(propuesta.wordmark)$
   wordmark:      "$propuesta.wordmark$",
@@ -45,7 +48,14 @@ $for(propuesta.sigs)$
     (name: "$it.name$", company: "$it.company$", role: "$it.role$"),
 $endfor$
   ),
-  footer-client: "$if(propuesta.footer-client)$$propuesta.footer-client$$endif$",
-  footer-doc:    "$if(propuesta.footer-doc)$$propuesta.footer-doc$$endif$",
+$if(propuesta.location)$
+  location:      "$propuesta.location$",
+$endif$
+$if(propuesta.qr)$
+  qr:            "$propuesta.qr$",
+$endif$
+$if(propuesta.hide-qr)$
+  show-qr:       false,
+$endif$
   doc,
 )

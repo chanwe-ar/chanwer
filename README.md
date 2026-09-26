@@ -37,7 +37,7 @@ devtools::install(".")
 - `chanwe_kbl()` — native Typst table generator for Quarto PDF reports,
   with `chanwe_col_signed()` for positive/negative value coloring.
 - `chanwe_gt()`, `chanwe_reactable()`, `chanwe_plotly()` — the same header
-  grammar (eyebrow / title / subtitle / `//` caption) and signed-value
+  grammar (eyebrow / title / subtitle / orange stamp caption) and signed-value
   coloring for HTML tables and interactive charts.
 - `chanwe_load_fonts()` — registers the brand fonts with `systemfonts`.
 - `chanwe_reporting_css()` — bundled SCSS for Quarto HTML output.
@@ -81,14 +81,16 @@ ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
     color = "Cylinders",
     caption = chanwe_caption("Source: Motor Trend, 1974")
   ) +
-  theme_chanwe(bg_color = "beige")
+  theme_chanwe(bg_color = "slate")
 ```
 
 The main decisions:
 
-- `bg_color` picks the surface: `"metallic"` (default, `#F7F7F7`),
-  `"white"`, `"white-ivory"`, `"gray"`, `"beige"`, `"transparent"`, or
-  any hex string. Grid line colors adapt automatically.
+- `bg_color` picks the surface, all `brand.yml` tokens: `"paper"`
+  (default, `#F8FAFC`), `"white"`, `"sunken"` (`#F1F5F9`), `"slate"`
+  (`#EBF0F6`), `"transparent"`, or any hex string. Grid line colors adapt
+  automatically. The older `"metallic"`, `"white-ivory"` and `"gray"`
+  still resolve (to paper, paper and slate).
 - `chanwe_title(text, eyebrow = "...")` adds the orange mono-caps
   eyebrow line above the title. Plain titles need no helper.
 - `has_subtitle = FALSE` tightens the header when there is no subtitle.
@@ -118,49 +120,50 @@ labs(
 
 ### Color scales
 
-The brand manual assigns each color family a role (coral = house lead,
-green = positive, vermillion = alert, ink = neutral anchor…), and the
-scales are built on those roles:
+Colors come from `color.palette` in the chanwe-brand `brand.yml`
+(`chanwe_palette("brand")` returns it). The brand manual assigns each
+color family a role (green = positive, red = alert, ink = neutral
+anchor…), and the scales are built on those roles:
 
 ```r
-# Categorical — 8 brand hues in a fixed, CVD-validated slot order
+# Categorical — brand.yml `meta.chart-palette-order`
 scale_color_chanwe_d()
 
 # Ordinal series (S/M/L, funnel stages): a one-hue ramp group
-scale_fill_chanwe_d(palette = "p15_blue", reverse = TRUE)
+scale_fill_chanwe_d(palette = "ramp_blue", reverse = TRUE)
 
 # Sequential magnitude — named one-hue gradients, light → dark
 scale_fill_chanwe_c(palette = "teal")
-# available: orange (default), coral, blue, teal, green, vermillion,
-# magenta, violet, mustard, ink
+# available: orange (default), blue, indigo, teal, green, amber, red,
+# purple (all from the series hues), mustard, ink
 
-# Diverging polarity — vermillion (negative) → neutral → green (positive)
+# Diverging polarity — red (negative) → neutral → green (positive)
 m <- max(abs(df$delta))
 scale_fill_chanwe_div(limits = c(-m, m))
 ```
 
-Notes from the palette validation (worth knowing when charting):
+Notes worth knowing when charting:
 
-- The categorical slot order (coral, blue, teal, green, violet, magenta,
-  mustard, ink) is CVD-validated — worst adjacent pair ΔE 17.5 under
-  protan/deutan simulation. Mustard and ink sit last deliberately;
-  charts with ≤ 6 series never reach them.
-- For scatter, bubble, and map charts keep to **≤ 3 series** (the first
-  three slots pass the stricter all-pairs check); fold the rest into
-  "Other" or facet.
-- Teal, green, and mustard sit below 3:1 mark contrast on the light
-  surfaces — pair them with direct labels or a table view.
-- Yellow and cyan are deliberately not offered as sequential ramps:
-  their entire family is too light to encode magnitude on light
-  surfaces. They remain available as raw tokens for accents.
+- The categorical slot order is brand.yml's `meta.chart-palette-order`:
+  the eight Apple-HIG-calibrated series hues — primary orange, blue,
+  green, indigo, orange, teal, purple, red. The same hues tint the
+  callouts, so a chart series and a callout speak the same colours.
+- Red sits last on purpose: it is nearly the same colour as the primary
+  (ΔE00 5.0), so the two only meet in an eight-series chart. The worst
+  pair inside the first seven is blue vs indigo (ΔE00 15.3).
+- For scatter, bubble, and map charts keep to **≤ 5 series**; fold the
+  rest into "Other" or facet.
+- The continuous ramps are built from the same hues (two tints, the
+  hue, a dark pole). The old neon families (yellow, cyan, magenta) are
+  not offered as ramps; they remain raw tokens.
 
 ### Signed colors — one pair everywhere
 
 `chanwe_palette("signed")` carries the canonical positive / negative /
-neutral: hue-true darkenings of the brand's designated families
-(green = positive, vermillion = alert, ink = neutral), stepped until
-they pass WCAG 4.5:1 small-text contrast on **all five brand surfaces**
-(the raw ramp poles don't — bright green tops out at 2.7:1). The same
+neutral: the brand's `kpi-green` / `kpi-red` and the slate `fg-muted`,
+all of which pass WCAG 4.5:1 small-text contrast on **every brand
+surface** (the raw `status-success` doesn't — bright green tops out at
+2.7:1). The same
 three hexes drive:
 
 - the KPI scoreboard ▲/▼ arrows (`chanwe_kpi()`),
@@ -171,7 +174,7 @@ three hexes drive:
 ```r
 chanwe_palette("signed")
 #>  positive  negative   neutral
-#> "#147705" "#CC1914" "#666666"
+#> "#147705" "#CC1914" "#475569"
 ```
 
 ### Fonts
@@ -179,9 +182,10 @@ chanwe_palette("signed")
 `theme_chanwe()` calls `chanwe_load_fonts()` automatically. The fonts
 are bundled with the `chanwe-report` Quarto extension
 (`_extensions/chanwe-report/fonts`); pass `path =` to point somewhere
-else. Registered families include Satoshi, Archivo (plus Medium /
-SemiBold / ExtraBold / Light), Fraunces 9pt (all weights), Cormorant
-Garamond, and JetBrains Mono (plus Thin).
+else. The registered families are the `brand.yml` typography: Inter
+(body, plus Light / Medium), Schibsted Grotesk (display, plus Medium /
+SemiBold), Instrument Serif, Cormorant Garamond, and JetBrains Mono
+(plus Thin).
 
 For crisp output use a systemfonts-aware device:
 
@@ -191,8 +195,8 @@ knitr::opts_chunk$set(dev = "ragg_png")
 
 ## Typst Tables
 
-`chanwe_kbl()` renders a data frame as a native Typst table — Archivo
-title, Satoshi subtitle, JetBrains Mono column headers and cells, thin
+`chanwe_kbl()` renders a data frame as a native Typst table — Schibsted
+Grotesk title, Inter subtitle, JetBrains Mono column headers and cells, thin
 ink divider rules. It emits a raw `{=typst}` block, so it works in
 Quarto documents rendered with the `chanwe-report-typst` format.
 
@@ -205,7 +209,7 @@ chanwe_kbl(
   eyebrow = "SECTION - FLEET",
   caption = "Source: mtcars",
   density = "spacious",
-  bg = "white-ivory"
+  bg = "paper"
 )
 ```
 ````
@@ -252,8 +256,8 @@ execute:
 
 The stylesheet enforces code blocks with a light background and orange
 left rule, semantic callout headers, smaller muted captions, and orange
-ToC/section-number accents. It also loads the brand web fonts (Satoshi,
-Archivo, JetBrains Mono) used by the HTML table and chart helpers below.
+ToC/section-number accents. It also loads the brand web fonts (Inter,
+Schibsted Grotesk, JetBrains Mono) used by the HTML table and chart helpers below.
 
 ### HTML tables and interactive charts
 
@@ -325,14 +329,16 @@ chanwe_preview_palette("chart")     # swatch grid of any group below
 
 | Group | Contents |
 |---|---|
-| `chart` | the categorical 8, CVD-validated slot order |
+| `chart` | the categorical 8, brand.yml `meta.chart-palette-order` |
 | `signed` | canonical positive / negative / neutral |
 | `semantic` | foreground, background, primary, success, danger, positive, … |
-| `core` | brand anchors (orange, black, white, beige, gray, silver) |
-| `p15_coral` … `p15_ink` | eleven 5-shade brand family ramps |
+| `brand` | the full `color.palette` of the chanwe-brand `brand.yml` |
+| `core` | brand anchors (orange, black, white, pure white, gray, silver) |
+| `ramp_blue` … `ramp_purple` | the series-hue ramps (blue, indigo, teal, green, amber, red, purple) for ordinal series |
+| `p15_coral` … `p15_ink` | eleven 5-shade legacy brand family ramps |
 | `p13_orange`, `p13_gray` | 10-step legacy ramps |
 | `p14_accents` | strong/soft accent pairs |
-| `mb_orange`, `mb_dark`, `mb_beige` | main-brand 100–950 ramps |
+| `mb_orange`, `mb_dark` | main-brand 100–950 ramps |
 
 Runnable end-to-end demos of every group and scale live in
 [inst/examples/display_color_palettes.R](inst/examples/display_color_palettes.R),

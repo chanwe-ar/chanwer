@@ -2,11 +2,11 @@
 #'
 #' The HTML counterpart of [chanwe_kbl()]: a `gt` table styled with the
 #' Chanwe header grammar -- mono-caps eyebrow with an orange rule prefix,
-#' Archivo title, Satoshi subtitle, mono-caps column labels, JetBrains Mono
-#' tabular figures right-aligned, a hairline ink rule above the table, a
-#' thin neutral rule under the column labels and to the right of the stub,
+#' Schibsted Grotesk title, Inter subtitle, mono-caps column labels, JetBrains Mono
+#' tabular figures right-aligned, a hairline slate rule above the table, a
+#' thin slate rule under the column labels and to the right of the stub,
 #' flat rows (an n100 tint on hover, matching [chanwe_reactable()], no
-#' zebra striping), and a `//`-prefixed source note.
+#' zebra striping), and the source note as an orange stamp.
 #'
 #' The function returns a regular `gt_tbl`, so every `gt` verb
 #' (`gt::fmt_number()`, `gt::cols_label()`, `gt::tab_style()`, ...) can be
@@ -16,11 +16,11 @@
 #' page. Load them with [chanwe_reporting_css()] in Quarto HTML documents.
 #'
 #' @param data A data frame or tibble.
-#' @param title Table title (Archivo, 20px).
+#' @param title Table title (Schibsted Grotesk, 20px).
 #' @param subtitle Subtitle line rendered below the title.
 #' @param eyebrow Small mono-caps label with an orange rule prefix, rendered
 #'   above the title.
-#' @param caption Source note at the bottom, prefixed with `//`.
+#' @param caption Source note at the bottom, drawn as the orange stamp.
 #' @param stub Name of the stub/row-identifier column (passed to
 #'   `gt::gt(rowname_col = )`). Rendered left-aligned in ink with a thin
 #'   vertical rule on its right.
@@ -32,8 +32,8 @@
 #'   columns where a negative delta is good (costs, churn). Default `FALSE`.
 #' @param density `"spacious"` (default) or `"compact"` row padding.
 #' @param bg Table background. Named shorthand accepted by [theme_chanwe()]
-#'   (`"white"`, `"white-ivory"`, `"metallic"`, `"gray"`, `"beige"`,
-#'   `"transparent"`) or any hex string. Default `"white"`.
+#'   (`"white"`, `"paper"`, `"sunken"`, `"slate"`, `"transparent"`) or any
+#'   hex string. Default `"white"`.
 #' @param id Optional HTML id for the table. A random id is generated when
 #'   `NULL` so the scoped CSS never leaks between tables.
 #'
@@ -103,7 +103,7 @@ chanwe_gt <- function(
   g <- gt::tab_options(
     g,
     table.width = gt::pct(100),
-    table.font.names = c("Satoshi", "DM Sans", "system-ui", "sans-serif"),
+    table.font.names = c("Inter", "system-ui", "sans-serif"),
     table.font.size = gt::px(13),
     table.font.color = tk$fg,
     table.background.color = bg,
@@ -111,36 +111,36 @@ chanwe_gt <- function(
     heading.padding = gt::px(6),
     heading.border.bottom.style = "none",
     heading.border.lr.style = "none",
-    # hairline ink rule above the whole table only -- gt's own bottom table
+    # hairline slate rule above the whole table only -- gt's own bottom table
     # border is off; the source note's top hairline (in the CSS block below)
     # already closes the table off without a second heavy rule under it
     table.border.top.style = "solid",
     table.border.top.width = gt::px(1),
-    table.border.top.color = tk$ink,
+    table.border.top.color = tk$rule,
     table.border.bottom.style = "none",
-    # ink rule between the heading and the column labels; a single thin
-    # neutral rule under the labels (gt's default 2px body-top rule is off).
+    # slate rule between the heading and the column labels; a single thin
+    # slate rule under the labels (gt's default 2px body-top rule is off).
     # The bottom one is restated !important in the CSS block below -- the
     # chanwe-brand extension has its own generic `thead th { border-bottom:
     # ... !important }` rule for plain markdown tables that otherwise wins
-    # over this and repaints it ink instead of neutral.
+    # over this and repaints it ink instead of slate.
     column_labels.border.top.style = "solid",
     column_labels.border.top.width = gt::px(1),
-    column_labels.border.top.color = tk$ink,
+    column_labels.border.top.color = tk$rule,
     column_labels.border.bottom.style = "solid",
     column_labels.border.bottom.width = gt::px(0.5),
-    column_labels.border.bottom.color = tk$n300,
+    column_labels.border.bottom.color = tk$rule,
     column_labels.padding = gt::px(8),
     column_labels.padding.horizontal = gt::px(12),
     table_body.border.top.style = "none",
     table_body.border.bottom.style = "none",
     table_body.hlines.style = "solid",
     table_body.hlines.width = gt::px(0.5),
-    table_body.hlines.color = tk$n200,
+    table_body.hlines.color = tk$rule_row,
     # thin stub divider (gt default is 2px)
     stub.border.style = "solid",
     stub.border.width = gt::px(1),
-    stub.border.color = tk$n300,
+    stub.border.color = tk$rule,
     data_row.padding = gt::px(row_pad),
     data_row.padding.horizontal = gt::px(12),
     # no zebra striping -- flat rows with an n100 hover tint, matching
@@ -175,17 +175,17 @@ chanwe_gt <- function(
       "  letter-spacing:.14em; text-transform:uppercase; color:%2$s; }",
       # chanwe-brand's generic `thead th { border-bottom: ... !important }`
       # (for plain markdown tables) otherwise wins over column_labels.border
-      # .bottom.* above and repaints this ink instead of neutral
-      "#%1$s thead th { border-bottom:0.5px solid %10$s !important; }",
+      # .bottom.* above and repaints this ink instead of slate
+      "#%1$s thead th { border-bottom:0.5px solid %9$s !important; }",
       "#%1$s .gt_row { font-variant-numeric: tabular-nums; }",
       "#%1$s .gt_row.gt_right { font-family:%6$s; font-size:12px; }",
       "#%1$s .gt_stub { color:%3$s; font-weight:500; }",
-      "#%1$s .gt_sourcenote { font: 300 10.5px/1.4 %6$s !important;",
-      "  color:%3$s; }",
-      "#%1$s .gt_sourcenote::before { content:'// '; color:%9$s; }",
+      # Source note: the orange caption stamp (styled inline, see
+      # chanwe_html_stamp_style())
+      "#%1$s .gt_sourcenote { line-height:1 !important; }",
       # hairline above the source note, matching the reactable caption
       # (no source_notes.border.top.* in gt::tab_options)
-      "#%1$s .gt_sourcenotes td { border-top:0.5px solid %10$s !important; }",
+      "#%1$s .gt_sourcenotes td { border-top:0.5px solid %9$s !important; }",
       # No zebra striping -- flat rows (transparent over the table
       # background), same n100 hover tint as chanwe_reactable()'s
       # highlightColor. Quarto wraps gt tables in Bootstrap's own
@@ -202,7 +202,7 @@ chanwe_gt <- function(
       sep = "\n"
     ),
     id, tk$accent, tk$ink, tk$fg_muted, tk$n100,
-    .cw_font_mono, .cw_font_display, .cw_font_sans, tk$accent, tk$n300
+    .cw_font_mono, .cw_font_display, .cw_font_sans, tk$rule
   )
   g <- gt::opt_css(g, css)
 
@@ -221,7 +221,10 @@ chanwe_gt <- function(
   }
 
   if (!is.null(caption)) {
-    g <- gt::tab_source_note(g, caption)
+    g <- gt::tab_source_note(g, gt::html(sprintf(
+      "<span class='chanwe-stamp' style='%s'>%s</span>",
+      chanwe_html_stamp_style(), chanwe_html_escape(caption)
+    )))
   }
   g
 }

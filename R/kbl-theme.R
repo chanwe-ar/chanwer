@@ -1,9 +1,9 @@
 #' Chanwe Table via Native Typst Output
 #'
 #' Generates a styled Typst table directly from a data frame, bypassing the
-#' HTML→Pandoc→Typst pipeline. Archivo title, Satoshi subtitle, JetBrains
+#' HTML→Pandoc→Typst pipeline. Schibsted Grotesk title, Inter subtitle, JetBrains
 #' Mono column headers and data cells (mono keeps figures tabular so numeric
-#' columns align digit-for-digit), thin ink divider lines. No CSS
+#' columns align digit-for-digit), slate hairline rules. No CSS
 #' translation losses.
 #'
 #' @param data A data frame or tibble.
@@ -43,11 +43,13 @@
 #'   (between the separator line and the labels). Default \code{0}.
 #' @param footer_top Extra vertical space in pt above the footer note text.
 #'   Default \code{0}.
-#' @param bg Table background colour. Named shorthand: \code{"white-ivory"}
-#'   (default, \code{#FAF9F7}), \code{"white"}, \code{"beige"} (\code{#F5F1EB}),
-#'   \code{"gray"} (\code{#EDF0F1}), \code{"metallic"} (\code{#F7F7F7}).
-#'   Or any raw Typst color expression (e.g. \code{"rgb(\\\"#EEF0F2\\\")"}). Pass \code{NULL} for transparent.
-#' @param top_border Logical. Draw a thin ink line above the title cell.
+#' @param bg Table background colour. Named shorthand for the brand surfaces:
+#'   \code{"paper"} (default, \code{#F8FAFC}), \code{"white"},
+#'   \code{"sunken"} (\code{#F1F5F9}), \code{"slate"} (\code{#EBF0F6}); the
+#'   earlier \code{"white-ivory"}, \code{"metallic"} and \code{"gray"} resolve
+#'   to paper / paper / slate. Or any raw Typst color expression (e.g.
+#'   \code{"rgb(\\\"#EBF0F6\\\")"}). Pass \code{NULL} for transparent.
+#' @param top_border Logical. Draw a slate hairline above the title cell.
 #'   Default \code{TRUE}.
 #' @param header_rule Logical. Draw the heavier rule between the title block
 #'   and the column labels. Default \code{TRUE}.
@@ -74,7 +76,7 @@
 #' @param highlight_cols Optional integer vector of column indices whose header
 #'   and data cells get a highlight background fill.
 #' @param highlight_color Hex color for \code{highlight_cols} fill.
-#'   Default \code{"#F5F1EB"}.
+#'   Default \code{"#EBF0F6"} (brand \code{surface-slate}).
 #'
 #' @return A \code{\link[knitr]{asis_output}} containing a raw \code{{=typst}} block.
 #'   Works in Quarto documents rendered with \code{format: chanwe-report-typst}.
@@ -116,7 +118,7 @@ chanwe_kbl <- function(
   note_size = '5.5pt',
   col_label_top = 0,
   footer_top = 0,
-  bg = "white-ivory",
+  bg = "paper",
   top_border = TRUE,
   header_rule = TRUE,
   padding = 12.5,
@@ -126,7 +128,7 @@ chanwe_kbl <- function(
   total_fill = TRUE,
   vlines = NULL,
   highlight_cols = NULL,
-  highlight_color = "#F5F1EB"
+  highlight_color = "#EBF0F6"
 ) {
   chanwe_require_package("knitr")
   density <- match.arg(density)
@@ -135,8 +137,8 @@ chanwe_kbl <- function(
 
   # table chrome colors come from the token system
   tokens <- chanwe_get_colors()
-  vline_color <- tokens[["typst-neutral-300"]]
-  total_fill_color <- tokens[["typst-neutral-100"]]
+  vline_color <- tokens[["border-cool"]]
+  total_fill_color <- tokens[["surface-sunken"]]
 
   inset_y <- if (!is.null(row_padding)) {
     row_padding
@@ -287,29 +289,23 @@ chanwe_kbl <- function(
   fill_val <- if (is.null(bg)) {
     NULL
   } else {
-    switch(
-      bg,
-      "white-ivory" = 'rgb("#FAF9F7")',
-      "ivory" = 'rgb("#FAF9F7")',
-      "white" = "white",
-      "beige" = 'rgb("#F5F1EB")',
-      "cream" = 'rgb("#F5F1EB")',
-      "gray" = 'rgb("#EDF0F1")',
-      "grey" = 'rgb("#EDF0F1")',
-      "metallic" = 'rgb("#F7F7F7")',
-      "silver" = 'rgb("#F7F7F7")',
-      "transparent" = "none",
+    surface <- chanwe_surface_name(bg)
+    if (identical(tolower(trimws(bg)), "transparent")) {
+      "none"
+    } else if (is.na(surface)) {
       bg
-    )
+    } else {
+      paste0('rgb("', .chanwe_surfaces[[surface]][["fill"]], '")')
+    }
   }
   bg_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
-  # Row dividers one step darker than before (neutral-200 read as invisible
-  # on the light surfaces); the metallic/silver surface needs the darker step.
-  row_divider_color <- if (!is.null(bg) && tolower(bg) %in% c("metallic", "silver")) {
-    tokens[["brand-silver"]]
-  } else {
-    tokens[["typst-neutral-300"]]
-  }
+  # Rules follow the chanwe-report table and figure frame: slate, never ink.
+  # Structural rules (above the title, under the title block, under the
+  # column labels, closing the body) are border-cool 0.5pt; the total rule
+  # one slate step darker; row dividers the lighter `rule` slate.
+  rule_color <- paste0('rgb("', tokens[["border-cool"]], '")')
+  total_rule_color <- paste0('rgb("', tokens[["rule-cool"]], '")')
+  row_divider_color <- tokens[["rule"]]
 
   # code builder
   L <- character(0)
@@ -347,7 +343,7 @@ chanwe_kbl <- function(
           ", weak: false)",
           '#chanwe-eyebrow(with-rule: true, size: ',
           eyebrow_pt,
-          ', color: rgb("', tokens[["brand-orange"]], '"))[',
+          ', color: rgb("', tokens[["primary"]], '"))[',
           esc(eyebrow),
           ']',
           "#v(-6pt, weak: false)"
@@ -356,9 +352,9 @@ chanwe_kbl <- function(
       if (!is.null(title)) {
         inner <- paste0(
           inner,
-          '#text(font: "Archivo", size: ',
+          '#text(font: "Schibsted Grotesk", size: ',
           title_pt,
-          ', fill: _t.ink, weight: "medium")[',
+          ', fill: _t.ink, weight: "semibold")[',
           esc(title),
           ']'
         )
@@ -368,7 +364,7 @@ chanwe_kbl <- function(
         n,
         ", inset: ",
         inset_title,
-        if (top_border) ", stroke: (top: 0.1pt + _t.ink)" else "",
+        if (top_border) paste0(", stroke: (top: 0.5pt + ", rule_color, ")") else "",
         ")[",
         inner,
         "],"
@@ -382,7 +378,7 @@ chanwe_kbl <- function(
         ", inset: ",
         inset_sub,
         ")[",
-        '#text(font: "Satoshi", size: ',
+        '#text(font: "Inter", size: ',
         sub_pt,
         ', fill: _t.fg-muted, weight: "regular")[',
         esc(subtitle),
@@ -395,7 +391,7 @@ chanwe_kbl <- function(
     }
 
     if (header_rule) {
-      p("      table.hline(stroke: 0.7pt + _t.ink),")
+      p("      table.hline(stroke: 0.5pt + ", rule_color, "),")
     }
 
     for (i in seq_len(n)) {
@@ -419,14 +415,14 @@ chanwe_kbl <- function(
     p("    ),")
   }
 
-  p("    table.hline(stroke: 0.1pt + _t.ink),")
+  p("    table.hline(stroke: 0.5pt + ", rule_color, "),")
 
   nr <- nrow(data)
   total_start <- if (n_total > 0) nr - n_total + 1L else nr + 1L
   for (i in seq_len(nr)) {
     is_total <- i >= total_start
     if (is_total && i == total_start) {
-      p("    table.hline(stroke: 0.7pt + _t.ink),")
+      p("    table.hline(stroke: 0.7pt + ", total_rule_color, "),")
     }
     for (j in seq_len(n)) {
       val <- esc(fmt_data[[j]][i])
@@ -461,11 +457,12 @@ chanwe_kbl <- function(
     }
   }
 
-  p("    table.hline(stroke: 0.5pt + _t.ink),")
+  # One closing rule, then the footer: the chanwe-report figure-frame stamp,
+  # a square primary box with the source line in white mono caps.
+  p("    table.hline(stroke: 0.5pt + ", rule_color, "),")
 
   if (!is.null(caption)) {
     p("    table.footer(")
-    p("      table.hline(stroke: 0.3pt + _t.ink),")
     p(
       "      table.cell(colspan: ",
       n,
@@ -473,16 +470,14 @@ chanwe_kbl <- function(
       inset_footer,
       ")[",
       pt_v(footer_top),
+      '#box(fill: rgb("', tokens[["primary"]], '"), inset: (x: 4mm, y: 1.6mm))[',
       '#text(font: "JetBrains Mono", size: ',
       note_pt,
-      ', fill: _t.ink)[',
-      '#text(fill: rgb("', tokens[["brand-orange"]], '"))[/\\/]#h(4pt)',
-      esc(caption),
-      ']],'
+      ', weight: "medium", tracking: 0.16em, fill: rgb("', tokens[["pure-white"]], '"))[',
+      '#upper[', esc(caption), ']',
+      ']]],'
     )
     p("    )")
-  } else {
-    p("    table.footer(table.hline(stroke: 0.1pt + _t.ink))")
   }
 
   p("  )")

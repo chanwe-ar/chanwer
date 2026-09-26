@@ -1,25 +1,30 @@
 #' Load Chanwe Fonts into systemfonts
 #'
-#' Registers all Chanwe font families with [systemfonts::register_font()],
-#' making them available to the ragg and svglite devices and to ggplot2.
-#' Call once per session before creating plots with [theme_chanwe()].
+#' Registers the brand font families declared in the chanwe-brand
+#' `brand.yml` with [systemfonts::register_font()], making them available to
+#' the ragg and svglite devices and to ggplot2. Call once per session before
+#' creating plots with [theme_chanwe()].
 #'
 #' Registered families:
-#' - `"Satoshi"` — Regular / Bold / Italic / BoldItalic
-#' - `"Archivo"` — Regular / Bold / Italic / BoldItalic
-#' - `"Archivo Medium"` — plain face = Medium (500); italic face = MediumItalic
-#' - `"Archivo SemiBold"` — plain face = SemiBold (600); used by [chanwe_title()]
-#' - `"Archivo ExtraBold"` — plain face = ExtraBold (800)
-#' - `".chanwe-subtitle"` — plain face = Archivo Light (300)
-#' - `"Fraunces 9pt"` — Regular / Bold / Italic / BoldItalic
-#' - `"Cormorant Garamond"` — variable font; used by the KPI hero value and subtitle notes
+#' - `"Inter"` — body text; Regular / Bold / Italic / BoldItalic
+#' - `"Inter Light"` — plain face = Light (300), the brand body weight
+#' - `"Inter Medium"` — plain face = Medium (500)
+#' - `"Schibsted Grotesk"` — display; Regular / Bold
+#' - `"Schibsted Grotesk Medium"` — plain face = Medium (500)
+#' - `"Schibsted Grotesk SemiBold"` — plain face = SemiBold (600), the brand
+#'   display weight; used by [chanwe_title()]
+#' - `"Instrument Serif"` — Regular / Italic
+#' - `"Cormorant Garamond"` — Regular / Bold / Italic / BoldItalic; used by
+#'   the KPI hero value and subtitle notes
 #' - `"JetBrains Mono"` — Regular / Bold / Italic / BoldItalic
-#' - `"JetBrains Mono Thin"` — plain face = Thin (100); used by axis titles / facet labels
+#' - `"JetBrains Mono Medium"` — plain face = Medium (500); used by the
+#'   caption stamp
+#' - `"JetBrains Mono Thin"` — plain face = Thin (100); used by axis titles /
+#'   facet labels
 #'
-#' @param path Directory containing the TTF files. Defaults to the fonts
-#'   bundled with any installed Chanwe Quarto extension, searched relative to
-#'   the working directory: `_extensions/chanwe-report/fonts` first, then
-#'   `_extensions/chanwe-publications/fonts`.
+#' @param path Directory containing the font files. Defaults to the fonts
+#'   bundled with the chanwe-report Quarto extension, searched relative to the
+#'   working directory (`_extensions/chanwe-report/fonts`).
 #'
 #' @return Invisibly, the resolved fonts directory path.
 #' @export
@@ -39,16 +44,9 @@ chanwe_load_fonts <- function(path = NULL) {
   }
 
   if (is.null(path)) {
-    # system.file(package=) returns the inst/ dir; dirname() gives package root
-    pkg_inst <- tryCatch(system.file(package = "chanwer"), error = function(e) "")
-    pkg_root <- if (nzchar(pkg_inst)) dirname(pkg_inst) else ""
     candidates <- c(
-      if (nzchar(pkg_root)) file.path(pkg_root, "_extensions/chanwe-report/fonts"),
-      if (nzchar(pkg_root)) file.path(pkg_root, "_extensions/chanwe-publications/fonts"),
       "_extensions/chanwe-report/fonts",
-      "_extensions/chanwe-publications/fonts",
       file.path(getwd(), "_extensions/chanwe-report/fonts"),
-      file.path(getwd(), "_extensions/chanwe-publications/fonts"),
       system.file("fonts", package = "chanwer")
     )
     path <- Find(function(p) nzchar(p) && dir.exists(p), candidates)
@@ -57,13 +55,20 @@ chanwe_load_fonts <- function(path = NULL) {
   if (is.null(path) || !dir.exists(path)) {
     warning(
       "chanwe_load_fonts(): fonts directory not found. ",
-      "Pass `path` explicitly or install the chanwe-report-typst Quarto extension."
+      "Pass `path` explicitly or install the chanwe-report Quarto extension."
     )
     return(invisible(NULL))
   }
 
+  # systemfonts only snaps to the registered plain (400) and bold (700)
+  # faces, so every other weight is registered as its own family, named the
+  # way gridtext and the CSS font-family lookup expect.
   .reg <- function(name, plain, bold = NULL, italic = NULL, bolditalic = NULL) {
-    fp <- function(f) { p <- file.path(path, f); if (!is.null(f) && file.exists(p)) p else NULL }
+    fp <- function(f) {
+      if (is.null(f)) return(NULL)
+      p <- file.path(path, f)
+      if (file.exists(p)) p else NULL
+    }
     pp <- fp(plain)
     if (is.null(pp)) return(invisible(NULL))
     tryCatch(
@@ -78,66 +83,42 @@ chanwe_load_fonts <- function(path = NULL) {
     )
   }
 
-  .reg("Satoshi",
-    plain      = "Satoshi-Regular.ttf",
-    bold       = "Satoshi-Bold.ttf",
-    italic     = "Satoshi-Italic.ttf",
-    bolditalic = "Satoshi-BoldItalic.ttf"
+  .reg("Inter",
+    plain      = "Inter-Regular.ttf",
+    bold       = "Inter-Bold.ttf",
+    italic     = "Inter-Italic.ttf",
+    bolditalic = "Inter-BoldItalic.ttf"
   )
-  .reg("Archivo",
-    plain      = "Archivo-Regular.ttf",
-    bold       = "Archivo-Bold.ttf",
-    italic     = "Archivo-Italic.ttf",
-    bolditalic = "Archivo-BoldItalic.ttf"
+  .reg("Inter Light", plain = "Inter-Light.ttf", italic = "Inter-LightItalic.ttf")
+  .reg("Inter Medium", plain = "Inter-Medium.ttf", italic = "Inter-MediumItalic.ttf")
+
+  .reg("Schibsted Grotesk",
+    plain = "SchibstedGrotesk-Regular.ttf",
+    bold  = "SchibstedGrotesk-Bold.ttf"
   )
-  .reg("Fraunces 9pt",
-    plain      = "Fraunces9pt-Regular.ttf",
-    bold       = "Fraunces9pt-Bold.ttf",
-    italic     = "Fraunces9pt-Italic.ttf",
-    bolditalic = "Fraunces9pt-BoldItalic.ttf"
+  .reg("Schibsted Grotesk Medium", plain = "SchibstedGrotesk-Medium.ttf")
+  .reg("Schibsted Grotesk SemiBold", plain = "SchibstedGrotesk-SemiBold.ttf")
+
+  .reg("Instrument Serif",
+    plain  = "InstrumentSerif-Regular.ttf",
+    italic = "InstrumentSerif-Italic.ttf"
   )
   .reg("Cormorant Garamond",
-    plain      = "CormorantGaramond[wght].ttf",
-    bold       = "CormorantGaramond[wght].ttf",
-    italic     = "CormorantGaramond-Italic[wght].ttf",
-    bolditalic = "CormorantGaramond-Italic[wght].ttf"
+    plain      = "CormorantGaramond-Regular.otf",
+    bold       = "CormorantGaramond-Bold.otf",
+    italic     = "CormorantGaramond-Italic.otf",
+    bolditalic = "CormorantGaramond-BoldItalic.otf"
   )
 
-  # Fraunces 9pt weight variants — each as its own family so they can be
-  # referenced by name (systemfonts only snaps to 400/700 from the base family)
-  .fraunces_weights <- list(
-    list(name = "Fraunces 9pt Thin",             plain = "Fraunces9pt-Thin.ttf",            italic = "Fraunces9pt-ThinItalic.ttf"),
-    list(name = "Fraunces 9pt ExtraLight",       plain = "Fraunces9pt-ExtraLight.ttf",      italic = "Fraunces9pt-ExtraLightItalic.ttf"),
-    list(name = "Fraunces 9pt Light",            plain = "Fraunces9pt-Light.ttf",           italic = "Fraunces9pt-LightItalic.ttf"),
-    list(name = "Fraunces 9pt Light Italic",     plain = "Fraunces9pt-LightItalic.ttf",     italic = "Fraunces9pt-LightItalic.ttf"),
-    list(name = "Fraunces 9pt Regular",          plain = "Fraunces9pt-Regular.ttf",         italic = "Fraunces9pt-Italic.ttf"),
-    list(name = "Fraunces 9pt Italic",           plain = "Fraunces9pt-Italic.ttf",          italic = "Fraunces9pt-Italic.ttf"),
-    list(name = "Fraunces 9pt Medium",           plain = "Fraunces9pt-Medium.ttf",          italic = "Fraunces9pt-MediumItalic.ttf"),
-    list(name = "Fraunces 9pt SemiBold",         plain = "Fraunces9pt-SemiBold.ttf",        italic = "Fraunces9pt-SemiBoldItalic.ttf"),
-    list(name = "Fraunces 9pt Bold",             plain = "Fraunces9pt-Bold.ttf",            italic = "Fraunces9pt-BoldItalic.ttf"),
-    list(name = "Fraunces 9pt ExtraBold",        plain = "Fraunces9pt-ExtraBold.ttf",       italic = "Fraunces9pt-ExtraBoldItalic.ttf"),
-    list(name = "Fraunces 9pt Black",            plain = "Fraunces9pt-Black.ttf",           italic = "Fraunces9pt-BlackItalic.ttf")
-  )
-  for (.fw in .fraunces_weights) {
-    .pp <- file.path(path, .fw$plain)
-    .ip <- file.path(path, .fw$italic)
-    if (file.exists(.pp)) {
-      tryCatch(
-        systemfonts::register_font(
-          name   = .fw$name,
-          plain  = .pp,
-          italic = if (file.exists(.ip)) .ip else NULL
-        ),
-        error = function(e) NULL
-      )
-    }
-  }
-  rm(.fraunces_weights, .fw, .pp, .ip)
   .reg("JetBrains Mono",
     plain      = "JetBrainsMono-Regular.ttf",
     bold       = "JetBrainsMono-Bold.ttf",
     italic     = "JetBrainsMono-Italic.ttf",
     bolditalic = "JetBrainsMono-BoldItalic.ttf"
+  )
+  .reg("JetBrains Mono Medium",
+    plain  = "JetBrainsMono-Medium.ttf",
+    italic = "JetBrainsMono-MediumItalic.ttf"
   )
   .reg("JetBrains Mono Thin",
     plain      = "JetBrainsMono-Thin.ttf",
@@ -146,85 +127,51 @@ chanwe_load_fonts <- function(path = NULL) {
     bolditalic = "JetBrainsMono-ExtraLightItalic.ttf"
   )
 
-  # Archivo Medium (500) — registered as its own family; used by the KPI hero value.
-  archivo_medium        <- file.path(path, "Archivo-Medium.ttf")
-  archivo_medium_italic <- file.path(path, "Archivo-MediumItalic.ttf")
-  if (file.exists(archivo_medium)) {
-    tryCatch(
-      systemfonts::register_font(
-        name       = "Archivo Medium",
-        plain      = archivo_medium,
-        italic     = if (file.exists(archivo_medium_italic)) archivo_medium_italic else NULL
-      ),
-      error = function(e) NULL
-    )
-  }
-
-  # Archivo SemiBold (600) — registered as its own family so gridtext resolves it
-  # via font-family lookup. Weight 600 alone won't work since systemfonts only
-  # snaps to registered weights (400 / 700 from the main "Archivo" registration).
-  archivo_semibold        <- file.path(path, "Archivo-SemiBold.ttf")
-  archivo_semibold_italic <- file.path(path, "Archivo-SemiBoldItalic.ttf")
-  if (file.exists(archivo_semibold)) {
-    tryCatch(
-      systemfonts::register_font(
-        name   = "Archivo SemiBold",
-        plain  = archivo_semibold,
-        italic = if (file.exists(archivo_semibold_italic)) archivo_semibold_italic else NULL
-      ),
-      error = function(e) NULL
-    )
-  }
-
-  # .chanwe-title: Archivo ExtraBold (800) baked as plain face for element_markdown.
-  # "Archivo ExtraBold": same file registered under its typographic family name
-  # so gridtext can resolve it via CSS font-family lookup (dot-prefixed names fail).
-  archivo_extrabold <- file.path(path, "Archivo-ExtraBold.ttf")
-  archivo_title <- if (file.exists(archivo_extrabold)) archivo_extrabold else file.path(path, "Archivo-Bold.ttf")
-  if (file.exists(archivo_title)) {
-    tryCatch(
-      systemfonts::register_font(name = ".chanwe-title", plain = archivo_title),
-      error = function(e) NULL
-    )
-    tryCatch(
-      systemfonts::register_font(name = "Archivo ExtraBold", plain = archivo_title),
-      error = function(e) NULL
-    )
-  }
-
-  # .chanwe-subtitle / "Archivo Light": Archivo Light (300) — one step above ExtraLight (200),
-  # baked as the plain face for reliable weight rendering.
-  archivo_light <- file.path(path, "Archivo-Light.ttf")
-  archivo_subtitle <- if (file.exists(archivo_light)) archivo_light else file.path(path, "Archivo-ExtraLight.ttf")
-  if (file.exists(archivo_subtitle)) {
-    tryCatch(
-      systemfonts::register_font(name = ".chanwe-subtitle", plain = archivo_subtitle),
-      error = function(e) NULL
-    )
-    tryCatch(
-      systemfonts::register_font(name = "Archivo Light", plain = archivo_subtitle),
-      error = function(e) NULL
-    )
-  }
-
   options(chanwer.fonts_loaded = TRUE)
   invisible(path)
 }
 
+# Named surfaces, all brand.yml tokens, with the grid colours theme_chanwe()
+# pairs with each: the major grid one hairline step darker than the surface,
+# the minor grid half a step. `metallic`, `white-ivory` and `gray` are the
+# pre-slate names, kept as aliases of the nearest brand surface.
+.chanwe_surfaces <- list(
+  paper  = c(fill = "#F8FAFC", major = "#CFD6DF", minor = "#EBF0F6"),
+  white  = c(fill = "#FFFFFF", major = "#CFD6DF", minor = "#F1F5F9"),
+  sunken = c(fill = "#F1F5F9", major = "#C6CDD6", minor = "#E2E8F0"),
+  slate  = c(fill = "#EBF0F6", major = "#C6CDD6", minor = "#E2E8F0")
+)
+
+.chanwe_surface_aliases <- c(
+  "paper" = "paper", "metallic" = "paper", "silver" = "paper",
+  "white-ivory" = "paper", "ivory" = "paper",
+  "white" = "white",
+  "sunken" = "sunken",
+  "slate" = "slate", "gray" = "slate", "grey" = "slate"
+)
+
+# Surface name for a named background, or NA for a raw colour / transparent.
+chanwe_surface_name <- function(bg_color) {
+  key <- tolower(trimws(bg_color))
+  if (key %in% c("beige", "cream")) {
+    stop(
+      "The beige surface was retired from the Chanwe brand; ",
+      "use \"slate\" or \"paper\" instead.",
+      call. = FALSE
+    )
+  }
+  unname(.chanwe_surface_aliases[key])
+}
+
 chanwe_resolve_bg <- function(bg_color) {
-  switch(
-    tolower(trimws(bg_color)),
-    white          = "#FFFFFF",
-    "white-ivory"  = "#FAF9F7",
-    ivory          = "#FAF9F7",
-    gray           = "#EDF0F1",
-    grey           = "#EDF0F1",
-    beige          = "#F5F1EB",
-    metallic       = "#F7F7F7",
-    silver         = "#F7F7F7",
-    transparent    = "transparent",
-    bg_color
-  )
+  if (identical(tolower(trimws(bg_color)), "transparent")) {
+    return("transparent")
+  }
+  surface <- chanwe_surface_name(bg_color)
+  if (is.na(surface)) {
+    return(bg_color)
+  }
+  .chanwe_surfaces[[surface]][["fill"]]
 }
 
 chanwe_require_package <- function(pkg) {
