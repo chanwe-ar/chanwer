@@ -12,7 +12,7 @@ contributes:
         x: 18mm
         top: 14mm
         bottom: 14mm
-      mainfont: "Inter"
+      mainfont: "Satoshi"
       monofont: "JetBrains Mono"
       fontsize: 10.5pt
       highlight-style: none

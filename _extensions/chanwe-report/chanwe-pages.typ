@@ -440,8 +440,12 @@
 //     .abstract-side  (label-row × N, hairline border-right)
 //     .abstract-body
 //       h2 (Schibsted Grotesk 28pt 700)
-//       p.lead   (Cormorant Garamond 12pt body, ::first-letter 56pt drop-cap)
-//       p · p · ... (Cormorant Garamond 12pt body)
+//       p.lead   (Satoshi 12pt body, ::first-letter 56pt Schibsted drop-cap)
+//       p · p · ... (Satoshi 12pt body)
+// El cuerpo iba en Cormorant Garamond redonda: texto corrido en serif, que
+// la guía de marca no le da a la serif (solo itálicas y números
+// editoriales), y un corte redondo que el brandbook no trae. Ahora es el
+// cuerpo de la marca, y la capitular, una letra de display, va en Schibsted.
 // =============================================================
 // El rotulo va un paso mas claro que el valor (`fg-subtle`, el tono de toda
 // la metadata) y el valor entra en el mismo chip contorneado que la portada
@@ -570,7 +574,7 @@
       block[
         #set par(leading: 0.65em, justify: true)
         #set text(font: _t.font-sans, size: 10pt, weight: _t.weight-regular, fill: body-color)
-        #show emph: it => if dark { text(font: _t.font-serif, style: "italic", weight: _t.weight-body, size: 1.414em, fill: body-color, it.body) } else { it }
+        #show emph: it => if dark { text(font: _t.font-serif, style: "italic", weight: _t.weight-body, size: 1.25em, fill: body-color, it.body) } else { it }
         #if takeaway != none {
           let s = str(takeaway)
           let parts = s.split(" ")
@@ -617,13 +621,13 @@
         block(below: 4mm)[
           #place(top + left, dx: 0pt, dy: 8pt)[
             #text(
-              font: _t.font-serif, size: 56pt, weight: _t.weight-body,
-              fill: _t.fg, first,
+              font: _t.font-display, size: 56pt, weight: _t.weight-display,
+              tracking: -0.05em, fill: _t.fg, first,
             )
           ]
           #pad(left: 24mm)[
             #set par(leading: 0.62em, justify: true, first-line-indent: 0pt)
-            #set text(font: _t.font-serif, size: 12pt, weight: _t.weight-body, fill: _t.fg)
+            #set text(font: _t.font-sans, size: 12pt, weight: _t.weight-body, fill: _t.fg)
             #text(weight: _t.weight-body, fill: _t.fg,
                   rest.slice(0, calc.min(rest.len(), 60)))
             #rest.slice(calc.min(rest.len(), 60))
@@ -633,7 +637,7 @@
 
       // remaining paragraphs (no drop cap)
       #set par(leading: 0.62em, justify: true)
-      #set text(font: _t.font-serif, size: 12pt, weight: _t.weight-body, fill: _t.fg)
+      #set text(font: _t.font-sans, size: 12pt, weight: _t.weight-body, fill: _t.fg)
       #for p in paragraphs {
         block(below: 4mm, p)
       }
@@ -917,7 +921,7 @@
         #set text(font: _t.font-sans, size: 10pt, weight: _t.weight-regular, fill: body-color)
         // Sobre obsidiana o naranja la cursiva va en el color del cuerpo: la
         // regla global la pinta de naranja y sobre naranja desaparecía.
-        #show emph: it => if dark { text(font: _t.font-serif, style: "italic", weight: _t.weight-body, size: 1.414em, fill: body-color, it.body) } else { it }
+        #show emph: it => if dark { text(font: _t.font-serif, style: "italic", weight: _t.weight-body, size: 1.25em, fill: body-color, it.body) } else { it }
         #if takeaway != none {
           let s     = str(takeaway)
           let parts = s.split(" ")
