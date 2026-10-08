@@ -1,3 +1,12 @@
+# chanwer (development version)
+
+* `inst/assets/Logo_Color.png` and `Logo_Negro.png` are the wordmark alone
+  (chanwe-brandbook `Marca_Color` and `Marca_Obsidiana`, 2400 × 493). They were
+  the lockup with the tagline «estrategia para crecer», which the brand retired
+  on 2026-10-08: the mark goes without it. Same names and colours, so
+  `chanwe_logo_path("Logo_Color.png")` keeps working; the image is shorter
+  (aspect 4.87:1, was 3.58:1), so a fixed height draws it wider.
+
 # chanwer 2.6.0
 
 chanwer now follows the CHANWE brand guidelines (chanwe-brandbook
@@ -79,8 +88,8 @@ The defaults changed, so this is a minor release.
 ## Assets
 
 * `inst/assets` marks are the current brandbook files: `Logo_Color.png`,
-  `Logo_Negro.png` (lockups), `Logo_Color1.png`, `Logo_Blanco.png`
-  (wordmarks), `Estrategia_Color1.png` (Aspa), `MH_Color.png` (Rombo) and
+  `Logo_Negro.png` (lockups; the wordmark alone since the next release),
+  `Logo_Color1.png`, `Logo_Blanco.png` (wordmarks), `Estrategia_Color1.png` (Aspa), `MH_Color.png` (Rombo) and
   `Tecno_Color.png` (Damero). The previous files were archive cuts in
   `#E94B2B` / `#101010`.
 * `chanwe_logo_path()` no longer falls back to the repository's legacy
