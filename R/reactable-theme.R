@@ -73,7 +73,7 @@ chanwe_reactable <- function(
     fontVariantNumeric = "tabular-nums"
   )
 
-  # Column defaults: numbers right-aligned in mono, text left in Inter.
+  # Column defaults: numbers right-aligned in mono, text left in Satoshi.
   # Text cells stay at body weight and colour (400, fg) — the same as the
   # chanwe_gt() body — so a table of labels reads as data, not as a wall of
   # medium-weight ink. Emphasis belongs to the header block and signed cells.
@@ -155,9 +155,10 @@ chanwe_reactable <- function(
       borderTop = paste("1px solid", tk$rule),
       padding = "6px 12px"
     ),
-    # flat page buttons: squared corners, tight padding
+    # flat page buttons, tight padding, the brand's 4px radius (cards,
+    # buttons and fields all take 4px in the brand guide)
     pageButtonStyle = list(
-      borderRadius = "0",
+      borderRadius = "4px",
       padding = "3px 8px",
       transition = paste0(
         "transform 100ms ", ease, ", background-color 120ms ", ease,

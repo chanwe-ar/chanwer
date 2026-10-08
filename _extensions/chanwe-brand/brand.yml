@@ -24,7 +24,9 @@ meta:
     hairline: 100     # mono captions and counters at 5–6pt
     thin: 200         # light metadata lines, the copyright micro-line
     body: 300         # running text, serif italics, serif-display numerals
-    body-plus: 350    # the figure frame's gloss lines
+    body-plus: 400    # the figure frame's gloss lines. Was 350 (between
+                      # Light and Regular); Satoshi has no 350 cut and Typst
+                      # broke the 300/400 tie arbitrarily, so it is Regular.
     regular: 400      # mono metadata, table body, agenda subrows
     medium: 500       # mono labels and eyebrows
     display: 600      # every Schibsted Grotesk run, `strong`
@@ -49,6 +51,7 @@ color:
 
     # ── Obsidian and what sits on it ────────────────────────────────────
     ink: "#111319"          # the brand black: every dark surface
+    ink-light: "#232A35"    # obsidiana clara: la card oscura del deck
     ink-soft: "#37393F"     # soft panel on ink
     ink-fg: "#64748B"       # the dot field on ink
     ink-subtle: "#646464"   # sunken labels on ink
@@ -58,7 +61,7 @@ color:
     fg: "#111319"           # headings: the same obsidian, named for type
     body-fg: "#475569"      # running text, at weight 300
     fg-muted: "#475569"     # secondary text, ledes, callout bodies
-    fg-subtle: "#8A94A6"    # metadata, labels, counters
+    fg-subtle: "#8A94A6"    # large/decorative text, rules, labels on ink; small text on paper is fg-muted
     emphasis: "#484848"     # italic subtitles
 
     # ── Paper and slate surfaces ───────────────────────────────────────

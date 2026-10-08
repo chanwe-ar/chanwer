@@ -10,6 +10,25 @@ test_that("theme_chanwe returns a theme with the ChanWe custom elements", {
   expect_identical(th$legend.position, "bottom")
 })
 
+test_that("theme_chanwe assigns the brand trio by role", {
+  th <- theme_chanwe()
+
+  # Satoshi for text, Schibsted Grotesk for the title, JetBrains Mono for
+  # eyebrows, axis text and titles, legends and the caption
+  expect_identical(th$text$family, "Satoshi")
+  expect_identical(th$plot.subtitle$family, "Satoshi")
+  expect_match(th$plot.title$family, "^Schibsted Grotesk")
+  expect_identical(th$plot.title$eyebrow_family, "JetBrains Mono")
+  expect_identical(th$axis.text$family, "JetBrains Mono")
+  expect_identical(th$axis.title$family, "JetBrains Mono")
+  expect_identical(th$legend.text$family, "JetBrains Mono")
+  expect_identical(th$plot.caption$family, "JetBrains Mono")
+  expect_match(th$strip.text$family, "^JetBrains Mono")
+  expect_identical(th$plot.subtitle$italic_family, "Cormorant Garamond")
+  # small labels are pizarra, never fg-subtle
+  expect_identical(th$plot.subtitle$kpi_label_colour, "#475569")
+})
+
 test_that("theme_chanwe background variants resolve to brand surfaces", {
   th_default <- theme_chanwe()
   th_white <- theme_chanwe(bg_color = "white")

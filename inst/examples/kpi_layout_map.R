@@ -38,7 +38,9 @@ zones <- data.frame(
              kpi_bot_sep + kpi_bot_ln_h + kpi_bot_pad,
              kpi_bot_sep + kpi_bot_ln_h + kpi_bot_pad + kpi_panel_h,
              total_h),
-  fill  = c("#FDE8C8", "#555555", "#C8DFF5", "#D4EDD4", "#F5D4F5"),
+  # zone fills: 70% tints of chart-orange, chart-blue, chart-green and
+  # chart-purple, and the slate rule-cool
+  fill  = c("#FFDFB2", "#C6CDD6", "#B2D7FF", "#C2EECD", "#E7CBF5"),
   label = c(
     sprintf("kpi_bot_sep = %g pt", kpi_bot_sep),
     sprintf("kpi_bot_ln_h = %g pt", kpi_bot_ln_h),
@@ -76,24 +78,24 @@ ggplot() +
   # zone labels (left side)
   geom_text(data = zones,
             aes(x = 0.02, y = ymid, label = label),
-            hjust = 0, size = 2.8, family = "mono", color = "#1A1A1A") +
+            hjust = 0, size = 2.8, family = "JetBrains Mono", color = "#111319") +
   # element dot + label (right side)
   geom_point(data = pts, aes(x = 0.62, y = y),
-             shape = 21, fill = "#FB3D0E", color = "white", size = 2.5) +
+             shape = 21, fill = "#FD3810", color = "white", size = 2.5) +
   geom_text(data = pts, aes(x = 0.64, y = y, label = label),
-            hjust = 0, size = 2.5, family = "mono", color = "#333333") +
+            hjust = 0, size = 2.5, family = "JetBrains Mono", color = "#475569") +
   # column x-position lines
   geom_vline(xintercept = col_x, linetype = "dashed",
-             color = "#2D7A4F", linewidth = 0.3) +
+             color = "#147705", linewidth = 0.3) +
   geom_label(data = col_df, aes(x = x, y = 1, label = label),
-             hjust = 1, vjust = 0, size = 2.2, family = "mono",
-             fill = "#EAF6EE", color = "#2D7A4F", label.size = 0.2) +
+             hjust = 1, vjust = 0, size = 2.2, family = "JetBrains Mono",
+             fill = "#C9FFC0", color = "#147705", label.size = 0.2) +
   # kpi_center_y reference line
   geom_hline(yintercept = kpi_center_y, linetype = "dotted",
-             color = "#FB3D0E", linewidth = 0.4) +
+             color = "#FD3810", linewidth = 0.4) +
   annotate("text", x = 0.01, y = kpi_center_y + 0.8,
            label = sprintf("kpi_center_y = %.1f pt", kpi_center_y),
-           hjust = 0, size = 2.5, color = "#FB3D0E", family = "mono") +
+           hjust = 0, size = 2.5, color = "#FD3810", family = "JetBrains Mono") +
   scale_y_continuous(
     name   = "pt from bottom of subtitle grob",
     breaks = sort(unique(c(0, zones$ymin, zones$ymax, round(kpi_center_y, 1)))),

@@ -57,8 +57,8 @@ A \code{gt_tbl} object.
 \description{
 The HTML counterpart of \code{\link[=chanwe_kbl]{chanwe_kbl()}}: a \code{gt} table styled with the
 Chanwe header grammar -- mono-caps eyebrow with an orange rule prefix,
-Schibsted Grotesk title, Inter subtitle, mono-caps column labels, JetBrains Mono
-tabular figures right-aligned, a hairline slate rule above the table, a
+Schibsted Grotesk title, Satoshi subtitle and body text, JetBrains Mono
+mono-caps column labels, JetBrains Mono tabular figures right-aligned, a hairline slate rule above the table, a
 thin slate rule under the column labels and to the right of the stub,
 flat rows (an n100 tint on hover, matching \code{\link[=chanwe_reactable]{chanwe_reactable()}}, no
 zebra striping), and the source note as an orange stamp.
@@ -68,8 +68,11 @@ The function returns a regular \code{gt_tbl}, so every \code{gt} verb
 (\code{gt::fmt_number()}, \code{gt::cols_label()}, \code{gt::tab_style()}, ...) can be
 piped after it.
 
-Fonts: the table uses the brand faces when they are available on the
-page. Load them with \code{\link[=chanwe_reporting_css]{chanwe_reporting_css()}} in Quarto HTML documents.
+Fonts: a \code{gt_tbl} cannot carry an HTML dependency, so the table uses the
+brand faces the page loads: the \code{chanwe-brand-html} Quarto format does,
+and so does \code{\link[=chanwe_reporting_css]{chanwe_reporting_css()}} (both from local files, no font
+CDN). \code{\link[=chanwe_reactable]{chanwe_reactable()}} and \code{\link[=chanwe_highchart]{chanwe_highchart()}} attach the fonts
+themselves.
 }
 \examples{
 \dontshow{if (requireNamespace("gt", quietly = TRUE)) withAutoprint(\{ # examplesIf}

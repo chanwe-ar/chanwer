@@ -22,8 +22,8 @@ look.
 - Use `scale_color_chanwe_d()` and `scale_fill_chanwe_d()` for discrete
   ChanWe palettes; `_c` variants for continuous orange gradients.
 - Use `chanwe_kbl()` for tables in Quarto Typst PDF reports.
-- Use `chanwe_load_fonts()` once per session to register brand fonts
-  (called automatically by `theme_chanwe()`).
+- Use `chanwe_load_fonts()` to register the bundled brand fonts (called
+  automatically by `theme_chanwe()`); it warns when a file is missing.
 - Use `chanwe_reporting_css()` for Quarto HTML report styling.
 
 ## Decision Rules
@@ -44,9 +44,17 @@ look.
   (default), `"white"`, `"sunken"`, `"slate"`, `"transparent"`, or any
   hex string. Every named surface is a `brand.yml` token; beige is
   retired and errors.
-- Colors and fonts mirror `_extensions/chanwe-brand/brand.yml`
-  (`.chanwe_brand_colors` in `R/palette.R`). Change brand.yml in
-  chanwe-brand first, sync the extension, then update that table.
+- Colors mirror chanwe-brandbook `brand/tokens/tokens.json`
+  (`.chanwe_brand_colors` in `R/palette.R`); the extension's `brand.yml`
+  follows the same tokens. Change tokens.json first, sync the extension,
+  then update that table. Never add a hex that is not a token or a tint
+  built from one.
+- Fonts follow the brand guide: Satoshi for text, Schibsted Grotesk for
+  titles, JetBrains Mono for eyebrows, labels and metadata; Cormorant
+  Garamond only for editorial italics and numerals. Inter is retired. The
+  TTF/WOFF2 files live in `inst/fonts` (copied from chanwe-brandbook
+  `brand/fonts`); `.chanwe_font_files` in `R/utils.R` lists what
+  `chanwe_load_fonts()` registers. No Google Fonts or other font CDN.
 - The eyebrow only appears when the title uses
   `chanwe_title(text, eyebrow = ...)`.
 - The header separator rule is drawn by the custom subtitle/title grobs;
@@ -73,7 +81,7 @@ look.
   - `fig-format: png`
 - The main reference examples are `chanwer-showcase-pdf.qmd` (every static
   pattern: ggplot2 + `chanwe_kbl()`) and `chanwer-showcase-html.qmd` (the
-  same plus `chanwe_gt()`, `chanwe_plotly()`, `chanwe_reactable()`).
+  same plus `chanwe_gt()`, `chanwe_highchart()`, `chanwe_reactable()`).
 - The Quarto extension lives under `_extensions/chanwe-report/`
   (template, filters, fonts, assets).
 

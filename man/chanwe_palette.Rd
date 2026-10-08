@@ -9,7 +9,7 @@ chanwe_palette(palette = NULL)
 \arguments{
 \item{palette}{Optional palette selector. Use \code{NULL} (default) to return
 all colors and grouped palettes. Supported names are \code{"all"}, \code{"core"},
-\code{"brand"} (the \code{color.palette} of the chanwe-brand \code{brand.yml}),
+\code{"brand"} (the 69-colour palette of chanwe-brandbook \code{tokens.json}),
 \code{"p13_orange"}, \code{"p13_gray"}, \code{"p14_accents"}, \code{"p15_coral"},
 \code{"p15_vermillion"}, \code{"p15_green"}, \code{"p15_magenta"}, \code{"p15_blue"},
 \code{"p15_yellow"}, \code{"p15_cyan"}, \code{"p15_mustard"}, \code{"p15_violet"},
@@ -36,6 +36,21 @@ They are used by the KPI scoreboard arrows (\code{\link[=chanwe_kpi]{chanwe_kpi(
 helper \code{\link[=chanwe_col_signed]{chanwe_col_signed()}}, and the poles of
 \code{\link[=scale_color_chanwe_div]{scale_color_chanwe_div()}}. Use them for any "went up / went down"
 encoding so the same pair appears in charts, tables, and reports.
+}
+
+\section{Legacy ramps}{
+
+The \verb{p13_*}, \code{p14_accents}, \verb{p15_*} and \verb{mb_*} groups predate the brand
+token system. Since chanwer 2.6.0 each keeps its name and length but is
+rebuilt from a brand token: the orange ramps from \code{primary} (the retired
+\verb{#E94B2B} is gone), the gray ramps from \code{ink} (not the retired \verb{#101010}),
+the p14 pairs from the palette's status and neon pairs, and each p15
+family from one token stepped toward its soft partner or a 75\% tint
+(coral = \code{primary}, vermillion = \code{chart-red}, green = \code{status-success},
+magenta = \code{chart-magenta}, blue = \code{status-info}, yellow =
+\code{status-warning}, cyan = \code{chart-cyan}, mustard = \code{exec-status-regular},
+violet = \code{violet}, teal = \code{chart-teal}, ink = \code{ink}). For new charts
+prefer \code{"chart"} and the \verb{ramp_*} groups.
 }
 
 \examples{

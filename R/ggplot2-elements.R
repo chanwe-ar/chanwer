@@ -91,7 +91,7 @@ new_element_chanwe_title <- function(
 }
 
 new_element_chanwe_subtitle <- function(
-  family = "Inter",
+  family = "Satoshi",
   italic_family = "Cormorant Garamond",
   size = 9,
   colour = "#475569",
@@ -101,7 +101,7 @@ new_element_chanwe_subtitle <- function(
   rule_colour = "#CFD6DF",
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
-  kpi_label_colour = "#8A94A6",
+  kpi_label_colour = "#475569",
   gap_ln = 6,
   sub_bot = 20,
   sub_top = 3,
@@ -206,7 +206,7 @@ new_element_chanwe_caption <- function(
 #     gap_n        gap between note and separator (3pt, only when has_n)
 #     n_h          note text (italic Cormorant Garamond, only when has_n)
 #     gap_ln       gap between subtitle text and separator (6pt compact / 14pt spacious)
-#     s_h          subtitle text (Inter)
+#     s_h          subtitle text (Satoshi)
 #     top (5pt)
 #
 #   MODE B — text + KPI scoreboard:
@@ -353,7 +353,7 @@ heightDetails.cw_title_tree <- function(x) {
   italic_family = "Cormorant Garamond",
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
-  kpi_label_colour = "#8A94A6",
+  kpi_label_colour = "#475569",
   gap_ln = 6,
   sub_bot = 20,
   sub_top = 3,
@@ -775,7 +775,7 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
   mono_fam <- element$mono_family %||_% "JetBrains Mono"
   mono_thin_fam <- element$mono_thin_family %||_% mono_fam
   italic_fam <- element$italic_family %||_% "Cormorant Garamond"
-  kpi_label_colour <- element$kpi_label_colour %||_% "#8A94A6"
+  kpi_label_colour <- element$kpi_label_colour %||_% "#475569"
 
   parts <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
   sub_text <- parts[1L]
@@ -785,7 +785,7 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
 
   sub_size <- element$size %||_% 9
   sub_gp <- grid::gpar(
-    fontfamily = element$family %||_% "Inter",
+    fontfamily = element$family %||_% "Satoshi",
     fontsize = sub_size,
     col = element$colour %||_% "#475569"
   )

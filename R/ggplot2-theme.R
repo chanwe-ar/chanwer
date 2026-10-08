@@ -55,16 +55,26 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' brand-consistent color palettes.
 #'
 #' ## Typography
+#' The brand trio, by the roles the CHANWE brand guide gives them: Satoshi
+#' for text, Schibsted Grotesk for titles, JetBrains Mono for eyebrows,
+#' labels and metadata. Cormorant Garamond only sets editorial italics and
+#' numerals.
+#'
 #' | Element | Font | Weight |
 #' |---------|------|--------|
 #' | Title (with eyebrow) | Schibsted Grotesk | 600 |
-#' | Subtitle | Inter | 400 |
+#' | Eyebrow | JetBrains Mono caps, orange rule | 400 |
+#' | Subtitle | Satoshi | 400 |
 #' | Subtitle note / KPI hero | Cormorant Garamond | italic |
-#' | Axis text | Inter | 400 |
+#' | Axis text (tick labels) | JetBrains Mono | 400 |
 #' | Axis titles | JetBrains Mono | 400 |
 #' | Facet strip labels | JetBrains Mono Thin | 100 |
 #' | Legend text / title | JetBrains Mono | 400 |
 #' | Caption stamp | JetBrains Mono caps, white on orange | 500 |
+#'
+#' Small text that has to be read (axis and legend titles, KPI labels) is
+#' pizarra (`fg-muted`, `#475569`) or obsidian (`ink`); never the lighter
+#' `fg-subtle`, which the guide keeps for large or decorative text.
 #'
 #' The eyebrow and the caption stamp render in the brand orange
 #' (`primary`, `#FD3810`) -- the same accent the HTML stylesheet uses
@@ -72,8 +82,8 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' The title is set at 1.85x the base size with a 1.0 line-height so the
 #' header, subtitle/KPI block and chart read as three distinct levels.
 #'
-#' Call [chanwe_load_fonts()] once per session to register the custom font
-#' families. `theme_chanwe()` calls it automatically.
+#' The fonts ship with the package; `theme_chanwe()` registers them through
+#' [chanwe_load_fonts()] the first time it runs.
 #'
 #' ## Background variants
 #' Every surface is a `brand.yml` token.
@@ -89,7 +99,11 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' `"paper"`, `"gray"` to `"slate"`.
 #'
 #' @param base_text_size Base text size in points. Default `6.75`. Title scales at ×1.85, subtitle ×0.90, eyebrow ×0.62.
-#' @param base_family Base font family for body text. Default `"Inter"`.
+#' @param base_family Base font family for body text (the subtitle and any
+#'   text that inherits from the theme). Default `"Satoshi"`. `"Inter"` (the
+#'   default before chanwer 2.6.0), `"Inter Light"` and `"Inter Medium"` are
+#'   deprecated: they warn and map to `"Satoshi"`, `"Satoshi Light"` and
+#'   `"Satoshi Medium"`.
 #' @param base_lineheight Base line-height multiplier. Default `1.60`.
 #' @param legend_position Legend position string passed to
 #'   `theme(legend.position = )`. Default `"bottom"`.
@@ -190,7 +204,7 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #'   theme_chanwe(bg_color = "white", legend_position = "none")
 theme_chanwe <- function(
   base_text_size = 6.75,
-  base_family = "Inter",
+  base_family = "Satoshi",
   base_lineheight = 1.60,
   legend_position = "bottom",
   bg_color = "paper",
@@ -200,6 +214,7 @@ theme_chanwe <- function(
   compact_title = TRUE,
   header_line = TRUE
 ) {
+  base_family <- chanwe_resolve_family(base_family, "base_family")
   chanwe_load_fonts()
   options(chanwer.plot_borders = plot_borders)
 
@@ -293,7 +308,11 @@ theme_chanwe <- function(
       base_family = base_family
     ),
     ggplot2::theme(
+      # %+replace% swaps the whole root element, so the family is restated
+      # here or every element without its own family would fall back to the
+      # device default instead of the brand body face.
       text = ggplot2::element_text(
+        family = base_family,
         color = colors[["fg-muted"]],
         lineheight = base_lineheight
       ),
@@ -314,7 +333,9 @@ theme_chanwe <- function(
         face = "plain",
         size = base_text_size * 0.825
       ),
+      # Tick labels are labels: JetBrains Mono, as in chanwe_highchart().
       axis.text = ggplot2::element_text(
+        family = mono_family,
         color = colors[["ink"]],
         size = base_text_size * 0.825
       ),
@@ -596,7 +617,8 @@ chanwe_kpi <- function(
 #'
 #' Note: `note` is ignored when `kpi` is supplied — the two do not stack.
 #'
-#' @param text Main subtitle string (Inter, muted ink, below the title rule).
+#' @param text Main subtitle string (Satoshi, pizarra `fg-muted`, below the
+#'   title rule).
 #' @param note Optional smaller italic line rendered below the subtitle, e.g. a
 #'   methodological caveat. Ignored when `kpi` is supplied.
 #' @param kpi KPI panel produced by [chanwe_kpi()]. When provided, a scoreboard

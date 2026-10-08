@@ -8,37 +8,54 @@ chanwe_load_fonts(path = NULL)
 }
 \arguments{
 \item{path}{Directory containing the font files. Defaults to the fonts
-bundled with the chanwe-report Quarto extension, searched relative to the
-working directory (\verb{_extensions/chanwe-report/fonts}).}
+bundled with the package; when those are unavailable, the
+\verb{_extensions/chanwe-report/fonts} folder of the working directory. The
+chanwe-report extension folder and chanwe-brandbook's \code{brand/fonts/print}
+files use the same names.}
 }
 \value{
-Invisibly, the resolved fonts directory path.
+Invisibly, the resolved fonts directory path (or \code{NULL} when no
+directory was found or the fonts were already registered).
 }
 \description{
-Registers the brand font families declared in the chanwe-brand
-\code{brand.yml} with \code{\link[systemfonts:register_font]{systemfonts::register_font()}}, making them available to
-the ragg and svglite devices and to ggplot2. Call once per session before
-creating plots with \code{\link[=theme_chanwe]{theme_chanwe()}}.
+Registers the CHANWE brand font families with
+\code{\link[systemfonts:register_font]{systemfonts::register_font()}}, making them available to the ragg and
+svglite devices and to ggplot2. \code{\link[=theme_chanwe]{theme_chanwe()}} calls it automatically;
+call it yourself only to register fonts from another folder.
 }
 \details{
-Registered families:
+The fonts ship with the package (\code{system.file("fonts", package = "chanwer")}), copied from chanwe-brandbook \code{brand/fonts/print}, so no
+Quarto extension or system install is needed. They follow the brand
+guide's roles:
 \itemize{
-\item \code{"Inter"} — body text; Regular / Bold / Italic / BoldItalic
-\item \code{"Inter Light"} — plain face = Light (300), the brand body weight
-\item \code{"Inter Medium"} — plain face = Medium (500)
-\item \code{"Schibsted Grotesk"} — display; Regular / Bold
+\item \code{"Satoshi"} — body text; Regular / Bold / Italic / BoldItalic
+\item \code{"Satoshi Light"} — plain face = Light (300), the document body weight
+\item \code{"Satoshi Medium"}, \code{"Satoshi SemiBold"} — 500 and 600
+\item \code{"Schibsted Grotesk"} — titles and display; Regular / Bold
 \item \code{"Schibsted Grotesk Medium"} — plain face = Medium (500)
 \item \code{"Schibsted Grotesk SemiBold"} — plain face = SemiBold (600), the brand
 display weight; used by \code{\link[=chanwe_title]{chanwe_title()}}
-\item \code{"Instrument Serif"} — Regular / Italic
-\item \code{"Cormorant Garamond"} — Regular / Bold / Italic / BoldItalic; used by
-the KPI hero value and subtitle notes
-\item \code{"JetBrains Mono"} — Regular / Bold / Italic / BoldItalic
+\item \code{"JetBrains Mono"} — eyebrows, labels, axis text, legends; Regular / Bold
 \item \code{"JetBrains Mono Medium"} — plain face = Medium (500); used by the
 caption stamp
-\item \code{"JetBrains Mono Thin"} — plain face = Thin (100); used by axis titles /
-facet labels
+\item \code{"JetBrains Mono Thin"} — plain face = Thin (100); used by facet labels
+\item \code{"Cormorant Garamond"} — editorial italics and numerals only (the KPI
+hero value and subtitle notes); every face is the variable italic
+\item \code{"Instrument Serif"} — display numerals; Regular / Italic
 }
+
+Inter is retired and no longer registered. Passing \code{"Inter"} (or
+\code{"Inter Light"} / \code{"Inter Medium"}) as \code{theme_chanwe(base_family = )}
+still works: it warns and uses the Satoshi equivalent.
+
+A family that is already installed on the system under the same name (for
+example JetBrains Mono) is left to the installed copy: systemfonts does not
+allow a registered font to shadow a system family.
+
+Every file the families need is checked. When one is missing the function
+warns (class \code{chanwer_missing_font}) and lists the files and families
+affected; a family whose regular file is missing is not registered, and a
+missing bold or italic face falls back to the regular one.
 }
 \examples{
 \dontrun{

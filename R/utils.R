@@ -1,32 +1,123 @@
+# Brand font families and the files behind them. Every file ships in
+# inst/fonts (identical to chanwe-brandbook brand/fonts/print, plus the
+# JetBrains Mono Thin cut the chanwe-report Typst pool carries), and the
+# chanwe-report extension's fonts folder uses the same file names, so either
+# directory can be passed to chanwe_load_fonts(path = ).
+#
+# systemfonts only snaps to the registered plain (400) and bold (700) faces,
+# so every other weight is registered as its own family, named the way
+# gridtext and the CSS font-family lookup expect.
+.chanwe_font_files <- list(
+  # Satoshi: body text and UI (brand guide, 03 Tipografia)
+  "Satoshi" = c(
+    plain = "Satoshi-Regular.ttf", bold = "Satoshi-Bold.ttf",
+    italic = "Satoshi-Italic.ttf", bolditalic = "Satoshi-BoldItalic.ttf"
+  ),
+  # the document body weight (300); Satoshi has no light italic
+  "Satoshi Light" = c(plain = "Satoshi-Light.ttf", italic = "Satoshi-Italic.ttf"),
+  "Satoshi Medium" = c(plain = "Satoshi-Medium.ttf"),
+  "Satoshi SemiBold" = c(plain = "Satoshi-SemiBold.ttf"),
+  # Schibsted Grotesk: titles, headings, big numbers (display weight 600)
+  "Schibsted Grotesk" = c(
+    plain = "SchibstedGrotesk-Regular.ttf", bold = "SchibstedGrotesk-Bold.ttf"
+  ),
+  "Schibsted Grotesk Medium" = c(plain = "SchibstedGrotesk-Medium.ttf"),
+  "Schibsted Grotesk SemiBold" = c(plain = "SchibstedGrotesk-SemiBold.ttf"),
+  # JetBrains Mono: eyebrows, labels, metadata, counters
+  "JetBrains Mono" = c(
+    plain = "JetBrainsMono-Regular.ttf", bold = "JetBrainsMono-Bold.ttf"
+  ),
+  "JetBrains Mono Medium" = c(plain = "JetBrainsMono-Medium.ttf"),
+  "JetBrains Mono Thin" = c(plain = "JetBrainsMono-Thin.ttf"),
+  # Editorial serifs: italics and numerals only. Cormorant ships as one
+  # variable italic file, so every face of the family is that italic.
+  "Cormorant Garamond" = c(
+    plain = "CormorantGaramond-Italic-wght.ttf",
+    bold = "CormorantGaramond-Italic-wght.ttf",
+    italic = "CormorantGaramond-Italic-wght.ttf",
+    bolditalic = "CormorantGaramond-Italic-wght.ttf"
+  ),
+  "Instrument Serif" = c(
+    plain = "InstrumentSerif-Regular.ttf", italic = "InstrumentSerif-Italic.ttf"
+  )
+)
+
+# Families retired from the brand, mapped to the family that replaces them.
+# Inter was the body face until 2026-10-01 (brand guide: "Se retiran Inter").
+.chanwe_retired_families <- c(
+  "Inter" = "Satoshi",
+  "Inter Light" = "Satoshi Light",
+  "Inter Medium" = "Satoshi Medium"
+)
+
+# Swap a retired family for its brand replacement, with a deprecation
+# warning that names the argument the caller passed it through.
+chanwe_resolve_family <- function(family, arg = "family") {
+  if (length(family) == 1L && family %in% names(.chanwe_retired_families)) {
+    new <- unname(.chanwe_retired_families[[family]])
+    warning(
+      sprintf(
+        paste0(
+          "`%s = \"%s\"` is deprecated: Inter was retired from the CHANWE ",
+          "brand. Using \"%s\" instead."
+        ),
+        arg, family, new
+      ),
+      call. = FALSE
+    )
+    return(new)
+  }
+  family
+}
+
 #' Load Chanwe Fonts into systemfonts
 #'
-#' Registers the brand font families declared in the chanwe-brand
-#' `brand.yml` with [systemfonts::register_font()], making them available to
-#' the ragg and svglite devices and to ggplot2. Call once per session before
-#' creating plots with [theme_chanwe()].
+#' Registers the CHANWE brand font families with
+#' [systemfonts::register_font()], making them available to the ragg and
+#' svglite devices and to ggplot2. [theme_chanwe()] calls it automatically;
+#' call it yourself only to register fonts from another folder.
 #'
-#' Registered families:
-#' - `"Inter"` — body text; Regular / Bold / Italic / BoldItalic
-#' - `"Inter Light"` — plain face = Light (300), the brand body weight
-#' - `"Inter Medium"` — plain face = Medium (500)
-#' - `"Schibsted Grotesk"` — display; Regular / Bold
+#' The fonts ship with the package (`system.file("fonts", package =
+#' "chanwer")`), copied from chanwe-brandbook `brand/fonts/print`, so no
+#' Quarto extension or system install is needed. They follow the brand
+#' guide's roles:
+#'
+#' - `"Satoshi"` — body text; Regular / Bold / Italic / BoldItalic
+#' - `"Satoshi Light"` — plain face = Light (300), the document body weight
+#' - `"Satoshi Medium"`, `"Satoshi SemiBold"` — 500 and 600
+#' - `"Schibsted Grotesk"` — titles and display; Regular / Bold
 #' - `"Schibsted Grotesk Medium"` — plain face = Medium (500)
 #' - `"Schibsted Grotesk SemiBold"` — plain face = SemiBold (600), the brand
 #'   display weight; used by [chanwe_title()]
-#' - `"Instrument Serif"` — Regular / Italic
-#' - `"Cormorant Garamond"` — Regular / Bold / Italic / BoldItalic; used by
-#'   the KPI hero value and subtitle notes
-#' - `"JetBrains Mono"` — Regular / Bold / Italic / BoldItalic
+#' - `"JetBrains Mono"` — eyebrows, labels, axis text, legends; Regular / Bold
 #' - `"JetBrains Mono Medium"` — plain face = Medium (500); used by the
 #'   caption stamp
-#' - `"JetBrains Mono Thin"` — plain face = Thin (100); used by axis titles /
-#'   facet labels
+#' - `"JetBrains Mono Thin"` — plain face = Thin (100); used by facet labels
+#' - `"Cormorant Garamond"` — editorial italics and numerals only (the KPI
+#'   hero value and subtitle notes); every face is the variable italic
+#' - `"Instrument Serif"` — display numerals; Regular / Italic
+#'
+#' Inter is retired and no longer registered. Passing `"Inter"` (or
+#' `"Inter Light"` / `"Inter Medium"`) as `theme_chanwe(base_family = )`
+#' still works: it warns and uses the Satoshi equivalent.
+#'
+#' A family that is already installed on the system under the same name (for
+#' example JetBrains Mono) is left to the installed copy: systemfonts does not
+#' allow a registered font to shadow a system family.
+#'
+#' Every file the families need is checked. When one is missing the function
+#' warns (class `chanwer_missing_font`) and lists the files and families
+#' affected; a family whose regular file is missing is not registered, and a
+#' missing bold or italic face falls back to the regular one.
 #'
 #' @param path Directory containing the font files. Defaults to the fonts
-#'   bundled with the chanwe-report Quarto extension, searched relative to the
-#'   working directory (`_extensions/chanwe-report/fonts`).
+#'   bundled with the package; when those are unavailable, the
+#'   `_extensions/chanwe-report/fonts` folder of the working directory. The
+#'   chanwe-report extension folder and chanwe-brandbook's `brand/fonts/print`
+#'   files use the same names.
 #'
-#' @return Invisibly, the resolved fonts directory path.
+#' @return Invisibly, the resolved fonts directory path (or `NULL` when no
+#'   directory was found or the fonts were already registered).
 #' @export
 #'
 #' @examples
@@ -39,104 +130,95 @@ chanwe_load_fonts <- function(path = NULL) {
   }
 
   if (!requireNamespace("systemfonts", quietly = TRUE)) {
-    warning("chanwe_load_fonts() requires the 'systemfonts' package.")
+    warning(
+      "chanwe_load_fonts() requires the 'systemfonts' package; ",
+      "the brand fonts were not registered.",
+      call. = FALSE
+    )
     return(invisible(NULL))
   }
 
   if (is.null(path)) {
     candidates <- c(
-      "_extensions/chanwe-report/fonts",
-      file.path(getwd(), "_extensions/chanwe-report/fonts"),
-      system.file("fonts", package = "chanwer")
+      system.file("fonts", package = "chanwer"),
+      file.path(getwd(), "_extensions", "chanwe-report", "fonts")
     )
     path <- Find(function(p) nzchar(p) && dir.exists(p), candidates)
   }
 
   if (is.null(path) || !dir.exists(path)) {
     warning(
-      "chanwe_load_fonts(): fonts directory not found. ",
-      "Pass `path` explicitly or install the chanwe-report Quarto extension."
+      "chanwe_load_fonts(): fonts directory not found",
+      if (!is.null(path)) paste0(" (", path, ")"),
+      ". Reinstall chanwer or pass `path` to a folder with the brand TTFs ",
+      "(chanwe-brandbook brand/fonts/print).",
+      call. = FALSE
     )
     return(invisible(NULL))
   }
 
-  # systemfonts only snaps to the registered plain (400) and bold (700)
-  # faces, so every other weight is registered as its own family, named the
-  # way gridtext and the CSS font-family lookup expect.
-  .reg <- function(name, plain, bold = NULL, italic = NULL, bolditalic = NULL) {
-    fp <- function(f) {
-      if (is.null(f)) return(NULL)
-      p <- file.path(path, f)
-      if (file.exists(p)) p else NULL
+  # systemfonts refuses a registry name that is already an installed system
+  # family (e.g. JetBrains Mono from the JetBrains IDEs); the installed copy
+  # is the same typeface and serves that family instead.
+  installed <- unique(systemfonts::system_fonts()$family)
+  missing <- character(0)
+  missing_families <- character(0)
+  for (family in names(.chanwe_font_files)) {
+    if (family %in% installed) {
+      next
     }
-    pp <- fp(plain)
-    if (is.null(pp)) return(invisible(NULL))
+    files <- .chanwe_font_files[[family]]
+    full <- file.path(path, files)
+    names(full) <- names(files)
+    absent <- stats::setNames(!file.exists(full), names(files))
+    if (any(absent)) {
+      missing <- union(missing, unname(files[absent]))
+      missing_families <- c(missing_families, family)
+    }
+    if (absent[["plain"]]) {
+      next
+    }
+    face <- function(name) {
+      if (name %in% names(full) && !absent[[name]]) full[[name]] else NULL
+    }
     tryCatch(
       systemfonts::register_font(
-        name       = name,
-        plain      = pp,
-        bold       = fp(bold),
-        italic     = fp(italic),
-        bolditalic = fp(bolditalic)
+        name = family,
+        plain = full[["plain"]],
+        bold = face("bold") %||_% full[["plain"]],
+        italic = face("italic") %||_% full[["plain"]],
+        bolditalic = face("bolditalic") %||_%
+          face("bold") %||_% face("italic") %||_% full[["plain"]]
       ),
-      error = function(e) NULL
+      error = function(e) {
+        warning(
+          sprintf(
+            "chanwe_load_fonts(): could not register \"%s\": %s",
+            family, conditionMessage(e)
+          ),
+          call. = FALSE
+        )
+      }
     )
   }
 
-  .reg("Inter",
-    plain      = "Inter-Regular.ttf",
-    bold       = "Inter-Bold.ttf",
-    italic     = "Inter-Italic.ttf",
-    bolditalic = "Inter-BoldItalic.ttf"
-  )
-  .reg("Inter Light", plain = "Inter-Light.ttf", italic = "Inter-LightItalic.ttf")
-  .reg("Inter Medium", plain = "Inter-Medium.ttf", italic = "Inter-MediumItalic.ttf")
-
-  .reg("Schibsted Grotesk",
-    plain = "SchibstedGrotesk-Regular.ttf",
-    bold  = "SchibstedGrotesk-Bold.ttf"
-  )
-  .reg("Schibsted Grotesk Medium", plain = "SchibstedGrotesk-Medium.ttf")
-  .reg("Schibsted Grotesk SemiBold", plain = "SchibstedGrotesk-SemiBold.ttf")
-
-  .reg("Instrument Serif",
-    plain  = "InstrumentSerif-Regular.ttf",
-    italic = "InstrumentSerif-Italic.ttf"
-  )
-  # Cormorant ships two ways: as a variable font, or as static OTFs (the way
-  # the chanwe-report extension carries it). Whichever is there is used.
-  if (file.exists(file.path(path, "CormorantGaramond[wght].ttf"))) {
-    .reg("Cormorant Garamond",
-      plain      = "CormorantGaramond[wght].ttf",
-      bold       = "CormorantGaramond[wght].ttf",
-      italic     = "CormorantGaramond-Italic[wght].ttf",
-      bolditalic = "CormorantGaramond-Italic[wght].ttf"
-    )
-  } else {
-    .reg("Cormorant Garamond",
-      plain      = "CormorantGaramond-Regular.otf",
-      bold       = "CormorantGaramond-Bold.otf",
-      italic     = "CormorantGaramond-Italic.otf",
-      bolditalic = "CormorantGaramond-BoldItalic.otf"
-    )
+  if (length(missing)) {
+    warning(structure(
+      class = c("chanwer_missing_font", "warning", "condition"),
+      list(
+        message = paste0(
+          "chanwe_load_fonts(): ", length(missing),
+          " brand font file(s) not found in ", path, ": ",
+          paste(missing, collapse = ", "), ".\n",
+          "Affected families: ", paste(unique(missing_families), collapse = ", "),
+          ". A family without its regular file is not registered and falls ",
+          "back to the device default; a missing bold or italic face falls ",
+          "back to the regular one."
+        ),
+        call = NULL
+      )
+    ))
   }
-
-  .reg("JetBrains Mono",
-    plain      = "JetBrainsMono-Regular.ttf",
-    bold       = "JetBrainsMono-Bold.ttf",
-    italic     = "JetBrainsMono-Italic.ttf",
-    bolditalic = "JetBrainsMono-BoldItalic.ttf"
-  )
-  .reg("JetBrains Mono Medium",
-    plain  = "JetBrainsMono-Medium.ttf",
-    italic = "JetBrainsMono-MediumItalic.ttf"
-  )
-  .reg("JetBrains Mono Thin",
-    plain      = "JetBrainsMono-Thin.ttf",
-    bold       = "JetBrainsMono-ExtraLight.ttf",
-    italic     = "JetBrainsMono-ThinItalic.ttf",
-    bolditalic = "JetBrainsMono-ExtraLightItalic.ttf"
-  )
 
   options(chanwer.fonts_loaded = TRUE)
   invisible(path)
@@ -213,14 +295,13 @@ chanwe_logo_path <- function(filename = "Logo_Color1.png") {
     )
   }
 
+  # The repository's top-level assets/ folder holds the pre-2026 brand kit
+  # (old logos, Raleway, Google Sans) and is deliberately not searched: the
+  # current marks are in inst/assets and the synced extension.
   candidates <- c(
     if (nzchar(src_root)) file.path(src_root, "inst/assets", filename),
-    if (nzchar(src_root)) file.path(src_root, "assets", filename),
-    if (nzchar(src_root)) file.path(src_root, "_extensions/assets", filename),
     if (nzchar(src_root)) file.path(src_root, "_extensions/chanwe-brand/assets", filename),
     file.path("inst/assets", filename),
-    file.path("assets", filename),
-    file.path("_extensions/assets", filename),
     file.path("_extensions/chanwe-brand/assets", filename)
   )
   existing <- candidates[file.exists(candidates)]

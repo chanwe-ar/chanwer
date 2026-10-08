@@ -22,7 +22,7 @@ chanwe:
   volume: "MENDOZA · ARGENTINA"
   chapter: "Design System"
   section: "R Package"
-  topic: "chanwer v2.3"
+  topic: "chanwer v2.6"
   rail-eyebrow: "VISUAL REFERENCE"
   hero-image: "_extensions/chanwe-report/assets/bg_mountains.jpg"
   hero-img-position: 10
@@ -31,7 +31,7 @@ chanwe:
   toc-eyebrow: "Document map"
   toc-title: "Contents"
   toc-lede: "The complete static reference for chanwer: the brand color system and its validated palettes, the four scale jobs (categorical, ordinal, sequential, diverging), the signed system, every theme_chanwe() header treatment and surface, the chart forms, and the full native-Typst table API — all on the chanwe-report-typst tokens."
-  page-bg: "FBFBFB"
+  page-bg: "F8FAFC"
   abstract-eyebrow: "TLDR;"
   abstract-title: "Static Reference"
   abstract-takeaway: "One color system and one header grammar, mapped to every chart and table: the same tokens drive eyebrows, KPI arrows, table deltas, and this document."
@@ -43,7 +43,7 @@ chanwe:
     - author
     - status
   meta-rows:
-    - { label: "Package",  value: "chanwer v2.3",     sub: "R design system" }
+    - { label: "Package",  value: "chanwer v2.6",     sub: "R design system" }
     - { label: "Format",   value: "chanwe-report-typst", sub: "Quarto extension" }
     - { label: "Author",   value: "Chanwe",            sub: "Alejandro Abraham" }
   back-cover: true
@@ -489,7 +489,7 @@ color.
 ::::
 :::: {.kpi title="NEGATIVE" main="#CC1914" main-color="#CC1914" secondary="hue-true vermillion" direction="none"}
 ::::
-:::: {.kpi title="NEUTRAL" main="#666666" main-color="#666666" secondary="brand ink-03" direction="none"}
+:::: {.kpi title="NEUTRAL" main="#475569" main-color="#475569" secondary="pizarra fg-muted" direction="none"}
 ::::
 :::: {.kpi title="CONTRAST" main="4.9+" unit=":1" secondary="on all five surfaces" direction="up"}
 ::::
@@ -572,7 +572,7 @@ chanwe_kbl(
 # Header Treatments
 
 The header grammar: mono-caps eyebrow with an orange rule, Schibsted Grotesk
-title at 1.85x base, Inter subtitle, optional note line or KPI scoreboard, and an
+title at 1.85x base, Satoshi subtitle, optional note line or KPI scoreboard, and an
 orange stamp source caption.
 
 ##### Eyebrow · title · subtitle (default)
