@@ -1,9 +1,10 @@
 # Brand color tokens -------------------------------------------------------
 
-# Mirror of `color.palette` in _extensions/chanwe-brand/brand.yml - the
-# source of truth. brand.yml is not installed with the package, so the values
-# are copied by hand: edit brand.yml in chanwe-brand first, sync the
-# extension, then update this table. Aliases (`primary-text`,
+# Mirror of `color.palette` in chanwe-brandbook brand/tokens/tokens.json, the
+# source of truth (chanwe-brand's brand.yml follows it, and the extension's
+# brand.yml here is synced from there). Neither file is installed with the
+# package, so the values are copied by hand: change tokens.json first, sync
+# the extension, then update this table. Aliases (`primary-text`,
 # `primary-active` -> `primary`) are resolved to their hex.
 .chanwe_brand_colors <- c(
   # The accent: one orange
@@ -12,6 +13,7 @@
   "primary-active"   = "#FD3810",
   # Obsidian and what sits on it
   "ink"              = "#111319",
+  "ink-light"        = "#232A35",
   "ink-soft"         = "#37393F",
   "ink-fg"           = "#64748B",
   "ink-subtle"       = "#646464",
@@ -36,6 +38,7 @@
   "callout-surface"  = "#F8FAFC",
   "surface-sunken"   = "#F1F5F9",
   "surface-slate"    = "#EBF0F6",
+  "surface-raised"   = "#FFFFFF",
   "callout-header"   = "#EBF0F6",
   "pure-white"       = "#FFFFFF",
   "pure-black"       = "#000000",
@@ -82,7 +85,52 @@
   "chart-cyan"          = "#11F7E6",
   "chart-cyan-soft"     = "#B6FFF8",
   "chart-magenta"       = "#EB03F2",
-  "chart-gray"          = "#71706C"
+  "chart-gray"          = "#71706C",
+  # The Reports tone (tokens.json, 2026-10-07): the code-number violet and
+  # its 12% wash, read like status-info / status-info-bg
+  "violet"              = "#7C3AED",
+  "violet-soft"         = "#EFE7FD"
+)
+
+# Mix `col` with `with` by `t` (0 = col, 1 = with), as an uppercase hex.
+.cw_mix <- function(col, with, t) {
+  a <- grDevices::col2rgb(col)
+  b <- grDevices::col2rgb(with)
+  toupper(grDevices::rgb(t(a * (1 - t) + b * t), maxColorValue = 255))
+}
+
+# The legacy chanwer ramps (p13, p14, p15, mb) predate the token system:
+# their anchors were the retired orange #E94B2B, the retired black #101010
+# and hues outside the palette. Since 2.6.0 every one is rebuilt from a
+# brand token, keeping its name, its length and its light -> dark steps.
+.cw_tints <- function(name, token, steps) {
+  stats::setNames(
+    vapply(steps, function(t) .cw_mix(token, "#FFFFFF", t), character(1)),
+    sprintf("%s-%02d", name, seq_along(steps))
+  )
+}
+
+# A 5-shade p15 family: the token (01) to a light pole (05) in four even
+# steps. The pole is the token's own soft partner when the palette has one,
+# otherwise a 75% tint.
+.cw_p15 <- function(family, token, light = NULL) {
+  b <- .chanwe_brand_colors
+  from <- b[[token]]
+  to <- if (is.null(light)) .cw_mix(from, "#FFFFFF", 0.75) else b[[light]]
+  stats::setNames(
+    vapply(0:4 / 4, function(t) .cw_mix(from, to, t), character(1)),
+    sprintf("p15-%s-%02d", family, 1:5)
+  )
+}
+
+# p13: ten steps from the token toward white, the steps the old ramps used.
+.cw_p13_orange <- .cw_tints(
+  "p13-orange", .chanwe_brand_colors[["primary"]],
+  c(0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.48, 0.64, 0.72, 0.80)
+)
+.cw_p13_gray <- .cw_tints(
+  "p13-gray", .chanwe_brand_colors[["ink"]],
+  c(0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.56, 0.64, 0.72, 0.80)
 )
 
 .chanwe_colors <- c(
@@ -95,91 +143,52 @@
   "signed-positive" = "#147705",
   "signed-negative" = "#CC1914",
   "signed-neutral"  = "#475569",
-  # Legacy chanwer names, resolved to brand.yml per the v1 -> v2 migration
-  # in _extensions/chanwe-brand/assets/COLORS.md.
+  # Legacy chanwer names, resolved to the brand tokens per the v1 -> v2
+  # migration in _extensions/chanwe-brand/assets/COLORS.md.
   "brand-orange" = "#FD3810",     # primary
   "brand-black" = "#111319",      # ink
   "brand-white" = "#F8FAFC",      # paper
   "brand-pure-white" = "#FFFFFF", # pure-white
   "brand-gray" = "#71706C",       # chart-gray
   "brand-silver" = "#D4D4D4",     # neutral-300
-  "p13-orange-01" = "#E94B2B",
-  "p13-orange-02" = "#EA5A3C",
-  "p13-orange-03" = "#EC684E",
-  "p13-orange-04" = "#ED775F",
-  "p13-orange-05" = "#EF8670",
-  "p13-orange-06" = "#F09482",
-  "p13-orange-07" = "#F2A393",
-  "p13-orange-08" = "#F5C0B6",
-  "p13-orange-09" = "#F6CFC7",
-  "p13-orange-10" = "#F8DDD9",
-  "p13-gray-01" = "#101010",
-  "p13-gray-02" = "#232323",
-  "p13-gray-03" = "#353535",
-  "p13-gray-04" = "#484848",
-  "p13-gray-05" = "#5B5B5B",
-  "p13-gray-06" = "#6D6D6D",
-  "p13-gray-07" = "#929292",
-  "p13-gray-08" = "#A5A5A5",
-  "p13-gray-09" = "#B8B8B8",
-  "p13-gray-10" = "#CACACA",
-  "p14-yellow-strong" = "#F9E710",
-  "p14-yellow-soft" = "#FFF8B8",
-  "p14-cyan-strong" = "#11F7E6",
-  "p14-cyan-soft" = "#B6FFF8",
-  "p14-blue-strong" = "#0C48ED",
-  "p14-blue-soft" = "#B8CEFF",
-  "p14-magenta-strong" = "#EB03F2",
-  "p14-magenta-soft" = "#FDCFFF",
-  "p14-green-strong" = "#1EB508",
-  "p14-green-soft" = "#C9FFC0",
-  "p14-red-strong" = "#F40C0C",
-  "p14-red-soft" = "#F9A7A7",
-  # p15 - full 5-shade ramps (dark -> light) for 11 semantic families
-  "p15-coral-01" = "#EE5524", "p15-coral-02" = "#F37548",
-  "p15-coral-03" = "#F79676", "p15-coral-04" = "#FBB89F",
-  "p15-coral-05" = "#FDD9C8",
-  "p15-vermillion-01" = "#F40C0C", "p15-vermillion-02" = "#F53333",
-  "p15-vermillion-03" = "#F75A5A", "p15-vermillion-04" = "#F88080",
-  "p15-vermillion-05" = "#F9A7A7",
-  "p15-green-01" = "#1EB508", "p15-green-02" = "#49C836",
-  "p15-green-03" = "#74DA64", "p15-green-04" = "#9EED92",
-  "p15-green-05" = "#C9FFC0",
-  "p15-magenta-01" = "#EB03F2", "p15-magenta-02" = "#F036F5",
-  "p15-magenta-03" = "#F469F9", "p15-magenta-04" = "#F99CFC",
-  "p15-magenta-05" = "#FDCFFF",
-  "p15-blue-01" = "#0C48ED", "p15-blue-02" = "#376AF2",
-  "p15-blue-03" = "#628BF6", "p15-blue-04" = "#8DADFB",
-  "p15-blue-05" = "#B8CEFF",
-  "p15-yellow-01" = "#F9E710", "p15-yellow-02" = "#FBEB3A",
-  "p15-yellow-03" = "#FCF064", "p15-yellow-04" = "#FEF48E",
-  "p15-yellow-05" = "#FFF8B8",
-  "p15-cyan-01" = "#11F7E6", "p15-cyan-02" = "#3AF9EB",
-  "p15-cyan-03" = "#64FBEF", "p15-cyan-04" = "#8DFDF3",
-  "p15-cyan-05" = "#B6FFF8",
-  "p15-mustard-01" = "#E8B400", "p15-mustard-02" = "#F0C32A",
-  "p15-mustard-03" = "#F6D255", "p15-mustard-04" = "#F8DD86",
-  "p15-mustard-05" = "#F8E7B6",
-  "p15-violet-01" = "#9B2E8F", "p15-violet-02" = "#B549AA",
-  "p15-violet-03" = "#C775BD", "p15-violet-04" = "#D7A2D2",
-  "p15-violet-05" = "#E5C9E0",
-  "p15-teal-01" = "#14A4B8", "p15-teal-02" = "#2BBED2",
-  "p15-teal-03" = "#5BCDDC", "p15-teal-04" = "#8AD9E5",
-  "p15-teal-05" = "#B8E7EE",
-  "p15-ink-01" = "#141414", "p15-ink-02" = "#3D3D3D",
-  "p15-ink-03" = "#666666", "p15-ink-04" = "#8F8F8F",
-  "p15-ink-05" = "#B8B8B8",
-  # mb - main brand palette (orange . dark, 100-950 scale)
-  "mb-orange-100" = "#F8DDD9", "mb-orange-200" = "#F6CFC7",
-  "mb-orange-300" = "#F5C0B6", "mb-orange-400" = "#F2A393",
-  "mb-orange-500" = "#F09482", "mb-orange-600" = "#EF8670",
-  "mb-orange-700" = "#ED775F", "mb-orange-800" = "#EC684E",
-  "mb-orange-900" = "#EA5A3C", "mb-orange-950" = "#E94B2B",
-  "mb-dark-100" = "#CACACA", "mb-dark-200" = "#B8B8B8",
-  "mb-dark-300" = "#A5A5A5", "mb-dark-400" = "#929292",
-  "mb-dark-500" = "#6D6D6D", "mb-dark-600" = "#5B5B5B",
-  "mb-dark-700" = "#484848", "mb-dark-800" = "#353535",
-  "mb-dark-900" = "#232323", "mb-dark-950" = "#101010",
+  .cw_p13_orange,
+  .cw_p13_gray,
+  # p14 - strong/soft pairs: the palette's status and neon pairs
+  "p14-yellow-strong" = "#F9E710",  # status-warning
+  "p14-yellow-soft" = "#FFF8B8",    # status-warning-bg
+  "p14-cyan-strong" = "#11F7E6",    # chart-cyan
+  "p14-cyan-soft" = "#B6FFF8",      # chart-cyan-soft
+  "p14-blue-strong" = "#0C48ED",    # status-info
+  "p14-blue-soft" = "#B8CEFF",      # status-info-bg
+  "p14-magenta-strong" = "#EB03F2", # chart-magenta
+  "p14-magenta-soft" = .cw_mix("#EB03F2", "#FFFFFF", 0.75), # its 75% tint
+  "p14-green-strong" = "#1EB508",   # status-success
+  "p14-green-soft" = "#C9FFC0",     # status-success-soft
+  "p14-red-strong" = "#D32F2F",     # status-error
+  "p14-red-soft" = "#FDECEA",       # status-error-bg
+  # p15 - full 5-shade ramps (dark -> light) for 11 families, each anchored
+  # on a brand token
+  .cw_p15("coral", "primary"),
+  .cw_p15("vermillion", "chart-red"),
+  .cw_p15("green", "status-success", "status-success-soft"),
+  .cw_p15("magenta", "chart-magenta"),
+  .cw_p15("blue", "status-info", "status-info-bg"),
+  .cw_p15("yellow", "status-warning", "status-warning-bg"),
+  .cw_p15("cyan", "chart-cyan", "chart-cyan-soft"),
+  .cw_p15("mustard", "exec-status-regular"),
+  .cw_p15("violet", "violet", "violet-soft"),
+  .cw_p15("teal", "chart-teal"),
+  .cw_p15("ink", "ink"),
+  # mb - main brand palette (orange . dark, 100-950 scale): the p13 ramps
+  # read light -> dark
+  stats::setNames(
+    rev(unname(.cw_p13_orange)),
+    paste0("mb-orange-", c(100, 200, 300, 400, 500, 600, 700, 800, 900, 950))
+  ),
+  stats::setNames(
+    rev(unname(.cw_p13_gray)),
+    paste0("mb-dark-", c(100, 200, 300, 400, 500, 600, 700, 800, 900, 950))
+  ),
   # chanwe-report-typst token names used across the helpers, resolved to
   # their brand.yml roles.
   "typst-primary"      = "#FD3810", # primary
@@ -294,13 +303,6 @@ chanwe_get_signed <- function() {
   )
 }
 
-# Mix `col` with `with` by `t` (0 = col, 1 = with), as an uppercase hex.
-.cw_mix <- function(col, with, t) {
-  a <- grDevices::col2rgb(col)
-  b <- grDevices::col2rgb(with)
-  toupper(grDevices::rgb(t(a * (1 - t) + b * t), maxColorValue = 255))
-}
-
 # Sequential ramps for the continuous scales - light -> dark, one series hue
 # each: two tints of the hue toward white, the hue itself, and a dark pole
 # (the hue stepped toward ink) so the strong end clears 3:1 mark contrast on
@@ -378,7 +380,7 @@ chanwe_get_signed <- function() {
 #'
 #' @param palette Optional palette selector. Use `NULL` (default) to return
 #'   all colors and grouped palettes. Supported names are `"all"`, `"core"`,
-#'   `"brand"` (the `color.palette` of the chanwe-brand `brand.yml`),
+#'   `"brand"` (the 69-colour palette of chanwe-brandbook `tokens.json`),
 #'   `"p13_orange"`, `"p13_gray"`, `"p14_accents"`, `"p15_coral"`,
 #'   `"p15_vermillion"`, `"p15_green"`, `"p15_magenta"`, `"p15_blue"`,
 #'   `"p15_yellow"`, `"p15_cyan"`, `"p15_mustard"`, `"p15_violet"`,
@@ -396,6 +398,19 @@ chanwe_get_signed <- function() {
 #' helper [chanwe_col_signed()], and the poles of
 #' [scale_color_chanwe_div()]. Use them for any "went up / went down"
 #' encoding so the same pair appears in charts, tables, and reports.
+#'
+#' @section Legacy ramps:
+#' The `p13_*`, `p14_accents`, `p15_*` and `mb_*` groups predate the brand
+#' token system. Since chanwer 2.6.0 each keeps its name and length but is
+#' rebuilt from a brand token: the orange ramps from `primary` (the retired
+#' `#E94B2B` is gone), the gray ramps from `ink` (not the retired `#101010`),
+#' the p14 pairs from the palette's status and neon pairs, and each p15
+#' family from one token stepped toward its soft partner or a 75% tint
+#' (coral = `primary`, vermillion = `chart-red`, green = `status-success`,
+#' magenta = `chart-magenta`, blue = `status-info`, yellow =
+#' `status-warning`, cyan = `chart-cyan`, mustard = `exec-status-regular`,
+#' violet = `violet`, teal = `chart-teal`, ink = `ink`). For new charts
+#' prefer `"chart"` and the `ramp_*` groups.
 #'
 #' @return If `palette = NULL`, a list containing `all` and `groups`.
 #'   Otherwise, a named character vector of hex colors.
@@ -445,9 +460,11 @@ chanwe_brand_tokens <- function() {
     colors = chanwe_get_colors(),
     semantic = semantic,
     chart_order = chanwe_get_chart(),
-    # brand.yml `typography`
+    # tokens.json `font`: Satoshi for text, Schibsted Grotesk for titles and
+    # display, JetBrains Mono for eyebrows, labels and metadata; Cormorant
+    # Garamond only for editorial italics and numerals. Inter is retired.
     typography = list(
-      family = "Inter",
+      family = "Satoshi",
       display_family = "Schibsted Grotesk",
       mono_family = "JetBrains Mono",
       serif_family = "Cormorant Garamond",
@@ -457,16 +474,20 @@ chanwe_brand_tokens <- function() {
       heading_line_height = 1.15,
       link_weight = 500
     ),
+    # One radius: the brand guide sets 4px on cards, buttons and fields
+    # (tokens.json `radius`); 999px pills are for status chips only.
     geometry = list(
-      radius_small = 3,
+      radius_small = 4,
       radius_base = 4,
-      radius_large = 6,
+      radius_large = 4,
       shadow = "none"
     ),
     reporting = list(
       code_background = semantic[["background"]],
       code_left_rule = semantic[["primary"]],
-      caption_color = chanwe_get_colors()[["fg-subtle"]],
+      # Captions are small text that is read: pizarra, not fg-subtle (the
+      # guide keeps fg-subtle for large or decorative text).
+      caption_color = chanwe_get_colors()[["fg-muted"]],
       # brand.yml `callout-*` accents
       callouts = c(
         note = chanwe_get_colors()[["callout-note"]],
@@ -500,6 +521,7 @@ chanwe_brand_tokens <- function() {
 #' @examples
 #' p <- chanwe_preview_palette("chart")
 chanwe_preview_palette <- function(palette = "all") {
+  chanwe_load_fonts()
   values <- chanwe_palette(palette)
 
   if (is.list(values)) {
@@ -543,20 +565,22 @@ chanwe_preview_palette <- function(palette = "all") {
     ) +
     ggplot2::geom_text(
       ggplot2::aes(label = label, color = label_col),
-      family = "Inter",
-      size = 3,
+      # token names and hex codes are labels: JetBrains Mono
+      family = "JetBrains Mono",
+      size = 2.6,
       lineheight = 1.1,
       fontface = "bold"
     ) +
     ggplot2::scale_color_identity() +
     ggplot2::scale_fill_identity() +
-    ggplot2::theme_void(base_family = "Inter") +
+    ggplot2::theme_void(base_family = "Satoshi") +
     ggplot2::labs(title = title_label) +
     ggplot2::theme(
       plot.title = ggplot2::element_text(
+        family = "Schibsted Grotesk SemiBold",
         hjust = 0,
         size = 14,
-        face = "bold",
+        face = "plain",
         color = chanwe_get_colors()[["ink"]]
       ),
       plot.background = ggplot2::element_rect(

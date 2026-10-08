@@ -1,0 +1,2456 @@
+// =================================================================
+// chanwe-brand-rules.scss — the HTML format's rules layer.
+//
+// Lived in brand.yml as `defaults.bootstrap.rules` until 2026-10-01.
+// Moved out because Quarto copies the whole processed brand into one
+// environment variable (QUARTO_FILTER_PARAMS), twice; with ~76 KB of rules
+// that variable passed 230 KB, and Linux refuses any single environment
+// string over 128 KB (MAX_ARG_STRLEN): every HTML render failed on Linux
+// ("Argument list too long") while macOS rendered fine.
+//
+// Same Sass as before, unchanged: it still reads the palette as
+// `$brand-<key>` variables, which the brand layer defines first — the
+// format lists the theme as `[brand, assets/chanwe-brand-rules.scss]`.
+// =================================================================
+
+/*-- scss:rules --*/
+
+:root {
+  --cw-color-primary: #{$brand-primary};
+  --cw-color-primary-active: #{$brand-primary-active};
+  --cw-color-primary-subtle: #{rgba($brand-primary, 0.10)};
+  /* Link hover and code function names. Once a darkened orange for 4.5:1
+     small-text contrast; retired — one orange, it now equals primary. */
+  --cw-color-primary-text: #{$brand-primary-text};
+  /* Critically damped feel: fast out, no overshoot. Used by every transition. */
+  --cw-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --cw-color-ink: #{$brand-ink};
+  --cw-color-ink-light: #{$brand-ink-light};
+  --cw-color-fg: #{$brand-fg};
+  --cw-color-body-fg: #{$brand-body-fg};
+  --cw-color-fg-muted: #{$brand-fg-muted};
+  --cw-color-fg-subtle: #{$brand-fg-subtle};
+
+  --cw-color-neutral-900: #{$brand-ink};
+  --cw-color-neutral-700: #{$brand-neutral-700};
+  --cw-color-neutral-0: #{$brand-paper};
+
+  --cw-color-bg: #{$brand-paper};
+  --cw-color-paper: #{$brand-paper};
+  --cw-color-bg-inverse: #{$brand-ink};
+  --cw-color-surface-inverse: #{$brand-ink};
+
+  --cw-color-text-primary: #{$brand-fg};
+  --cw-color-text-secondary: #{$brand-fg-muted};
+  --cw-color-text-muted: #{$brand-fg-subtle};
+  --cw-color-text-inverse: #{$brand-paper};
+
+  --cw-color-border-subtle: #{rgba($brand-ink, 0.10)};
+  --cw-color-border-default: #{$brand-neutral-300};
+  --cw-color-border-strong: #{$brand-ink};
+  /* surface-sunken: un paso de slate por debajo de la hoja, el mismo
+     panel de codigo que usa el reporte Typst. Antes leia neutral-100,
+     que al lado de la hoja slate salia calido. */
+  --cw-color-code-bg: #{$brand-surface-sunken};
+  --cw-color-border-cool: #{$brand-border-cool};
+  /* La paleta de codigo del PDF. `assets/chanwe.tmTheme` la espeja a
+     mano para el resaltador nativo de Typst; aca se lee derecho desde
+     brand.yml, de modo que un bloque de codigo sale del mismo color en
+     el reporte y en la pagina. El texto base no se pinta: hereda
+     `body-fg`, asi que un identificador comun lee como la prosa. */
+  --cw-color-code-keyword: #{$brand-code-keyword};
+  --cw-color-code-string: #{$brand-code-string};
+  --cw-color-code-number: #{$brand-code-number};
+  --cw-color-code-operator: #{$brand-code-operator};
+  --cw-color-code-function: #{$brand-code-function};
+  --cw-color-code-type: #{$brand-code-type};
+  --cw-color-code-comment: #{$brand-code-comment};
+  /* Los ocho matices de la serie. `primary` es el octavo y ya tiene
+     su propia variable, asi que no se repite aca. */
+  --cw-color-chart-blue: #{$brand-chart-blue};
+  --cw-color-chart-green: #{$brand-chart-green};
+  --cw-color-chart-indigo: #{$brand-chart-indigo};
+  --cw-color-chart-orange: #{$brand-chart-orange};
+  --cw-color-chart-red: #{$brand-chart-red};
+  --cw-color-chart-teal: #{$brand-chart-teal};
+  --cw-color-chart-purple: #{$brand-chart-purple};
+
+  --cw-color-status-success: #{$brand-status-success};
+  --cw-color-status-error: #{$brand-status-error};
+  --cw-color-status-error-bg: #{$brand-status-error-bg};
+  --cw-color-status-warning: #{$brand-status-warning};
+  --cw-color-status-warning-bg: #{$brand-status-warning-bg};
+  --cw-color-status-info: #{$brand-status-info};
+  --cw-color-status-info-bg: #{$brand-status-info-bg};
+  --cw-color-callout-important: #{$brand-callout-important};
+  --cw-color-callout-note: #{$brand-callout-note};
+  --cw-color-callout-tip: #{$brand-callout-tip};
+  --cw-color-callout-warning: #{$brand-callout-warning};
+  --cw-color-callout-caution: #{$brand-callout-caution};
+  --cw-color-callout-surface: #{$brand-callout-surface};
+  --cw-color-callout-header: #{$brand-callout-header};
+  --cw-color-surface-sunken: #{$brand-surface-sunken};
+  /* `pure-white` se llama asi porque una clave `white` la toma
+     Bootstrap como su propio `$white`. Aca es el papel del callout y
+     el tinte del indice: el unico blanco de verdad de la marca. */
+  --cw-color-pure-white: #{$brand-pure-white};
+  --cw-color-emphasis: #{$brand-emphasis};
+  --cw-color-rule-cool: #{$brand-rule-cool};
+  /* El velo de la portada. La portada Typst vela al 80%, pero su
+     arte es `cover-snow-ridge.jpg`, una foto de nieve ya muy alta de
+     clave; acá el arte es `bg_mountains.jpg`, con cielo azul y mucho
+     mas saturado, asi que al 80% quedaba bastante mas presente que
+     en el reporte. Al 90% la foto llega al mismo punto: se adivina
+     el cerro y nada mas. Subirlo la tapa, bajarlo le come el
+     contraste al masthead, que se apoya encima. */
+  --cw-cover-veil: #{rgba($brand-callout-surface, 0.90)};
+
+  --cw-font-display: "Schibsted Grotesk", "Satoshi", "Helvetica Neue", Arial, sans-serif;
+  --cw-font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --cw-font-sans: "Satoshi", "Helvetica Neue", Arial, sans-serif;
+  --cw-font-mono: "JetBrains Mono", Menlo, "Courier New", monospace;
+  /* La serif de display de la contratapa: un solo corte, 400. */
+  --cw-font-serif-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  /* Pese al nombre historico, estas no son variables de grafico: son
+     las cajas `.alert-*` de Bootstrap y un color de enlace. Siguen a
+     `status-*`, que es chrome semantico, no la serie. */
+  --chanwe-yellow-strong: var(--cw-color-status-warning);
+  --chanwe-yellow-soft: var(--cw-color-status-warning-bg);
+  --chanwe-cyan-strong: #{$brand-chart-cyan};
+  --chanwe-cyan-soft: #{$brand-chart-cyan-soft};
+  --chanwe-blue-strong: var(--cw-color-status-info);
+  --chanwe-green-strong: var(--cw-color-status-success);
+  --chanwe-green-soft: #{$brand-status-success-soft};
+  --chanwe-red-strong: var(--cw-color-status-error);
+  --chanwe-red-soft: var(--cw-color-status-error-bg);
+}
+
+
+/* Title banner: HTML analogue of the report cover.
+   Background is the story-covers four-layer texture
+   (assets/brand/story-covers/background-texture.md): two crosshatch
+   tramas at coprime steps — the ~1280px preset, 18/31px — plus the
+   light and shadow radials, on `paper`. The base used to be a stray
+   #FBFBFB — the story-covers spec still writes its pre-palette
+   #F7F7F7 — and it is the token now, so the banner and the deck
+   cover sit on the same colour. The shorthand also suppresses
+   Quarto's banner image. */
+.quarto-title-banner,
+.quarto-title-block .quarto-title-banner {
+  /* La altura de la banda de pie. La leen el pie del campo y el pie
+     del riel, que son las dos mitades de un mismo zocalo: con el
+     mismo alto, sus filetes caen en la misma linea y el zocalo cruza
+     la portada entera en dos colores en vez de escalonarse. */
+  --cw-cover-foot-h: clamp(2.4rem, 4vw, 3.1rem);
+  background:
+    radial-gradient(120% 70% at 82% 8%, rgba(255,255,255,.9) 0%, rgba(255,255,255,0) 58%),
+    radial-gradient(90% 60% at 12% 96%, rgba(20,20,26,.05) 0%, rgba(20,20,26,0) 60%),
+    repeating-linear-gradient(147deg, rgba(20,20,26,.036) 0 1px, rgba(20,20,26,0) 1px 18px),
+    repeating-linear-gradient(57deg, rgba(20,20,26,.022) 0 1px, rgba(20,20,26,0) 1px 31px),
+    #{$brand-paper} !important;
+  color: var(--cw-color-fg) !important;
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(21rem, 38vw, 34rem);
+  padding: 0;
+  border-bottom: 1px solid var(--cw-color-border-strong);
+}
+
+.quarto-title-banner::before {
+  content: "";
+  position: absolute;
+  left: clamp(1.5rem, 7vw, 7.5rem);
+  top: clamp(0.75rem, 1.8vw, 1.35rem);
+  width: min(5.5rem, 15vw);
+  height: 2px;
+  border-radius: 0;
+  background: var(--cw-color-primary);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* El arte velado de la portada: la foto entra a sangre en el campo
+   editorial, con el papel al 80% encima haciendo de velo —los mismos
+   dos numeros que usa `chanwe-cover.typ`—. En la portada el arte es
+   una banda propia entre el masthead y la losa; acá, apaisado, es el
+   fondo del campo y el texto se apoya arriba. El velo alcanza. */
+.quarto-title-banner::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 74%;
+  background:
+    linear-gradient(var(--cw-cover-veil), var(--cw-cover-veil)),
+    var(--cw-cover-art) center / cover no-repeat;
+  /* El azul del cielo es lo que impedia que leyera blanca aun con el
+     velo alto: desaturada, la foto se va al gris de la nieve del
+     reporte en vez de teñir el campo. */
+  filter: saturate(0.35);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Riel de obsidiana ──────────────────────────────────────────
+   El gesto mas reconocible de la portada: 26% de la hoja en tinta,
+   el wordmark rotado en el centro y la plaza en una celda al pie
+   con su filete. El wordmark va en `Logo_Gris.svg` (rule-cool),
+   no en blanco: sobre obsidiana el blanco puro pesa de mas y queda
+   reservado para la tarjeta del QR. */
+.quarto-title-banner .chanwe-cover-rail {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 26%;
+  background: var(--cw-color-ink);
+  border-left: 1px solid var(--cw-color-border-strong);
+  /* El riel es decorativo y no debe robarle clics al indice; el QR
+     se lo devuelve para si mismo. */
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* El wordmark se centra por masa, no por caja. Girado -90deg la
+   palabra sube, y su bounding box la ensanchan las astas de la `h`
+   y el `®`, que caen todos del mismo lado: centrada geometricamente
+   la columna de texto se lee corrida a la derecha. Medido sobre el
+   render, el centro de masa queda +4.8px del eje a 1440px, o sea un
+   10% de la altura de la caja — de ahi el corrimiento. */
+.quarto-title-banner .chanwe-rail-wordmark {
+  --cw-rail-mark-h: clamp(2.2rem, 3.4vw, 3.4rem);
+  display: block;
+  width: clamp(9rem, 15vw, 16rem);
+  height: var(--cw-rail-mark-h);
+  background: var(--cw-wordmark-cool) center / contain no-repeat;
+  transform: translateX(calc(var(--cw-rail-mark-h) * -0.1)) rotate(-90deg);
+}
+
+.quarto-title-banner .chanwe-rail-foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--cw-cover-foot-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  border-top: 1px solid #{rgba($brand-pure-white, 0.18)};
+  font-family: var(--cw-font-mono);
+  font-size: 0.56rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cw-color-rule-cool);
+}
+
+.quarto-title-banner .chanwe-rail-slash {
+  color: var(--cw-color-primary);
+}
+
+.quarto-title-banner .quarto-title,
+.quarto-title-block .quarto-title-meta,
+.quarto-title-banner .subtitle,
+.quarto-title-banner .title {
+  position: relative;
+  z-index: 2;
+  color: var(--cw-color-fg) !important;
+  text-align: left !important;
+}
+
+/* The title block spans the full banner width (screen-start/end) at
+   z-index 2 — its transparent right-side padding would otherwise sit
+   over the floating TOC and swallow its clicks. Let pointer events
+   pass through the empty box; children stay interactive. */
+.quarto-title-banner .quarto-title {
+  pointer-events: none;
+}
+.quarto-title-banner .quarto-title > * {
+  pointer-events: auto;
+}
+
+.quarto-title-block .quarto-title-meta {
+  background: transparent;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  align-items: start;
+  gap: 0.9rem 1.3rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.quarto-title-block .quarto-title-meta-heading {
+  display: block;
+  font-family: var(--cw-font-mono);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cw-color-fg-subtle);
+  margin-bottom: 0.18rem;
+}
+
+#title-block-header .keywords {
+  display: none !important;
+}
+
+.quarto-title-block .quarto-title-meta-contents {
+  padding-bottom: 0;
+  /* Body face at 500: the title is the only element in the display face,
+     so weight + size + face carry the hierarchy. */
+  font-family: var(--cw-font-sans);
+  font-size: 0.92rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--cw-color-fg) !important;
+  opacity: 1;
+}
+
+/* El campo editorial ocupa el 74% y se reparte como la portada:
+   masthead arriba, titular al medio, losa y banda de pie abajo.
+   `justify-content: space-between` es lo que separa las tres, igual
+   que las filas `auto / 1fr / auto` de `chanwe-cover.typ`. */
+.quarto-title-banner .quarto-title {
+  grid-column: screen-start / screen-end;
+  width: 100%;
+  max-width: none;
+  min-height: clamp(21rem, 38vw, 34rem);
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  padding: 0 calc(26% + clamp(1.5rem, 3vw, 3rem)) 0 clamp(1.5rem, 7vw, 7.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ── Banda de pie del campo: pastilla de serie y sello de barras ──
+   La pastilla es la del pie de la portada —bermellon, texto en
+   blanco, el glifo `//` en bold— y el sello, el mismo gesto
+   editorial: no es un codigo que se lea, es un remate. */
+.quarto-title-banner .quarto-title .chanwe-cover-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  /* Misma altura y mismo filete que el pie del riel, y sin relleno
+     vertical propio: los dos apoyan en el fondo del banner, asi que
+     igualando la altura los dos filetes quedan a la misma cota y se
+     tocan en la costura. */
+  height: var(--cw-cover-foot-h);
+  margin: clamp(1.1rem, 2vw, 1.6rem) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--cw-color-border-subtle);
+}
+
+.quarto-title-banner .chanwe-cover-series {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.42em 0.95em;
+  border-radius: 4px;
+  background: var(--cw-color-ink);
+  color: var(--cw-color-rule-cool);
+  font-family: var(--cw-font-mono);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* El `//` se queda en bermellon: es el unico acento de la banda. */
+.quarto-title-banner .chanwe-cover-series-glyph {
+  font-weight: 700;
+  color: var(--cw-color-primary);
+}
+
+.quarto-title-banner .chanwe-cover-series-slash {
+  color: #{rgba($brand-rule-cool, 0.55)};
+}
+
+/* Barras de ancho alterno, como `_publication-barcode()`. */
+.quarto-title-banner .chanwe-cover-stamp {
+  width: 4.6rem;
+  height: 0.62rem;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--cw-color-fg-muted) 0 1.6px,
+    transparent 1.6px 3.2px,
+    var(--cw-color-fg-muted) 3.2px 4px,
+    transparent 4px 6.4px,
+    var(--cw-color-fg-muted) 6.4px 8.8px,
+    transparent 8.8px 10.4px
+  );
+}
+
+/* El fondo del campo: la losa de metadatos y, pegada debajo, la banda
+   de pie. En la portada el ledger se apoya sobre el pie; antes
+   quedaba flotando a media altura porque `space-between` repartia
+   entre cuatro hijos y no entre tres grupos. */
+.quarto-title-banner .quarto-title .chanwe-cover-bottom {
+  display: flex;
+  flex-direction: column;
+}
+
+/* La losa de metadatos, entre filetes. El filete vive aca y no en
+   `.quarto-title-meta` porque el bloque tambien alberga las
+   palabras clave cuando el documento las declara. */
+.quarto-title-banner .quarto-title .chanwe-banner-bottom {
+  margin: 0;
+  padding: clamp(1.1rem, 2.4vw, 1.6rem) 0 0;
+  border-top: 1px solid var(--cw-color-border-subtle);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+}
+
+.quarto-title-banner .quarto-title .chanwe-banner-bottom > .quarto-title-meta {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: min(48rem, 100%);
+}
+
+/* Marco del QR: el mismo dibujo que `chanwe-qr-frame()` en los
+   formatos Typst —filete fino, esquina exterior, tarjeta clara
+   adentro con su zona tranquila—. Vive en el riel, arriba y sobre el
+   mismo eje que el wordmark, asi que toma los colores de la
+   contratapa y no los del papel: filete blanco al 16% sobre la
+   obsidiana. El riel no recibe eventos, pero el QR si: es el unico
+   hijo que es un enlace de verdad. */
+.quarto-title-banner .chanwe-cover-qr {
+  position: absolute;
+  top: clamp(1.5rem, 2.8vw, 2.6rem);
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  padding: 0.26rem;
+  border: 1px solid #{rgba($brand-pure-white, 0.16)};
+  border-radius: 4px;
+  background: transparent;
+  line-height: 0;
+  pointer-events: auto;
+  transition: border-color 0.2s var(--cw-ease);
+}
+
+.quarto-title-banner .chanwe-cover-qr:hover {
+  border-color: var(--cw-color-primary);
+}
+
+.quarto-title-banner .chanwe-cover-qr-card {
+  display: block;
+  /* El SVG trae 33 modulos de lado —29 de codigo y 2 de zona
+     tranquila a cada lado—, asi que el paso es el ancho util sobre
+     33, no sobre 29. **A esta medida el chip es un sello, no un
+     codigo que se escanee**: a 1440px el paso queda en ~1.4px por
+     modulo, menos de la mitad del piso de 3px, y ninguna camara lo
+     lee contra la pantalla ni siquiera en un display 2x. Sigue
+     siendo un enlace, y la direccion esta escrita en el pie del
+     documento. Para que vuelva a escanearse hay que subirlo a
+     ~6.3rem de tarjeta (3px por modulo), que es tres veces esto. */
+  width: clamp(2.55rem, 3.4vw, 3.5rem);
+  aspect-ratio: 1;
+  padding: 0.12rem;
+  border-radius: 3px;
+  background:
+    var(--cw-contact-qr) center / contain no-repeat,
+    #{$brand-pure-white};
+}
+
+.quarto-title-banner .quarto-title .chanwe-keywords {
+  margin-top: 1rem;
+  padding-top: 0;
+}
+
+.quarto-title-banner .quarto-categories {
+  display: flex;
+  flex-wrap: wrap;
+  /* center, not stretch: the subject pill must sit on the tab's
+     vertical center, not hang from its top edge */
+  align-items: center;
+  justify-content: flex-start !important;
+  gap: 0.45rem;
+  margin-top: 0;
+  margin-bottom: clamp(1.25rem, 2vw, 2rem);
+}
+
+/* Masthead: la pastilla del tema contra el margen y el renglon de
+   ubicacion a la derecha, con su filete abajo — la banda superior de
+   la portada, que alli lleva la pastilla de edicion y las tres filas
+   de coordenadas. */
+.quarto-title-banner .quarto-categories.chanwe-top-pills {
+  justify-content: space-between !important;
+  flex-wrap: nowrap;
+  padding-bottom: clamp(0.8rem, 1.5vw, 1.15rem);
+  border-bottom: 1px solid var(--cw-color-border-subtle);
+  margin-bottom: 0;
+  margin-top: clamp(1.4rem, 2.6vw, 2.2rem);
+  margin-bottom: clamp(0.75rem, 1.4vw, 1.15rem);
+}
+
+.quarto-title-banner .quarto-title > .quarto-categories .quarto-category,
+.quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category {
+  background: transparent !important;
+  color: var(--cw-color-primary) !important;
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  border-radius: 0;
+  font-family: var(--cw-font-mono);
+  font-size: 0.65rem;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 0;
+  text-decoration: none !important;
+}
+
+/* Masthead accent tab: the first top pill sits in the story-covers
+   tab (solid FD3810, white mono caps, light and small like the Typst
+   cover tabs) and replaces the 22pt eyebrow rule as the row's anchor;
+   the remaining pills stay plain mono caps. Square corners: the tab
+   is a solid mark of the cover system, not a keyword pill. */
+.quarto-title-banner .quarto-title > .quarto-categories::before,
+.quarto-title-banner .quarto-categories.chanwe-top-pills::before {
+  content: none;
+}
+
+/* La pastilla del masthead va en obsidiana, como la de edicion de la
+   portada, y su texto en rule-cool: la regla de la marca para un
+   texto sobre tinta. El naranja queda para el punto del titular, el
+   filete de datum y el glifo del pie — los acentos, no las cajas.
+   Redondea con el radio de la marca (4px), igual que la pastilla de
+   serie del pie: las dos del campo editorial son la misma pieza y
+   antes una iba en angulo recto y la otra no. */
+.quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(1),
+.quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(1) {
+  background: var(--cw-color-ink) !important;
+  color: var(--cw-color-rule-cool) !important;
+  border-radius: 4px;
+  padding: 0.3rem 0.55rem;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+}
+
+.quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(2),
+.quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(2) {
+  background: transparent !important;
+  color: var(--cw-color-primary) !important;
+  /* breathing room between the subject and the topic tab */
+  margin-left: 0.4rem;
+}
+
+.quarto-title-banner .quarto-title > .quarto-categories .quarto-category:hover,
+.quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:hover {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+.quarto-title-banner .quarto-title .chanwe-keyword-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start !important;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.quarto-title-banner .quarto-title .chanwe-keyword-pills .quarto-category {
+  background: var(--cw-color-surface-sunken) !important;
+  color: var(--cw-color-fg-muted) !important;
+  border: 1px solid var(--cw-color-border-subtle) !important;
+  outline: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  border-radius: 4px;
+  font-family: var(--cw-font-mono);
+  font-size: 0.58rem;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.5rem;
+  text-decoration: none !important;
+}
+
+/* El titular con su linea de datum: el filete bermellon a la
+   izquierda del bloque, como en la portada, en vez de colgar solo
+   del punto. Tracking -0.05em, el de toda la familia display. */
+.quarto-title-banner .quarto-title .title {
+  max-width: min(58rem, 52vw);
+  font-family: var(--cw-font-display);
+  font-size: clamp(2.4rem, 4.7vw, 4.25rem);
+  font-weight: 600 !important;
+  letter-spacing: -0.05em;
+  /* 1.0, not 0.96: accents and descenders of two-line Spanish titles touch at 0.96 */
+  line-height: 1;
+  color: var(--cw-color-fg) !important;
+}
+
+/* La linea de datum: un solo filete para el titular y la bajada. */
+.quarto-title-banner .quarto-title .chanwe-datum {
+  border-left: 3px solid var(--cw-color-primary);
+  padding-left: clamp(0.85rem, 1.6vw, 1.35rem);
+}
+
+
+.quarto-title-banner .quarto-title .title::before {
+  content: "";
+  display: block;
+  width: min(180px, 50vw);
+  height: 38px;
+  margin: clamp(2rem, 3.8vw, 3.25rem) 0 clamp(2rem, 3.4vw, 3rem);
+  background: url("_extensions/chanwe-brand/assets/Logo_Negro.svg") left center / contain no-repeat;
+}
+
+/* El punto del titular: 40% mas chico que los 0.34em originales. El
+   `vertical-align` se recalcula para que el centro del disco no se
+   mueva —estaba a 0.13em sobre la linea de base y ahi se queda—, asi
+   el punto encoge sin subir ni bajar respecto del texto. */
+.quarto-title-banner .quarto-title .title::after {
+  content: "";
+  display: inline-block;
+  width: 0.204em;
+  height: 0.204em;
+  margin-left: 0.12em;
+  border-radius: 50%;
+  background: var(--cw-color-primary);
+  vertical-align: 0.028em;
+}
+
+.quarto-title-banner .quarto-title.has-chanwe-title-logo .title::before {
+  content: none;
+  display: none;
+}
+
+/* En la portada el wordmark vive en el riel y el campo editorial no
+   lo repite. El de la izquierda queda fuera. */
+.quarto-title-banner .quarto-title .chanwe-title-logo {
+  display: none;
+}
+
+.quarto-title-banner .quarto-title .chanwe-title-logo-legacy {
+  display: block;
+  width: min(180px, 50vw);
+  height: 38px;
+  max-height: 38px;
+  background: url("_extensions/chanwe-brand/assets/Logo_Negro.svg") left center / contain no-repeat;
+  margin: clamp(0.45rem, 1vw, 0.85rem) 0 0;
+}
+
+.quarto-title-banner .chanwe-title-logo + .quarto-categories.chanwe-top-pills {
+  margin-top: clamp(1.4rem, 2.6vw, 2.2rem);
+}
+
+.quarto-title-banner .subtitle {
+  max-width: min(40rem, 44vw);
+  margin-top: clamp(0.85rem, 1.7vw, 1.35rem);
+  font-family: var(--cw-font-serif);
+  font-size: clamp(1rem, 1.5vw, 1.38rem);
+  font-style: italic;
+  font-weight: 300 !important;
+  line-height: 1.24;
+  color: var(--cw-color-emphasis) !important;
+  opacity: 1;
+}
+
+@media (max-width: 980px) {
+  .quarto-title-banner {
+    min-height: 0;
+  }
+  /* El arte ya no es el panel de la derecha sino el fondo del campo:
+     a esta altura ocupa el ancho entero y sigue detras del texto. */
+  .quarto-title-banner::after {
+    width: 100%;
+    border-left: 0;
+  }
+  /* El riel de obsidiana es una columna: sin ancho para dos columnas,
+     se va. El wordmark y la plaza ya los repite el pie del documento. */
+  .quarto-title-banner .chanwe-cover-rail {
+    display: none;
+  }
+  .quarto-title-banner .quarto-title {
+    grid-row: 1;
+    min-height: 0;
+    max-width: 100%;
+    padding: 2rem 1.35rem 2.3rem;
+  }
+  /* Sin riel no hay que reservarle ancho al masthead ni al pie. */
+  .quarto-title-banner .quarto-categories.chanwe-top-pills {
+    flex-wrap: wrap;
+    gap: 0.5rem 0.9rem;
+  }
+  .quarto-title-banner .quarto-title .chanwe-banner-bottom {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .quarto-title-banner .quarto-title .title {
+    max-width: 100%;
+    font-size: clamp(2.15rem, 10.5vw, 3.1rem);
+  }
+  .quarto-title-banner .quarto-title .title::before,
+  .quarto-title-banner .quarto-title .chanwe-title-logo {
+    width: min(170px, 62vw);
+    max-height: 38px;
+  }
+  .quarto-title-banner .quarto-title .title::before {
+    margin-top: 2.2rem;
+    margin-bottom: 2rem;
+  }
+  .quarto-title-banner .quarto-title .chanwe-title-logo {
+    margin-top: 0.45rem;
+    margin-bottom: 0;
+  }
+  .quarto-title-banner .subtitle {
+    max-width: 100%;
+    font-size: 1rem;
+    line-height: 1.32;
+  }
+  .quarto-title-banner .quarto-categories {
+    margin-bottom: 1.1rem;
+  }
+  .quarto-title-banner .quarto-categories.chanwe-top-pills {
+    margin-bottom: 0.85rem;
+  }
+  .quarto-title-banner .chanwe-title-logo + .quarto-categories.chanwe-top-pills {
+    margin-top: 3.05rem;
+  }
+  .quarto-title-block .quarto-title-meta {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+  .quarto-title-block .quarto-title-meta-contents {
+    padding-bottom: 0;
+  }
+  .quarto-title-banner .quarto-title .chanwe-keywords {
+    margin-top: 0.9rem;
+  }
+  .quarto-title-banner .quarto-title .chanwe-keyword-pills .quarto-category {
+    font-size: 0.56rem;
+    padding: 0.18rem 0.42rem;
+  }
+  main.content section#references,
+  main.content #refs,
+  main.content .references.csl-bib-body {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+  main.content section.footnotes,
+  main.content #footnotes,
+  main.content [role="doc-endnotes"] {
+    padding-left: 1.1rem;
+  }
+}
+
+/* Content links: ink text, brand orange on the underline (colour on a solid
+   mark, not on 3.3:1 body text). Affordance is visible at rest. */
+main.content a:not(.nav-link, .anchorjs-link, .code-copy-button, .quarto-category, .footnote-ref, .footnote-back),
+main.content a.quarto-xref {
+  color: var(--cw-color-fg);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--cw-color-primary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: color 120ms var(--cw-ease), text-decoration-color 120ms var(--cw-ease);
+}
+main.content a:not(.nav-link, .anchorjs-link, .code-copy-button, .quarto-category, .footnote-ref, .footnote-back):hover,
+main.content a.quarto-xref:hover {
+  color: var(--cw-color-primary-text);
+  text-decoration-thickness: 2px;
+}
+main.content a:not(.nav-link, .anchorjs-link, .code-copy-button, .quarto-category, .footnote-ref, .footnote-back):focus-visible,
+main.content a.quarto-xref:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--cw-font-display);
+  font-weight: 600 !important;
+}
+
+/* Highlighted text (.mark) */
+mark, .mark {
+  background-color: var(--cw-color-primary-subtle);
+  color: var(--cw-color-primary-active);
+  font-weight: 600;
+  padding: 0.08rem 0.32rem;
+  border-radius: 4px;
+}
+
+/* Inline code */
+:not(pre) > code:not(.sourceCode),
+p code:not(.sourceCode),
+li code:not(.sourceCode),
+td code:not(.sourceCode) {
+  background: var(--cw-color-code-bg);
+  color: var(--cw-color-neutral-700);
+  border-radius: 4px;
+  font-family: var(--cw-font-mono);
+  font-size: 0.85em;
+  padding: 0.08rem 0.32rem;
+}
+
+/* Callouts: Typst callout-contract colours on a 2px left rule and a
+   rotated-square glyph (the chanwe-glyph); transparent header with the
+   title in mono caps, ink. Colour lives on solid marks, never on text. */
+.callout {
+  --cw-callout-accent: var(--cw-color-ink);
+  background-color: var(--cw-color-pure-white) !important;
+  /* El marco en `border-cool`, el rol que el reporte le da al callout,
+     y no el `border-default` neutro: misma luminancia (212 contra 213),
+     el tono frio es lo unico que se mueve, y asi el marco y la hairline
+     de la cabecera son el mismo gris. */
+  border: 1px solid var(--cw-color-border-cool) !important;
+  border-left: 2px solid var(--cw-callout-accent) !important;
+  border-radius: 4px;
+}
+.callout.callout-note,
+.callout.callout-info { --cw-callout-accent: var(--cw-color-callout-note); }
+.callout.callout-tip,
+.callout.callout-success { --cw-callout-accent: var(--cw-color-callout-tip); }
+.callout.callout-warning { --cw-callout-accent: var(--cw-color-callout-warning); }
+.callout.callout-important { --cw-callout-accent: var(--cw-color-callout-important); }
+.callout.callout-caution,
+.callout.callout-alert { --cw-callout-accent: var(--cw-color-callout-caution); }
+
+/* Quarto le pone `padding: .4em .7em` al card del estilo simple —el
+   default no lo lleva—, asi que todo lo de adentro quedaba metido
+   10px a cada lado y la cabecera flotaba en vez de apoyarse en los
+   bordes. El aire lo ponen la cabecera y el cuerpo, igual que en el
+   default; las dos apariencias comparten geometria y se diferencian
+   solo en la barra. */
+.callout.callout-style-simple {
+  padding: 0 !important;
+}
+.callout.callout-style-simple .callout-body {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.callout > .callout-header {
+  /* Quarto le pone `opacity: 85%` a la cabecera del estilo default y
+     `75%` a la del simple. Con eso ningun color de la barra sale como
+     se declaro: medido sobre el render, el slate llegaba a #EDF2F7 en
+     vez de #EBF0F6, la hairline a #D6DCE3 y el glifo `//` a una
+     version palida de su acento. La marca no tiene colores al 85%. */
+  opacity: 1 !important;
+  background: transparent !important;
+  border-bottom: 0 !important;
+  padding: 0.6rem 1.2rem 0.55rem !important;
+}
+
+/* La barra de titulo va en `callout-header`, el mismo slate que el
+   bloque de cabecera del callout del reporte, cerrada por la hairline
+   `border-cool` que el reporte dibuja entre la cabecera y el cuerpo.
+   El radio interior es 2px del lado del filete de 2px y 3px del otro,
+   para no asomar una esquina viva adentro del card de 4px. Va **solo**
+   en el estilo default: `appearance="simple"` quiere decir, por
+   definicion, que el titulo se queda sin fondo. */
+.callout.callout-style-default > .callout-header {
+  background: var(--cw-color-callout-header) !important;
+  border-bottom: 1px solid var(--cw-color-border-cool) !important;
+  border-radius: 2px 3px 0 0;
+}
+.callout .callout-title-container {
+  display: flex;
+  align-items: center;
+  font-family: var(--cw-font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cw-color-ink);
+}
+.callout .callout-title-container::before {
+  content: "//";
+  display: inline-block;
+  flex: none;
+  margin: 0 8px 0 1px;
+  color: var(--cw-callout-accent);
+}
+.callout .callout-icon-container {
+  display: none !important;
+}
+.callout .callout-body,
+.callout .callout-body-container {
+  background-color: var(--cw-color-pure-white) !important;
+  /* `body-fg`, el mismo slate del cuerpo: el callout es un parrafo
+     del documento, no una caja aparte, y se lee igual que el resto.
+     El papel blanco es lo que lo despega de la hoja. */
+  color: var(--cw-color-body-fg) !important;
+  font-size: 0.94rem;
+  line-height: 1.58;
+}
+.callout .callout-body {
+  padding: 0 !important;
+}
+.callout .callout-body-container {
+  padding: 0.45rem 1.2rem 1rem !important;
+}
+/* El parrafo tambien en `body-fg`: sin esta regla Bootstrap le pone el
+   color de cuerpo del tema y el texto del callout salia en el negro
+   pleno de `fg`, mas oscuro que la prosa que lo rodea. */
+.callout .callout-body-container p,
+.callout .callout-body-container li {
+  color: var(--cw-color-body-fg) !important;
+}
+.callout .callout-body-container a {
+  color: var(--chanwe-blue-strong) !important;
+}
+/* Collapsible callouts: respond on press; open on the critically damped curve */
+.callout > .callout-header[data-bs-toggle] {
+  cursor: pointer;
+  transition: transform 100ms var(--cw-ease);
+}
+.callout > .callout-header[data-bs-toggle]:active {
+  transform: translateY(1px);
+}
+.callout .callout-toggle,
+.callout .callout-toggle::before {
+  transition: transform 160ms var(--cw-ease);
+}
+.callout .collapsing {
+  transition: height 220ms var(--cw-ease);
+}
+
+
+/* Bootstrap alert blocks aligned with the same palette */
+.alert-info { border-color: var(--chanwe-cyan-strong) !important; background-color: var(--chanwe-cyan-soft) !important; color: var(--cw-color-neutral-900) !important; }
+.alert-success { border-color: var(--chanwe-green-strong) !important; background-color: var(--chanwe-green-soft) !important; color: var(--cw-color-neutral-900) !important; }
+.alert-warning { border-color: var(--chanwe-yellow-strong) !important; background-color: var(--chanwe-yellow-soft) !important; color: var(--cw-color-neutral-900) !important; }
+.alert-danger { border-color: var(--chanwe-red-strong) !important; background-color: var(--chanwe-red-soft) !important; color: var(--cw-color-neutral-900) !important; }
+
+/* Premium editorial skin */
+body {
+  background: var(--cw-color-bg);
+  /* El texto corrido va un punto por encima de fg y en Satoshi Light;
+     fg queda para titulares y para lo que pida el negro pleno. */
+  color: var(--cw-color-body-fg);
+  font-family: var(--cw-font-sans);
+  font-weight: 300;
+}
+
+
+.quarto-title-banner {
+  border-bottom: 0;
+}
+
+.quarto-title-banner .quarto-title .title {
+  /* El tracking lo fija la regla del titular, mas arriba: -0.05em, el
+     de toda la familia display y el que usa `tracking` en la portada
+     del reporte (`chanwe-cover.typ`). Aca habia un -0.025em que, por
+     ser la misma especificidad y venir despues, ganaba en silencio:
+     el banner se veia mas suelto que la portada de la que sale, y el
+     comentario que lo acompañaba —"the Typst covers use -0.025em
+     too"— no era cierto. */
+  font-optical-sizing: auto;
+  text-wrap: balance;
+  font-weight: 600 !important;
+}
+
+.page-columns .content {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: clamp(2.2rem, 3vw, 3.8rem) clamp(1rem, 2vw, 2rem);
+}
+
+
+main.content .cell,
+main.content .quarto-figure,
+main.content .table-responsive,
+main.content .panel-tabset {
+  margin-top: 1.8rem;
+  margin-bottom: 1.8rem;
+}
+
+main.content .callout {
+  margin-top: 2.4rem;
+  margin-bottom: 2.4rem;
+}
+
+main.content p {
+  margin-bottom: 1.15rem;
+}
+
+main.content .chanwe-document-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 0.72rem;
+  margin: 0.15rem 0 2.35rem;
+  padding-bottom: 1.35rem;
+  border-bottom: 1px solid var(--cw-color-border-subtle);
+}
+
+main.content .chanwe-document-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+main.content .chanwe-document-pill-row p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+main.content .chanwe-pill-label,
+main.content .chanwe-pill {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/* Label = the banner eyebrow (22pt rule + mono caps, brand orange), not a pill:
+   the values are the content of the row, the label should not out-shout them. */
+main.content .chanwe-pill-label {
+  padding: 0;
+  margin-right: 0.3rem;
+  border: 0;
+  background: transparent;
+  color: var(--cw-color-primary);
+  font-family: var(--cw-font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+main.content .chanwe-pill-label::before {
+  content: "";
+  display: inline-block;
+  flex: none;
+  width: 22pt;
+  height: 0.75pt;
+  margin-right: 0.45rem;
+  background: var(--cw-color-primary);
+}
+
+/* One radius language: 4px like the banner keyword pills, callouts, code and figures */
+main.content .chanwe-pill {
+  padding: 0.28rem 0.6rem;
+  border: 1px solid var(--cw-color-border-default);
+  border-radius: 4px;
+  background: var(--cw-color-surface-sunken);
+  /* Mono y slate: la pastilla es un dato, no una frase. Va en la
+     misma familia que su rotulo y en el color del cuerpo, asi el
+     renglon entero se lee como metadato y el naranja del rotulo
+     sigue siendo lo unico que levanta la voz. */
+  color: var(--cw-color-body-fg);
+  font-family: var(--cw-font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+main.content .chanwe-pill-accent {
+  /* Outline chip, not a solid ink block: status metadata should not
+     be the highest-contrast element in the banner. */
+  border-color: var(--cw-color-ink);
+  background: transparent;
+  color: var(--cw-color-ink);
+  font-weight: 600;
+}
+
+main.content ul,
+main.content ol,
+main.content dl {
+  margin-top: 0.65rem;
+  margin-bottom: 1.3rem;
+}
+
+/* Listas de tareas. La casilla es el mismo dibujo que `_task-box()`
+   en `chanwe-report/chanwe-lists.typ`, el componente compartido: a
+   canto vivo, del cuerpo de una versal chica, con el filete en
+   bermellon; vacia para lo pendiente y llena con la tilde blanca
+   para lo hecho. Antes salia la casilla nativa del sistema, que en
+   cada navegador se pinta de su propio azul.
+
+   La tilde va como SVG embebido porque un `background-image` no
+   puede leer una custom property. El `%23FFFFFF` de adentro es el
+   unico color escrito a mano en el bloque: es `pure-white`, que por
+   definicion no puede cambiar de valor.
+
+   El selector es descendiente y no `> li > input`: Pandoc envuelve
+   cada casilla en un `<label>`, asi que el input es nieto del `li`,
+   no hijo. */
+main.content ul.task-list input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 0.72em;
+  height: 0.72em;
+  margin: 0 0.72em 0.16em -1.05em;
+  border: 1px solid var(--cw-color-primary);
+  border-radius: 0;
+  background: transparent;
+  vertical-align: middle;
+}
+
+main.content ul.task-list input[type="checkbox"]:checked {
+  background-color: var(--cw-color-primary);
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7.2 7.2'><path d='M1.6 3.7 L3 5.2 L5.7 2' fill='none' stroke='%23FFFFFF' stroke-width='.9' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+/* Listas de definicion. El termino lleva un filete corto debajo —corto
+   porque el `inline-block` lo ajusta al ancho de la palabra, no al de
+   la columna— y la definicion cuelga a una sangria de 1.5em, la misma
+   que usa el `show terms.item` del reporte. */
+main.content dl dt {
+  display: inline-block;
+  margin-top: 1.6rem;
+  border-bottom: 1px solid var(--cw-color-primary);
+  padding-bottom: 0.14rem;
+  color: var(--cw-color-fg);
+  font-weight: 600;
+}
+
+main.content dl dt:first-of-type {
+  margin-top: 0;
+}
+
+main.content dl dd {
+  margin: 0.55rem 0 0 1.5em;
+  color: var(--cw-color-body-fg);
+}
+
+/* Tracking is size-specific (tighter as type grows) and leading tracks size
+   inversely — the same scale the Typst templates use. */
+main.content h1,
+main.content h2,
+main.content h3,
+main.content h4 {
+  color: var(--cw-color-neutral-900);
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
+
+main.content h1 {
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  padding-top: 1rem;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+
+main.content h2 {
+  margin-top: 3.25rem;
+  margin-bottom: 0.95rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+main.content h3 {
+  margin-top: 2.6rem;
+  margin-bottom: 0.95rem;
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+}
+
+main.content h4 {
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+}
+
+main.content h2.chanwe-area-heading {
+  margin-top: clamp(4rem, 7vw, 6.2rem);
+  margin-bottom: 1.6rem;
+  /* La losa crece un 50% en alto, y el reparto del relleno es
+     asimetrico a proposito: el texto no queda centrado sino un paso
+     por debajo del medio, apoyado contra el canto de abajo. */
+  padding: 2.4rem 1.15rem 1.34rem;
+  border: 0;
+  border-left: 4px solid var(--cw-color-primary);
+  border-radius: 4px;
+  /* La trama de la contratapa, la misma que el pie del documento:
+     paso 14.4px y punto de 0.73px de radio, los numeros de
+     `_chanwe-dot-field()`. Aca a alfa 0.25 —un 75% de transparencia—,
+     que sobre la obsidiana clara se lee como textura y no como
+     retícula. */
+  --cw-dot-step: 14.4px;
+  --cw-dot: #{rgba($brand-ink-fg, 0.25)};
+  background-color: var(--cw-color-ink-light);
+  background-image:
+    radial-gradient(circle at center, var(--cw-dot) 0.73px, transparent 0.8px);
+  background-size: var(--cw-dot-step) var(--cw-dot-step);
+  color: var(--cw-color-text-inverse) !important;
+  font-size: clamp(1.56rem, 2.34vw, 2.145rem);
+  line-height: 1.08;
+  overflow: hidden;
+}
+
+/* El numeral va en la italica de Instrument Serif, como el numeral de
+   la agenda del deck. La familia trae UN solo peso —400—, asi que el
+   700 con que venia no se podia sostener: un peso mayor se resolvia
+   igual en Regular. */
+main.content h2.chanwe-area-heading .header-section-number {
+  color: var(--cw-color-primary) !important;
+  font-family: var(--cw-font-serif-display);
+  font-size: 1.68em;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1;
+  margin-right: 0.5rem;
+  vertical-align: 0;
+}
+
+main.content h4,
+main.content h5,
+main.content h6 {
+  margin-top: 2rem;
+  margin-bottom: 0.7rem;
+}
+
+main.content section#references,
+main.content #refs,
+main.content .references.csl-bib-body {
+  padding-left: clamp(1.25rem, 3.2vw, 3.4rem);
+  padding-right: clamp(1.25rem, 3.2vw, 3.4rem);
+}
+
+main.content section.footnotes,
+main.content #footnotes,
+main.content [role="doc-endnotes"] {
+  padding-left: clamp(1.5rem, 4vw, 4.2rem);
+}
+
+main.content h1::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: 0.72rem;
+  border-radius: 0;
+  /* El filete del H1 va en slate, no en la obsidiana de
+     `border-strong`: a todo el ancho de la columna el negro pesaba
+     como una regla de tabla debajo del titular. `fg-subtle` y no
+     `fg-muted` —el slate del cuerpo tambien resultaba pesado a ese
+     ancho—. Es el unico de los siete trazos que leen `border-strong`
+     que cambia; los otros seis siguen en obsidiana. */
+  background: var(--cw-color-fg-subtle);
+}
+
+main.content h1 .header-section-number,
+main.content h2 .header-section-number,
+main.content h3 .header-section-number,
+main.content h4 .header-section-number,
+main.content h5 .header-section-number,
+main.content h6 .header-section-number {
+  color: var(--cw-color-primary) !important;
+  display: inline-block;
+  margin-right: 0.34em;
+}
+
+main.content h1 .header-section-number {
+  font-family: var(--cw-font-serif);
+  /* 50% sobre los 2.1em originales. El `line-height` baja en la misma
+     proporcion (0.72 → 0.48) para que la caja de linea no cambie:
+     2.1 × 0.72 = 3.15 × 0.48. La numeral crece, el interlineado del
+     encabezado se queda donde estaba. */
+  font-size: 3.15em;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 0.48;
+  /* Baseline-align so the title text sits at the bottom of the numeral,
+     matching the Typst H1 grid (bottom/baseline alignment). */
+  vertical-align: baseline;
+}
+
+/* Los cuatro primeros niveles llevan la numeral en la itálica
+   editorial —la misma Cormorant Garamond de los numerales del indice
+   del reporte—, no en la mono: la mono es para metadatos y rotulos,
+   no para un numero que encabeza. Cada nivel la pide un poco mas
+   chica en relacion a su propio cuerpo, asi que la escala baja de
+   2.1em a 1.12em y el salto entre niveles se nota dos veces: por el
+   tamaño del encabezado y por el de la numeral. */
+main.content h2 .header-section-number {
+  font-family: var(--cw-font-serif);
+  /* Tambien 50% mas, con el mismo canje de `line-height`:
+     1.62 × 0.72 = 2.43 × 0.48. */
+  font-size: 2.43em;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 0.48;
+  letter-spacing: 0;
+  vertical-align: baseline;
+}
+
+main.content h3 .header-section-number {
+  font-family: var(--cw-font-serif);
+  font-size: 1.34em;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 0.76;
+  letter-spacing: 0;
+  vertical-align: baseline;
+}
+
+main.content h4 .header-section-number {
+  font-family: var(--cw-font-serif);
+  font-size: 1.12em;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 0.8;
+  letter-spacing: 0;
+  vertical-align: baseline;
+}
+
+main.content h5,
+main.content h6 {
+  font-family: var(--cw-font-mono);
+  font-size: 0.78rem;
+  font-weight: 500 !important;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Dot prefix on h5 only: h6 stays plain so dense documents don't
+   become a field of orange dots. */
+main.content h5::before {
+  content: "";
+  display: inline-block;
+  width: 0.38rem;
+  height: 0.38rem;
+  margin-right: 0.45rem;
+  border-radius: 50%;
+  background: var(--cw-color-primary);
+  vertical-align: 0.03em;
+}
+
+main.content h5::after,
+main.content h6::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: 0.6rem;
+  background: var(--cw-color-border-default);
+}
+
+.chanwe-heading-preview {
+  display: grid;
+  gap: 0.62rem;
+  padding: 1rem 0;
+}
+
+.chanwe-heading-preview-row {
+  font-family: var(--cw-font-display);
+  color: var(--cw-color-text-primary);
+  line-height: 1.1;
+  font-weight: 600;
+}
+
+.chanwe-heading-preview-row span {
+  color: var(--cw-color-primary);
+  display: inline-block;
+  margin-right: 0.32rem;
+}
+
+.chanwe-heading-preview-h1 { font-size: 2.25rem; }
+.chanwe-heading-preview-h2 {
+  font-size: 1.72rem;
+  padding-bottom: 0.32rem;
+  border-bottom: 1px solid rgba(39, 39, 39, 0.15);
+}
+.chanwe-heading-preview-h3 { font-size: 1.38rem; }
+.chanwe-heading-preview-h4 { font-size: 1.08rem; }
+.chanwe-heading-preview-h5 { font-size: 0.96rem; }
+.chanwe-heading-preview-h6 {
+  font-size: 0.86rem;
+  color: var(--cw-color-text-muted);
+}
+
+/* El indice no compite con la portada: entra recien cuando el banner
+   sale de vista. `.chanwe-toc-visible` lo pone el listener de scroll
+   de assets/title-banner-layout.html. Como ya no se cruza con el
+   riel, el wordmark rotado vuelve a centrarse en toda su altura. */
+@media (min-width: 1200px) {
+  body:not(.floating):not(.docked) #quarto-margin-sidebar {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-0.4rem);
+    transition:
+      opacity 0.3s var(--cw-ease),
+      transform 0.3s var(--cw-ease),
+      visibility 0s linear 0.3s;
+  }
+  body.chanwe-toc-visible:not(.floating):not(.docked) #quarto-margin-sidebar {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.3s var(--cw-ease),
+      transform 0.3s var(--cw-ease),
+      visibility 0s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:not(.floating):not(.docked) #quarto-margin-sidebar,
+  body.chanwe-toc-visible:not(.floating):not(.docked) #quarto-margin-sidebar {
+    transform: none;
+    transition: opacity 0.01ms;
+  }
+}
+
+@media (min-width: 1200px) {
+  body:not(.floating):not(.docked) #quarto-margin-sidebar {
+    position: fixed;
+    top: clamp(1rem, 3.2vh, 2rem);
+    right: clamp(1rem, 2.5vw, 2.25rem);
+    bottom: clamp(1rem, 3.2vh, 2rem);
+    width: clamp(210px, 17vw, 280px);
+    padding: 0;
+    /* !important: quarto.js re-stamps the sidebar's z-index to 1,
+       which drops it under the banner title block (z-index 2) and
+       makes the TOC unclickable over the cover. */
+    z-index: 30 !important;
+  }
+
+  /* Content-height card, not a viewport-tall column */
+  body:not(.floating):not(.docked) #quarto-margin-sidebar nav[role="doc-toc"] {
+    box-sizing: border-box;
+    height: auto;
+    max-height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+}
+
+/* TOC as a material: a translucent layer floating over the document.
+   Content is visibly underneath; no ink border. El tinte es
+   `pure-white` y no un gris propio: el papel de la hoja ya es slate,
+   asi que el indice se despega por ser mas blanco que el fondo. El
+   alfa se queda por debajo de 1 —y con el `backdrop-filter`— porque
+   lo que hace que flote es que el texto se adivine debajo. */
+nav[role="doc-toc"] {
+  border: 0;
+  border-radius: 4px;
+  background: #{rgba($brand-pure-white, 0.82)};
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 #{rgba($brand-pure-white, 0.75)},
+    0 1px 0 #{rgba($brand-ink, 0.06)};
+  padding: 0.8rem 0.85rem;
+}
+
+nav[role="doc-toc"] #toc-title,
+nav[role="doc-toc"] h2 {
+  margin: 0 0 0.6rem;
+  padding: 0 0.34rem;
+  border: 0;
+  font-family: var(--cw-font-mono);
+  font-size: 0.6rem;
+  font-weight: 500 !important;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cw-color-fg-subtle);
+}
+
+nav[role="doc-toc"] .nav-link {
+  border-left: 1px solid transparent;
+  margin: 0.1rem 0;
+  border-radius: 0;
+  padding: 0.16rem 0.45rem 0.16rem 0.34rem;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  color: var(--cw-color-fg-muted);
+  transition: color 120ms var(--cw-ease), transform 100ms var(--cw-ease);
+}
+
+nav[role="doc-toc"] .nav-link:active {
+  transform: translateX(2px);
+}
+
+nav[role="doc-toc"] ul {
+  padding-left: 0;
+  margin-left: 0;
+  list-style: none;
+}
+
+nav[role="doc-toc"] ul ul {
+  display: none;
+  margin-top: 0.12rem;
+  margin-bottom: 0.22rem;
+  padding-left: 0.9rem;
+}
+
+nav[role="doc-toc"] li:has(> .nav-link.active) > ul,
+nav[role="doc-toc"] li:has(> ul .nav-link.active) > ul {
+  display: block;
+}
+
+nav[role="doc-toc"] ul ul .nav-link {
+  padding-top: 0.12rem;
+  padding-bottom: 0.12rem;
+  font-size: 0.76rem;
+  line-height: 1.22;
+  color: var(--cw-color-text-muted);
+}
+
+nav[role="doc-toc"] .header-section-number {
+  color: var(--cw-color-primary) !important;
+  display: inline-block;
+  margin-right: 0.36rem;
+  font-size: 0.84em;
+  font-weight: 400 !important;
+}
+
+nav[role="doc-toc"] .nav-link:hover {
+  background: transparent;
+  color: var(--cw-color-ink);
+}
+
+/* Quarto sets the active colour with !important; ink text, primary hairline */
+.sidebar nav[role="doc-toc"] .nav-link.active,
+nav[role="doc-toc"] .nav-link.active {
+  border-left-color: var(--cw-color-primary) !important;
+  background: transparent;
+  color: var(--cw-color-ink) !important;
+  font-weight: 600;
+}
+
+/* Code-copy button answers the press */
+.code-copy-button {
+  transition: transform 100ms var(--cw-ease), opacity 120ms var(--cw-ease);
+}
+.code-copy-button:active {
+  transform: scale(0.92);
+}
+
+
+/* Bootstrap envuelve el `pre` en un `div.sourceCode` que dibuja su
+   propia caja —fondo #E9ECEF al 65% y filete de 1px—, un pelo mas
+   oscura que la tarjeta de adentro. Asomando alrededor del `pre` se
+   leia como una sombra, y los dos filetes de 1px apilados como un
+   marco del doble de grueso. La caja de afuera no aporta nada: el
+   `pre` ya es la tarjeta. */
+div.sourceCode {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Code as a card, not a flat fill: same hairline-border + 4px-radius +
+   colour-on-the-left-edge language as callouts and tables. El canto
+   izquierdo va en slate y no en bermellon: el bloque de codigo no es
+   un acento, y el filete solo tiene que decir donde empieza la
+   tarjeta. `fg-subtle`, el mismo slate claro que el filete del H1.
+   El relleno es del `pre` y de nadie mas: venia con 5px propios mas
+   los 2/4px que el `code` de adentro trae de Bootstrap, y el texto
+   quedaba pegado al canto. */
+pre,
+pre.sourceCode,
+div.sourceCode pre {
+  background-color: var(--cw-color-code-bg) !important;
+  border: 1px solid var(--cw-color-border-default) !important;
+  border-left: 2px solid var(--cw-color-fg-subtle) !important;
+  border-radius: 4px !important;
+  box-shadow: none;
+  font-family: var(--cw-font-mono);
+  padding: 0.95rem 1.15rem !important;
+}
+
+pre > code,
+pre.sourceCode > code,
+div.sourceCode pre > code {
+  padding: 0 !important;
+}
+
+/* Code-fold ("Code" toggle): unstyled by Quarto/the browser by default —
+   an eyebrow-style header bar attached to the code card below it, reusing
+   the callout's "//" glyph instead of the native disclosure arrow. */
+details.code-fold {
+  margin: 1.7rem 0;
+}
+details.code-fold > summary {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: -1px;
+  padding: 0.42rem 0.75rem;
+  list-style: none;
+  border: 1px solid var(--cw-color-border-default);
+  /* El mismo canto que la tarjeta de codigo a la que se engancha. */
+  border-left: 2px solid var(--cw-color-fg-subtle);
+  border-radius: 4px 4px 0 0;
+  background: var(--cw-color-code-bg);
+  color: var(--cw-color-fg-muted);
+  font-family: var(--cw-font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 120ms var(--cw-ease), border-color 120ms var(--cw-ease);
+}
+details.code-fold > summary::-webkit-details-marker {
+  display: none;
+}
+details.code-fold > summary::before {
+  content: "//";
+  display: inline-block;
+  flex: none;
+  margin: 0 8px 0 1px;
+  color: var(--cw-color-primary);
+}
+details.code-fold > summary:hover {
+  color: var(--cw-color-ink);
+}
+details.code-fold > summary:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: 2px;
+}
+details.code-fold[open] > summary {
+  border-bottom-color: transparent;
+}
+details.code-fold[open] > summary + * pre,
+details.code-fold[open] > summary + * pre.sourceCode {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  margin-top: 0;
+}
+
+/* Resaltado de sintaxis: la paleta `code-*` de brand.yml, la misma que
+   `_extensions/chanwe-report/assets/chanwe.tmTheme` espeja a mano para
+   Typst, de modo que el mismo bloque de codigo sale del mismo color en
+   el PDF y en la pagina. Las reglas por token de Quarto (`code span.kw`
+   y companina) traen el hex literal adentro, no las variables
+   `--quarto-hl-*` que tambien emiten, asi que hay que pisarlas con el
+   mismo selector mas abajo en la cascada.
+
+   El texto base no se pinta en ningun lado: hereda `body-fg`, que es el
+   mismo #475569 de `code-function`, asi que un identificador comun y un
+   nombre de funcion leen igual —como en el PDF—. */
+
+/* keywords, control de flujo, imports y directivas */
+code span.kw,
+code span.cf,
+code span.ot,
+code span.im,
+code span.pp {
+  color: var(--cw-color-code-keyword);
+}
+
+/* cadenas, caracteres y strings verbatim */
+code span.st,
+code span.ss,
+code span.ch,
+code span.vs {
+  color: var(--cw-color-code-string);
+}
+
+/* numeros y constantes del lenguaje (TRUE, None, nil) */
+code span.dv,
+code span.bn,
+code span.fl,
+code span.cn {
+  color: var(--cw-color-code-number);
+}
+
+/* operadores, puntuacion y nombres de argumento: en el tmTheme la
+   puntuacion de parametros cae en este mismo scope */
+code span.op,
+code span.sc,
+code span.at {
+  color: var(--cw-color-code-operator);
+}
+
+/* nombres de funcion y de clase */
+code span.fu {
+  color: var(--cw-color-code-function);
+}
+
+/* tipos declarados e incorporados */
+code span.dt,
+code span.bu {
+  color: var(--cw-color-code-type);
+}
+
+/* una variable comun no esta en el tmTheme: cae al color de cuerpo */
+code span.va {
+  color: var(--cw-color-body-fg);
+}
+
+/* comentarios, anotaciones y docstrings */
+code span.co,
+code span.cv,
+code span.an,
+code span.do,
+code span.in,
+code span.wa {
+  color: var(--cw-color-code-comment);
+  font-style: italic;
+}
+
+/* Errores y alertas. El tmTheme no los tiene —Typst no los emite—, asi
+   que estos dos se quedan con el `status-error` del HTML. */
+code span.er,
+code span.al {
+  color: var(--cw-color-status-error);
+}
+
+
+/* Tables: the chanwe_gt() / chanwe_kbl() grammar — mono-caps column labels,
+   hairline rows, tabular figures — so markdown, gt and Typst tables read as one. */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border-radius: 0;
+  border-top: 1px solid var(--cw-color-border-strong);
+  border-bottom: 1px solid var(--cw-color-border-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+/* `main.content` prefix: Bootstrap's `.table > :not(caption) > * > *` (0,1,1)
+   otherwise outranks `table thead th` for colour and padding. */
+main.content table thead th,
+table thead th {
+  background: transparent;
+  color: var(--cw-color-fg-subtle);
+  border-top: 0 !important;
+  border-bottom: 1px solid var(--cw-color-border-strong) !important;
+  font-family: var(--cw-font-mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  vertical-align: bottom;
+  padding-top: 0.55rem;
+  padding-bottom: 0.5rem;
+}
+
+main.content table tbody td,
+table tbody td {
+  border-bottom: 1px solid var(--cw-color-border-subtle);
+  padding: 0.55rem 0.5rem;
+  vertical-align: top;
+}
+
+main.content table tbody tr:last-child td,
+table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Priority badges (.chanwe-priority-must / -should / -could / -future):
+   mono caps in ink; the level colour lives on the glyph, never on the text. */
+.chanwe-priority {
+  --cw-priority-level: var(--cw-color-fg-subtle);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.5rem 0.18rem;
+  border: 1px solid var(--cw-color-border-default);
+  border-radius: 4px;
+  background: #FFFFFF;
+  color: var(--cw-color-ink);
+  font-family: var(--cw-font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.chanwe-priority::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--cw-priority-level);
+  transform: rotate(45deg);
+}
+.chanwe-priority-must { --cw-priority-level: var(--cw-color-primary); }
+.chanwe-priority-should { --cw-priority-level: var(--cw-color-callout-note); }
+.chanwe-priority-could { --cw-priority-level: var(--cw-color-callout-tip); }
+.chanwe-priority-future {
+  --cw-priority-level: var(--cw-color-fg-subtle);
+  border-style: dashed;
+  color: var(--cw-color-fg-muted);
+}
+
+table tbody tr:nth-child(even) {
+  background: transparent !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > *,
+.table-striped > tbody > tr:nth-of-type(even) > * {
+  background-color: var(--cw-color-neutral-0) !important;
+}
+
+
+/* La cita, con el dibujo del reporte punto por punto (`show quote`
+   en `chanwe-report/typst-template.typ`): panel en `surface-sunken`
+   —un paso de slate mas claro que el abstract y el codigo, porque la
+   cita es un aparte y no un bloque de interfaz—, canto bermellon de
+   1.4pt a la izquierda, inset de 6mm a los lados y 5mm arriba y
+   abajo, y 6mm de aire por fuera. El cuerpo va en la serif italica a
+   1.32 veces el cuerpo —la proporcion de los 13.2pt del reporte
+   contra sus 10pt de cuerpo— en `fg-muted`.
+
+   Antes era un filete suelto sobre papel: se leia como un renglon
+   con una marca al lado, no como el aparte que es. */
+/* `main.content` adelante: Pandoc emite `<blockquote class="blockquote">`
+   y Bootstrap le pone `.blockquote{font-size:1.0546875rem}`. Una
+   `blockquote` pelada (0,0,1) pierde contra esa clase (0,1,0), asi que
+   hasta 2026-09-25 el cuerpo de la cita no era el que dice esta regla
+   sino ~17.9px —practicamente el del texto corrido—, aunque el panel,
+   el filete, el color y la italica si se aplicaran. */
+main.content blockquote {
+  margin: 1.42rem 0;
+  border-left: 1.87px solid var(--cw-color-primary);
+  border-radius: 0;
+  background: var(--cw-color-surface-sunken);
+  padding: 1.18rem 1.42rem;
+  color: var(--cw-color-fg-muted);
+  font-family: var(--cw-font-serif);
+  font-size: 1.75rem;
+  font-style: italic;
+  font-weight: 300;
+  line-height: 1.34;
+}
+
+/* Adentro del panel el aire de parrafo baja a medio cuerpo: el aire
+   del cuerpo separaba la cita de su atribucion un renglon entero. */
+blockquote > p {
+  margin: 0;
+}
+
+blockquote > p + p {
+  margin-top: 0.5em;
+}
+
+/* La atribucion. En el reporte es un campo del `quote` de Typst, asi
+   que la plantilla sabe cual es; en markdown no existe tal cosa —son
+   parrafos y nada mas—, de modo que se marca a mano con
+   `[— Quien]{.attribution}`. Gatillarla por `p:last-child` seria
+   adivinar: achicaria el cierre de cualquier cita de dos parrafos.
+   La cita va en 1.75rem y la atribucion en 0.6 de ese cuerpo: las dos
+   medidas del panel que no salen del reporte. La Cormorant tiene una
+   altura de x muy corta (~0.36 del cuerpo, contra ~0.73 de la Inter),
+   asi que con la proporcion del reporte —13.2pt contra 10pt— la cita
+   se leia mas chica que la prosa que la rodea. Medido sobre el render
+   a 1440px: el texto corrido dibuja 8px de altura de x y la cita
+   dibujaba 6; a 1.75rem llega a 10, un cuarto por encima del cuerpo,
+   que es como tiene que leerse un aparte. */
+blockquote .attribution {
+  display: block;
+  margin-top: 1.5mm;
+  font-size: 0.6em;
+  color: var(--cw-color-fg-subtle);
+}
+
+/* Great Quote — full-bleed dark block */
+.great-quote {
+  background: var(--cw-color-surface-inverse);
+  color: var(--cw-color-text-inverse);
+  font-family: var(--cw-font-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  line-height: 1.08;
+  padding: clamp(3.2rem, 7vw, 6rem) clamp(1.6rem, 7vw, 6rem);
+  margin-top: 3.6rem;
+  margin-bottom: 3.6rem;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+.great-quote::before {
+  content: "VERBATIM";
+  display: block;
+  max-width: 760px;
+  margin: 0 auto 1.4rem;
+  padding-left: 2.1rem;
+  color: var(--cw-color-primary);
+  font-family: var(--cw-font-mono);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: linear-gradient(var(--cw-color-primary), var(--cw-color-primary)) left 0.45em / 22pt 1px no-repeat;
+}
+.great-quote p {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0.6rem;
+}
+.great-quote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Chapter cover — HTML section divider */
+.chapter-cover {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin: 3.8rem -50vw;
+  background: var(--cw-color-paper);
+  border-top: 1px solid var(--cw-color-border-strong);
+  border-bottom: 1px solid var(--cw-color-border-strong);
+}
+
+.chapter-cover-media {
+  min-height: clamp(13rem, 30vw, 22rem);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.chapter-cover-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(16, 16, 16, 0.62), rgba(16, 16, 16, 0.16)),
+    linear-gradient(0deg, rgba(16, 16, 16, 0.3), rgba(16, 16, 16, 0));
+}
+
+.chapter-cover-content {
+  max-width: min(920px, calc(100vw - 2.4rem));
+  margin: 0 auto;
+  padding: clamp(2.2rem, 5vw, 4.8rem) 0;
+}
+
+.chapter-cover-content::before {
+  content: "";
+  display: block;
+  width: 128px;
+  height: 32px;
+  margin-bottom: 1.5rem;
+  background: url("_extensions/chanwe-brand/assets/Logo_Negro.svg") left center / contain no-repeat;
+}
+
+.chapter-cover-title {
+  margin: 0 0 1rem !important;
+  color: var(--cw-color-text-primary) !important;
+  font-size: clamp(2rem, 6vw, 4.7rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.chapter-cover-title::after {
+  content: "";
+  display: block;
+  width: 82px;
+  height: 4px;
+  margin-top: 1.2rem;
+  border-radius: 4px;
+  background: var(--cw-color-primary);
+}
+
+.chapter-cover-content p {
+  max-width: 700px;
+  color: var(--cw-color-text-secondary);
+  font-size: 1.06rem;
+  line-height: 1.68;
+}
+
+@media (max-width: 980px) {
+  .great-quote {
+    font-size: 1.08rem;
+    line-height: 1.85;
+    padding: 1.8rem 1.6rem;
+  }
+  .chapter-cover {
+    margin-top: 2.7rem;
+    margin-bottom: 2.7rem;
+  }
+  .chapter-cover-media {
+    min-height: 11rem;
+  }
+  .chapter-cover-content {
+    max-width: calc(100vw - 2rem);
+    padding-top: 2rem;
+    padding-bottom: 2.3rem;
+  }
+  .chapter-cover-content::before {
+    width: 104px;
+    height: 26px;
+    margin-bottom: 1.1rem;
+  }
+}
+
+
+/* Tabsets: feedback on press (100ms), colour on 120ms, hover only darkens */
+.panel-tabset > .nav-tabs {
+  border-bottom: 1px solid var(--cw-color-border-default);
+  gap: 0.3rem;
+}
+
+.panel-tabset > .nav-tabs .nav-link {
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  border-radius: 0;
+  padding: 0.5rem 0.55rem 0.55rem;
+  background: transparent;
+  font-weight: 500;
+  color: var(--cw-color-fg-muted);
+  transition: color 120ms var(--cw-ease), border-color 120ms var(--cw-ease), transform 100ms var(--cw-ease);
+}
+
+.panel-tabset > .nav-tabs .nav-link:hover {
+  color: var(--cw-color-ink);
+  background: transparent;
+  border-color: transparent;
+}
+
+.panel-tabset > .nav-tabs .nav-link:active {
+  transform: translateY(1px);
+}
+
+.panel-tabset > .nav-tabs .nav-link.active {
+  color: var(--cw-color-ink);
+  font-weight: 600;
+  border-bottom-color: var(--cw-color-primary);
+  background: transparent;
+}
+
+.panel-tabset > .nav-tabs .nav-link:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: -2px;
+}
+
+
+img,
+.quarto-figure img {
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+
+.quarto-figure figcaption,
+.figure-caption,
+.panel-caption,
+table caption {
+  color: var(--cw-color-text-muted);
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+/* Figure-local editorial footer + alt-footer frame */
+main.content .chanwe-figure {
+  width: 100%;
+  margin: clamp(2.4rem, 4vw, 4rem) 0;
+  break-inside: avoid;
+}
+
+main.content .chanwe-figure-footer,
+main.content .chanwe-figure-alt-footer {
+  display: grid;
+  align-items: center;
+  column-gap: clamp(1.25rem, 3vw, 3.5rem);
+}
+
+main.content .chanwe-figure-footer {
+  grid-template-columns: minmax(12rem, 5fr) minmax(16rem, 7fr);
+  padding: 0 0 0.45rem;
+  border-bottom: 1px solid var(--cw-color-ink);
+}
+
+main.content .chanwe-figure-footer-left,
+main.content .chanwe-figure-footer-right,
+main.content .chanwe-figure-alt-footer-left,
+main.content .chanwe-figure-alt-footer-right {
+  min-width: 0;
+}
+
+main.content .chanwe-figure-footer-left p,
+main.content .chanwe-figure-footer-right p,
+main.content .chanwe-figure-alt-footer-left p,
+main.content .chanwe-figure-alt-footer-right p {
+  margin: 0;
+}
+
+main.content .chanwe-figure-footer-left,
+main.content .chanwe-figure-footer-left p {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+main.content .chanwe-figure-footer-dash {
+  display: inline-block;
+  flex: 0 0 2.35rem;
+  width: 2.35rem;
+  height: 3px;
+  background: var(--cw-color-primary);
+}
+
+main.content .chanwe-figure-footer-label {
+  color: var(--cw-color-ink);
+  font-family: var(--cw-font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+main.content .chanwe-figure-footer-right {
+  color: var(--cw-color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.35;
+  text-align: right;
+}
+
+main.content .chanwe-figure-footer-right strong,
+main.content .chanwe-figure-alt-footer-right strong {
+  color: var(--cw-color-ink);
+  font-weight: 700;
+}
+
+main.content .chanwe-figure-body {
+  width: 100%;
+  padding: clamp(0.55rem, 1vw, 0.85rem) 0;
+}
+
+main.content .chanwe-figure-body > :first-child,
+main.content .chanwe-figure-body .quarto-figure {
+  margin-top: 0;
+}
+
+main.content .chanwe-figure-body > :last-child,
+main.content .chanwe-figure-body .quarto-figure {
+  margin-bottom: 0;
+}
+
+main.content .chanwe-figure-body img {
+  border-radius: 0;
+}
+
+main.content .chanwe-figure-body figcaption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+main.content .chanwe-figure-alt-footer {
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 0.5rem 0 0;
+  border-top: 1px solid var(--cw-color-ink);
+}
+
+main.content .chanwe-figure-alt-footer-left {
+  justify-self: start;
+  padding: 0.45rem 1.05rem 0.425rem;
+  background: var(--cw-color-primary);
+  color: var(--cw-color-text-inverse);
+  font-family: var(--cw-font-mono);
+  font-size: 0.56rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+main.content .chanwe-figure-alt-footer-right {
+  color: var(--cw-color-text-muted);
+  font-size: 0.88rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+@media (max-width: 680px) {
+  main.content .chanwe-figure-footer,
+  main.content .chanwe-figure-alt-footer {
+    grid-template-columns: 1fr;
+    row-gap: 0.5rem;
+  }
+
+  main.content .chanwe-figure-footer-right {
+    text-align: left;
+  }
+}
+
+
+@media (max-width: 980px) {
+  .page-columns .content {
+    border-radius: 4px;
+    padding: 1.55rem;
+  }
+}
+
+@media (min-width: 992px) {
+  body:not(.floating):not(.docked) .page-columns {
+    grid-template-columns:
+      [screen-start] 1.5em
+      [screen-start-inset] 4fr
+      [page-start page-start-inset] 30px
+      [body-start-outset] 30px
+      [body-start] 2rem
+      [body-content-start] minmax(680px, calc(1100px - 4rem))
+      [body-content-end] 2rem
+      [body-end] 30px
+      [body-end-outset] minmax(120px, 240px)
+      [page-end-inset] 30px
+      [page-end] 4fr
+      [screen-end-inset] 1.5em
+      [screen-end];
+  }
+}
+
+/* Document footer — ink variant of the story-covers texture
+   (same 18/31px steps as the title banner). */
+.chanwe-document-footer {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) auto;
+  align-items: center;
+  column-gap: clamp(1.5rem, 4vw, 4rem);
+  min-height: 148px;
+  margin: clamp(2.6rem, 3.2vw, 3.8rem) 0 clamp(1.1rem, 1.8vw, 1.8rem);
+  padding: clamp(1.2rem, 2.2vw, 1.9rem) clamp(1rem, 2.8vw, 2.4rem);
+  box-sizing: border-box;
+  /* La trama de la contratapa del reporte: puntos, no rayado. Los
+     numeros salen de `_chanwe-dot-field()` en `chanwe-cover.typ`:
+     paso 3.8mm (14.4px a 96dpi), punto de 0.55pt de radio (0.73px) y
+     base transparentizada al 72%, o sea alfa 0.28 sobre `ink-fg`. */
+  --cw-dot-step: 14.4px;
+  --cw-dot: #{rgba($brand-ink-fg, 0.28)};
+  --cw-dot-focus: #{rgba($brand-ink-fg, 0.75)};
+  background-color: var(--cw-color-bg-inverse);
+  background-image:
+    radial-gradient(circle at center, var(--cw-dot) 0.73px, transparent 0.8px);
+  background-size: var(--cw-dot-step) var(--cw-dot-step);
+  overflow: hidden;
+  color: var(--cw-color-rule-cool);
+}
+
+/* El foco de la trama: en la contratapa los puntos se encienden en
+   (0.74, 0.40) del pliego y se apagan hacia el borde. Aca es la misma
+   trama a mas opacidad, recortada por una mascara radial en esa misma
+   posicion. */
+.chanwe-document-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at center, var(--cw-dot-focus) 0.73px, transparent 0.8px);
+  background-size: var(--cw-dot-step) var(--cw-dot-step);
+  -webkit-mask-image: radial-gradient(circle at 74% 40%, #000 0%, transparent 34%);
+  mask-image: radial-gradient(circle at 74% 40%, #000 0%, transparent 34%);
+}
+
+.chanwe-document-footer > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Topic tab at the bottom of the right column, matching the banner
+   masthead tab. */
+.chanwe-footer-topic {
+  margin-top: 1rem;
+  background: var(--cw-color-primary);
+  /* Blanco puro sobre bermellon: esta permitido. El que esta vedado
+     es el blanco puro sobre obsidiana, que se reserva para el papel
+     de la tarjeta del QR. */
+  color: var(--cw-color-pure-white);
+  font-family: var(--cw-font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  padding: 0.3rem 0.55rem;
+}
+
+.chanwe-footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-self: start;
+  min-width: 0;
+}
+
+/* El filete de acento del masthead de la contratapa: fino, no una
+   barra. Alla son 0.4pt a todo el ancho; aca conserva su largo pero
+   toma el grosor. */
+.chanwe-footer-rule {
+  display: block;
+  width: 50px;
+  height: 1px;
+  margin-bottom: 1.18rem;
+  background: var(--cw-color-primary);
+}
+
+.chanwe-footer-logo-mark {
+  display: block;
+  width: 136px;
+  max-width: 42vw;
+  height: 31px;
+  background: var(--cw-wordmark-cool) left center / contain no-repeat;
+}
+
+.chanwe-footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  margin-top: 1.18rem;
+  /* Los renglones de metadatos de la contratapa: mono en versalitas.
+     Sobre obsidiana el blanco puro pesa de mas, y `rule-cool` —el
+     slate de la tagline— los dejaba al frente de lo que son: un
+     renglon de metadatos. Un paso mas oscuro, `fg-subtle`, los hunde
+     sin perderlos. */
+  color: var(--cw-color-fg-subtle);
+  font-family: var(--cw-font-mono);
+  font-size: 0.6rem;
+  font-weight: 300;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Right column stretches to the brand column's height: tagline on
+   top, topic tab flush with the bottom of the last contact line. */
+.chanwe-footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  align-self: stretch;
+  justify-self: end;
+  min-width: 0;
+}
+
+.chanwe-footer-tagline {
+  margin-top: calc(1.18rem + 1px);
+  text-align: right;
+  /* La bajada de la contratapa: Instrument Serif italica, primera
+     linea en `rule-cool` y segunda en bermellon. La familia trae un
+     solo corte —400—, asi que no se le puede pedir un peso mas fino. */
+  color: var(--cw-color-rule-cool);
+  font-family: var(--cw-font-serif-display);
+  font-size: clamp(1.35rem, 2.3vw, 1.95rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+
+.chanwe-footer-tagline-accent {
+  color: var(--cw-color-primary);
+}
+
+@media (max-width: 980px) {
+  .chanwe-document-footer {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 1rem;
+    min-height: 0;
+    margin: 2.1rem 0 1rem;
+    padding: 1.35rem 0.9rem 1.45rem;
+  }
+
+  .chanwe-footer-logo-mark {
+    width: 102px;
+    height: 24px;
+  }
+
+  .chanwe-footer-contact {
+    font-size: 0.56rem;
+  }
+
+  .chanwe-footer-right {
+    align-items: flex-start;
+    justify-content: flex-start;
+    align-self: auto;
+    justify-self: start;
+    gap: 0.9rem;
+  }
+
+  .chanwe-footer-tagline {
+    margin-top: 0;
+    text-align: left;
+    font-size: 1.18rem;
+  }
+
+  .chanwe-footer-topic {
+    margin-top: 0;
+  }
+}
+
+/* Accessibility signals — three independent preferences.
+   Reduced motion is a gentler equivalent, not no feedback. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  a:active, button:active, .nav-link:active, .callout-header:active {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  nav[role="doc-toc"] {
+    background: var(--cw-color-neutral-0) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid var(--cw-color-border-default) !important;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .callout { border-color: var(--cw-color-ink) !important; }
+  .callout .callout-title-container { color: #000000; }
+  .chanwe-priority,
+  main.content .chanwe-pill { border-color: var(--cw-color-ink); }
+  main.content a:not(.nav-link, .anchorjs-link, .code-copy-button, .quarto-category, .footnote-ref, .footnote-back) {
+    color: var(--cw-color-ink);
+    text-decoration-thickness: 2px;
+  }
+  nav[role="doc-toc"] {
+    background: var(--cw-color-neutral-0) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid var(--cw-color-ink) !important;
+  }
+}

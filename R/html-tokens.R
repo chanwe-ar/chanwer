@@ -3,14 +3,17 @@
 # title / subtitle / stamp caption) to browser output so a table or chart
 # looks the same in a Quarto HTML report as it does in the Typst PDF.
 #
-# Font stacks follow brand.yml `typography`: Schibsted Grotesk for display,
-# Inter for body text, JetBrains Mono for eyebrows, column labels and
-# figures. Every stack falls back to the platform UI font. Multi-word names
-# are left unquoted (valid CSS) so the stacks can sit inside single- or
-# double-quoted style attributes.
+# Font stacks follow chanwe-brandbook tokens.json `font`: Satoshi for body
+# text, Schibsted Grotesk for display, JetBrains Mono for eyebrows, column
+# labels and figures. The fallbacks are the token stacks' system fonts;
+# Inter, retired, is left out. Multi-word names are left unquoted (valid
+# CSS) so the stacks can sit inside single- or double-quoted style
+# attributes. The faces themselves come from chanwe_html_fonts_dependency().
 
-.cw_font_sans <- "Inter, system-ui, -apple-system, sans-serif"
-.cw_font_display <- "Schibsted Grotesk, system-ui, sans-serif"
+.cw_font_sans <- paste0(
+  "Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif"
+)
+.cw_font_display <- "Schibsted Grotesk, Helvetica Neue, Arial, sans-serif"
 .cw_font_mono <- paste0(
   "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace"
 )
@@ -182,29 +185,35 @@ chanwe_html_caption_tag <- function(caption, bg = NULL) {
   )
 }
 
-# Web-font dependency (Inter, Schibsted Grotesk and JetBrains Mono from
-# Google Fonts) attached to the htmlwidgets so the helpers render with the
-# brand faces even when chanwe_reporting_css() is not loaded. Quarto requires
-# widget dependencies to be disk-based, so the CDN links are injected through
-# `head` and the (empty) file source points at the package's quarto dir.
+# Web-font dependency attached to the htmlwidgets (chanwe_reactable(),
+# chanwe_highchart()) so they render in the brand faces even when the page
+# does not load them. It is the WOFF2 the package ships in inst/fonts/web
+# (the brandbook's brand/fonts/web files, Satoshi, Schibsted Grotesk and
+# JetBrains Mono) with a local @font-face stylesheet: no Google Fonts or other
+# CDN request, so a report renders the same offline, and a self-contained
+# Quarto/R Markdown file carries the fonts inside it. Quarto requires widget
+# dependencies to be disk-based, which a packaged folder is.
 chanwe_html_fonts_dependency <- function() {
   chanwe_require_package("htmltools")
-  src <- system.file("quarto", package = "chanwer")
-  if (!nzchar(src)) {
-    src <- tempdir()
-  }
   list(
     htmltools::htmlDependency(
       name = "chanwe-fonts",
-      version = "2.0.0",
-      src = c(file = src),
-      all_files = FALSE,
-      head = paste0(
-        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2',
-        '?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400',
-        '&amp;family=Schibsted+Grotesk:wght@500;600;700',
-        '&amp;family=JetBrains+Mono:wght@300;400;500&amp;display=swap">'
-      )
+      version = "3.0.0",
+      src = c(file = chanwe_fonts_dir("web")),
+      stylesheet = "chanwe-fonts.css",
+      all_files = TRUE
     )
   )
+}
+
+# Folder of the bundled fonts (inst/fonts), or one of its subfolders.
+chanwe_fonts_dir <- function(...) {
+  dir <- system.file("fonts", ..., package = "chanwer")
+  if (!nzchar(dir)) {
+    stop(
+      "The brand fonts bundled with chanwer were not found; reinstall chanwer.",
+      call. = FALSE
+    )
+  }
+  dir
 }

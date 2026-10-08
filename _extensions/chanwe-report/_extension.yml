@@ -11,7 +11,7 @@ contributes:
       margin:
         x: 18mm
         y: 22mm
-      mainfont: "Inter"
+      mainfont: "Satoshi"
       monofont: "JetBrains Mono"
       fontsize: 10.5pt
       # Pandoc no colorea: con un estilo activo escribe cada token como un

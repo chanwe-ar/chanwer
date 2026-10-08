@@ -72,7 +72,7 @@
   weight-hairline:  100,
   weight-thin:      200,
   weight-body:      300,
-  weight-body-plus: 350,
+  weight-body-plus: 400,  // era 350; Satoshi no tiene ese corte y Typst desempataba 300/400 al azar
   weight-regular:   400,
   weight-medium:    500,
   weight-display:   600,
@@ -82,7 +82,7 @@
   // La serif de display: numerales del índice y bajada de contratapa.
   // Distinta de font-serif, que es la itálica del cuerpo.
   font-serif-display:  ("Instrument Serif", "Georgia", "Times New Roman"),
-  font-sans:    ("Inter", "Helvetica Neue", "Arial"),
+  font-sans:    ("Satoshi", "Helvetica Neue", "Arial"),
   font-mono:    ("JetBrains Mono", "Menlo", "Courier New"),
 )
 
@@ -160,11 +160,12 @@
 // ---------- Running header / footer --------------------------
 // La paleta del renglón de servicio. `inverse` es `none` sobre la hoja y
 // "dark" o "primary" en las páginas que pintan la hoja entera. Sobre naranja
-// todo pasa a blanco —texto, acento, logo—; sobre obsidiana el texto y el
-// acento se quedan como están y sólo el wordmark cambia al corte gris de la
-// portada (rule-cool), que es el que se lee sobre tinta.
+// el texto y el acento pasan a blanco, y el wordmark al corte `Papel`
+// (`Logo_Papel.svg`, #F8FAFC): `Blanco` nunca es el logo. Sobre obsidiana el
+// texto y el acento se quedan como están y sólo el wordmark cambia al corte
+// gris de la portada (rule-cool): el renglón de servicio es un riel.
 #let _hf-palette(inverse) = if inverse == "primary" {
-  (text: _t.white, accent: _t.white, rule: _t.white.transparentize(60%), logo: "Logo_Blanco.svg")
+  (text: _t.white, accent: _t.white, rule: _t.white.transparentize(60%), logo: "Logo_Papel.svg")
 } else if inverse == "dark" {
   (text: _t.fg-subtle, accent: _t.primary, rule: _t.rule-ink, logo: "Logo_Gris.svg")
 } else {
@@ -355,16 +356,17 @@ $chanwe-charts.typ()$
   set heading(numbering: "1.1.1.")
 
   // ---- inline rules (apply to entire document) ---------------
-  // La cursiva cambia de familia —Inter a Cormorant Garamond—, y la serif
-  // tiene una altura de x mucho menor: 0.386em contra 0.546em. Al mismo
-  // cuerpo se leia mas chica que el texto que la rodea. El factor iguala esas
-  // dos alturas (0.546 / 0.386).
+  // La cursiva cambia de familia —Satoshi a Cormorant Garamond—, y la serif
+  // tiene una altura de x menor: 0.386em contra 0.48em (Satoshi Light, el
+  // corte del cuerpo). Al mismo cuerpo se leia mas chica que el texto que la
+  // rodea. El factor iguala esas dos alturas (0.48 / 0.386 ≈ 1.25). Con
+  // Inter (0.546em) era 1.414.
   show emph: it => text(font: _t.font-serif, style: "italic", weight: _t.weight-body,
-                        size: 1.414em, fill: _t.body-fg, it.body)
+                        size: 1.25em, fill: _t.body-fg, it.body)
   show strong: it => text(weight: _t.weight-display, fill: _t.body-fg, it.body)
   // La matemática en línea va en el negro de los titulares, no en el slate
   // del cuerpo, y un décimo más grande: Computer Modern tiene la x más baja
-  // que Inter y a cuerpo igual se veía chica. La de bloque conserva su panel
+  // que Satoshi y a cuerpo igual se veía chica. La de bloque conserva su panel
   // y su gris apagado.
   show math.equation.where(block: false): set text(fill: _t.fg, size: 1.1em)
   // Superíndice y subíndice un poco más grandes que el 0.6em de fábrica.
@@ -564,7 +566,10 @@ $chanwe-charts.typ()$
     _label-heading(it.body, dot: _t.fg-muted))
 
   // ---- lists -------------------------------------------------
-  set list(marker: ([•], [◦], [–]))
+  // Satoshi no trae el `◦` (U+25E6) y Typst lo buscaba en la fuente que
+  // hubiera: era Inter mientras estuvo en el pool, y sin ella, Arial del
+  // sistema. JetBrains Mono, de la marca, lo trae.
+  set list(marker: ([•], text(font: _t.font-mono, [◦]), [–]))
 
   // ---- quote (Pandoc/Quarto blockquotes) ---------------------
   // Panel en el slate hundido con el canto naranja: la cita de terceros se

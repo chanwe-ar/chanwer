@@ -5,7 +5,7 @@ author: "Alejandro Abraham"
 date: today
 lang: en
 topic: "Design System"
-subject: "chanwer v2.3 / static + interactive"
+subject: "chanwer v2.6 / static + interactive"
 brand: _extensions/chanwe-brand/brand.yml
 format:
   chanwe-brand-html:
@@ -508,7 +508,7 @@ chanwe_gt(
 # Header Treatments
 
 The header grammar: mono-caps eyebrow with an orange rule, Schibsted Grotesk
-title at 1.85× base, Inter subtitle, optional note line or KPI scoreboard, and an
+title at 1.85× base, Satoshi subtitle, optional note line or KPI scoreboard, and an
 orange stamp source caption.
 
 ## Eyebrow · title · subtitle (default)
@@ -1096,7 +1096,7 @@ chanwe_gt(
             gt::cell_text(weight = 600),
             gt::cell_borders(
                 sides = "top",
-                color = "#0F0F0F",
+                color = chanwe_palette("brand")[["ink"]],
                 weight = gt::px(1)
             )
         ),
@@ -1210,7 +1210,7 @@ highcharter::highchart() |>
             style = list(
                 fontFamily = '"JetBrains Mono", ui-monospace, monospace',
                 fontSize = "11px",
-                color = "#0F0F0F",
+                color = chanwe_palette("brand")[["ink"]],
                 textOutline = "none"
             )
         ),

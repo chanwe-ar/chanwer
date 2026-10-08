@@ -6,7 +6,7 @@
 \usage{
 theme_chanwe(
   base_text_size = 6.75,
-  base_family = "Inter",
+  base_family = "Satoshi",
   base_lineheight = 1.6,
   legend_position = "bottom",
   bg_color = "paper",
@@ -20,7 +20,11 @@ theme_chanwe(
 \arguments{
 \item{base_text_size}{Base text size in points. Default \code{6.75}. Title scales at ×1.85, subtitle ×0.90, eyebrow ×0.62.}
 
-\item{base_family}{Base font family for body text. Default \code{"Inter"}.}
+\item{base_family}{Base font family for body text (the subtitle and any
+text that inherits from the theme). Default \code{"Satoshi"}. \code{"Inter"} (the
+default before chanwer 2.6.0), \code{"Inter Light"} and \code{"Inter Medium"} are
+deprecated: they warn and map to \code{"Satoshi"}, \code{"Satoshi Light"} and
+\code{"Satoshi Medium"}.}
 
 \item{base_lineheight}{Base line-height multiplier. Default \code{1.60}.}
 
@@ -67,12 +71,18 @@ treatment, and with \code{\link[=scale_color_chanwe_d]{scale_color_chanwe_d()}} 
 brand-consistent color palettes.
 }
 \details{
-\subsection{Typography}{\tabular{lll}{
+\subsection{Typography}{
+
+The brand trio, by the roles the CHANWE brand guide gives them: Satoshi
+for text, Schibsted Grotesk for titles, JetBrains Mono for eyebrows,
+labels and metadata. Cormorant Garamond only sets editorial italics and
+numerals.\tabular{lll}{
    Element \tab Font \tab Weight \cr
    Title (with eyebrow) \tab Schibsted Grotesk \tab 600 \cr
-   Subtitle \tab Inter \tab 400 \cr
+   Eyebrow \tab JetBrains Mono caps, orange rule \tab 400 \cr
+   Subtitle \tab Satoshi \tab 400 \cr
    Subtitle note / KPI hero \tab Cormorant Garamond \tab italic \cr
-   Axis text \tab Inter \tab 400 \cr
+   Axis text (tick labels) \tab JetBrains Mono \tab 400 \cr
    Axis titles \tab JetBrains Mono \tab 400 \cr
    Facet strip labels \tab JetBrains Mono Thin \tab 100 \cr
    Legend text / title \tab JetBrains Mono \tab 400 \cr
@@ -80,14 +90,18 @@ brand-consistent color palettes.
 }
 
 
+Small text that has to be read (axis and legend titles, KPI labels) is
+pizarra (\code{fg-muted}, \verb{#475569}) or obsidian (\code{ink}); never the lighter
+\code{fg-subtle}, which the guide keeps for large or decorative text.
+
 The eyebrow and the caption stamp render in the brand orange
 (\code{primary}, \verb{#FD3810}) -- the same accent the HTML stylesheet uses
 for section numbers and that the table helpers use for their eyebrows.
 The title is set at 1.85x the base size with a 1.0 line-height so the
 header, subtitle/KPI block and chart read as three distinct levels.
 
-Call \code{\link[=chanwe_load_fonts]{chanwe_load_fonts()}} once per session to register the custom font
-families. \code{theme_chanwe()} calls it automatically.
+The fonts ship with the package; \code{theme_chanwe()} registers them through
+\code{\link[=chanwe_load_fonts]{chanwe_load_fonts()}} the first time it runs.
 }
 
 \subsection{Background variants}{

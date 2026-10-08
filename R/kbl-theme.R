@@ -1,8 +1,9 @@
 #' Chanwe Table via Native Typst Output
 #'
 #' Generates a styled Typst table directly from a data frame, bypassing the
-#' HTML→Pandoc→Typst pipeline. Schibsted Grotesk title, Inter subtitle, JetBrains
-#' Mono column headers and data cells (mono keeps figures tabular so numeric
+#' HTML→Pandoc→Typst pipeline. Schibsted Grotesk title, Satoshi subtitle and
+#' text cells (the brand guide sets tables in Satoshi), JetBrains Mono column
+#' headers and right-aligned figures (mono keeps them tabular so numeric
 #' columns align digit-for-digit), slate hairline rules. No CSS
 #' translation losses.
 #'
@@ -378,7 +379,7 @@ chanwe_kbl <- function(
         ", inset: ",
         inset_sub,
         ")[",
-        '#text(font: "Inter", size: ',
+        '#text(font: "Satoshi", size: ',
         sub_pt,
         ', fill: _t.fg-muted, weight: "regular")[',
         esc(subtitle),
@@ -428,7 +429,17 @@ chanwe_kbl <- function(
       val <- esc(fmt_data[[j]][i])
       is_first <- j == 1L
       fill <- if (!is.null(color_data[[j]])) color_data[[j]][i] else "_t.ink"
-      weight <- if (is_first) '"medium"' else '"thin"'
+      # Figures (right-aligned columns) stay in mono so digits line up;
+      # text cells read in Satoshi, at the document body weight (300).
+      is_figure <- identical(col_aligns[j], "right")
+      cell_font <- if (is_figure) "JetBrains Mono" else "Satoshi"
+      weight <- if (is_first) {
+        '"medium"'
+      } else if (is_figure) {
+        '"thin"'
+      } else {
+        '"light"'
+      }
       cell_fill <- if (is_total && total_fill) {
         paste0(', fill: rgb("', total_fill_color, '")')
       } else if (!is.null(highlight_cols) && j %in% highlight_cols) {
@@ -441,7 +452,7 @@ chanwe_kbl <- function(
         col_aligns[j],
         cell_fill,
         ")[",
-        '#text(font: "JetBrains Mono", size: ',
+        '#text(font: "', cell_font, '", size: ',
         body_pt,
         ', fill: ',
         fill,

@@ -1,6 +1,6 @@
 Package: chanwer
 Title: ChanWe Visual Themes for Quarto Workflows
-Version: 2.5.0
+Version: 2.6.0
 Authors@R:
     person(given = "Chanwe",
            family = "Team",
@@ -11,8 +11,9 @@ Description: Brand-consistent themes, color palettes, and utilities for
     custom title, subtitle, KPI-scoreboard, and caption elements, discrete
     and continuous color scales, a native Typst table generator for Quarto
     PDF reports, matching gt, reactable and highcharter helpers for HTML
-    output, font registration helpers, and Quarto-ready styling tokens for
-    HTML and Typst outputs.
+    output, the CHANWE brand fonts (Satoshi, Schibsted Grotesk, JetBrains
+    Mono) bundled and registered for ggplot2 and served locally to HTML
+    output, and Quarto-ready styling tokens for HTML and Typst outputs.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -34,6 +35,7 @@ Suggests:
     htmltools,
     htmlwidgets,
     knitr,
+    png,
     reactable,
     systemfonts,
     testthat (>= 3.0.0)

@@ -36,10 +36,11 @@ devtools::install(".")
   the diverging negative/neutral/positive scale.
 - `chanwe_kbl()` — native Typst table generator for Quarto PDF reports,
   with `chanwe_col_signed()` for positive/negative value coloring.
-- `chanwe_gt()`, `chanwe_reactable()`, `chanwe_plotly()` — the same header
-  grammar (eyebrow / title / subtitle / orange stamp caption) and signed-value
-  coloring for HTML tables and interactive charts.
-- `chanwe_load_fonts()` — registers the brand fonts with `systemfonts`.
+- `chanwe_gt()`, `chanwe_reactable()`, `chanwe_highchart()` — the same
+  header grammar (eyebrow / title / subtitle / orange stamp caption) and
+  signed-value coloring for HTML tables and interactive charts.
+- `chanwe_load_fonts()` — registers the bundled brand fonts (Satoshi,
+  Schibsted Grotesk, JetBrains Mono) with `systemfonts`.
 - `chanwe_reporting_css()` — bundled SCSS for Quarto HTML output.
 - `chanwe_brand_tokens()` and `chanwe_preview_palette()` — utilities.
 
@@ -120,8 +121,9 @@ labs(
 
 ### Color scales
 
-Colors come from `color.palette` in the chanwe-brand `brand.yml`
-(`chanwe_palette("brand")` returns it). The brand manual assigns each
+Colors come from the palette in chanwe-brandbook `brand/tokens/tokens.json`,
+which the chanwe-brand `brand.yml` follows (`chanwe_palette("brand")`
+returns it). The brand manual assigns each
 color family a role (green = positive, red = alert, ink = neutral
 anchor…), and the scales are built on those roles:
 
@@ -179,13 +181,23 @@ chanwe_palette("signed")
 
 ### Fonts
 
-`theme_chanwe()` calls `chanwe_load_fonts()` automatically. The fonts
-are bundled with the `chanwe-report` Quarto extension
-(`_extensions/chanwe-report/fonts`); pass `path =` to point somewhere
-else. The registered families are the `brand.yml` typography: Inter
-(body, plus Light / Medium), Schibsted Grotesk (display, plus Medium /
-SemiBold), Instrument Serif, Cormorant Garamond, and JetBrains Mono
-(plus Thin).
+The brand trio, by the roles the CHANWE brand guide gives them:
+
+| Role | Family | Where chanwer uses it |
+|---|---|---|
+| Text | **Satoshi** | subtitles, table text, chart body text |
+| Titles and display | **Schibsted Grotesk** (600) | chart and table titles |
+| Eyebrows, labels, metadata | **JetBrains Mono** | eyebrows, axis text and titles, legends, column labels, figures, the caption stamp |
+| Editorial italics and numerals | Cormorant Garamond | KPI hero value, subtitle notes |
+
+Inter is retired. The fonts ship with the package (`inst/fonts`, copied
+from chanwe-brandbook `brand/fonts`), so nothing is downloaded and no system
+install is needed. `theme_chanwe()` calls `chanwe_load_fonts()`
+automatically; pass `path =` to register the same files from another folder
+(the chanwe-report extension's `fonts/` uses the same names). A missing file
+is reported with a warning, never skipped silently.
+`theme_chanwe(base_family = "Inter")`, the old default, still works: it
+warns and uses Satoshi.
 
 For crisp output use a systemfonts-aware device:
 
@@ -196,8 +208,8 @@ knitr::opts_chunk$set(dev = "ragg_png")
 ## Typst Tables
 
 `chanwe_kbl()` renders a data frame as a native Typst table — Schibsted
-Grotesk title, Inter subtitle, JetBrains Mono column headers and cells, thin
-ink divider rules. It emits a raw `{=typst}` block, so it works in
+Grotesk title, Satoshi subtitle and text cells, JetBrains Mono column headers
+and figures, thin slate divider rules. It emits a raw `{=typst}` block, so it works in
 Quarto documents rendered with the `chanwe-report-typst` format.
 
 ````markdown
@@ -256,15 +268,19 @@ execute:
 
 The stylesheet enforces code blocks with a light background and orange
 left rule, semantic callout headers, smaller muted captions, and orange
-ToC/section-number accents. It also loads the brand web fonts (Inter,
-Schibsted Grotesk, JetBrains Mono) used by the HTML table and chart helpers below.
+ToC/section-number accents. It also declares the brand web fonts (Satoshi,
+Schibsted Grotesk, JetBrains Mono, Cormorant Garamond) from the WOFF2 files in
+the package, with no font CDN, so the report looks the same offline.
 
 ### HTML tables and interactive charts
 
-`chanwe_gt()`, `chanwe_reactable()` and `chanwe_plotly()` port the
+`chanwe_gt()`, `chanwe_reactable()` and `chanwe_highchart()` port the
 `chanwe_kbl()` header grammar to HTML output. All three return the
-underlying object (`gt_tbl`, `reactable` widget, `plotly` widget) so the
-library's own verbs can be piped afterwards.
+underlying object (`gt_tbl`, `reactable` widget, `highchart` widget) so the
+library's own verbs can be piped afterwards. The two widgets carry the
+brand fonts as a local HTML dependency (`inst/fonts/web`); a `gt` table uses
+the fonts its page loads (the `chanwe-brand-html` format or
+`chanwe_reporting_css()`).
 
 ```r
 df <- data.frame(
@@ -289,12 +305,11 @@ chanwe_reactable(df,
   signed = "delta", defaultPageSize = 10
 )
 
-# Interactive chart (plotly): header block, unified ink hover card, no modebar
-plotly::plot_ly(mtcars, x = ~wt, y = ~mpg, color = ~factor(cyl),
-  colors = unname(chanwe_palette("chart"))[1:3],
-  type = "scatter", mode = "markers"
+# Interactive chart (highcharter): header block, ink tooltip, no menu
+highcharter::hchart(mtcars, "scatter",
+  highcharter::hcaes(x = wt, y = mpg, group = cyl)
 ) |>
-  chanwe_plotly(
+  chanwe_highchart(
     title = "Fleet overview", eyebrow = "SECTION · EFFICIENCY",
     subtitle = "Weight against fuel economy.",
     caption = "Source · Motor Trend, 1974."
@@ -332,13 +347,18 @@ chanwe_preview_palette("chart")     # swatch grid of any group below
 | `chart` | the categorical 8, brand.yml `meta.chart-palette-order` |
 | `signed` | canonical positive / negative / neutral |
 | `semantic` | foreground, background, primary, success, danger, positive, … |
-| `brand` | the full `color.palette` of the chanwe-brand `brand.yml` |
+| `brand` | the full palette of chanwe-brandbook `tokens.json` |
 | `core` | brand anchors (orange, black, white, pure white, gray, silver) |
 | `ramp_blue` … `ramp_purple` | the series-hue ramps (blue, indigo, teal, green, amber, red, purple) for ordinal series |
-| `p15_coral` … `p15_ink` | eleven 5-shade legacy brand family ramps |
-| `p13_orange`, `p13_gray` | 10-step legacy ramps |
-| `p14_accents` | strong/soft accent pairs |
-| `mb_orange`, `mb_dark` | main-brand 100–950 ramps |
+| `p15_coral` … `p15_ink` | eleven 5-shade legacy family ramps, each rebuilt from one brand token |
+| `p13_orange`, `p13_gray` | 10-step legacy ramps from `primary` and `ink` |
+| `p14_accents` | strong/soft pairs: the palette's status and neon pairs |
+| `mb_orange`, `mb_dark` | the p13 ramps on a 100–950 scale |
+
+The legacy groups keep their names and lengths, but since 2.6.0 none of them
+carries an off-palette or retired value (the old `#E94B2B` orange and
+`#101010` black are gone); see `?chanwe_palette`. Prefer `chart` and the
+`ramp_*` groups for new charts.
 
 Runnable end-to-end demos of every group and scale live in
 [inst/examples/display_color_palettes.R](inst/examples/display_color_palettes.R),

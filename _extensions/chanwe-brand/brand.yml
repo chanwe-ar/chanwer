@@ -24,7 +24,9 @@ meta:
     hairline: 100     # mono captions and counters at 5–6pt
     thin: 200         # light metadata lines, the copyright micro-line
     body: 300         # running text, serif italics, serif-display numerals
-    body-plus: 350    # the figure frame's gloss lines
+    body-plus: 400    # the figure frame's gloss lines. Was 350 (between
+                      # Light and Regular); Satoshi has no 350 cut and Typst
+                      # broke the 300/400 tie arbitrarily, so it is Regular.
     regular: 400      # mono metadata, table body, agenda subrows
     medium: 500       # mono labels and eyebrows
     display: 600      # every Schibsted Grotesk run, `strong`
@@ -49,6 +51,7 @@ color:
 
     # ── Obsidian and what sits on it ────────────────────────────────────
     ink: "#111319"          # the brand black: every dark surface
+    ink-light: "#232A35"    # obsidiana clara: la card oscura del deck
     ink-soft: "#37393F"     # soft panel on ink
     ink-fg: "#64748B"       # the dot field on ink
     ink-subtle: "#646464"   # sunken labels on ink
@@ -58,7 +61,7 @@ color:
     fg: "#111319"           # headings: the same obsidian, named for type
     body-fg: "#475569"      # running text, at weight 300
     fg-muted: "#475569"     # secondary text, ledes, callout bodies
-    fg-subtle: "#8A94A6"    # metadata, labels, counters
+    fg-subtle: "#8A94A6"    # large/decorative text, rules, labels on ink; small text on paper is fg-muted
     emphasis: "#484848"     # italic subtitles
 
     # ── Paper and slate surfaces ───────────────────────────────────────
@@ -179,32 +182,30 @@ typography:
           weight: 700
         - path: assets/fonts/schibsted-grotesk/SchibstedGrotesk-ExtraBold.ttf
           weight: 800
-    - family: Inter
+    # Satoshi es la fuente de cuerpo (Inter se retiró el 2026-10-08). Los
+    # archivos son los del brandbook, en assets/fonts/satoshi/. Satoshi no
+    # trae 100, 200 ni 350, ni cursivas en 300, 500 y 600.
+    - family: Satoshi
       source: file
       files:
-        - path: assets/fonts/inter/Inter-Regular.ttf
+        - path: assets/fonts/satoshi/Satoshi-Light.ttf
+          weight: 300
+        - path: assets/fonts/satoshi/Satoshi-Regular.ttf
           weight: 400
-        - path: assets/fonts/inter/Inter-Italic.ttf
+        - path: assets/fonts/satoshi/Satoshi-Italic.ttf
           weight: 400
           style: italic
-        - path: assets/fonts/inter/Inter-Medium.ttf
+        - path: assets/fonts/satoshi/Satoshi-Medium.ttf
           weight: 500
-        - path: assets/fonts/inter/Inter-MediumItalic.ttf
-          weight: 500
-          style: italic
-        - path: assets/fonts/inter/Inter-SemiBold.ttf
+        - path: assets/fonts/satoshi/Satoshi-SemiBold.ttf
           weight: 600
-        - path: assets/fonts/inter/Inter-SemiBoldItalic.ttf
-          weight: 600
-          style: italic
-        - path: assets/fonts/inter/Inter-Bold.ttf
+        - path: assets/fonts/satoshi/Satoshi-Bold.ttf
           weight: 700
-        - path: assets/fonts/inter/Inter-BoldItalic.ttf
+        - path: assets/fonts/satoshi/Satoshi-BoldItalic.ttf
           weight: 700
           style: italic
-    # Satoshi fue la fuente de cuerpo hasta 2026-09-22. Los archivos siguen
-    # versionados en assets/fonts/satoshi/ pero ya no se declaran: una familia
-    # declarada se embebe en cada HTML aunque no la use ninguna regla.
+        - path: assets/fonts/satoshi/Satoshi-Black.ttf
+          weight: 900
     - family: Instrument Serif
       source: file
       files:
@@ -242,7 +243,7 @@ typography:
         - path: assets/fonts/jetbrains/JetBrainsMono-Bold.ttf
           weight: 700
   base:
-    family: Inter
+    family: Satoshi
     size: 13.5px
     line-height: 1.62
 
@@ -373,7 +374,7 @@ defaults:
 
         --cw-font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
         --cw-font-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-        --cw-font-sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+        --cw-font-sans: "Satoshi", "Helvetica Neue", Arial, sans-serif;
         --cw-font-mono: "JetBrains Mono", Menlo, "Courier New", monospace;
         /* La serif de display de la contratapa: un solo corte, 400. */
         --cw-font-serif-display: "Instrument Serif", Georgia, "Times New Roman", serif;
@@ -1208,7 +1209,7 @@ defaults:
       /* Premium editorial skin */
       body {
         background: var(--cw-color-bg);
-        /* El texto corrido va un punto por encima de fg y en Inter Light;
+        /* El texto corrido va un punto por encima de fg y en Satoshi Light;
            fg queda para titulares y para lo que pida el negro pleno. */
         color: var(--cw-color-body-fg);
         font-family: var(--cw-font-sans);

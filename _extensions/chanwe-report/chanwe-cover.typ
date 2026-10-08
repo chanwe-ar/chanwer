@@ -739,7 +739,8 @@
   }
   let _edge-color = if cover-edge-color != none { cover-edge-color } else { _t.primary }
   let wordmark = if wordmark == none {
-    _chanwe-assets + (if dark { "Logo_Blanco.svg" } else { "Logo_Negro.svg" })
+    // Sobre la losa de obsidiana el logo va en `Papel`, no en `Blanco`.
+    _chanwe-assets + (if dark { "Logo_Papel.svg" } else { "Logo_Negro.svg" })
   } else {
     _chanwe-clean-path(wordmark)
   }

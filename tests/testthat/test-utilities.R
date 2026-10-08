@@ -114,3 +114,32 @@ test_that("chanwe_kbl auto-aligns numeric columns right", {
 
   expect_match(txt, "align: (left, right,)", fixed = TRUE)
 })
+
+test_that("chanwe_kbl sets text in Satoshi and figures in JetBrains Mono", {
+  skip_if_not_installed("knitr")
+
+  df <- data.frame(item = c("Alpha", "Beta"), amount = c(1.5, 2))
+  txt <- as.character(chanwe_kbl(df, title = "T", subtitle = "Sub line"))
+
+  expect_false(grepl("Inter", txt, fixed = TRUE))
+  # subtitle and the text column read in Satoshi
+  expect_match(txt, '#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted', fixed = TRUE)
+  expect_match(txt, '#text(font: "Satoshi", size: 7pt, fill: _t.ink, weight: "medium")[Alpha]', fixed = TRUE)
+  # the right-aligned figures stay mono
+  expect_match(txt, '#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[1.5]', fixed = TRUE)
+})
+
+test_that("bundled marks are the current brandbook files, not the archive", {
+  # the retired orange #E94B2B and black #101010 are gone from inst/assets
+  skip_if_not_installed("png")
+  for (f in c("Logo_Color.png", "Logo_Color1.png", "Estrategia_Color1.png", "Logo_Negro.png")) {
+    path <- chanwe_logo_path(f)
+    skip_if(!nzchar(path), "bundled asset not found")
+    m <- png::readPNG(path)
+    opaque <- m[, , 4] > 0.99
+    top <- names(sort(table(grDevices::rgb(
+      m[, , 1][opaque], m[, , 2][opaque], m[, , 3][opaque]
+    )), decreasing = TRUE))[[1]]
+    expect_true(top %in% c("#FD3810", "#111319"), info = f)
+  }
+})

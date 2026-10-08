@@ -32,7 +32,7 @@
   weight-display:   600,
   weight-bold:      700,
   font-display: ("Schibsted Grotesk", "Helvetica Neue", "Arial"),
-  font-sans:    ("Inter", "Helvetica Neue", "Arial"),
+  font-sans:    ("Satoshi", "Helvetica Neue", "Arial"),
   font-mono:    ("JetBrains Mono", "Menlo", "Courier New"),
   font-serif:   ("Cormorant Garamond", "Georgia", "Times New Roman"),
 )
@@ -131,7 +131,7 @@ $chanwe-qr.typ()$
   set par(leading: 0.5em, spacing: 0pt)
 
   place(center + bottom, dy: -7mm,
-    image(_p-assets + "Logo_Papel.svg", width: 100%, fit: "contain")
+    image(_p-assets + "Logo_Fantasma.svg", width: 100%, fit: "contain")
   )
 
   // ─── Edge label ───────────────────────────────────────────────
@@ -180,9 +180,13 @@ $chanwe-qr.typ()$
   // Subject grid + optional lede — wrapped in compact callout
   line(length: 100%, stroke: 0.5pt + _t.border-cool)
   v(5mm)
+  // Esquinas a 4pt, el radio del callout y del panel de código del reporte.
+  // Sin filete: el panel de asunto no advierte nada, y el slate solo ya lo
+  // despega de la página.
   block(
     width: 100%,
     fill: _t.surface-slate,
+    radius: 4pt,
     inset: (x: 5mm, y: 5mm),
   )[
     #grid(

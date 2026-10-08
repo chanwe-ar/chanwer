@@ -1,4 +1,4 @@
-# Fonts are registered from the chanwe-report Quarto extension, which is not
-# available in the test environment. Mark them as loaded so theme_chanwe()
-# does not emit a "fonts directory not found" warning on every call.
-options(chanwer.fonts_loaded = TRUE)
+# The brand fonts ship with the package (inst/fonts), so theme_chanwe()
+# registers them on its first call without any warning. Tests that exercise
+# chanwe_load_fonts() pass `path` explicitly, which bypasses the
+# once-per-session cache.

@@ -2,8 +2,8 @@
 #'
 #' The HTML counterpart of [chanwe_kbl()]: a `gt` table styled with the
 #' Chanwe header grammar -- mono-caps eyebrow with an orange rule prefix,
-#' Schibsted Grotesk title, Inter subtitle, mono-caps column labels, JetBrains Mono
-#' tabular figures right-aligned, a hairline slate rule above the table, a
+#' Schibsted Grotesk title, Satoshi subtitle and body text, JetBrains Mono
+#' mono-caps column labels, JetBrains Mono tabular figures right-aligned, a hairline slate rule above the table, a
 #' thin slate rule under the column labels and to the right of the stub,
 #' flat rows (an n100 tint on hover, matching [chanwe_reactable()], no
 #' zebra striping), and the source note as an orange stamp.
@@ -12,8 +12,11 @@
 #' (`gt::fmt_number()`, `gt::cols_label()`, `gt::tab_style()`, ...) can be
 #' piped after it.
 #'
-#' Fonts: the table uses the brand faces when they are available on the
-#' page. Load them with [chanwe_reporting_css()] in Quarto HTML documents.
+#' Fonts: a `gt_tbl` cannot carry an HTML dependency, so the table uses the
+#' brand faces the page loads: the `chanwe-brand-html` Quarto format does,
+#' and so does [chanwe_reporting_css()] (both from local files, no font
+#' CDN). [chanwe_reactable()] and [chanwe_highchart()] attach the fonts
+#' themselves.
 #'
 #' @param data A data frame or tibble.
 #' @param title Table title (Schibsted Grotesk, 20px).
@@ -103,7 +106,10 @@ chanwe_gt <- function(
   g <- gt::tab_options(
     g,
     table.width = gt::pct(100),
-    table.font.names = c("Inter", "system-ui", "sans-serif"),
+    table.font.names = c(
+      "Satoshi", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Arial",
+      "sans-serif"
+    ),
     table.font.size = gt::px(13),
     table.font.color = tk$fg,
     table.background.color = bg,

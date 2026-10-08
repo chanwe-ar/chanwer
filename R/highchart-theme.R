@@ -2,7 +2,7 @@
 #'
 #' Applies the Chanwe header grammar and chart chrome to an existing
 #' `highcharter` object: eyebrow / title / subtitle block anchored top-left
-#' in Schibsted Grotesk, Inter body font, JetBrains Mono axis ticks, no axis lines or
+#' in Schibsted Grotesk, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
 #' ticks, hairline y-grid, an ink tooltip in mono, no exporting menu or
 #' credits, and an optional caption drawn as the chanwe-report figure stamp
 #' (a square orange box with white mono caps) under a slate hairline.
@@ -14,6 +14,11 @@
 #' the header (below the subtitle) and opens the caption (above the stamp
 #' line), each spanning from the header/caption's own left edge to the
 #' plot area's right edge, in a light neutral gray.
+#'
+#' Fonts: the brand faces come from the bundled WOFF2 (the `chanwe-fonts`
+#' dependency), and highcharter's own Google Fonts loader is switched off,
+#' so the widget makes no font request. Call `chanwe_highchart()` last in
+#' the pipe: a later `hc_*()` call re-enables highcharter's loader.
 #'
 #' Discrete colours are not changed by this function -- the chart palette
 #' (`chanwe_palette("chart")`) is applied as the widget's series colours, so
@@ -84,8 +89,16 @@ chanwe_highchart <- function(
     # of the title-subtitle one.
     parts <- c(
       if (!is.null(eyebrow)) {
+        # The brand eyebrow: an orange rule, then JetBrains Mono caps with
+        # wide tracking (same as chanwe_html_header_tag()).
         sprintf(
-          "<div style='font-size:10px;font-weight:500;font-family:%s;color:%s;margin-bottom:9px'>—— %s</div>",
+          paste0(
+            "<div style='font-size:10px;font-weight:500;font-family:%1$s;",
+            "color:%2$s;letter-spacing:.18em;text-transform:uppercase;",
+            "margin-bottom:9px'><span style='display:inline-block;width:22px;",
+            "height:1px;background:%2$s;vertical-align:middle;",
+            "margin-right:8px'></span>%3$s</div>"
+          ),
           hc_mono, tk$accent, chanwe_html_escape(eyebrow)
         )
       },
@@ -97,8 +110,8 @@ chanwe_highchart <- function(
       },
       if (!is.null(subtitle)) {
         sprintf(
-          "<div style='font-size:12px;color:%s;margin-top:6px'>%s</div>",
-          tk$fg_muted, chanwe_html_escape(subtitle)
+          "<div style='font-size:12px;color:%s;font-family:%s;margin-top:6px'>%s</div>",
+          tk$fg_muted, hc_sans, chanwe_html_escape(subtitle)
         )
       }
     )
@@ -238,5 +251,11 @@ chanwe_highchart <- function(
   }
 
   hc$dependencies <- c(hc$dependencies, chanwe_html_fonts_dependency())
+  # highcharter collects every fontFamily in the options into `x$fonts` and
+  # its JavaScript binding requests each one from Google Fonts. The brand
+  # faces come from the local dependency above, so that list is dropped:
+  # the widget makes no font request. A later hc_*() call re-collects it, so
+  # call chanwe_highchart() last.
+  hc$x$fonts <- NULL
   hc
 }

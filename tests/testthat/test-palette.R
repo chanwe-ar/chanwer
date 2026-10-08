@@ -96,10 +96,70 @@ test_that("chanwe_brand_tokens carries semantic mapping and structure", {
       names(tokens)
   ))
   expect_identical(tokens$chart_order, chanwe_palette("chart"))
-  expect_identical(tokens$typography$family, "Inter")
+  expect_identical(tokens$typography$family, "Satoshi")
   expect_identical(tokens$typography$display_family, "Schibsted Grotesk")
+  expect_identical(tokens$typography$mono_family, "JetBrains Mono")
+  # one radius (brand guide: 4px on cards, buttons and fields)
+  expect_true(all(unlist(tokens$geometry[c("radius_small", "radius_base", "radius_large")]) == 4))
+  # captions are small text that is read: pizarra, not fg-subtle
+  expect_identical(unname(tokens$reporting$caption_color), "#475569")
   expect_named(
     tokens$reporting$callouts,
     c("note", "info", "tip", "success", "warning", "important", "caution", "alert")
   )
+})
+
+test_that("the brand group carries the tokens.json additions", {
+  brand <- chanwe_palette("brand")
+
+  expect_identical(brand[["ink-light"]], "#232A35")
+  expect_identical(brand[["surface-raised"]], "#FFFFFF")
+  expect_identical(brand[["violet"]], "#7C3AED")
+  expect_identical(brand[["violet-soft"]], "#EFE7FD")
+})
+
+test_that("no retired brand colour survives anywhere in the palette", {
+  # the brand guide's "Se retiran" list, plus the retired text orange
+  retired <- c(
+    "#101010", "#F7F7F7", "#272727", "#26313A", "#6E6E6E", "#64717D",
+    "#FF3B1F", "#FBFBFB", "#C42E00", "#E94B2B", "#E8DDC4", "#C52C0C"
+  )
+  all_values <- toupper(c(
+    chanwe_palette("all"),
+    unlist(lapply(c("orange", "mustard", "ink", "blue", "red"), chanwe_seq_pal)),
+    .chanwe_div_ramp(), .chanwe_div_ramp(cvd = TRUE)
+  ))
+  expect_false(any(retired %in% all_values))
+})
+
+test_that("legacy ramps are rebuilt from brand tokens", {
+  g <- chanwe_palette()$groups
+
+  expect_identical(g$p13_orange[[1]], "#FD3810")
+  expect_identical(g$p13_gray[[1]], "#111319")
+  expect_length(g$p13_orange, 10L)
+  expect_identical(unname(g$mb_orange), rev(unname(g$p13_orange)))
+  expect_identical(unname(g$mb_dark), rev(unname(g$p13_gray)))
+
+  anchors <- c(
+    coral = "#FD3810", vermillion = "#FF3B30", green = "#1EB508",
+    magenta = "#EB03F2", blue = "#0C48ED", yellow = "#F9E710",
+    cyan = "#11F7E6", mustard = "#D97706", violet = "#7C3AED",
+    teal = "#00C7BE", ink = "#111319"
+  )
+  for (fam in names(anchors)) {
+    ramp <- g[[paste0("p15_", fam)]]
+    expect_length(ramp, 5L)
+    expect_identical(ramp[[1]], anchors[[fam]], info = fam)
+  }
+  # soft partners close the ramps that have one
+  expect_identical(g$p15_blue[[5]], "#B8CEFF")
+  expect_identical(g$p15_violet[[5]], "#EFE7FD")
+
+  # p14 pairs are the palette's status pairs
+  expect_identical(g$p14_accents[["p14-red-strong"]], "#D32F2F")
+  expect_identical(g$p14_accents[["p14-red-soft"]], "#FDECEA")
+
+  # the default continuous ramp ends in primary and starts from its tints
+  expect_identical(chanwe_seq_pal("orange")[[3]], "#FD3810")
 })

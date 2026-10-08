@@ -22,12 +22,13 @@
   fg:           rgb("#111319"),
   fg-muted:     rgb("#475569"),
   fg-subtle:    rgb("#8A94A6"),
+  body-fg:      rgb("#475569"),
   callout-surface: rgb("#F8FAFC"),
   surface-raised: rgb("#FFFFFF"),
   // Hairlines: `rule` warm on paper, `rule-cool` for lede panels.
   rule:        rgb("#E2E8F0"),
   rule-cool:   rgb("#C6CDD6"),
-  emphasis:     _t.emphasis,
+  emphasis:     rgb("#484848"),
   emphasis-soft: rgb("#5B5B5B"),
   primary:      rgb("#FD3810"),
   primary-soft: rgb("#FD38101A"),
@@ -44,7 +45,7 @@
   // La serif de display: numerales del índice y bajada de contratapa.
   // Distinta de font-serif, que es la itálica del cuerpo.
   font-serif-display:   ("Instrument Serif", "Georgia", "Times New Roman"),
-  font-sans:    ("Inter", "Helvetica Neue", "Arial"),
+  font-sans:    ("Satoshi", "Helvetica Neue", "Arial"),
   font-mono:    ("JetBrains Mono", "Menlo", "Courier New"),
 )
 #let _t = chanwe-tokens
@@ -335,7 +336,7 @@
   block(width: 100%, height: 50mm, fill: _t.paper-alt, inset: (x: 14mm))[
     #set align(center + horizon)
     #align(center + horizon,
-      image(_chanwe-assets + "Logo_Beige.svg", height: 45mm, fit: "contain"))
+      image(_chanwe-assets + "Logo_Fantasma.svg", height: 45mm, fit: "contain"))
   ]
 }
 
@@ -419,7 +420,7 @@
       rows: (auto, 1fr, auto),
       row-gutter: 0pt,
       align(left + top, block(width: 100%, spacing: 0pt)[
-        #image(_chanwe-assets + "Logo_Blanco.svg", height: 10.1mm, fit: "contain")
+        #image(_chanwe-assets + "Logo_Papel.svg", height: 10.1mm, fit: "contain")
           #v(11mm)
           // Filete de acento bajo el wordmark, del mismo grosor que el
           // eyebrow de la portada.
@@ -818,7 +819,10 @@
   ]
 
   // ---- lists / quotes (as chanwe-publications) ------------------
-  set list(marker: ([•], [◦], [–]))
+  // Satoshi no trae el `◦` (U+25E6) y Typst lo buscaba en la fuente que
+  // hubiera: era Inter mientras estuvo en el pool, y sin ella, Arial del
+  // sistema. JetBrains Mono, de la marca, lo trae.
+  set list(marker: ([•], text(font: _t.font-mono, [◦]), [–]))
   show quote: it => block(
     above: 6mm, below: 6mm,
     inset: (left: 6mm),

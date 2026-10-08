@@ -41,7 +41,7 @@ The modified \code{highcharter} object.
 \description{
 Applies the Chanwe header grammar and chart chrome to an existing
 \code{highcharter} object: eyebrow / title / subtitle block anchored top-left
-in Schibsted Grotesk, Inter body font, JetBrains Mono axis ticks, no axis lines or
+in Schibsted Grotesk, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
 ticks, hairline y-grid, an ink tooltip in mono, no exporting menu or
 credits, and an optional caption drawn as the chanwe-report figure stamp
 (a square orange box with white mono caps) under a slate hairline.
@@ -55,6 +55,11 @@ line), each spanning from the header/caption's own left edge to the
 plot area's right edge, in a light neutral gray.
 }
 \details{
+Fonts: the brand faces come from the bundled WOFF2 (the \code{chanwe-fonts}
+dependency), and highcharter's own Google Fonts loader is switched off,
+so the widget makes no font request. Call \code{chanwe_highchart()} last in
+the pipe: a later \verb{hc_*()} call re-enables highcharter's loader.
+
 Discrete colours are not changed by this function -- the chart palette
 (\code{chanwe_palette("chart")}) is applied as the widget's series colours, so
 series added without an explicit \code{color} cycle through the brand palette.
