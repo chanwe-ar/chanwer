@@ -30,3 +30,5 @@
 ^temp\.html$
 ^temp_files$
 ^\.impeccable$
+^scripts$
+^CLAUDE\.md$
