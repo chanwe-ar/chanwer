@@ -408,3 +408,17 @@ pak::pak("chanwe-ar/chanwer")
 ```
 
 For local development in this repository, run `devtools::install(".")`.
+
+## Versioning and releases
+
+chanwer is a versioned asset of the CHANWE suite: CHANWE Espacios (desktop, and later mobile) ships a pinned
+release of it in its downloads menu. A change reaches people only through a release.
+
+- Versions are `vMAJOR.MINOR.PATCH`, the same as `Version:` in `DESCRIPTION`: PATCH for fixes, MINOR for new
+  functions or changed defaults, MAJOR when an exported function or argument is removed or renamed.
+- Record every change at the top of `NEWS.md` under `# chanwer (development version)`.
+- To release, on an up-to-date `main`: rename that heading to `# chanwer X.Y.Z`, set `Version: X.Y.Z`, merge that,
+  then run `scripts/release.sh X.Y.Z`. It tags `vX.Y.Z` and publishes a GitHub release with `chanwer-vX.Y.Z.zip`
+  (the package source with `.Rbuildignore` applied; `remotes::install_local()` installs it) and the notes.
+- Never move or delete a published tag or release; fix forward with a new version.
+- Then raise the pin in chanwe-desktop-app `components.lock.json`; the next desktop release carries it.

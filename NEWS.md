@@ -1,4 +1,4 @@
-# chanwer (development version)
+# chanwer 2.6.1
 
 * `inst/assets/Logo_Color.png` and `Logo_Negro.png` are the wordmark alone
   (chanwe-brandbook `Marca_Color` and `Marca_Obsidiana`, 2400 × 493). They were
