@@ -32,3 +32,4 @@
 ^\.impeccable$
 ^scripts$
 ^CLAUDE\.md$
+^\.env\.example$

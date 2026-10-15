@@ -72,3 +72,8 @@ rsconnect/
 /temp_files/
 /chanwer-showcase-html.html
 /chanwer-showcase-html_files/
+
+# Local environment files (the committed template is .env.example)
+.env
+.env.*
+!.env.example
