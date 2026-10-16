@@ -77,3 +77,8 @@ rsconnect/
 .env
 .env.*
 !.env.example
+
+# Local environment files; only the reviewed example templates are versioned.
+.env
+.env.*
+!/.env.example
