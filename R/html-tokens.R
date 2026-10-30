@@ -45,23 +45,56 @@ chanwe_html_tokens <- function() {
     rule_row = tk[["rule"]],
     positive = tk[["signed-positive"]],
     negative = tk[["signed-negative"]],
-    neutral = tk[["signed-neutral"]]
+    neutral = tk[["signed-neutral"]],
+    # v2 (brand-v2.md): the tint (text colour at 7%) for table headers and
+    # hover, the pane hairline, the plot tokens and the radii in px.
+    tint = tk[["tint"]],
+    pane = tk[["pane"]],
+    hairline = tk[["rule"]],
+    focus = chanwe_tokens$plot$focus,
+    grid = chanwe_tokens$plot$grid,
+    axis_text = chanwe_tokens$plot$`axis-text`,
+    title = chanwe_tokens$plot$title,
+    white = tk[["pure-white"]],
+    radius_surface = chanwe_tokens$radii$surface,
+    radius_pill = chanwe_tokens$radii$pill,
+    bar_radius = chanwe_tokens$plot$`bar-radius`,
+    type = chanwe_tokens$type
   )
 }
 
-# Inline style of the orange caption stamp (the chanwe-report figure-frame
-# stamp): square primary box, white JetBrains Mono caps. Double quotes only,
-# so it can sit inside a single-quoted style attribute (highcharter).
-chanwe_html_stamp_style <- function() {
+# The caption style every helper takes by default: "mono" (v2) or "stamp"
+# (the orange stamp of chanwer 2.x). Set options(chanwer.caption_style =
+# "stamp") to keep the old look everywhere.
+chanwe_caption_style <- function(style = NULL) {
+  style <- style %||_% getOption("chanwer.caption_style", "mono")
+  match.arg(style, c("mono", "stamp"))
+}
+
+# Inline style of the caption. v2 ("mono"): a JetBrains Mono label at the
+# compact size (type.caption) in plot.axis-text, spaced capitals. "stamp":
+# the chanwe-report figure-frame stamp of chanwer 2.x, a square primary box
+# with white mono caps. Double quotes only, so it can sit inside a
+# single-quoted style attribute (highcharter).
+chanwe_html_stamp_style <- function(style = NULL) {
   tk <- chanwe_html_tokens()
+  mono <- gsub("'", "\"", .cw_font_mono, fixed = TRUE)
+  if (chanwe_caption_style(style) == "stamp") {
+    return(sprintf(
+      paste0(
+        "display:inline-block; background:%s; color:%s; ",
+        "font: 500 9px/1.2 %s; letter-spacing:.16em; ",
+        "text-transform:uppercase; padding:5px 14px; border-radius:0;"
+      ),
+      tk$primary, tk$white, mono
+    ))
+  }
   sprintf(
     paste0(
-      "display:inline-block; background:%s; color:%s; ",
-      "font: 500 9px/1.2 %s; letter-spacing:.16em; ",
-      "text-transform:uppercase; padding:5px 14px; border-radius:0;"
+      "display:inline-block; color:%s; font: 400 %spx/1.3 %s; ",
+      "letter-spacing:.08em; text-transform:uppercase;"
     ),
-    tk$primary, chanwe_get_colors()[["pure-white"]],
-    gsub("'", "\"", .cw_font_mono, fixed = TRUE)
+    tk$axis_text, tk$type$caption, mono
   )
 }
 
@@ -99,6 +132,8 @@ chanwe_html_header_tag <- function(
   eyebrow = NULL,
   bg = NULL
 ) {
+  # with a `bg`, the block is the top of a v2 pane (16px top corners, the
+  # hairline on three sides); the table below it continues the pane
   if (is.null(title) && is.null(subtitle) && is.null(eyebrow)) {
     return(NULL)
   }
@@ -109,8 +144,11 @@ chanwe_html_header_tag <- function(
     "padding: 4px 0 12px 0;"
   } else {
     sprintf(
-      "background:%s; border-top:1px solid %s; padding: 10px 12px 12px;",
-      bg, tk$rule
+      paste0(
+        "background:%1$s; border:1px solid %2$s; border-bottom:none; ",
+        "border-radius:%3$spx %3$spx 0 0; padding: 14px 16px 12px;"
+      ),
+      bg, tk$hairline, tk$radius_surface
     )
   }
   tags$div(
@@ -162,7 +200,7 @@ chanwe_html_header_tag <- function(
 # under a slate hairline.
 # As with chanwe_html_header_tag(), a `bg` puts the line on the table
 # background with the 12px side inset so the widget reads as one card.
-chanwe_html_caption_tag <- function(caption, bg = NULL) {
+chanwe_html_caption_tag <- function(caption, bg = NULL, caption_style = NULL) {
   if (is.null(caption)) {
     return(NULL)
   }
@@ -172,16 +210,19 @@ chanwe_html_caption_tag <- function(caption, bg = NULL) {
   style <- if (is.null(bg)) {
     "padding: 8px 0 0;"
   } else {
-    # hairline above the caption: same slate rule as under the column labels
+    # the foot of the v2 pane: hairline on every side, 16px bottom corners
     sprintf(
-      "background:%s; border-top:0.5px solid %s; padding: 12px 12px 10px;",
-      bg, tk$rule
+      paste0(
+        "background:%1$s; border:1px solid %2$s; ",
+        "border-radius:0 0 %3$spx %3$spx; padding: 10px 16px 12px;"
+      ),
+      bg, tk$hairline, tk$radius_surface
     )
   }
   tags$div(
     class = "chanwe-html-caption",
     style = style,
-    tags$span(class = "chanwe-stamp", style = chanwe_html_stamp_style(), caption)
+    tags$span(class = "chanwe-stamp", style = chanwe_html_stamp_style(caption_style), caption)
   )
 }
 

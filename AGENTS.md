@@ -18,9 +18,13 @@ look.
 - Use `chanwe_title()` when a title needs the orange mono-caps eyebrow.
 - Use `chanwe_subtitle()` when a subtitle needs a note line or a KPI
   scoreboard (`chanwe_kpi()`); plain subtitles need no helper.
-- Use `chanwe_caption()` for the source line, drawn as the orange caption stamp.
-- Use `scale_color_chanwe_d()` and `scale_fill_chanwe_d()` for discrete
-  ChanWe palettes; `_c` variants for continuous orange gradients.
+- Use `chanwe_caption()` for the source line, drawn as a mono label (`caption_style = "stamp"` for the 2.x orange stamp).
+- Use `scale_color_chanwe_focus()` / `scale_fill_chanwe_focus()` when a
+  chart has a series that matters (v2 rule C1: orange focus, slate
+  context); `scale_color_chanwe_d()` / `scale_fill_chanwe_d()` only for
+  charts with no focus; `_c` variants for continuous gradients.
+- Use `geom_chanwe_col()` / `geom_chanwe_bar()` for bars (3px rounded
+  ends, pill legend keys); `key_glyph = draw_key_chanwe_pill` elsewhere.
 - Use `chanwe_kbl()` for tables in Quarto Typst PDF reports.
 - Use `chanwe_load_fonts()` to register the bundled brand fonts (called
   automatically by `theme_chanwe()`); it warns when a file is missing.
@@ -44,11 +48,18 @@ look.
   (default), `"white"`, `"sunken"`, `"slate"`, `"transparent"`, or any
   hex string. Every named surface is a `brand.yml` token; beige is
   retired and errors.
-- Colors mirror chanwe-brandbook `brand/tokens/tokens.json`
-  (`.chanwe_brand_colors` in `R/palette.R`); the extension's `brand.yml`
-  follows the same tokens. Change tokens.json first, sync the extension,
-  then update that table. Never add a hex that is not a token or a tint
-  built from one.
+- Every value comes from `chanwe_tokens` in `R/brand-tokens.R`, generated
+  by chanwe-brandbook from `brand/tokens/tokens.json` and synced here
+  (`brand:sync`). Never edit that file; change tokens.json in the
+  brandbook. In code read colours with `.cw_tk("<name>")` or
+  `chanwe_tokens$plot$...`, and build tints with `.cw_mix()` /
+  `.cw_alpha()`. `tests/testthat/test-token-drift.R` fails on any hex
+  string literal that is not a token.
+- The v2 look (brand-v2 Q3): horizontal slate grid only, no axis lines or
+  ticks, mono labels and captions at the compact size, pill legend keys,
+  rounded bars, tables as panes (tint header, hairline rows, 16px).
+  Snapshot tests (vdiffr) live in `tests/testthat/test-snapshots.R`;
+  review changes with `testthat::snapshot_review()`.
 - Fonts follow the brand guide: Satoshi for text, Schibsted Grotesk for
   titles, JetBrains Mono for eyebrows, labels and metadata; Cormorant
   Garamond only for editorial italics and numerals. Inter is retired. The

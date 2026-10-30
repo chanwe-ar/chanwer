@@ -224,15 +224,16 @@ chanwe_load_fonts <- function(path = NULL) {
   invisible(path)
 }
 
-# Named surfaces, all brand.yml tokens, with the grid colours theme_chanwe()
-# pairs with each: the major grid one hairline step darker than the surface,
-# the minor grid half a step. `metallic`, `white-ivory` and `gray` are the
-# pre-slate names, kept as aliases of the nearest brand surface.
+# Named surfaces, all tokens, with the hairlines that sit on each: `major`
+# for structural rules, `minor` for the lighter row dividers. The v2 plot
+# grid is one token for every surface (`plot.grid`, ink-fg at 25%), set in
+# theme_chanwe(). `metallic`, `white-ivory` and `gray` are the pre-slate
+# names, kept as aliases of the nearest brand surface.
 .chanwe_surfaces <- list(
-  paper  = c(fill = "#F8FAFC", major = "#CFD6DF", minor = "#EBF0F6"),
-  white  = c(fill = "#FFFFFF", major = "#CFD6DF", minor = "#F1F5F9"),
-  sunken = c(fill = "#F1F5F9", major = "#C6CDD6", minor = "#E2E8F0"),
-  slate  = c(fill = "#EBF0F6", major = "#C6CDD6", minor = "#E2E8F0")
+  paper  = c(fill = .cw_tk("paper"), major = .cw_tk("border-cool"), minor = .cw_tk("surface-slate")),
+  white  = c(fill = .cw_tk("pure-white"), major = .cw_tk("border-cool"), minor = .cw_tk("surface-sunken")),
+  sunken = c(fill = .cw_tk("surface-sunken"), major = .cw_tk("rule-cool"), minor = .cw_tk("rule")),
+  slate  = c(fill = .cw_tk("surface-slate"), major = .cw_tk("rule-cool"), minor = .cw_tk("rule"))
 )
 
 .chanwe_surface_aliases <- c(

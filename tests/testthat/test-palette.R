@@ -39,23 +39,24 @@ test_that("chanwe_palette(NULL) returns all colors plus grouped palettes", {
   expect_false(any(grepl("beige", names(grouped$groups))))
 })
 
-test_that("chart palette follows brand.yml meta.chart-palette-order", {
+test_that("chart palette is tokens.json plot.categorical, named by token", {
   chart <- chanwe_palette("chart")
 
+  expect_identical(unname(chart), chanwe_tokens$plot$categorical)
   expect_named(
     chart,
     c(
-      "primary", "chart-blue", "chart-green", "chart-indigo",
-      "chart-orange", "chart-teal", "chart-purple", "chart-red"
+      "primary", "chart-blue", "chart-teal", "chart-indigo",
+      "chart-purple", "chart-green", "chart-orange", "chart-red"
     )
   )
-  expect_identical(
-    unname(chart),
-    c(
-      "#FD3810", "#007AFF", "#34C759", "#5856D6",
-      "#FF9500", "#00C7BE", "#AF52DE", "#FF3B30"
-    )
-  )
+})
+
+test_that("slate and focus groups are the plot tokens", {
+  expect_identical(unname(chanwe_palette("slate")), chanwe_tokens$plot$slate)
+  focus <- chanwe_palette("focus")
+  expect_identical(focus[[1]], chanwe_tokens$plot$focus)
+  expect_length(focus, length(chanwe_tokens$plot$slate) + 1L)
 })
 
 test_that("signed tokens are canonical and mapped into semantic", {
@@ -92,15 +93,19 @@ test_that("chanwe_brand_tokens carries semantic mapping and structure", {
   expect_identical(tokens$semantic[["background"]], "#F8FAFC")
 
   expect_true(all(
-    c("name", "colors", "semantic", "chart_order", "typography", "geometry", "reporting") %in%
+    c("name", "colors", "semantic", "chart_order", "typography", "geometry", "plot", "reporting") %in%
       names(tokens)
   ))
   expect_identical(tokens$chart_order, chanwe_palette("chart"))
   expect_identical(tokens$typography$family, "Satoshi")
   expect_identical(tokens$typography$display_family, "Schibsted Grotesk")
   expect_identical(tokens$typography$mono_family, "JetBrains Mono")
-  # one radius (brand guide: 4px on cards, buttons and fields)
-  expect_true(all(unlist(tokens$geometry[c("radius_small", "radius_base", "radius_large")]) == 4))
+  # v2 radii from the generated tokens: row 8, pane 12, surface 16, pill
+  expect_identical(tokens$geometry$radius_small, chanwe_tokens$radii$row)
+  expect_identical(tokens$geometry$radius_base, chanwe_tokens$radii$pane)
+  expect_identical(tokens$geometry$radius_large, chanwe_tokens$radii$surface)
+  expect_identical(tokens$geometry$radius_pill, chanwe_tokens$radii$pill)
+  expect_identical(tokens$plot, chanwe_tokens$plot)
   # captions are small text that is read: pizarra, not fg-subtle
   expect_identical(unname(tokens$reporting$caption_color), "#475569")
   expect_named(

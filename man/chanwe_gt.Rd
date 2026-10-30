@@ -15,7 +15,8 @@ chanwe_gt(
   smaller_is_better = FALSE,
   density = c("spacious", "compact"),
   bg = "white",
-  id = NULL
+  id = NULL,
+  caption_style = NULL
 )
 }
 \arguments{
@@ -28,11 +29,11 @@ chanwe_gt(
 \item{eyebrow}{Small mono-caps label with an orange rule prefix, rendered
 above the title.}
 
-\item{caption}{Source note at the bottom, drawn as the orange stamp.}
+\item{caption}{Source note at the bottom, a mono label (or the orange
+stamp, see \code{caption_style}).}
 
 \item{stub}{Name of the stub/row-identifier column (passed to
-\code{gt::gt(rowname_col = )}). Rendered left-aligned in ink with a thin
-vertical rule on its right.}
+\code{gt::gt(rowname_col = )}). Rendered left-aligned in ink, medium weight.}
 
 \item{signed}{Optional character vector of column names whose values are
 coloured by valence with the canonical signed tokens (positive green,
@@ -50,18 +51,21 @@ hex string. Default \code{"white"}.}
 
 \item{id}{Optional HTML id for the table. A random id is generated when
 \code{NULL} so the scoped CSS never leaks between tables.}
+
+\item{caption_style}{\code{"mono"} (v2 default) or \code{"stamp"} (the orange stamp
+of chanwer 2.x). \code{NULL} reads \code{getOption("chanwer.caption_style", "mono")}.}
 }
 \value{
 A \code{gt_tbl} object.
 }
 \description{
-The HTML counterpart of \code{\link[=chanwe_kbl]{chanwe_kbl()}}: a \code{gt} table styled with the
-Chanwe header grammar -- mono-caps eyebrow with an orange rule prefix,
-Schibsted Grotesk title, Satoshi subtitle and body text, JetBrains Mono
-mono-caps column labels, JetBrains Mono tabular figures right-aligned, a hairline slate rule above the table, a
-thin slate rule under the column labels and to the right of the stub,
-flat rows (an n100 tint on hover, matching \code{\link[=chanwe_reactable]{chanwe_reactable()}}, no
-zebra striping), and the source note as an orange stamp.
+The HTML counterpart of \code{\link[=chanwe_kbl]{chanwe_kbl()}}: a \code{gt} table as a v2 pane
+(16px corners, a hairline border, no shadow) with the Chanwe header
+grammar -- mono-caps eyebrow with an orange rule prefix, Schibsted
+Grotesk title, Satoshi subtitle and body text, JetBrains Mono column
+labels on the tint header, JetBrains Mono tabular figures right-aligned,
+hairline rows (the tint on hover, matching \code{\link[=chanwe_reactable]{chanwe_reactable()}}, no zebra
+striping), and the source note as a mono caption.
 }
 \details{
 The function returns a regular \code{gt_tbl}, so every \code{gt} verb

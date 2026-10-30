@@ -12,7 +12,9 @@ chanwe_highchart(
   caption = NULL,
   legend = FALSE,
   height = 440,
-  bg = "white"
+  bg = "white",
+  focus = NULL,
+  caption_style = NULL
 )
 }
 \arguments{
@@ -21,7 +23,8 @@ chanwe_highchart(
 \item{title, subtitle, eyebrow}{Header block rendered top-left, stacked as
 one \code{useHTML} chart title.}
 
-\item{caption}{Source note rendered bottom-left as the orange stamp.}
+\item{caption}{Source note rendered bottom-left as a mono label (or the
+orange stamp, see \code{caption_style}).}
 
 \item{legend}{Logical. Show the legend (vertical, right, centered on the
 plot body)? Default \code{FALSE}.}
@@ -34,6 +37,13 @@ dashboard layout until \code{hc_size()} sets the widget's own height field.}
 
 \item{bg}{Chart and plot background. Named shorthand accepted by
 \code{\link[=theme_chanwe]{theme_chanwe()}} or any hex string. Default \code{"white"}.}
+
+\item{focus}{Optional name of the series that matters: it turns orange
+(and is drawn on top), the others go on the slate ramp. Applies to the
+series already added to \code{hc}.}
+
+\item{caption_style}{\code{"mono"} (v2 default) or \code{"stamp"} (the orange stamp
+of chanwer 2.x). \code{NULL} reads \code{getOption("chanwer.caption_style", "mono")}.}
 }
 \value{
 The modified \code{highcharter} object.
@@ -60,9 +70,12 @@ dependency), and highcharter's own Google Fonts loader is switched off,
 so the widget makes no font request. Call \code{chanwe_highchart()} last in
 the pipe: a later \verb{hc_*()} call re-enables highcharter's loader.
 
-Discrete colours are not changed by this function -- the chart palette
-(\code{chanwe_palette("chart")}) is applied as the widget's series colours, so
-series added without an explicit \code{color} cycle through the brand palette.
+Colour (v2 rule C1): with \code{focus}, the named series is orange and every
+other series sits on the slate ramp (\code{\link[=chanwe_focus_colors]{chanwe_focus_colors()}}); without
+it, the categorical palette (\code{chanwe_palette("chart")}) is applied as the
+widget's series colours. Columns and bars take the 3px \code{plot.bar-radius},
+the y grid is \code{plot.grid}, axis labels are mono at the compact size and
+legend symbols are pills.
 }
 \examples{
 \dontshow{if (requireNamespace("highcharter", quietly = TRUE)) withAutoprint(\{ # examplesIf}

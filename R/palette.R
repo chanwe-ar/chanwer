@@ -1,96 +1,23 @@
 # Brand color tokens -------------------------------------------------------
 
-# Mirror of `color.palette` in chanwe-brandbook brand/tokens/tokens.json, the
-# source of truth (chanwe-brand's brand.yml follows it, and the extension's
-# brand.yml here is synced from there). Neither file is installed with the
-# package, so the values are copied by hand: change tokens.json first, sync
-# the extension, then update this table. Aliases (`primary-text`,
-# `primary-active` -> `primary`) are resolved to their hex.
-.chanwe_brand_colors <- c(
-  # The accent: one orange
-  "primary"          = "#FD3810",
-  "primary-text"     = "#FD3810",
-  "primary-active"   = "#FD3810",
-  # Obsidian and what sits on it
-  "ink"              = "#111319",
-  "ink-light"        = "#232A35",
-  "ink-soft"         = "#37393F",
-  "ink-fg"           = "#64748B",
-  "ink-subtle"       = "#646464",
-  "rule-ink"         = "#434D5D",
-  # Type
-  "fg"               = "#111319",
-  "body-fg"          = "#475569",
-  "fg-muted"         = "#475569",
-  "fg-subtle"        = "#8A94A6",
-  "emphasis"         = "#484848",
-  # The series hues (Apple-HIG-calibrated): the chart series and the
-  # callout roles share them; `primary` is the eighth member.
-  "chart-blue"       = "#007AFF",
-  "chart-green"      = "#34C759",
-  "chart-indigo"     = "#5856D6",
-  "chart-orange"     = "#FF9500",
-  "chart-red"        = "#FF3B30",
-  "chart-teal"       = "#00C7BE",
-  "chart-purple"     = "#AF52DE",
-  # Paper and slate surfaces
-  "paper"            = "#F8FAFC",
-  "callout-surface"  = "#F8FAFC",
-  "surface-sunken"   = "#F1F5F9",
-  "surface-slate"    = "#EBF0F6",
-  "surface-raised"   = "#FFFFFF",
-  "callout-header"   = "#EBF0F6",
-  "pure-white"       = "#FFFFFF",
-  "pure-black"       = "#000000",
-  # Hairlines
-  "rule"             = "#E2E8F0",
-  "rule-cool"        = "#C6CDD6",
-  "border-cool"      = "#CFD6DF",
-  "border"           = "#1113191A",
-  "neutral-300"      = "#D4D4D4",
-  "neutral-700"      = "#525252",
-  # Callouts - every one a series hue
-  "callout-note"      = "#007AFF", # chart-blue
-  "callout-tip"       = "#00C7BE", # chart-teal
-  "callout-warning"   = "#FF9500", # chart-orange
-  "callout-important" = "#FD3810", # primary
-  "callout-caution"   = "#AF52DE", # chart-purple
-  "callout-do"        = "#34C759", # chart-green
-  "callout-dont"      = "#FF3B30", # chart-red
-  # Report semaphores
-  "research-muted"      = "#99999E",
-  "kpi-green"           = "#147705",
-  "kpi-red"             = "#CC1914",
-  "exec-status-good"    = "#15803D",
-  "exec-status-regular" = "#D97706",
-  "exec-status-bad"     = "#CC1914",
-  # Code highlighting
-  "code-keyword"     = "#FD3810",
-  "code-string"      = "#15803D",
-  "code-number"      = "#7C3AED",
-  "code-operator"    = "#0758E5",
-  "code-function"    = "#475569",
-  "code-type"        = "#353535",
-  "code-comment"     = "#928D86",
-  # HTML statuses (semantic chrome, not series colours) and the legacy
-  # chart accents - cyan, magenta and gray are no longer in the series
-  "status-success"      = "#1EB508",
-  "status-success-soft" = "#C9FFC0",
-  "status-error"        = "#D32F2F",
-  "status-error-bg"     = "#FDECEA",
-  "status-warning"      = "#F9E710",
-  "status-warning-bg"   = "#FFF8B8",
-  "status-info"         = "#0C48ED",
-  "status-info-bg"      = "#B8CEFF",
-  "chart-cyan"          = "#11F7E6",
-  "chart-cyan-soft"     = "#B6FFF8",
-  "chart-magenta"       = "#EB03F2",
-  "chart-gray"          = "#71706C",
-  # The Reports tone (tokens.json, 2026-10-07): the code-number violet and
-  # its 12% wash, read like status-info / status-info-bg
-  "violet"              = "#7C3AED",
-  "violet-soft"         = "#EFE7FD"
-)
+# Every colour comes from `chanwe_tokens` (R/brand-tokens.R), which
+# chanwe-brandbook generates from brand/tokens/tokens.json and syncs here
+# (`brand:sync`). Never edit that file or write a hex in this package: read a
+# token with .cw_tk(), or build a tint from one with .cw_mix() / .cw_alpha().
+# tests/testthat/test-token-drift.R fails on any string literal hex that is
+# not a token.
+
+# One token by name, from the light colours, then the plot group.
+.cw_tk <- function(name) {
+  value <- chanwe_tokens$colors[[name]]
+  if (is.null(value)) {
+    stop(sprintf("`%s` is not a colour in chanwe_tokens.", name), call. = FALSE)
+  }
+  value
+}
+
+# A token as a named character vector (the brand group, as before 3.0.0).
+.chanwe_brand_colors <- unlist(chanwe_tokens$colors)
 
 # Mix `col` with `with` by `t` (0 = col, 1 = with), as an uppercase hex.
 .cw_mix <- function(col, with, t) {
@@ -99,13 +26,22 @@
   toupper(grDevices::rgb(t(a * (1 - t) + b * t), maxColorValue = 255))
 }
 
+# A token at an opacity, as #RRGGBBAA: the v2 tint is the text colour at 7%
+# (brand-v2.md §6), the plot grid ink-fg at 25% (`plot.grid`).
+.cw_alpha <- function(col, alpha) {
+  rgb <- grDevices::col2rgb(substr(col, 1L, 7L))
+  toupper(grDevices::rgb(
+    rgb[1], rgb[2], rgb[3], round(alpha * 255), maxColorValue = 255
+  ))
+}
+
 # The legacy chanwer ramps (p13, p14, p15, mb) predate the token system:
 # their anchors were the retired orange #E94B2B, the retired black #101010
 # and hues outside the palette. Since 2.6.0 every one is rebuilt from a
 # brand token, keeping its name, its length and its light -> dark steps.
 .cw_tints <- function(name, token, steps) {
   stats::setNames(
-    vapply(steps, function(t) .cw_mix(token, "#FFFFFF", t), character(1)),
+    vapply(steps, function(t) .cw_mix(token, .cw_tk("pure-white"), t), character(1)),
     sprintf("%s-%02d", name, seq_along(steps))
   )
 }
@@ -114,9 +50,8 @@
 # steps. The pole is the token's own soft partner when the palette has one,
 # otherwise a 75% tint.
 .cw_p15 <- function(family, token, light = NULL) {
-  b <- .chanwe_brand_colors
-  from <- b[[token]]
-  to <- if (is.null(light)) .cw_mix(from, "#FFFFFF", 0.75) else b[[light]]
+  from <- .cw_tk(token)
+  to <- if (is.null(light)) .cw_mix(from, .cw_tk("pure-white"), 0.75) else .cw_tk(light)
   stats::setNames(
     vapply(0:4 / 4, function(t) .cw_mix(from, to, t), character(1)),
     sprintf("p15-%s-%02d", family, 1:5)
@@ -125,12 +60,20 @@
 
 # p13: ten steps from the token toward white, the steps the old ramps used.
 .cw_p13_orange <- .cw_tints(
-  "p13-orange", .chanwe_brand_colors[["primary"]],
+  "p13-orange", .cw_tk("primary"),
   c(0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.48, 0.64, 0.72, 0.80)
 )
 .cw_p13_gray <- .cw_tints(
-  "p13-gray", .chanwe_brand_colors[["ink"]],
+  "p13-gray", .cw_tk("ink"),
   c(0, 0.08, 0.16, 0.24, 0.32, 0.40, 0.56, 0.64, 0.72, 0.80)
+)
+
+# The plot group of tokens.json (brand-v2 Q3 / C1): the focus colour, the
+# slate ramp for every other series (dark -> light) and the categorical
+# order for charts with no focus series.
+.chanwe_slate_colors <- stats::setNames(
+  chanwe_tokens$plot$slate,
+  paste0("slate-", seq_along(chanwe_tokens$plot$slate))
 )
 
 .chanwe_colors <- c(
@@ -138,34 +81,44 @@
   # Signed tokens - the canonical positive/negative/neutral for KPI arrows,
   # table deltas, and diverging-scale poles. Positive and negative are the
   # brand's kpi-green / kpi-red, which clear WCAG 4.5:1 small-text contrast
-  # on every brand surface (the raw status-success #1EB508 tops out at
-  # 2.7:1); neutral is the slate fg-muted.
-  "signed-positive" = "#147705",
-  "signed-negative" = "#CC1914",
-  "signed-neutral"  = "#475569",
+  # on every brand surface (the raw status-success tops out at 2.7:1);
+  # neutral is the slate fg-muted.
+  "signed-positive" = .cw_tk("kpi-green"),
+  "signed-negative" = .cw_tk("kpi-red"),
+  "signed-neutral"  = .cw_tk("fg-muted"),
+  # The v2 plot tokens
+  "plot-focus" = chanwe_tokens$plot$focus,
+  "plot-grid" = chanwe_tokens$plot$grid,
+  "plot-axis-text" = chanwe_tokens$plot$`axis-text`,
+  "plot-title" = chanwe_tokens$plot$title,
+  "plot-background" = chanwe_tokens$plot$background,
+  # The v2 tint (brand-v2.md §6): the text colour at 7%, for table headers,
+  # hover and grouping inside a pane.
+  "tint" = .cw_alpha(.cw_tk("ink"), 0.07),
+  .chanwe_slate_colors,
   # Legacy chanwer names, resolved to the brand tokens per the v1 -> v2
   # migration in _extensions/chanwe-brand/assets/COLORS.md.
-  "brand-orange" = "#FD3810",     # primary
-  "brand-black" = "#111319",      # ink
-  "brand-white" = "#F8FAFC",      # paper
-  "brand-pure-white" = "#FFFFFF", # pure-white
-  "brand-gray" = "#71706C",       # chart-gray
-  "brand-silver" = "#D4D4D4",     # neutral-300
+  "brand-orange" = .cw_tk("primary"),
+  "brand-black" = .cw_tk("ink"),
+  "brand-white" = .cw_tk("paper"),
+  "brand-pure-white" = .cw_tk("pure-white"),
+  "brand-gray" = .cw_tk("chart-gray"),
+  "brand-silver" = .cw_tk("neutral-300"),
   .cw_p13_orange,
   .cw_p13_gray,
   # p14 - strong/soft pairs: the palette's status and neon pairs
-  "p14-yellow-strong" = "#F9E710",  # status-warning
-  "p14-yellow-soft" = "#FFF8B8",    # status-warning-bg
-  "p14-cyan-strong" = "#11F7E6",    # chart-cyan
-  "p14-cyan-soft" = "#B6FFF8",      # chart-cyan-soft
-  "p14-blue-strong" = "#0C48ED",    # status-info
-  "p14-blue-soft" = "#B8CEFF",      # status-info-bg
-  "p14-magenta-strong" = "#EB03F2", # chart-magenta
-  "p14-magenta-soft" = .cw_mix("#EB03F2", "#FFFFFF", 0.75), # its 75% tint
-  "p14-green-strong" = "#1EB508",   # status-success
-  "p14-green-soft" = "#C9FFC0",     # status-success-soft
-  "p14-red-strong" = "#D32F2F",     # status-error
-  "p14-red-soft" = "#FDECEA",       # status-error-bg
+  "p14-yellow-strong" = .cw_tk("status-warning"),
+  "p14-yellow-soft" = .cw_tk("status-warning-bg"),
+  "p14-cyan-strong" = .cw_tk("chart-cyan"),
+  "p14-cyan-soft" = .cw_tk("chart-cyan-soft"),
+  "p14-blue-strong" = .cw_tk("status-info"),
+  "p14-blue-soft" = .cw_tk("status-info-bg"),
+  "p14-magenta-strong" = .cw_tk("chart-magenta"),
+  "p14-magenta-soft" = .cw_mix(.cw_tk("chart-magenta"), .cw_tk("pure-white"), 0.75),
+  "p14-green-strong" = .cw_tk("status-success"),
+  "p14-green-soft" = .cw_tk("status-success-soft"),
+  "p14-red-strong" = .cw_tk("status-error"),
+  "p14-red-soft" = .cw_tk("status-error-bg"),
   # p15 - full 5-shade ramps (dark -> light) for 11 families, each anchored
   # on a brand token
   .cw_p15("coral", "primary"),
@@ -190,27 +143,25 @@
     paste0("mb-dark-", c(100, 200, 300, 400, 500, 600, 700, 800, 900, 950))
   ),
   # chanwe-report-typst token names used across the helpers, resolved to
-  # their brand.yml roles.
-  "typst-primary"      = "#FD3810", # primary
-  # brand.yml retired the darker text orange (#C52C0C): one orange, so the
-  # small-text accent is primary itself.
-  "typst-primary-text" = "#FD3810", # primary-text -> primary
-  "typst-ink"          = "#111319", # ink
-  "typst-fg"           = "#111319", # fg
-  "typst-fg-muted"     = "#475569", # fg-muted
-  "typst-fg-subtle"    = "#8A94A6", # fg-subtle
-  "typst-neutral-100"  = "#F1F5F9", # surface-sunken
-  "typst-neutral-200"  = "#E2E8F0", # rule
-  "typst-neutral-300"  = "#D4D4D4", # neutral-300
-  "typst-neutral-700"  = "#525252", # neutral-700
-  "typst-neutral-900"  = "#111319", # ink
-  "typst-white"        = "#FFFFFF", # pure-white
-  "typst-green"        = "#34C759", # callout-do
-  "typst-red"          = "#FF3B30", # callout-dont
-  "typst-warning"      = "#FF9500", # callout-warning
-  "typst-info"         = "#007AFF", # callout-note
-  "typst-tip"          = "#00C7BE", # callout-tip
-  "typst-caution"      = "#AF52DE"  # callout-caution
+  # their brand.yml roles (one orange: primary-text is primary).
+  "typst-primary"      = .cw_tk("primary"),
+  "typst-primary-text" = .cw_tk("primary-text"),
+  "typst-ink"          = .cw_tk("ink"),
+  "typst-fg"           = .cw_tk("fg"),
+  "typst-fg-muted"     = .cw_tk("fg-muted"),
+  "typst-fg-subtle"    = .cw_tk("fg-subtle"),
+  "typst-neutral-100"  = .cw_tk("surface-sunken"),
+  "typst-neutral-200"  = .cw_tk("rule"),
+  "typst-neutral-300"  = .cw_tk("neutral-300"),
+  "typst-neutral-700"  = .cw_tk("neutral-700"),
+  "typst-neutral-900"  = .cw_tk("ink"),
+  "typst-white"        = .cw_tk("pure-white"),
+  "typst-green"        = .cw_tk("callout-do"),
+  "typst-red"          = .cw_tk("callout-dont"),
+  "typst-warning"      = .cw_tk("callout-warning"),
+  "typst-info"         = .cw_tk("callout-note"),
+  "typst-tip"          = .cw_tk("callout-tip"),
+  "typst-caution"      = .cw_tk("callout-caution")
 )
 
 .chanwe_semantic_names <- c(
@@ -227,14 +178,16 @@
   neutral    = "signed-neutral"
 )
 
-# Categorical chart palette - brand.yml `meta.chart-palette-order`: the
-# eight series hues. `chart-red` sits last on purpose: it is dE00 5.0 from
-# `primary`, so the two reds only meet in an eight-series chart; the worst
-# pair inside the first seven is dE00 15.3 (blue vs indigo).
-.chanwe_chart_colors <- .chanwe_brand_colors[c(
-  "primary", "chart-blue", "chart-green", "chart-indigo",
-  "chart-orange", "chart-teal", "chart-purple", "chart-red"
-)]
+# Categorical chart palette - tokens.json `plot.categorical`, for charts
+# with no focus series (rule C1). Each hue is named by its colour token.
+.chanwe_chart_colors <- local({
+  hexes <- chanwe_tokens$plot$categorical
+  pool <- .chanwe_brand_colors[c(
+    "primary", "chart-blue", "chart-teal", "chart-indigo", "chart-purple",
+    "chart-green", "chart-orange", "chart-red"
+  )]
+  stats::setNames(hexes, names(pool)[match(toupper(hexes), toupper(pool))])
+})
 
 .chanwe_chart_names <- names(.chanwe_chart_colors)
 
@@ -276,7 +229,9 @@
     ramp_purple = .chanwe_named_ramp("purple"),
     semantic = chanwe_get_semantic(),
     signed = chanwe_get_signed(),
-    chart = .chanwe_chart_colors
+    chart = .chanwe_chart_colors,
+    slate = .chanwe_slate_colors,
+    focus = c("plot-focus" = chanwe_tokens$plot$focus, .chanwe_slate_colors)
   )
 }
 
@@ -380,14 +335,25 @@ chanwe_get_signed <- function() {
 #'
 #' @param palette Optional palette selector. Use `NULL` (default) to return
 #'   all colors and grouped palettes. Supported names are `"all"`, `"core"`,
-#'   `"brand"` (the 69-colour palette of chanwe-brandbook `tokens.json`),
+#'   `"brand"` (every colour of chanwe-brandbook `tokens.json`, read from the
+#'   generated `chanwe_tokens`),
 #'   `"p13_orange"`, `"p13_gray"`, `"p14_accents"`, `"p15_coral"`,
 #'   `"p15_vermillion"`, `"p15_green"`, `"p15_magenta"`, `"p15_blue"`,
 #'   `"p15_yellow"`, `"p15_cyan"`, `"p15_mustard"`, `"p15_violet"`,
 #'   `"p15_teal"`, `"p15_ink"`, `"mb_orange"`, `"mb_dark"`, the series-hue
 #'   ramps `"ramp_blue"`, `"ramp_indigo"`, `"ramp_teal"`, `"ramp_green"`,
 #'   `"ramp_amber"`, `"ramp_red"`, `"ramp_purple"`,
-#'   `"semantic"`, `"signed"`, and `"chart"`.
+#'   `"semantic"`, `"signed"`, `"chart"` (the categorical order of
+#'   `tokens.json` `plot.categorical`, for charts with no focus series),
+#'   `"slate"` (the `plot.slate` ramp, dark to light, for the series that are
+#'   not the focus) and `"focus"` (the focus orange followed by the slate
+#'   ramp).
+#'
+#' @section The focus rule (v2):
+#' Orange is the one signal: the series that matters takes `plot.focus`
+#' (`#FD3810`) and every other series sits on the slate ramp. Use
+#' [scale_color_chanwe_focus()] / [scale_fill_chanwe_focus()] for that; keep
+#' the categorical `"chart"` palette for charts where no series is the focus.
 #'
 #' @section Signed colors:
 #' The `"signed"` group carries the canonical positive / negative / neutral
@@ -447,7 +413,9 @@ chanwe_palette <- function(palette = NULL) {
 #' Returns structured brand tokens used across theme helpers and Quarto
 #' reporting components.
 #'
-#' @return A list with color, typography, geometry, and reporting token blocks.
+#' @return A list with color, typography, geometry, plot and reporting token
+#'   blocks. Values come from the generated `chanwe_tokens`
+#'   (chanwe-brandbook `tokens.json`).
 #' @export
 #'
 #' @examples
@@ -464,24 +432,33 @@ chanwe_brand_tokens <- function() {
     # display, JetBrains Mono for eyebrows, labels and metadata; Cormorant
     # Garamond only for editorial italics and numerals. Inter is retired.
     typography = list(
-      family = "Satoshi",
-      display_family = "Schibsted Grotesk",
-      mono_family = "JetBrains Mono",
+      family = chanwe_tokens$fonts$body,
+      display_family = chanwe_tokens$fonts$display,
+      mono_family = chanwe_tokens$fonts$mono,
       serif_family = "Cormorant Garamond",
-      base_size = 13.5,
+      base_size = chanwe_tokens$type$body,
       base_line_height = 1.62,
       heading_weight = 600,
       heading_line_height = 1.15,
-      link_weight = 500
+      link_weight = 500,
+      # the v2 type scale in px (label 10 ... display 48)
+      scale = unlist(chanwe_tokens$type)
     ),
-    # One radius: the brand guide sets 4px on cards, buttons and fields
-    # (tokens.json `radius`); 999px pills are for status chips only.
+    # v2 shapes (tokens.json `radius`, brand-v2.md §3): rows 8px, dense
+    # panes 12px, panes on a page 16px, every control a 999px pill.
     geometry = list(
-      radius_small = 4,
-      radius_base = 4,
-      radius_large = 4,
+      radius_small = chanwe_tokens$radii$row,
+      radius_base = chanwe_tokens$radii$pane,
+      radius_large = chanwe_tokens$radii$surface,
+      radius_pill = chanwe_tokens$radii$pill,
+      radii = unlist(chanwe_tokens$radii),
+      space = unlist(chanwe_tokens$space),
+      control = unlist(chanwe_tokens$control),
       shadow = "none"
     ),
+    # tokens.json `plot` (brand-v2 Q3): focus, slate ramp, categorical,
+    # grid, axis text, line width, point size and bar radius.
+    plot = chanwe_tokens$plot,
     reporting = list(
       code_background = semantic[["background"]],
       code_left_rule = semantic[["primary"]],

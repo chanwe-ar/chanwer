@@ -36,10 +36,10 @@ test_that("chanwe_gt builds a gt table with the chanwe heading", {
   expect_match(html, "TABLE")
   expect_match(html, "chanwe-title")
   expect_match(html, "Source")
-  # thin stub and header rules replace gt's 2px defaults
+  # v2 pane: no vertical stub rule, hairline rows
   expect_match(html, "#cwtest .gt_stub")
   opts <- g[["_options"]]
-  expect_identical(opts$value[[which(opts$parameter == "stub_border_width")]], "1px")
+  expect_identical(opts$value[[which(opts$parameter == "stub_border_style")]], "none")
   expect_identical(opts$value[[which(opts$parameter == "table_body_border_top_style")]], "none")
 
   expect_error(chanwe_gt(fleet, signed = "nope"), "not found")

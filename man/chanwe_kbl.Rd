@@ -26,7 +26,7 @@ chanwe_kbl(
   col_label_top = 0,
   footer_top = 0,
   bg = "paper",
-  top_border = TRUE,
+  top_border = NULL,
   header_rule = TRUE,
   padding = 12.5,
   fmt = list(),
@@ -35,7 +35,9 @@ chanwe_kbl(
   total_fill = TRUE,
   vlines = NULL,
   highlight_cols = NULL,
-  highlight_color = "#EBF0F6"
+  highlight_color = NULL,
+  pane = TRUE,
+  caption_style = NULL
 )
 }
 \arguments{
@@ -104,7 +106,8 @@ to paper / paper / slate. Or any raw Typst color expression (e.g.
 \code{"rgb(\\\"#EBF0F6\\\")"}). Pass \code{NULL} for transparent.}
 
 \item{top_border}{Logical. Draw a slate hairline above the title cell.
-Default \code{TRUE}.}
+Default \code{NULL}: \code{FALSE} for a pane (its border closes the
+top), \code{TRUE} with \code{pane = FALSE}.}
 
 \item{header_rule}{Logical. Draw the heavier rule between the title block
 and the column labels. Default \code{TRUE}.}
@@ -129,7 +132,7 @@ same column as text. For the standard positive/negative treatment use
 get a heavier rule above them, no row dividers, and (optionally) a
 highlight fill. Default \code{0} (no total rows).}
 
-\item{total_fill}{Logical. Fill total rows with a light gray background.
+\item{total_fill}{Logical. Fill total rows with the slate tint.
 Only used when \code{n_total > 0}. Default \code{TRUE}.}
 
 \item{vlines}{Optional integer vector of column indices at which to draw
@@ -139,7 +142,17 @@ vertical divider lines (Typst \code{table.vline} x positions).}
 and data cells get a highlight background fill.}
 
 \item{highlight_color}{Hex color for \code{highlight_cols} fill.
-Default \code{"#EBF0F6"} (brand \code{surface-slate}).}
+Default \code{NULL}: the \code{surface-slate} token (\code{#EBF0F6}).}
+
+\item{pane}{Logical. Draw the table as a v2 pane (brand-v2 Q1 B): a block
+with the 16px surface radius (scaled to the document like the type, 8pt
+at the default 7pt body), a hairline border, column labels on the slate
+tint and no outer fill around it. Default \code{TRUE}; \code{FALSE} draws
+the open chanwer 2.x table.}
+
+\item{caption_style}{\code{"mono"} (v2 default): the source line as a
+JetBrains Mono label. \code{"stamp"}: the orange stamp of chanwer 2.x.
+\code{NULL} reads \code{getOption("chanwer.caption_style", "mono")}.}
 }
 \value{
 A \code{\link[knitr]{asis_output}} containing a raw \code{{=typst}} block.
@@ -147,11 +160,12 @@ Works in Quarto documents rendered with \code{format: chanwe-report-typst}.
 }
 \description{
 Generates a styled Typst table directly from a data frame, bypassing the
-HTML→Pandoc→Typst pipeline. Schibsted Grotesk title, Satoshi subtitle and
-text cells (the brand guide sets tables in Satoshi), JetBrains Mono column
-headers and right-aligned figures (mono keeps them tabular so numeric
-columns align digit-for-digit), slate hairline rules. No CSS
-translation losses.
+HTML→Pandoc→Typst pipeline. The table is a v2 pane: a rounded block with a
+hairline, the column labels on the slate tint, hairline rows. Schibsted
+Grotesk title, Satoshi subtitle and text cells, JetBrains Mono column
+labels and right-aligned figures (mono keeps them tabular so numeric
+columns align digit-for-digit), the source line as a mono label. Colours,
+fonts and radii come from the generated tokens (\code{chanwe_tokens}).
 }
 \examples{
 \dontshow{if (requireNamespace("knitr", quietly = TRUE)) withAutoprint(\{ # examplesIf}

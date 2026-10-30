@@ -25,8 +25,14 @@ devtools::install(".")
 - `chanwe_palette()` — exact named color tokens and grouped palettes
   (core brand, `p13`/`p14`/`p15` ramps, `mb` main-brand scale, semantic,
   and the editorial 8-color chart palette).
-- `theme_chanwe()` — the editorial ggplot2 theme with custom title,
-  subtitle, KPI-scoreboard, and caption elements.
+- `theme_chanwe()` — the CHANWE v2 ggplot2 theme (horizontal slate grid,
+  no axis lines, mono labels at the compact size, pill legend keys) with
+  custom title, subtitle, KPI-scoreboard, and caption elements.
+- `scale_color_chanwe_focus()` / `scale_fill_chanwe_focus()` and
+  `chanwe_focus_colors()` — the v2 colour rule: the focus series in
+  orange, every other series on the slate ramp.
+- `geom_chanwe_col()` / `geom_chanwe_bar()` — bars with 3px rounded ends;
+  `draw_key_chanwe_pill()` — the pill legend key.
 - `chanwe_title()`, `chanwe_subtitle()`, `chanwe_kpi()`,
   `chanwe_caption()` — label helpers for the full header treatment.
 - `scale_color_chanwe_d()` / `scale_fill_chanwe_d()` — discrete brand
@@ -37,8 +43,8 @@ devtools::install(".")
 - `chanwe_kbl()` — native Typst table generator for Quarto PDF reports,
   with `chanwe_col_signed()` for positive/negative value coloring.
 - `chanwe_gt()`, `chanwe_reactable()`, `chanwe_highchart()` — the same
-  header grammar (eyebrow / title / subtitle / orange stamp caption) and
-  signed-value coloring for HTML tables and interactive charts.
+  header grammar (eyebrow / title / subtitle / mono caption), tables as
+  v2 panes and signed-value coloring for HTML tables and interactive charts.
 - `chanwe_load_fonts()` — registers the bundled brand fonts (Satoshi,
   Schibsted Grotesk, JetBrains Mono) with `systemfonts`.
 - `chanwe_reporting_css()` — bundled SCSS for Quarto HTML output.
@@ -62,6 +68,35 @@ ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
   ) +
   theme_chanwe()
 ```
+
+## CHANWE v2 (3.0.0)
+
+chanwer follows the CHANWE v2 language (chanwe-brandbook
+`brand/guidelines/brand-v2.md`, decisions Q3 and C1). Every value is read
+from `chanwe_tokens` in `R/brand-tokens.R`, which chanwe-brandbook generates
+from `brand/tokens/tokens.json` and syncs here: never edit it by hand, and
+never write a hex in the package (the drift test fails).
+
+**Orange is the one signal.** Mark the series that matters; everything else
+goes on the slate ramp. Use the categorical palette only when no series is
+the focus.
+
+```r
+ggplot(sales, aes(region, usd, fill = region)) +
+  geom_chanwe_col(width = 0.6) +          # 3px rounded ends, pill legend keys
+  scale_fill_chanwe_focus("Cuyo") +       # Cuyo orange, the rest slate
+  labs(title = "Sales by region", caption = chanwe_caption("Source: ledger")) +
+  theme_chanwe(legend_position = "none")
+
+ggplot(peers, aes(year, value, colour = country)) +
+  geom_line(key_glyph = draw_key_chanwe_pill) +
+  scale_color_chanwe_focus("Argentina") +
+  theme_chanwe()
+```
+
+Horizontal bars take `theme_chanwe(grid = "x")`. The caption is a mono
+label; `caption_style = "stamp"` (or `options(chanwer.caption_style =
+"stamp")` for every helper) brings back the 2.x orange stamp.
 
 ## ggplot2 Pattern
 
@@ -87,10 +122,10 @@ ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
 
 The main decisions:
 
-- `bg_color` picks the surface, all `brand.yml` tokens: `"paper"`
+- `bg_color` picks the surface, all tokens: `"paper"`
   (default, `#F8FAFC`), `"white"`, `"sunken"` (`#F1F5F9`), `"slate"`
-  (`#EBF0F6`), `"transparent"`, or any hex string. Grid line colors adapt
-  automatically. The older `"metallic"`, `"white-ivory"` and `"gray"`
+  (`#EBF0F6`), `"transparent"`, or any hex string. The grid is
+  `plot.grid` (ink-fg at 25%) on every surface. The older `"metallic"`, `"white-ivory"` and `"gray"`
   still resolve (to paper, paper and slate).
 - `chanwe_title(text, eyebrow = "...")` adds the orange mono-caps
   eyebrow line above the title. Plain titles need no helper.
@@ -121,14 +156,16 @@ labs(
 
 ### Color scales
 
-Colors come from the palette in chanwe-brandbook `brand/tokens/tokens.json`,
-which the chanwe-brand `brand.yml` follows (`chanwe_palette("brand")`
-returns it). The brand manual assigns each
+Colors come from chanwe-brandbook `brand/tokens/tokens.json` through the
+generated `chanwe_tokens` (`chanwe_palette("brand")` returns its colours). The brand manual assigns each
 color family a role (green = positive, red = alert, ink = neutral
 anchor…), and the scales are built on those roles:
 
 ```r
-# Categorical — brand.yml `meta.chart-palette-order`
+# A focus series (v2 rule C1): orange focus, slate context
+scale_color_chanwe_focus("Argentina")
+
+# Categorical, no focus — tokens.json `plot.categorical`
 scale_color_chanwe_d()
 
 # Ordinal series (S/M/L, funnel stages): a one-hue ramp group
@@ -146,9 +183,9 @@ scale_fill_chanwe_div(limits = c(-m, m))
 
 Notes worth knowing when charting:
 
-- The categorical slot order is brand.yml's `meta.chart-palette-order`:
-  the eight Apple-HIG-calibrated series hues — primary orange, blue,
-  green, indigo, orange, teal, purple, red. The same hues tint the
+- The categorical slot order is `tokens.json` `plot.categorical`:
+  the eight series hues — primary orange, blue, teal, indigo, purple,
+  green, orange, red. The same hues tint the
   callouts, so a chart series and a callout speak the same colours.
 - Red sits last on purpose: it is nearly the same colour as the primary
   (ΔE00 5.0), so the two only meet in an eight-series chart. The worst
@@ -187,7 +224,7 @@ The brand trio, by the roles the CHANWE brand guide gives them:
 |---|---|---|
 | Text | **Satoshi** | subtitles, table text, chart body text |
 | Titles and display | **Schibsted Grotesk** (600) | chart and table titles |
-| Eyebrows, labels, metadata | **JetBrains Mono** | eyebrows, axis text and titles, legends, column labels, figures, the caption stamp |
+| Eyebrows, labels, metadata | **JetBrains Mono** | eyebrows, axis text and titles, legends, column labels, figures, captions |
 | Editorial italics and numerals | Cormorant Garamond | KPI hero value, subtitle notes |
 
 Inter is retired. The fonts ship with the package (`inst/fonts`, copied
@@ -344,7 +381,9 @@ chanwe_preview_palette("chart")     # swatch grid of any group below
 
 | Group | Contents |
 |---|---|
-| `chart` | the categorical 8, brand.yml `meta.chart-palette-order` |
+| `chart` | the categorical 8, `tokens.json` `plot.categorical` |
+| `slate` | the `plot.slate` ramp (dark to light) for the context series |
+| `focus` | the focus orange followed by the slate ramp |
 | `signed` | canonical positive / negative / neutral |
 | `semantic` | foreground, background, primary, success, danger, positive, … |
 | `brand` | the full palette of chanwe-brandbook `tokens.json` |

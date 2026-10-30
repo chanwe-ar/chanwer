@@ -22,7 +22,7 @@ chanwe:
   volume: "MENDOZA · ARGENTINA"
   chapter: "Design System"
   section: "R Package"
-  topic: "chanwer v2.6"
+  topic: "chanwer v3.0"
   rail-eyebrow: "VISUAL REFERENCE"
   hero-image: "_extensions/chanwe-report/assets/bg_mountains.jpg"
   hero-img-position: 10
@@ -43,7 +43,7 @@ chanwe:
     - author
     - status
   meta-rows:
-    - { label: "Package",  value: "chanwer v2.6",     sub: "R design system" }
+    - { label: "Package",  value: "chanwer v3.0",     sub: "R design system" }
     - { label: "Format",   value: "chanwe-report-typst", sub: "Quarto extension" }
     - { label: "Author",   value: "Chanwe",            sub: "Alejandro Abraham" }
   back-cover: true
@@ -194,12 +194,75 @@ p_fleet <- ggplot(mt, aes(wt, mpg, color = hp_band)) +
     )
 ```
 
+# CHANWE v2 in charts
+
+chanwer 3.0.0 brings the charts and tables to the CHANWE v2 language
+(brand-v2 Q3, colour rule C1). Every value comes from the generated
+`chanwe_tokens` (chanwe-brandbook `tokens.json`): slate gridlines,
+horizontal only; no axis lines or ticks; Schibsted Grotesk titles;
+JetBrains Mono axis labels, legends and captions at the compact size;
+legend keys as pills; bars with 3px rounded ends (`geom_chanwe_col()`,
+`geom_chanwe_bar()`); tables as panes.
+
+**Orange is the one signal.** The series that matters takes the focus
+orange and every other series sits on the slate ramp
+(`scale_fill_chanwe_focus()`, `scale_color_chanwe_focus()`,
+`chanwe_focus_colors()`). The categorical palette is for charts with no
+focus series.
+
+```{r}
+#| label: v2-focus-palette
+#| fig-height: 2.4
+chanwe_preview_palette("focus")
+```
+
+```{r}
+#| label: v2-focus-bars
+region_sales <- data.frame(
+    region = c("Cuyo", "Pampeana", "NOA", "Patagonia", "NEA"),
+    sales = c(42, 37, 31, 25, 18)
+)
+region_sales$region <- factor(region_sales$region, levels = region_sales$region)
+ggplot(region_sales, aes(region, sales, fill = region)) +
+    geom_chanwe_col(width = 0.62) +
+    scale_fill_chanwe_focus("Cuyo") +
+    labs(
+        title = chanwe_title("Sales by region", eyebrow = "V2 - FOCUS BAR"),
+        subtitle = chanwe_subtitle("Cuyo is the focus; the other regions recede on the slate ramp"),
+        x = NULL,
+        y = "USD MM",
+        caption = chanwe_caption("Source: simulated")
+    ) +
+    theme_chanwe(legend_position = "none")
+```
+
+```{r}
+#| label: v2-focus-lines
+peers <- expand.grid(year = 2015:2025, country = c("Argentina", "Brasil", "Chile", "Uruguay"))
+peers$value <- with(peers, 50 + (year - 2015) * c(1.2, 2.2, 2.8, 3.4)[as.integer(country)] +
+    sin(year + as.integer(country)) * 2)
+ggplot(peers, aes(year, value, colour = country)) +
+    geom_line(linewidth = 0.55, key_glyph = draw_key_chanwe_pill) +
+    scale_color_chanwe_focus("Argentina") +
+    scale_x_continuous(breaks = seq(2015, 2025, 2)) +
+    labs(
+        title = chanwe_title("Activity index", eyebrow = "V2 - FOCUS LINE"),
+        subtitle = chanwe_subtitle("Argentina against its peers, 2015 = 50"),
+        x = NULL,
+        y = NULL,
+        colour = NULL,
+        caption = chanwe_caption("Source: simulated")
+    ) +
+    theme_chanwe()
+```
+
 # The Color System
 
 Every color in `chanwer` is a named token. `chanwe_palette()` returns the
 full inventory; `chanwe_palette("<group>")` returns one group;
 `chanwe_preview_palette("<group>")` draws its swatch grid. The values
-mirror `color.palette` in the chanwe-brand `brand.yml`.
+are read from the generated `chanwe_tokens` (chanwe-brandbook
+`tokens.json`), never written by hand.
 
 ::: {.chanwe-callout kind="note" eyebrow="BRAND ROLES" title="The manual assigns each family a job"}
 Orange is the one accent, blue is structural, green is positive, red
@@ -209,10 +272,11 @@ roles — positive/negative is never an arbitrary red/green pair.
 
 ## The categorical eight
 
-The slot order is `meta.chart-palette-order` from `brand.yml` — primary
-orange, blue, green, indigo, orange, teal, purple, red — the eight
-Apple-HIG-calibrated series hues, shared with the callouts. Red sits last:
-it is nearly the primary, so the two only meet in an eight-series chart.
+The slot order is `plot.categorical` from `tokens.json` — primary
+orange, blue, teal, indigo, purple, green, orange, red — the eight
+series hues, shared with the callouts. Red sits last: it is nearly the
+primary, so the two only meet in an eight-series chart. Use it only when
+no series is the focus.
 
 ```{r}
 #| label: preview-chart
@@ -300,7 +364,7 @@ mpg_drv <- ggplot2::mpg |>
         class = reorder(class, class, FUN = length)
     )
 ggplot(mpg_drv, aes(y = class, fill = drv)) +
-    geom_bar(width = 0.62) +
+    geom_chanwe_bar(width = 0.62) +
     scale_fill_chanwe_d() +
     labs(
         title = chanwe_title(
@@ -315,7 +379,7 @@ ggplot(mpg_drv, aes(y = class, fill = drv)) +
         fill = "Drivetrain",
         caption = chanwe_caption("Source: ggplot2::mpg")
     ) +
-    theme_chanwe()
+    theme_chanwe(grid = "x")
 ```
 
 ## Ordinal: one-hue ramp
@@ -327,7 +391,7 @@ the order in the color: `scale_fill_chanwe_d(palette = "ramp_blue", reverse = TR
 #| label: ordinal
 #| fig-height: 4.0
 ggplot(mt, aes(hp_band, fill = hp_band)) +
-    geom_bar(width = 0.55) +
+    geom_chanwe_bar(width = 0.55) +
     scale_fill_chanwe_d(palette = "ramp_blue", reverse = TRUE) +
     labs(
         title = chanwe_title(
@@ -460,7 +524,7 @@ mk <- ggplot2::mpg |>
     mutate(delta = hwy - mean(hwy), manufacturer = reorder(manufacturer, delta))
 md <- max(abs(mk$delta))
 ggplot(mk, aes(delta, manufacturer, fill = delta)) +
-    geom_col(width = 0.62) +
+    geom_chanwe_col(width = 0.62) +
     scale_fill_chanwe_div(limits = c(-md, md)) +
     labs(
         title = chanwe_title(
@@ -573,7 +637,7 @@ chanwe_kbl(
 
 The header grammar: mono-caps eyebrow with an orange rule, Schibsted Grotesk
 title at 1.85x base, Satoshi subtitle, optional note line or KPI scoreboard, and an
-orange stamp source caption.
+mono source caption (`caption_style = "stamp"` brings back the orange stamp).
 
 ##### Eyebrow · title · subtitle (default)
 
@@ -767,7 +831,7 @@ p_fleet +
 # Surfaces and Frames
 
 `theme_chanwe()` exposes five named surfaces plus `"transparent"` and raw
-hex; grid colors adapt per surface.
+hex; the v2 grid (`plot.grid`, ink-fg at 25%) is the same on every surface.
 
 ##### paper · default
 
@@ -1023,7 +1087,7 @@ ggplot(cyl_summary, aes(cyl, avg_mpg)) +
 #| label: form-focus
 #| fig-height: 4.0
 ggplot(cyl_summary, aes(cyl, avg_mpg)) +
-    geom_col(aes(fill = cyl == "4"), width = 0.62) +
+    geom_chanwe_col(aes(fill = cyl), width = 0.62) +
     geom_text(
         aes(label = sprintf("%.1f", avg_mpg)),
         vjust = -0.7,
@@ -1031,13 +1095,7 @@ ggplot(cyl_summary, aes(cyl, avg_mpg)) +
         colour = chanwe_palette("semantic")[["secondary"]],
         size = 6.75 * 0.8 / ggplot2::.pt
     ) +
-    scale_fill_manual(
-        values = c(
-            `TRUE` = chanwe_palette("semantic")[["primary"]],
-            `FALSE` = "#D4D4D4"
-        ),
-        guide = "none"
-    ) +
+    scale_fill_chanwe_focus("4", guide = "none") +
     scale_y_continuous(expand = expansion(mult = c(0, 0.14))) +
     labs(
         title = chanwe_title(
@@ -1045,7 +1103,7 @@ ggplot(cyl_summary, aes(cyl, avg_mpg)) +
             eyebrow = "FORM - FOCUS BAR"
         ),
         subtitle = chanwe_subtitle(
-            "One accent, gray context, values on the bars"
+            "The focus in orange, the context on the slate ramp, values on the bars"
         ),
         x = "Cylinders",
         caption = chanwe_caption("Source: mtcars")
@@ -1072,7 +1130,7 @@ ggplot(mt, aes(wt, mpg, color = cyl)) +
             "Faceted by transmission",
             eyebrow = "FORM - FACETS"
         ),
-        subtitle = chanwe_subtitle("Strip labels in JetBrains Mono Thin"),
+        subtitle = chanwe_subtitle("Strip labels in JetBrains Mono"),
         x = "Weight",
         y = "MPG",
         color = "Cyl",

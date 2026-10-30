@@ -7,7 +7,9 @@
 chanwe_brand_tokens()
 }
 \value{
-A list with color, typography, geometry, and reporting token blocks.
+A list with color, typography, geometry, plot and reporting token
+blocks. Values come from the generated \code{chanwe_tokens}
+(chanwe-brandbook \code{tokens.json}).
 }
 \description{
 Returns structured brand tokens used across theme helpers and Quarto
