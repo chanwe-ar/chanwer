@@ -14,6 +14,7 @@ chanwe_reactable(
   smaller_is_better = FALSE,
   columns = list(),
   bg = "white",
+  caption_style = NULL,
   ...
 )
 }
@@ -37,6 +38,9 @@ right-aligned in mono; \code{signed} columns get the valence style).}
 \item{bg}{Table background. Named shorthand accepted by \code{\link[=theme_chanwe]{theme_chanwe()}}
 or any hex string. Default \code{"white"}.}
 
+\item{caption_style}{\code{"mono"} (v2 default) or \code{"stamp"} (the orange stamp
+of chanwer 2.x). \code{NULL} reads \code{getOption("chanwer.caption_style", "mono")}.}
+
 \item{...}{Further arguments passed to \code{reactable::reactable()}
 (\code{defaultPageSize}, \code{searchable}, \code{defaultSorted}, ...). \code{highlight} and
 \code{borderless} default to \code{TRUE}; pass them explicitly to override.}
@@ -45,17 +49,17 @@ or any hex string. Default \code{"white"}.}
 An \code{htmlwidget} of class \code{reactable}.
 }
 \description{
-An interactive \code{reactable} styled with the same header grammar as
-\code{\link[=chanwe_gt]{chanwe_gt()}} and \code{\link[=chanwe_kbl]{chanwe_kbl()}}: eyebrow / title / subtitle block above
-the table, orange stamp caption below, mono-caps column labels, JetBrains
-Mono tabular figures right-aligned, hairline slate rules, optional valence
-colouring for signed columns.
+An interactive \code{reactable} as a v2 pane (16px corners, a hairline around
+header, table and caption) with the same header grammar as \code{\link[=chanwe_gt]{chanwe_gt()}}
+and \code{\link[=chanwe_kbl]{chanwe_kbl()}}: eyebrow / title / subtitle block above the table, a
+mono caption below, mono column labels on the tint header, JetBrains Mono
+tabular figures right-aligned, hairline rows, optional valence colouring
+for signed columns.
 }
 \details{
-Interaction states follow the brand: the sortable header darkens on hover,
-sort and pagination buttons respond on press (100 ms, no overshoot), the
-current page sits on an ink background and page buttons turn brand orange
-on hover.
+Interaction states follow v2: the sortable header darkens on hover, rows
+take the tint, page buttons are pills (tint and orange text on hover, the
+current page an obsidian pill) and respond on press (100 ms, scale .97).
 }
 \examples{
 \dontshow{if (requireNamespace("reactable", quietly = TRUE) && requireNamespace("htmlwidgets", quietly = TRUE)) withAutoprint(\{ # examplesIf}

@@ -1,15 +1,15 @@
 #' Chanwe Interactive Table via reactable (HTML)
 #'
-#' An interactive `reactable` styled with the same header grammar as
-#' [chanwe_gt()] and [chanwe_kbl()]: eyebrow / title / subtitle block above
-#' the table, orange stamp caption below, mono-caps column labels, JetBrains
-#' Mono tabular figures right-aligned, hairline slate rules, optional valence
-#' colouring for signed columns.
+#' An interactive `reactable` as a v2 pane (16px corners, a hairline around
+#' header, table and caption) with the same header grammar as [chanwe_gt()]
+#' and [chanwe_kbl()]: eyebrow / title / subtitle block above the table, a
+#' mono caption below, mono column labels on the tint header, JetBrains Mono
+#' tabular figures right-aligned, hairline rows, optional valence colouring
+#' for signed columns.
 #'
-#' Interaction states follow the brand: the sortable header darkens on hover,
-#' sort and pagination buttons respond on press (100 ms, no overshoot), the
-#' current page sits on an ink background and page buttons turn brand orange
-#' on hover.
+#' Interaction states follow v2: the sortable header darkens on hover, rows
+#' take the tint, page buttons are pills (tint and orange text on hover, the
+#' current page an obsidian pill) and respond on press (100 ms, scale .97).
 #'
 #' @param data A data frame or tibble.
 #' @param title,subtitle,eyebrow Header block rendered above the table.
@@ -23,6 +23,9 @@
 #'   right-aligned in mono; `signed` columns get the valence style).
 #' @param bg Table background. Named shorthand accepted by [theme_chanwe()]
 #'   or any hex string. Default `"white"`.
+#' @param caption_style `"mono"` (v2 default) or `"stamp"` (the orange stamp
+#'   of chanwer 2.x). `NULL` reads `getOption("chanwer.caption_style",
+#'   "mono")`.
 #' @param ... Further arguments passed to `reactable::reactable()`
 #'   (`defaultPageSize`, `searchable`, `defaultSorted`, ...). `highlight` and
 #'   `borderless` default to `TRUE`; pass them explicitly to override.
@@ -59,6 +62,7 @@ chanwe_reactable <- function(
   smaller_is_better = FALSE,
   columns = list(),
   bg = "white",
+  caption_style = NULL,
   ...
 ) {
   chanwe_require_package("reactable")
@@ -119,62 +123,85 @@ chanwe_reactable <- function(
     }
   }
 
+  # v2 pane: the header block, the table and the caption are one pane
+  # (16px corners, a hairline around it). The table takes the corners and
+  # outer edges the header or caption does not.
+  has_hdr <- !is.null(title) || !is.null(subtitle) || !is.null(eyebrow)
+  has_cap <- !is.null(caption)
+  hair <- paste("1px solid", tk$hairline)
+  rad <- paste0(tk$radius_surface, "px")
+  root_style <- list(
+    fontFamily = .cw_font_sans,
+    fontSize = "13px",
+    borderLeft = hair,
+    borderRight = hair,
+    borderTop = hair,
+    borderBottom = if (has_cap) "none" else hair,
+    borderTopLeftRadius = if (has_hdr) "0" else rad,
+    borderTopRightRadius = if (has_hdr) "0" else rad,
+    borderBottomLeftRadius = if (has_cap) "0" else rad,
+    borderBottomRightRadius = if (has_cap) "0" else rad,
+    overflow = "hidden"
+  )
+
   theme <- reactable::reactableTheme(
     color = tk$fg,
     backgroundColor = bg,
-    borderColor = tk$rule_row,
-    highlightColor = tk$n100,
-    cellPadding = "10px 12px",
-    style = list(fontFamily = .cw_font_sans, fontSize = "13px"),
-    # Slate rule above the column labels — with a header block the widget gets
-    # two rules, one on the header's top edge and this one, same as chanwe_gt()
-    tableStyle = list(borderTop = paste("1px solid", tk$rule)),
-    # Column labels take the sharp brand orange accent (same token as the
-    # eyebrow and the caption stamp); hover still darkens to ink.
+    borderColor = tk$hairline,
+    highlightColor = tk$tint,
+    cellPadding = "10px 16px",
+    style = root_style,
+    # v2 tint header: mono labels (the one place for spaced capitals) in
+    # fg-muted on the tint, a hairline under; hover darkens to ink.
     headerStyle = list(
       fontFamily = .cw_font_mono,
       fontSize = "10px",
-      fontWeight = 400,
-      letterSpacing = ".14em",
+      fontWeight = 500,
+      letterSpacing = ".12em",
       textTransform = "uppercase",
-      color = tk$accent,
-      borderBottom = paste("0.5px solid", tk$rule),
+      color = tk$fg_muted,
+      backgroundColor = tk$tint,
+      borderBottom = hair,
       transition = paste("color 120ms", ease),
       "&:hover" = list(color = tk$ink),
       "&:active" = list(transform = "translateY(1px)")
     ),
     rowStyle = list(transition = paste("background-color 120ms", ease)),
     # The pagination bar carries the table background itself — the theme's
-    # backgroundColor does not reach it — with the same 12px side inset as
+    # backgroundColor does not reach it — with the same 16px side inset as
     # the cells and the header block.
     paginationStyle = list(
       fontFamily = .cw_font_mono,
-      fontSize = "10px",
+      fontSize = "11px",
       color = tk$fg_muted,
       backgroundColor = bg,
-      borderTop = paste("1px solid", tk$rule),
-      padding = "6px 12px"
+      borderTop = hair,
+      padding = "6px 16px"
     ),
-    # flat page buttons, tight padding, the brand's 4px radius (cards,
-    # buttons and fields all take 4px in the brand guide)
+    # v2 controls are pills: page buttons are pills with a tint on hover;
+    # the current page is the obsidian pill of a segmented switch.
     pageButtonStyle = list(
-      borderRadius = "4px",
-      padding = "3px 8px",
+      borderRadius = paste0(tk$radius_pill, "px"),
+      padding = "3px 10px",
       transition = paste0(
         "transform 100ms ", ease, ", background-color 120ms ", ease,
         ", color 120ms ", ease
       ),
-      "&:active" = list(transform = "scale(.94)")
+      "&:active" = list(transform = "scale(.97)")
     ),
-    pageButtonHoverStyle = list(backgroundColor = tk$primary, color = "#FFFFFF"),
+    pageButtonHoverStyle = list(backgroundColor = tk$tint, color = tk$primary),
     pageButtonActiveStyle = list(
-      backgroundColor = tk$primary_active,
-      color = "#FFFFFF"
+      backgroundColor = tk$tint,
+      color = tk$primary_active
     ),
     pageButtonCurrentStyle = list(
       backgroundColor = tk$ink,
-      color = "#FFFFFF",
+      color = tk$white,
       fontWeight = 500
+    ),
+    searchInputStyle = list(
+      borderRadius = paste0(tk$radius_pill, "px"),
+      borderColor = tk$hairline
     )
   )
 
@@ -190,7 +217,7 @@ chanwe_reactable <- function(
   if (!is.null(hdr)) {
     x <- htmlwidgets::prependContent(x, hdr)
   }
-  cap <- chanwe_html_caption_tag(caption, bg = bg)
+  cap <- chanwe_html_caption_tag(caption, bg = bg, caption_style = caption_style)
   if (!is.null(cap)) {
     x <- htmlwidgets::appendContent(x, cap)
   }

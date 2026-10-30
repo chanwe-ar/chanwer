@@ -9,14 +9,19 @@ chanwe_palette(palette = NULL)
 \arguments{
 \item{palette}{Optional palette selector. Use \code{NULL} (default) to return
 all colors and grouped palettes. Supported names are \code{"all"}, \code{"core"},
-\code{"brand"} (the 69-colour palette of chanwe-brandbook \code{tokens.json}),
+\code{"brand"} (every colour of chanwe-brandbook \code{tokens.json}, read from the
+generated \code{chanwe_tokens}),
 \code{"p13_orange"}, \code{"p13_gray"}, \code{"p14_accents"}, \code{"p15_coral"},
 \code{"p15_vermillion"}, \code{"p15_green"}, \code{"p15_magenta"}, \code{"p15_blue"},
 \code{"p15_yellow"}, \code{"p15_cyan"}, \code{"p15_mustard"}, \code{"p15_violet"},
 \code{"p15_teal"}, \code{"p15_ink"}, \code{"mb_orange"}, \code{"mb_dark"}, the series-hue
 ramps \code{"ramp_blue"}, \code{"ramp_indigo"}, \code{"ramp_teal"}, \code{"ramp_green"},
 \code{"ramp_amber"}, \code{"ramp_red"}, \code{"ramp_purple"},
-\code{"semantic"}, \code{"signed"}, and \code{"chart"}.}
+\code{"semantic"}, \code{"signed"}, \code{"chart"} (the categorical order of
+\code{tokens.json} \code{plot.categorical}, for charts with no focus series),
+\code{"slate"} (the \code{plot.slate} ramp, dark to light, for the series that are
+not the focus) and \code{"focus"} (the focus orange followed by the slate
+ramp).}
 }
 \value{
 If \code{palette = NULL}, a list containing \code{all} and \code{groups}.
@@ -26,6 +31,14 @@ Otherwise, a named character vector of hex colors.
 Returns Chanwe brand colors as a single named vector, grouped vectors,
 or specific palette subsets used by plotting and reporting helpers.
 }
+\section{The focus rule (v2)}{
+
+Orange is the one signal: the series that matters takes \code{plot.focus}
+(\verb{#FD3810}) and every other series sits on the slate ramp. Use
+\code{\link[=scale_color_chanwe_focus]{scale_color_chanwe_focus()}} / \code{\link[=scale_fill_chanwe_focus]{scale_fill_chanwe_focus()}} for that; keep
+the categorical \code{"chart"} palette for charts where no series is the focus.
+}
+
 \section{Signed colors}{
 
 The \code{"signed"} group carries the canonical positive / negative / neutral

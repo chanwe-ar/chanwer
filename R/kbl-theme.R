@@ -1,11 +1,12 @@
 #' Chanwe Table via Native Typst Output
 #'
 #' Generates a styled Typst table directly from a data frame, bypassing the
-#' HTML→Pandoc→Typst pipeline. Schibsted Grotesk title, Satoshi subtitle and
-#' text cells (the brand guide sets tables in Satoshi), JetBrains Mono column
-#' headers and right-aligned figures (mono keeps them tabular so numeric
-#' columns align digit-for-digit), slate hairline rules. No CSS
-#' translation losses.
+#' HTML→Pandoc→Typst pipeline. The table is a v2 pane: a rounded block with a
+#' hairline, the column labels on the slate tint, hairline rows. Schibsted
+#' Grotesk title, Satoshi subtitle and text cells, JetBrains Mono column
+#' labels and right-aligned figures (mono keeps them tabular so numeric
+#' columns align digit-for-digit), the source line as a mono label. Colours,
+#' fonts and radii come from the generated tokens (\code{chanwe_tokens}).
 #'
 #' @param data A data frame or tibble.
 #' @param title Table title.
@@ -51,7 +52,8 @@
 #'   to paper / paper / slate. Or any raw Typst color expression (e.g.
 #'   \code{"rgb(\\\"#EBF0F6\\\")"}). Pass \code{NULL} for transparent.
 #' @param top_border Logical. Draw a slate hairline above the title cell.
-#'   Default \code{TRUE}.
+#'   Default \code{NULL}: \code{FALSE} for a pane (its border closes the
+#'   top), \code{TRUE} with \code{pane = FALSE}.
 #' @param header_rule Logical. Draw the heavier rule between the title block
 #'   and the column labels. Default \code{TRUE}.
 #' @param padding Uniform outer margin in pts applied around the entire table
@@ -70,14 +72,22 @@
 #' @param n_total Number of trailing rows to treat as total rows. Total rows
 #'   get a heavier rule above them, no row dividers, and (optionally) a
 #'   highlight fill. Default \code{0} (no total rows).
-#' @param total_fill Logical. Fill total rows with a light gray background.
+#' @param total_fill Logical. Fill total rows with the slate tint.
 #'   Only used when \code{n_total > 0}. Default \code{TRUE}.
 #' @param vlines Optional integer vector of column indices at which to draw
 #'   vertical divider lines (Typst \code{table.vline} x positions).
 #' @param highlight_cols Optional integer vector of column indices whose header
 #'   and data cells get a highlight background fill.
 #' @param highlight_color Hex color for \code{highlight_cols} fill.
-#'   Default \code{"#EBF0F6"} (brand \code{surface-slate}).
+#'   Default \code{NULL}: the \code{surface-slate} token (\code{#EBF0F6}).
+#' @param pane Logical. Draw the table as a v2 pane (brand-v2 Q1 B): a block
+#'   with the 16px surface radius (scaled to the document like the type, 8pt
+#'   at the default 7pt body), a hairline border, column labels on the slate
+#'   tint and no outer fill around it. Default \code{TRUE}; \code{FALSE} draws
+#'   the open chanwer 2.x table.
+#' @param caption_style \code{"mono"} (v2 default): the source line as a
+#'   JetBrains Mono label. \code{"stamp"}: the orange stamp of chanwer 2.x.
+#'   \code{NULL} reads \code{getOption("chanwer.caption_style", "mono")}.
 #'
 #' @return A \code{\link[knitr]{asis_output}} containing a raw \code{{=typst}} block.
 #'   Works in Quarto documents rendered with \code{format: chanwe-report-typst}.
@@ -120,7 +130,7 @@ chanwe_kbl <- function(
   col_label_top = 0,
   footer_top = 0,
   bg = "paper",
-  top_border = TRUE,
+  top_border = NULL,
   header_rule = TRUE,
   padding = 12.5,
   fmt = list(),
@@ -129,17 +139,29 @@ chanwe_kbl <- function(
   total_fill = TRUE,
   vlines = NULL,
   highlight_cols = NULL,
-  highlight_color = "#EBF0F6"
+  highlight_color = NULL,
+  pane = TRUE,
+  caption_style = NULL
 ) {
   chanwe_require_package("knitr")
   density <- match.arg(density)
+  caption_style <- chanwe_caption_style(caption_style)
+  if (is.null(top_border)) top_border <- !isTRUE(pane)
 
   sp <- density == "spacious"
 
-  # table chrome colors come from the token system
+  # Every value comes from the generated tokens (chanwe_tokens, from
+  # tokens.json): colours, fonts, the type scale and the radii.
   tokens <- chanwe_get_colors()
-  vline_color <- tokens[["border-cool"]]
-  total_fill_color <- tokens[["surface-sunken"]]
+  fonts <- chanwe_tokens$fonts
+  typst_rgb <- function(hex) paste0('rgb("', hex, '")')
+  # v2-print (brand-v2 Q1 B): hairlines are `rule`, fills are the slate
+  # tint (the text colour at 7%), never a grey.
+  hairline <- tokens[["rule"]]
+  tint <- tokens[["tint"]]
+  vline_color <- hairline
+  total_fill_color <- tint
+  if (is.null(highlight_color)) highlight_color <- tokens[["surface-slate"]]
 
   inset_y <- if (!is.null(row_padding)) {
     row_padding
@@ -304,9 +326,9 @@ chanwe_kbl <- function(
   # Structural rules (above the title, under the title block, under the
   # column labels, closing the body) are border-cool 0.5pt; the total rule
   # one slate step darker; row dividers the lighter `rule` slate.
-  rule_color <- paste0('rgb("', tokens[["border-cool"]], '")')
-  total_rule_color <- paste0('rgb("', tokens[["rule-cool"]], '")')
-  row_divider_color <- tokens[["rule"]]
+  rule_color <- if (isTRUE(pane)) typst_rgb(hairline) else typst_rgb(tokens[["border-cool"]])
+  total_rule_color <- typst_rgb(tokens[["rule-cool"]])
+  row_divider_color <- hairline
 
   # code builder
   L <- character(0)
@@ -353,7 +375,7 @@ chanwe_kbl <- function(
       if (!is.null(title)) {
         inner <- paste0(
           inner,
-          '#text(font: "Schibsted Grotesk", size: ',
+          '#text(font: "', fonts$display, '", size: ',
           title_pt,
           ', fill: _t.ink, weight: "semibold")[',
           esc(title),
@@ -379,7 +401,7 @@ chanwe_kbl <- function(
         ", inset: ",
         inset_sub,
         ")[",
-        '#text(font: "Satoshi", size: ',
+        '#text(font: "', fonts$body, '", size: ',
         sub_pt,
         ', fill: _t.fg-muted, weight: "regular")[',
         esc(subtitle),
@@ -396,7 +418,14 @@ chanwe_kbl <- function(
     }
 
     for (i in seq_len(n)) {
-      hdr_fill <- if (!is.null(highlight_cols) && i %in% highlight_cols) paste0(', fill: rgb("', highlight_color, '")') else ""
+      # v2 tint header: the column labels sit on the tint inside the pane
+      hdr_fill <- if (!is.null(highlight_cols) && i %in% highlight_cols) {
+        paste0(", fill: ", typst_rgb(highlight_color))
+      } else if (isTRUE(pane)) {
+        paste0(", fill: ", typst_rgb(tint))
+      } else {
+        ""
+      }
       p(
         "      table.cell(align: ",
         col_aligns[i],
@@ -405,9 +434,9 @@ chanwe_kbl <- function(
         hdr_fill,
         ")[",
         pt_v(col_label_top),
-        '#text(font: "JetBrains Mono", size: ',
+        '#text(font: "', fonts$mono, '", size: ',
         label_pt,
-        ', fill: _t.fg-muted, weight: "thin", tracking: 0.05em)[',
+        ', fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[',
         esc(toupper(labels[i])),
         ']],'
       )
@@ -432,7 +461,7 @@ chanwe_kbl <- function(
       # Figures (right-aligned columns) stay in mono so digits line up;
       # text cells read in Satoshi, at the document body weight (300).
       is_figure <- identical(col_aligns[j], "right")
-      cell_font <- if (is_figure) "JetBrains Mono" else "Satoshi"
+      cell_font <- if (is_figure) fonts$mono else fonts$body
       weight <- if (is_first) {
         '"medium"'
       } else if (is_figure) {
@@ -470,7 +499,9 @@ chanwe_kbl <- function(
 
   # One closing rule, then the footer: the chanwe-report figure-frame stamp,
   # a square primary box with the source line in white mono caps.
-  p("    table.hline(stroke: 0.5pt + ", rule_color, "),")
+  if (!isTRUE(pane) || !is.null(caption)) {
+    p("    table.hline(stroke: 0.5pt + ", rule_color, "),")
+  }
 
   if (!is.null(caption)) {
     p("    table.footer(")
@@ -481,12 +512,23 @@ chanwe_kbl <- function(
       inset_footer,
       ")[",
       pt_v(footer_top),
-      '#box(fill: rgb("', tokens[["primary"]], '"), inset: (x: 4mm, y: 1.6mm))[',
-      '#text(font: "JetBrains Mono", size: ',
-      note_pt,
-      ', weight: "medium", tracking: 0.16em, fill: rgb("', tokens[["pure-white"]], '"))[',
-      '#upper[', esc(caption), ']',
-      ']]],'
+      if (caption_style == "stamp") {
+        paste0(
+          '#box(fill: ', typst_rgb(tokens[["primary"]]), ', inset: (x: 4mm, y: 1.6mm))[',
+          '#text(font: "', fonts$mono, '", size: ', note_pt,
+          ', weight: "medium", tracking: 0.16em, fill: ', typst_rgb(tokens[["pure-white"]]), ')[',
+          '#upper[', esc(caption), ']]]'
+        )
+      } else {
+        # v2: the caption is a mono label in plot.axis-text, no box
+        paste0(
+          '#text(font: "', fonts$mono, '", size: ', note_pt,
+          ', weight: "regular", tracking: 0.08em, fill: ',
+          typst_rgb(chanwe_tokens$plot$`axis-text`), ')[',
+          '#upper[', esc(caption), ']]'
+        )
+      },
+      '],'
     )
     p("    )")
   }
@@ -495,7 +537,25 @@ chanwe_kbl <- function(
   p("  ]")
   p("}")
 
-  pad_fill <- if (!is.null(fill_val)) paste0(", fill: ", fill_val) else ""
+  pad_fill <- if (!is.null(fill_val) && !isTRUE(pane)) paste0(", fill: ", fill_val) else ""
+
+  # v2 pane (brand-v2 Q1 B): the table sits in a block with the 16px
+  # surface radius (on the document's px scale: body_size / type.body pt per
+  # px), a hairline and no shadow; clip keeps the tint header in the corners.
+  if (isTRUE(pane)) {
+    body_num <- suppressWarnings(as.numeric(sub("pt$", "", body_pt)))
+    pt_per_px <- if (is.na(body_num)) 0.75 else body_num / chanwe_tokens$type$body
+    radius_pt <- round(chanwe_tokens$radii$surface * pt_per_px, 2)
+    L <- c(
+      paste0(
+        "#block(width: 100%, radius: ", radius_pt, "pt, clip: true, stroke: 0.5pt + ",
+        typst_rgb(hairline), if (!is.null(fill_val)) paste0(", fill: ", fill_val) else "",
+        ")["
+      ),
+      L,
+      "]"
+    )
+  }
 
   if (padding > 0) {
     L <- c(

@@ -1,15 +1,17 @@
 Package: chanwer
 Title: ChanWe Visual Themes for Quarto Workflows
-Version: 2.6.1
+Version: 3.0.0
 Authors@R:
     person(given = "Chanwe",
            family = "Team",
            role = c("aut", "cre"),
            email = "team@chanwe.example")
 Description: Brand-consistent themes, color palettes, and utilities for
-    ChanWe reporting workflows. Provides an editorial ggplot2 theme with
-    custom title, subtitle, KPI-scoreboard, and caption elements, discrete
-    and continuous color scales, a native Typst table generator for Quarto
+    ChanWe reporting workflows, in the CHANWE v2 language with every value
+    read from the brand's generated tokens. Provides a ggplot2 theme with
+    custom title, subtitle, KPI-scoreboard, and caption elements, rounded
+    bars, pill legend keys, a focus colour rule, discrete and continuous
+    color scales, a native Typst table generator for Quarto
     PDF reports, matching gt, reactable and highcharter helpers for HTML
     output, the CHANWE brand fonts (Satoshi, Schibsted Grotesk, JetBrains
     Mono) bundled and registered for ggplot2 and served locally to HTML
@@ -23,7 +25,7 @@ BugReports: https://github.com/chanwe-ar/chanwer/issues
 Depends:
     R (>= 4.2.0)
 Imports:
-    ggplot2,
+    ggplot2 (>= 3.5.0),
     grDevices,
     grid,
     stats,
@@ -38,5 +40,6 @@ Suggests:
     png,
     reactable,
     systemfonts,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    vdiffr
 Config/testthat/edition: 3

@@ -146,10 +146,12 @@ new_element_chanwe_caption <- function(
   primary_colour = "#FD3810",
   ink_colour = "#111319",
   rule_colour = "#CFD6DF",
+  stamp = FALSE,
   inherit.blank = FALSE
 ) {
   structure(
     list(
+      stamp = stamp,
       family = family,
       mono_thin_family = mono_thin_family,
       face = "plain",
@@ -625,9 +627,11 @@ heightDetails.cw_subtitle_tree <- function(x) {
   sep_gp,
   ink_col,
   rule_col = ink_col,
-  stamp_fill = "#FD3810"
+  stamp_fill = "#FD3810",
+  stamp = TRUE
 ) {
   grid::gTree(
+    stamp = stamp,
     rule_col = rule_col,
     stamp_fill = stamp_fill,
     cap_text = cap_text,
@@ -640,12 +644,15 @@ heightDetails.cw_subtitle_tree <- function(x) {
   )
 }
 
-# The caption is the chanwe-report figure-frame stamp: a square orange box
-# with the source line in white mono caps, under a slate hairline.
+# The caption is a mono label under a slate hairline (v2: JetBrains Mono at
+# the compact size); `caption_style = "stamp"` restores the chanwe-report
+# figure-frame stamp, a square orange box with the source line in white mono
+# caps.
 .cw_caption_heights <- function(x) {
   c_h <- .cw_str_h(toupper(x$cap_text), x$cap_gp)
   fs <- x$cap_gp$fontsize %||_% 5
-  pad_y <- fs * 0.9 # stamp inset, top and bottom
+  stamp <- !isFALSE(x$stamp)
+  pad_y <- if (stamp) fs * 0.9 else 0 # stamp inset, top and bottom
   box_h <- c_h + 2 * pad_y
   top <- 16 # top padding: space between chart bottom and the separator line
   bot <- 4 # bottom padding
@@ -657,7 +664,7 @@ heightDetails.cw_subtitle_tree <- function(x) {
   list(
     c_h = c_h,
     pad_y = pad_y,
-    pad_x = fs * 2.2,
+    pad_x = if (stamp) fs * 2.2 else 0,
     box_h = box_h,
     top = top,
     bot = bot,
@@ -696,7 +703,7 @@ makeContent.cw_caption_tree <- function(x) {
   )
 
   ch <- grid::gList(
-    box_g,
+    if (!isFALSE(x$stamp)) box_g,
     cap_g,
     grid::linesGrob(
       x = grid::unit(c(0, 1), "npc"),
@@ -837,8 +844,9 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
   rule <- element$rule_colour %||_% "#CFD6DF"
   # The chanwe-report figure-frame stamp: white mono caps on the primary
   # orange, in the medium mono weight so the small caps hold on the fill.
+  stamp <- !isFALSE(element$stamp)
   mono_medium <- element$mono_medium_family %||_% "JetBrains Mono Medium"
-  has_medium <- requireNamespace("systemfonts", quietly = TRUE) &&
+  has_medium <- stamp && requireNamespace("systemfonts", quietly = TRUE) &&
     mono_medium %in% systemfonts::registry_fonts()$family
   cap_gp <- grid::gpar(
     fontfamily = if (has_medium) mono_medium else element$family %||_% "JetBrains Mono",
@@ -864,7 +872,8 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
     sep_gp,
     ink,
     rule_col = rule,
-    stamp_fill = primary
+    stamp_fill = primary,
+    stamp = stamp
   )
 }
 

@@ -48,52 +48,53 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 
 #' Chanwe ggplot2 Theme
 #'
-#' A clean editorial ggplot2 theme with Chanwe typography, neutral surfaces,
-#' orange accents, and minimal chrome. Pairs with [chanwe_title()],
-#' [chanwe_subtitle()], and [chanwe_caption()] for the full Chanwe title
-#' treatment, and with [scale_color_chanwe_d()] / [scale_fill_chanwe_d()] for
-#' brand-consistent color palettes.
+#' The CHANWE v2 chart theme (brand-v2 Q3): a calm surface, horizontal slate
+#' gridlines only (1px, `ink-fg` at 25%), no axis lines or ticks, the title
+#' in Schibsted Grotesk, axis labels, legends and the caption in JetBrains
+#' Mono at the compact size, and legend keys sized as pills. Every value is
+#' a token from the generated `chanwe_tokens` (`plot`, `type`). Pairs with
+#' [chanwe_title()], [chanwe_subtitle()] and [chanwe_caption()] for the
+#' header, with [scale_color_chanwe_focus()] for the colour rule and
+#' [geom_chanwe_col()] for rounded bars.
+#'
+#' ## The colour rule (C1)
+#' Orange is the one signal: the series that matters takes the focus orange
+#' and every other series sits on the slate ramp
+#' ([scale_color_chanwe_focus()], [scale_fill_chanwe_focus()]). The
+#' categorical palette ([scale_color_chanwe_d()]) is for charts with no focus
+#' series.
 #'
 #' ## Typography
-#' The brand trio, by the roles the CHANWE brand guide gives them: Satoshi
-#' for text, Schibsted Grotesk for titles, JetBrains Mono for eyebrows,
-#' labels and metadata. Cormorant Garamond only sets editorial italics and
-#' numerals.
+#' The chart is drawn in the kit's px: `base_text_size` is the body size
+#' (`type.body`, 14px), and the compact size of the labels is `type.caption`
+#' (11px) on the same scale.
 #'
-#' | Element | Font | Weight |
-#' |---------|------|--------|
-#' | Title (with eyebrow) | Schibsted Grotesk | 600 |
-#' | Eyebrow | JetBrains Mono caps, orange rule | 400 |
-#' | Subtitle | Satoshi | 400 |
-#' | Subtitle note / KPI hero | Cormorant Garamond | italic |
-#' | Axis text (tick labels) | JetBrains Mono | 400 |
-#' | Axis titles | JetBrains Mono | 400 |
-#' | Facet strip labels | JetBrains Mono Thin | 100 |
-#' | Legend text / title | JetBrains Mono | 400 |
-#' | Caption stamp | JetBrains Mono caps, white on orange | 500 |
+#' | Element | Font | Size |
+#' |---------|------|------|
+#' | Title (with eyebrow) | Schibsted Grotesk 600 | 1.85x base |
+#' | Eyebrow | JetBrains Mono caps, orange rule | 0.62x base |
+#' | Subtitle | Satoshi | 0.9x base |
+#' | Subtitle note / KPI hero | Cormorant Garamond italic | |
+#' | Axis text and titles | JetBrains Mono, `plot.axis-text` | compact |
+#' | Facet strip labels | JetBrains Mono, `fg-muted` | compact |
+#' | Legend text / title | JetBrains Mono | compact |
+#' | Caption | JetBrains Mono caps, `plot.axis-text` | compact |
 #'
-#' Small text that has to be read (axis and legend titles, KPI labels) is
-#' pizarra (`fg-muted`, `#475569`) or obsidian (`ink`); never the lighter
-#' `fg-subtle`, which the guide keeps for large or decorative text.
-#'
-#' The eyebrow and the caption stamp render in the brand orange
-#' (`primary`, `#FD3810`) -- the same accent the HTML stylesheet uses
-#' for section numbers and that the table helpers use for their eyebrows.
-#' The title is set at 1.85x the base size with a 1.0 line-height so the
-#' header, subtitle/KPI block and chart read as three distinct levels.
+#' The caption was an orange stamp before chanwer 3.0.0; v2 keeps orange for
+#' the focus series, so the stamp is now opt-in (`caption_style = "stamp"`).
 #'
 #' The fonts ship with the package; `theme_chanwe()` registers them through
 #' [chanwe_load_fonts()] the first time it runs.
 #'
 #' ## Background variants
-#' Every surface is a `brand.yml` token.
+#' Every surface is a token; the grid is `plot.grid` on all of them.
 #'
-#' | Name | Token | Hex | Major grid | Minor grid |
-#' |------|-------|-----|------------|------------|
-#' | `"paper"` | `paper` | `#F8FAFC` | `#CFD6DF` | `#EBF0F6` |
-#' | `"white"` | `pure-white` | `#FFFFFF` | `#CFD6DF` | `#F1F5F9` |
-#' | `"sunken"` | `surface-sunken` | `#F1F5F9` | `#C6CDD6` | `#E2E8F0` |
-#' | `"slate"` | `surface-slate` | `#EBF0F6` | `#C6CDD6` | `#E2E8F0` |
+#' | Name | Token | Hex |
+#' |------|-------|-----|
+#' | `"paper"` | `paper` | `#F8FAFC` |
+#' | `"white"` | `pure-white` (`plot.background`, the v2 pane) | `#FFFFFF` |
+#' | `"sunken"` | `surface-sunken` | `#F1F5F9` |
+#' | `"slate"` | `surface-slate` | `#EBF0F6` |
 #'
 #' The earlier names still resolve: `"metallic"` and `"white-ivory"` to
 #' `"paper"`, `"gray"` to `"slate"`.
@@ -125,6 +126,13 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #'   ways: top padding above the eyebrow 8 → 4 pt, gap between subtitle text
 #'   and separator line 14 → 6 pt, and bottom padding below the separator line
 #'   20 → 12 pt. Set to `FALSE` for the spacious layout.
+#' @param caption_style `"mono"` (default, v2): the caption is a JetBrains
+#'   Mono label at the compact size under a hairline. `"stamp"`: the orange
+#'   stamp of chanwer 2.x (white mono caps on the primary orange).
+#' @param grid Which gridlines to draw: `"y"` (default, horizontal lines on
+#'   the value axis of a column or line chart), `"x"` (vertical lines, for
+#'   horizontal bars, where the value axis is x) or `"none"`. One direction
+#'   only, never both.
 #' @param header_line When `TRUE` (default) draws the thin separator line that
 #'   visually closes the header area: the subtitle grob draws it between the
 #'   subtitle text and the chart, and when `has_subtitle = FALSE` the title grob
@@ -191,12 +199,12 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #'   ) +
 #'   theme_chanwe(bg_color = "slate", legend_position = "none")
 #'
-#' ## Bar chart — white background, fill scale
+#' ## Bar chart — white background, rounded bars, one focus bar
 #' avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
 #' p3 <- ggplot2::ggplot(avg_mpg,
 #'   ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
-#'   ggplot2::geom_col(width = 0.6) +
-#'   scale_fill_chanwe_d() +
+#'   geom_chanwe_col(width = 0.6) +
+#'   scale_fill_chanwe_focus("4") +
 #'   ggplot2::labs(
 #'     title = chanwe_title("Average MPG by cylinder count"),
 #'     caption = chanwe_caption("Source: mtcars")
@@ -212,24 +220,33 @@ theme_chanwe <- function(
   plot_borders = "none",
   has_subtitle = TRUE,
   compact_title = TRUE,
-  header_line = TRUE
+  header_line = TRUE,
+  caption_style = c("mono", "stamp"),
+  grid = c("y", "x", "none")
 ) {
+  caption_style <- match.arg(caption_style)
+  grid <- match.arg(grid)
   base_family <- chanwe_resolve_family(base_family, "base_family")
   chanwe_load_fonts()
   options(chanwer.plot_borders = plot_borders)
 
   colors <- chanwe_get_colors()
-  # Major grid: one step darker than the surface so the lines register
-  # without competing with the marks (paired with a 0.1 linewidth below).
-  # Raw colours fall back to the rule-cool / rule hairlines.
-  surface <- chanwe_surface_name(bg_color)
-  grid <- if (is.na(surface)) {
-    c(major = colors[["rule-cool"]], minor = colors[["rule"]])
-  } else {
-    .chanwe_surfaces[[surface]]
-  }
-  grid_color <- grid[["major"]]
-  grid_color_minor <- grid[["minor"]]
+  plot_tk <- chanwe_tokens$plot
+  type_tk <- chanwe_tokens$type
+  # The v2 chart is drawn in the kit's px: `base_text_size` is the body size
+  # (type.body, 14px), so one px is base_text_size / 14 pt and every other
+  # size, line and gap scales with it.
+  px <- base_text_size / type_tk$body
+  compact_size <- type_tk$caption * px
+  # ggplot2 linewidths are mm
+  px_lwd <- function(n) n * px / ggplot2::.pt
+  # One grid for every surface (plot.grid: ink-fg at 25%, 1px); raw
+  # surfaces keep it too.
+  grid_color <- plot_tk$grid
+  grid_line <- ggplot2::element_line(
+    color = grid_color,
+    linewidth = px_lwd(plot_tk$`grid-width`)
+  )
   bg_color <- chanwe_resolve_bg(bg_color)
   surface_fill <- bg_color
   panel_border_element <- ggplot2::element_blank()
@@ -268,7 +285,7 @@ theme_chanwe <- function(
     # Display size: more contrast against the subtitle/KPI block so the
     # header reads as its own level (hierarchy = weight + size + leading).
     size = base_text_size * 1.85,
-    colour = colors[["ink"]],
+    colour = plot_tk$title,
     eyebrow_family = mono_family,
     eyebrow_size = base_text_size * 0.62,
     # Eyebrow and the caption stamp share the brand orange (#FD3810,
@@ -320,51 +337,47 @@ theme_chanwe <- function(
       plot.caption = new_element_chanwe_caption(
         family = mono_family,
         mono_thin_family = mono_thin_family,
-        size = base_text_size * 0.77,
-        colour = colors[["pure-white"]],
+        size = if (caption_style == "stamp") base_text_size * 0.77 else compact_size,
+        colour = if (caption_style == "stamp") colors[["pure-white"]] else plot_tk$`axis-text`,
         primary_colour = colors[["primary"]],
         ink_colour = colors[["ink"]],
-        rule_colour = colors[["border-cool"]]
+        rule_colour = colors[["border-cool"]],
+        stamp = caption_style == "stamp"
       ),
-      # Axis titles and tick labels at 0.825x base (25% up from 0.66x).
+      # v2 (brand-v2 Q3): axis titles and tick labels are mono labels at the
+      # compact size (type.caption) in plot.axis-text; no axis lines, no
+      # ticks, horizontal gridlines only.
       axis.title = ggplot2::element_text(
         family = mono_family,
-        color = colors[["ink"]],
+        color = plot_tk$`axis-text`,
         face = "plain",
-        size = base_text_size * 0.825
+        size = compact_size
       ),
-      # Tick labels are labels: JetBrains Mono, as in chanwe_highchart().
       axis.text = ggplot2::element_text(
         family = mono_family,
-        color = colors[["ink"]],
-        size = base_text_size * 0.825
+        color = plot_tk$`axis-text`,
+        size = compact_size
       ),
       axis.title.x = ggplot2::element_text(
         hjust = 1,
-        margin = ggplot2::margin(t = 10)
+        margin = ggplot2::margin(t = type_tk$caption * px)
       ),
       axis.title.y = ggplot2::element_text(
         angle = 90,
         hjust = 1,
         vjust = 0.5,
-        margin = ggplot2::margin(0, 8, 0, 0)
+        margin = ggplot2::margin(0, type_tk$caption * px, 0, 0)
       ),
-      axis.line = ggplot2::element_line(
-        color = grid_color,
-        linewidth = 0.15
-      ),
+      axis.line = ggplot2::element_blank(),
       axis.line.x = ggplot2::element_blank(),
       axis.line.y = ggplot2::element_blank(),
-      axis.ticks = ggplot2::element_line(
-        color = grid_color,
-        linewidth = 0.1
-      ),
+      axis.ticks = ggplot2::element_blank(),
+      axis.ticks.length = grid::unit(0, "pt"),
+      axis.text.x = ggplot2::element_text(margin = ggplot2::margin(t = 4 * px)),
+      axis.text.y = ggplot2::element_text(margin = ggplot2::margin(r = 4 * px)),
       panel.grid.major = ggplot2::element_blank(),
-      panel.grid.major.y = ggplot2::element_line(
-        color = grid_color,
-        linewidth = 0.1
-      ),
-      panel.grid.major.x = ggplot2::element_blank(),
+      panel.grid.major.y = if (grid == "y") grid_line else ggplot2::element_blank(),
+      panel.grid.major.x = if (grid == "x") grid_line else ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
       plot.background = ggplot2::element_rect(fill = surface_fill, color = NA),
       panel.background = ggplot2::element_rect(
@@ -377,39 +390,48 @@ theme_chanwe <- function(
         color = NA
       ),
       strip.text = ggplot2::element_text(
-        family = mono_thin_family,
-        color = colors[["ink"]],
-        face = "plain",
-        size = base_text_size * 1,
-        margin = ggplot2::margin(b = 6)
-      ),
-      legend.position = legend_position,
-      legend.justification = c(1, 0),
-      legend.box.just = "right",
-      legend.title = ggplot2::element_text(
         family = mono_family,
         color = colors[["fg-muted"]],
         face = "plain",
-        size = base_text_size * 0.8
+        size = compact_size,
+        hjust = 0,
+        margin = ggplot2::margin(b = 6 * px)
+      ),
+      # Legend: mono labels at the compact size; keys sized as pills (the
+      # pill glyph is draw_key_chanwe_pill(), the default of
+      # geom_chanwe_col() / geom_chanwe_bar()).
+      legend.position = legend_position,
+      legend.justification = c(0, 0),
+      legend.box.just = "left",
+      legend.location = "plot",
+      legend.title = ggplot2::element_text(
+        family = mono_family,
+        color = plot_tk$`axis-text`,
+        face = "plain",
+        size = compact_size
       ),
       legend.text = ggplot2::element_text(
         family = mono_family,
-        color = colors[["ink"]],
-        size = base_text_size * 0.8
+        color = colors[["fg-muted"]],
+        size = compact_size,
+        margin = ggplot2::margin(l = 4 * px)
       ),
       legend.background = ggplot2::element_rect(
         fill = surface_fill,
         color = NA
       ),
       legend.key = ggplot2::element_rect(
-        fill = surface_fill,
+        fill = NA,
         color = NA
       ),
       legend.box.background = ggplot2::element_rect(
         fill = NA,
         color = NA
       ),
-      legend.key.size = grid::unit(0.85, "lines"),
+      legend.key.width = grid::unit(16 * px, "pt"),
+      legend.key.height = grid::unit(8 * px, "pt"),
+      legend.key.spacing.x = grid::unit(12 * px, "pt"),
+      legend.key.spacing.y = grid::unit(4 * px, "pt"),
       panel.spacing = grid::unit(1.0, "lines"),
       plot.subtitle = subtitle_element,
       plot.title.position = "plot",

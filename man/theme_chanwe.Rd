@@ -14,7 +14,9 @@ theme_chanwe(
   plot_borders = "none",
   has_subtitle = TRUE,
   compact_title = TRUE,
-  header_line = TRUE
+  header_line = TRUE,
+  caption_style = c("mono", "stamp"),
+  grid = c("y", "x", "none")
 )
 }
 \arguments{
@@ -59,46 +61,58 @@ visually closes the header area: the subtitle grob draws it between the
 subtitle text and the chart, and when \code{has_subtitle = FALSE} the title grob
 draws it below the title text. Set to \code{FALSE} to suppress the line entirely
 (e.g. for minimal or embedded layouts).}
+
+\item{caption_style}{\code{"mono"} (default, v2): the caption is a JetBrains
+Mono label at the compact size under a hairline. \code{"stamp"}: the orange
+stamp of chanwer 2.x (white mono caps on the primary orange).}
+
+\item{grid}{Which gridlines to draw: \code{"y"} (default, horizontal lines on
+the value axis of a column or line chart), \code{"x"} (vertical lines, for
+horizontal bars, where the value axis is x) or \code{"none"}. One direction
+only, never both.}
 }
 \value{
 A ggplot2 theme object. Add to any ggplot with \code{+ theme_chanwe()}.
 }
 \description{
-A clean editorial ggplot2 theme with Chanwe typography, neutral surfaces,
-orange accents, and minimal chrome. Pairs with \code{\link[=chanwe_title]{chanwe_title()}},
-\code{\link[=chanwe_subtitle]{chanwe_subtitle()}}, and \code{\link[=chanwe_caption]{chanwe_caption()}} for the full Chanwe title
-treatment, and with \code{\link[=scale_color_chanwe_d]{scale_color_chanwe_d()}} / \code{\link[=scale_fill_chanwe_d]{scale_fill_chanwe_d()}} for
-brand-consistent color palettes.
+The CHANWE v2 chart theme (brand-v2 Q3): a calm surface, horizontal slate
+gridlines only (1px, \code{ink-fg} at 25\%), no axis lines or ticks, the title
+in Schibsted Grotesk, axis labels, legends and the caption in JetBrains
+Mono at the compact size, and legend keys sized as pills. Every value is
+a token from the generated \code{chanwe_tokens} (\code{plot}, \code{type}). Pairs with
+\code{\link[=chanwe_title]{chanwe_title()}}, \code{\link[=chanwe_subtitle]{chanwe_subtitle()}} and \code{\link[=chanwe_caption]{chanwe_caption()}} for the
+header, with \code{\link[=scale_color_chanwe_focus]{scale_color_chanwe_focus()}} for the colour rule and
+\code{\link[=geom_chanwe_col]{geom_chanwe_col()}} for rounded bars.
 }
 \details{
+\subsection{The colour rule (C1)}{
+
+Orange is the one signal: the series that matters takes the focus orange
+and every other series sits on the slate ramp
+(\code{\link[=scale_color_chanwe_focus]{scale_color_chanwe_focus()}}, \code{\link[=scale_fill_chanwe_focus]{scale_fill_chanwe_focus()}}). The
+categorical palette (\code{\link[=scale_color_chanwe_d]{scale_color_chanwe_d()}}) is for charts with no focus
+series.
+}
+
 \subsection{Typography}{
 
-The brand trio, by the roles the CHANWE brand guide gives them: Satoshi
-for text, Schibsted Grotesk for titles, JetBrains Mono for eyebrows,
-labels and metadata. Cormorant Garamond only sets editorial italics and
-numerals.\tabular{lll}{
-   Element \tab Font \tab Weight \cr
-   Title (with eyebrow) \tab Schibsted Grotesk \tab 600 \cr
-   Eyebrow \tab JetBrains Mono caps, orange rule \tab 400 \cr
-   Subtitle \tab Satoshi \tab 400 \cr
-   Subtitle note / KPI hero \tab Cormorant Garamond \tab italic \cr
-   Axis text (tick labels) \tab JetBrains Mono \tab 400 \cr
-   Axis titles \tab JetBrains Mono \tab 400 \cr
-   Facet strip labels \tab JetBrains Mono Thin \tab 100 \cr
-   Legend text / title \tab JetBrains Mono \tab 400 \cr
-   Caption stamp \tab JetBrains Mono caps, white on orange \tab 500 \cr
+The chart is drawn in the kit's px: \code{base_text_size} is the body size
+(\code{type.body}, 14px), and the compact size of the labels is \code{type.caption}
+(11px) on the same scale.\tabular{lll}{
+   Element \tab Font \tab Size \cr
+   Title (with eyebrow) \tab Schibsted Grotesk 600 \tab 1.85x base \cr
+   Eyebrow \tab JetBrains Mono caps, orange rule \tab 0.62x base \cr
+   Subtitle \tab Satoshi \tab 0.9x base \cr
+   Subtitle note / KPI hero \tab Cormorant Garamond italic \tab  \cr
+   Axis text and titles \tab JetBrains Mono, \code{plot.axis-text} \tab compact \cr
+   Facet strip labels \tab JetBrains Mono, \code{fg-muted} \tab compact \cr
+   Legend text / title \tab JetBrains Mono \tab compact \cr
+   Caption \tab JetBrains Mono caps, \code{plot.axis-text} \tab compact \cr
 }
 
 
-Small text that has to be read (axis and legend titles, KPI labels) is
-pizarra (\code{fg-muted}, \verb{#475569}) or obsidian (\code{ink}); never the lighter
-\code{fg-subtle}, which the guide keeps for large or decorative text.
-
-The eyebrow and the caption stamp render in the brand orange
-(\code{primary}, \verb{#FD3810}) -- the same accent the HTML stylesheet uses
-for section numbers and that the table helpers use for their eyebrows.
-The title is set at 1.85x the base size with a 1.0 line-height so the
-header, subtitle/KPI block and chart read as three distinct levels.
+The caption was an orange stamp before chanwer 3.0.0; v2 keeps orange for
+the focus series, so the stamp is now opt-in (\code{caption_style = "stamp"}).
 
 The fonts ship with the package; \code{theme_chanwe()} registers them through
 \code{\link[=chanwe_load_fonts]{chanwe_load_fonts()}} the first time it runs.
@@ -106,12 +120,12 @@ The fonts ship with the package; \code{theme_chanwe()} registers them through
 
 \subsection{Background variants}{
 
-Every surface is a \code{brand.yml} token.\tabular{lllll}{
-   Name \tab Token \tab Hex \tab Major grid \tab Minor grid \cr
-   \code{"paper"} \tab \code{paper} \tab \verb{#F8FAFC} \tab \verb{#CFD6DF} \tab \verb{#EBF0F6} \cr
-   \code{"white"} \tab \code{pure-white} \tab \verb{#FFFFFF} \tab \verb{#CFD6DF} \tab \verb{#F1F5F9} \cr
-   \code{"sunken"} \tab \code{surface-sunken} \tab \verb{#F1F5F9} \tab \verb{#C6CDD6} \tab \verb{#E2E8F0} \cr
-   \code{"slate"} \tab \code{surface-slate} \tab \verb{#EBF0F6} \tab \verb{#C6CDD6} \tab \verb{#E2E8F0} \cr
+Every surface is a token; the grid is \code{plot.grid} on all of them.\tabular{lll}{
+   Name \tab Token \tab Hex \cr
+   \code{"paper"} \tab \code{paper} \tab \verb{#F8FAFC} \cr
+   \code{"white"} \tab \code{pure-white} (\code{plot.background}, the v2 pane) \tab \verb{#FFFFFF} \cr
+   \code{"sunken"} \tab \code{surface-sunken} \tab \verb{#F1F5F9} \cr
+   \code{"slate"} \tab \code{surface-slate} \tab \verb{#EBF0F6} \cr
 }
 
 
@@ -178,12 +192,12 @@ p2 <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, color = factor(cyl))) +
   ) +
   theme_chanwe(bg_color = "slate", legend_position = "none")
 
-## Bar chart — white background, fill scale
+## Bar chart — white background, rounded bars, one focus bar
 avg_mpg <- aggregate(mpg ~ cyl, data = mtcars, FUN = mean)
 p3 <- ggplot2::ggplot(avg_mpg,
   ggplot2::aes(factor(cyl), mpg, fill = factor(cyl))) +
-  ggplot2::geom_col(width = 0.6) +
-  scale_fill_chanwe_d() +
+  geom_chanwe_col(width = 0.6) +
+  scale_fill_chanwe_focus("4") +
   ggplot2::labs(
     title = chanwe_title("Average MPG by cylinder count"),
     caption = chanwe_caption("Source: mtcars")

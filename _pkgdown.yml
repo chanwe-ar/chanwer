@@ -24,6 +24,12 @@ reference:
       - scale_fill_chanwe_c
       - scale_color_chanwe_div
       - scale_fill_chanwe_div
+      - scale_color_chanwe_focus
+      - scale_fill_chanwe_focus
+      - chanwe_focus_colors
+      - geom_chanwe_col
+      - geom_chanwe_bar
+      - draw_key_chanwe_pill
   - title: Typst Tables
     contents:
       - chanwe_kbl

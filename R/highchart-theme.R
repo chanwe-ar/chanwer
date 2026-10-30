@@ -20,14 +20,18 @@
 #' so the widget makes no font request. Call `chanwe_highchart()` last in
 #' the pipe: a later `hc_*()` call re-enables highcharter's loader.
 #'
-#' Discrete colours are not changed by this function -- the chart palette
-#' (`chanwe_palette("chart")`) is applied as the widget's series colours, so
-#' series added without an explicit `color` cycle through the brand palette.
+#' Colour (v2 rule C1): with `focus`, the named series is orange and every
+#' other series sits on the slate ramp ([chanwe_focus_colors()]); without
+#' it, the categorical palette (`chanwe_palette("chart")`) is applied as the
+#' widget's series colours. Columns and bars take the 3px `plot.bar-radius`,
+#' the y grid is `plot.grid`, axis labels are mono at the compact size and
+#' legend symbols are pills.
 #'
 #' @param hc A `highcharter` object (from `highcharter::highchart()`).
 #' @param title,subtitle,eyebrow Header block rendered top-left, stacked as
 #'   one `useHTML` chart title.
-#' @param caption Source note rendered bottom-left as the orange stamp.
+#' @param caption Source note rendered bottom-left as a mono label (or the
+#'   orange stamp, see `caption_style`).
 #' @param legend Logical. Show the legend (vertical, right, centered on the
 #'   plot body)? Default `FALSE`.
 #' @param height Widget height in pixels, passed to
@@ -37,6 +41,12 @@
 #'   dashboard layout until `hc_size()` sets the widget's own height field.
 #' @param bg Chart and plot background. Named shorthand accepted by
 #'   [theme_chanwe()] or any hex string. Default `"white"`.
+#' @param focus Optional name of the series that matters: it turns orange
+#'   (and is drawn on top), the others go on the slate ramp. Applies to the
+#'   series already added to `hc`.
+#' @param caption_style `"mono"` (v2 default) or `"stamp"` (the orange stamp
+#'   of chanwer 2.x). `NULL` reads `getOption("chanwer.caption_style",
+#'   "mono")`.
 #'
 #' @return The modified `highcharter` object.
 #' @export
@@ -63,7 +73,9 @@ chanwe_highchart <- function(
   caption = NULL,
   legend = FALSE,
   height = 440,
-  bg = "white"
+  bg = "white",
+  focus = NULL,
+  caption_style = NULL
 ) {
   chanwe_require_package("highcharter")
   chanwe_require_package("htmlwidgets")
@@ -105,7 +117,7 @@ chanwe_highchart <- function(
       if (!is.null(title)) {
         sprintf(
           "<div style='font-size:24px;font-weight:600;color:%s;font-family:%s'>%s</div>",
-          tk$ink, .cw_font_display, chanwe_html_escape(title)
+          tk$title, .cw_font_display, chanwe_html_escape(title)
         )
       },
       if (!is.null(subtitle)) {
@@ -118,9 +130,17 @@ chanwe_highchart <- function(
     header <- paste(parts, collapse = "")
   }
 
+  # v2 axis labels: mono at the compact size (type.caption) in
+  # plot.axis-text; the grid is plot.grid (ink-fg at 25%, as rgba because
+  # Highcharts 9 reads no 8-digit hex).
   axis_style <- list(style = list(
-    fontFamily = hc_mono, fontSize = "10.5px", color = tk$fg_muted
+    fontFamily = hc_mono, fontSize = paste0(tk$type$caption, "px"),
+    color = tk$axis_text
   ))
+  hc_rgba <- function(hex) {
+    v <- grDevices::col2rgb(hex, alpha = TRUE)
+    sprintf("rgba(%d,%d,%d,%s)", v[1], v[2], v[3], format(round(v[4] / 255, 2)))
+  }
 
   # title_margin is wider than a hairline gap: the rotated y-axis title
   # lives in that band too and needs room for its own text length.
@@ -195,7 +215,7 @@ chanwe_highchart <- function(
           "}",
           sep = "\n"
         ),
-        tk$rule
+        tk$hairline
       )))
     ) |>
     highcharter::hc_colors(unname(chanwe_palette("chart"))) |>
@@ -203,31 +223,41 @@ chanwe_highchart <- function(
       enabled = isTRUE(legend), align = "right", verticalAlign = "middle",
       layout = "vertical",
       itemStyle = list(
-        fontFamily = hc_mono, fontSize = "10.5px", color = tk$fg_muted,
-        fontWeight = "normal"
+        fontFamily = hc_mono, fontSize = paste0(tk$type$caption, "px"),
+        color = tk$fg_muted, fontWeight = "normal"
       ),
       itemHoverStyle = list(color = tk$ink),
-      symbolWidth = 10, symbolHeight = 10, symbolRadius = 1
+      # v2 legend keys are pills
+      symbolWidth = 16, symbolHeight = 8, symbolRadius = 4,
+      squareSymbol = FALSE
     ) |>
     highcharter::hc_tooltip(
       shared = TRUE, xDateFormat = "%Y-%m-%d", borderWidth = 0,
-      borderRadius = 4, backgroundColor = tk$ink,
+      borderRadius = chanwe_tokens$radii$row, backgroundColor = tk$ink,
       style = list(
-        color = "#FFFFFF", fontFamily = hc_mono, fontSize = "11px"
+        color = tk$white, fontFamily = hc_mono,
+        fontSize = paste0(tk$type$caption, "px")
       )
     ) |>
     highcharter::hc_exporting(enabled = FALSE) |>
     highcharter::hc_credits(enabled = FALSE) |>
-    highcharter::hc_plotOptions(series = list(
-      marker = list(enabled = FALSE), lineWidth = 1.2,
-      states = list(hover = list(lineWidthPlus = 0))
-    )) |>
+    highcharter::hc_plotOptions(
+      series = list(
+        marker = list(enabled = FALSE),
+        lineWidth = chanwe_tokens$plot$`line-width`,
+        states = list(hover = list(lineWidthPlus = 0))
+      ),
+      # v2 bars: plot.bar-radius (Highcharts 9 rounds every corner)
+      column = list(borderRadius = tk$bar_radius, borderWidth = 0),
+      bar = list(borderRadius = tk$bar_radius, borderWidth = 0)
+    ) |>
     highcharter::hc_xAxis(
       gridLineWidth = 0, lineWidth = 0, tickLength = 0, labels = axis_style,
       title = list(style = axis_style$style, align = "high", x = 20)
     ) |>
     highcharter::hc_yAxis(
-      gridLineColor = tk$n200, gridLineWidth = 0.75, lineWidth = 0,
+      gridLineColor = hc_rgba(tk$grid),
+      gridLineWidth = chanwe_tokens$plot$`grid-width`, lineWidth = 0,
       tickLength = 0, labels = axis_style, title = list(style = axis_style$style)
     )
 
@@ -243,11 +273,23 @@ chanwe_highchart <- function(
       highcharter::hc_caption(
         text = sprintf(
           "<span class='chanwe-stamp' style='%s'>%s</span>",
-          chanwe_html_stamp_style(), chanwe_html_escape(caption)
+          chanwe_html_stamp_style(caption_style), chanwe_html_escape(caption)
         ),
         useHTML = TRUE, align = "left", margin = caption_margin,
         style = list(fontFamily = hc_mono)
       )
+  }
+
+  # The v2 colour rule: the focus series in orange, the rest on the slate
+  # ramp, by series name (series added before this call).
+  if (!is.null(focus)) {
+    series <- hc$x$hc_opts$series
+    nms <- vapply(series, function(x) as.character(x$name %||_% ""), character(1))
+    cols <- chanwe_focus_colors(nms, focus)
+    for (i in seq_along(series)) {
+      hc$x$hc_opts$series[[i]]$color <- unname(cols[[nms[i]]])
+      if (nms[i] %in% focus) hc$x$hc_opts$series[[i]]$zIndex <- 10
+    }
   }
 
   hc$dependencies <- c(hc$dependencies, chanwe_html_fonts_dependency())
