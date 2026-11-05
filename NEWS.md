@@ -1,3 +1,14 @@
+# chanwer (development version)
+
+* The KPI hero value (and every Cormorant Garamond run) is set in lining
+  figures: `chanwe_load_fonts()` registers the family with
+  `font_feature(numbers = "lining")`. The old-style 3, 4, 5, 7 and 9 hung
+  below the baseline, so a value like "45,91" looked uneven. Same fix as the
+  HTML heading numerals in chanwe-brand (2026-11-05).
+* `chanwer-showcase-pdf.qmd` declares `brand: false`. Quarto was stamping the
+  brand logo on every body page, over the section headings above the tables
+  and figures; the showcase was re-rendered.
+
 # chanwer 3.0.0
 
 chanwer follows CHANWE v2 (chanwe-brandbook `brand/guidelines/brand-v2.md`;

@@ -70,6 +70,19 @@ chanwe_resolve_family <- function(family, arg = "family") {
   family
 }
 
+# OpenType features a family is registered with. Cormorant Garamond sets
+# old-style figures by default: in the KPI hero value the 3, 4, 5, 7 and 9
+# hang below the baseline, so "45,91" reads as if it had slipped. Lining
+# figures stand on it, like the numerals of the report (chanwe-brand,
+# 2026-11-05, where the HTML heading numerals took the same fix).
+.chanwe_font_features <- function(family) {
+  if (identical(family, "Cormorant Garamond")) {
+    systemfonts::font_feature(numbers = "lining")
+  } else {
+    systemfonts::font_feature()
+  }
+}
+
 #' Load Chanwe Fonts into systemfonts
 #'
 #' Registers the CHANWE brand font families with
@@ -188,7 +201,8 @@ chanwe_load_fonts <- function(path = NULL) {
         bold = face("bold") %||_% full[["plain"]],
         italic = face("italic") %||_% full[["plain"]],
         bolditalic = face("bolditalic") %||_%
-          face("bold") %||_% face("italic") %||_% full[["plain"]]
+          face("bold") %||_% face("italic") %||_% full[["plain"]],
+        features = .chanwe_font_features(family)
       ),
       error = function(e) {
         warning(

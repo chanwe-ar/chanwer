@@ -3,6 +3,10 @@ title: "chanwer Showcase"
 subtitle: "Every palette, scale, header treatment, surface, chart form and native Typst table pattern in the chanwer R package — static output for chanwe-report-typst"
 author: "Alejandro Abraham"
 date: today
+# The format owns its page, logo and fonts (chanwe-brand's rule for every
+# Typst document). Without this Quarto stamped the brand logo on the page
+# background, 0.75in from the top left corner, over the section headings.
+brand: false
 format:
   chanwe-report-typst:
     keep-typ: true
