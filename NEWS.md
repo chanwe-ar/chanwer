@@ -1,4 +1,4 @@
-# chanwer (development version)
+# chanwer 3.0.1
 
 * The KPI hero value (and every Cormorant Garamond run) is set in lining
   figures: `chanwe_load_fonts()` registers the family with
