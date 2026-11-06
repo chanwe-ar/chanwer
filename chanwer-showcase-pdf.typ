@@ -4548,176 +4548,9 @@
 // chanwe-publications se fusiono aca: este formato es el de aquella, en A4,
 // con la portada del viejo chanwe-report conservada como variante "hero".
 #let chanwe = chanwe-report
-#let brand-color = (
-  background: rgb("#f8fafc"),
-  body-fg: rgb("#475569"),
-  border: rgb("#1113191a"),
-  border-cool: rgb("#cfd6df"),
-  callout-caution: rgb("#af52de"),
-  callout-do: rgb("#34c759"),
-  callout-dont: rgb("#ff3b30"),
-  callout-header: rgb("#ebf0f6"),
-  callout-important: rgb("#fd3810"),
-  callout-note: rgb("#007aff"),
-  callout-surface: rgb("#f8fafc"),
-  callout-tip: rgb("#00c7be"),
-  callout-warning: rgb("#ff9500"),
-  chart-blue: rgb("#007aff"),
-  chart-cyan: rgb("#11f7e6"),
-  chart-cyan-soft: rgb("#b6fff8"),
-  chart-gray: rgb("#71706c"),
-  chart-green: rgb("#34c759"),
-  chart-indigo: rgb("#5856d6"),
-  chart-magenta: rgb("#eb03f2"),
-  chart-orange: rgb("#ff9500"),
-  chart-purple: rgb("#af52de"),
-  chart-red: rgb("#ff3b30"),
-  chart-teal: rgb("#00c7be"),
-  code-comment: rgb("#928d86"),
-  code-function: rgb("#475569"),
-  code-keyword: rgb("#fd3810"),
-  code-number: rgb("#7c3aed"),
-  code-operator: rgb("#0758e5"),
-  code-string: rgb("#15803d"),
-  code-type: rgb("#353535"),
-  danger: rgb("#d32f2f"),
-  emphasis: rgb("#484848"),
-  exec-status-bad: rgb("#cc1914"),
-  exec-status-good: rgb("#15803d"),
-  exec-status-regular: rgb("#d97706"),
-  fg: rgb("#111319"),
-  fg-muted: rgb("#475569"),
-  fg-subtle: rgb("#8a94a6"),
-  foreground: rgb("#475569"),
-  info: rgb("#0c48ed"),
-  ink: rgb("#111319"),
-  ink-fg: rgb("#64748b"),
-  ink-light: rgb("#232a35"),
-  ink-soft: rgb("#37393f"),
-  ink-subtle: rgb("#646464"),
-  kpi-green: rgb("#147705"),
-  kpi-red: rgb("#cc1914"),
-  neutral-300: rgb("#d4d4d4"),
-  neutral-700: rgb("#525252"),
-  paper: rgb("#f8fafc"),
-  primary: rgb("#fd3810"),
-  primary-active: rgb("#fd3810"),
-  primary-text: rgb("#fd3810"),
-  pure-black: rgb("#000000"),
-  pure-white: rgb("#ffffff"),
-  research-muted: rgb("#99999e"),
-  rule: rgb("#e2e8f0"),
-  rule-cool: rgb("#c6cdd6"),
-  rule-ink: rgb("#434d5d"),
-  secondary: rgb("#111319"),
-  status-error: rgb("#d32f2f"),
-  status-error-bg: rgb("#fdecea"),
-  status-info: rgb("#0c48ed"),
-  status-info-bg: rgb("#b8ceff"),
-  status-success: rgb("#1eb508"),
-  status-success-soft: rgb("#c9ffc0"),
-  status-warning: rgb("#f9e710"),
-  status-warning-bg: rgb("#fff8b8"),
-  success: rgb("#1eb508"),
-  surface-slate: rgb("#ebf0f6"),
-  surface-sunken: rgb("#f1f5f9"),
-  warning: rgb("#f9e710")
-)
-#let brand-color-background = (
-  background: color.mix((brand-color.background, 15%), (brand-color.background, 85%)),
-  body-fg: color.mix((brand-color.body-fg, 15%), (brand-color.background, 85%)),
-  border: color.mix((brand-color.border, 15%), (brand-color.background, 85%)),
-  border-cool: color.mix((brand-color.border-cool, 15%), (brand-color.background, 85%)),
-  callout-caution: color.mix((brand-color.callout-caution, 15%), (brand-color.background, 85%)),
-  callout-do: color.mix((brand-color.callout-do, 15%), (brand-color.background, 85%)),
-  callout-dont: color.mix((brand-color.callout-dont, 15%), (brand-color.background, 85%)),
-  callout-header: color.mix((brand-color.callout-header, 15%), (brand-color.background, 85%)),
-  callout-important: color.mix((brand-color.callout-important, 15%), (brand-color.background, 85%)),
-  callout-note: color.mix((brand-color.callout-note, 15%), (brand-color.background, 85%)),
-  callout-surface: color.mix((brand-color.callout-surface, 15%), (brand-color.background, 85%)),
-  callout-tip: color.mix((brand-color.callout-tip, 15%), (brand-color.background, 85%)),
-  callout-warning: color.mix((brand-color.callout-warning, 15%), (brand-color.background, 85%)),
-  chart-blue: color.mix((brand-color.chart-blue, 15%), (brand-color.background, 85%)),
-  chart-cyan: color.mix((brand-color.chart-cyan, 15%), (brand-color.background, 85%)),
-  chart-cyan-soft: color.mix((brand-color.chart-cyan-soft, 15%), (brand-color.background, 85%)),
-  chart-gray: color.mix((brand-color.chart-gray, 15%), (brand-color.background, 85%)),
-  chart-green: color.mix((brand-color.chart-green, 15%), (brand-color.background, 85%)),
-  chart-indigo: color.mix((brand-color.chart-indigo, 15%), (brand-color.background, 85%)),
-  chart-magenta: color.mix((brand-color.chart-magenta, 15%), (brand-color.background, 85%)),
-  chart-orange: color.mix((brand-color.chart-orange, 15%), (brand-color.background, 85%)),
-  chart-purple: color.mix((brand-color.chart-purple, 15%), (brand-color.background, 85%)),
-  chart-red: color.mix((brand-color.chart-red, 15%), (brand-color.background, 85%)),
-  chart-teal: color.mix((brand-color.chart-teal, 15%), (brand-color.background, 85%)),
-  code-comment: color.mix((brand-color.code-comment, 15%), (brand-color.background, 85%)),
-  code-function: color.mix((brand-color.code-function, 15%), (brand-color.background, 85%)),
-  code-keyword: color.mix((brand-color.code-keyword, 15%), (brand-color.background, 85%)),
-  code-number: color.mix((brand-color.code-number, 15%), (brand-color.background, 85%)),
-  code-operator: color.mix((brand-color.code-operator, 15%), (brand-color.background, 85%)),
-  code-string: color.mix((brand-color.code-string, 15%), (brand-color.background, 85%)),
-  code-type: color.mix((brand-color.code-type, 15%), (brand-color.background, 85%)),
-  danger: color.mix((brand-color.danger, 15%), (brand-color.background, 85%)),
-  emphasis: color.mix((brand-color.emphasis, 15%), (brand-color.background, 85%)),
-  exec-status-bad: color.mix((brand-color.exec-status-bad, 15%), (brand-color.background, 85%)),
-  exec-status-good: color.mix((brand-color.exec-status-good, 15%), (brand-color.background, 85%)),
-  exec-status-regular: color.mix((brand-color.exec-status-regular, 15%), (brand-color.background, 85%)),
-  fg: color.mix((brand-color.fg, 15%), (brand-color.background, 85%)),
-  fg-muted: color.mix((brand-color.fg-muted, 15%), (brand-color.background, 85%)),
-  fg-subtle: color.mix((brand-color.fg-subtle, 15%), (brand-color.background, 85%)),
-  foreground: color.mix((brand-color.foreground, 15%), (brand-color.background, 85%)),
-  info: color.mix((brand-color.info, 15%), (brand-color.background, 85%)),
-  ink: color.mix((brand-color.ink, 15%), (brand-color.background, 85%)),
-  ink-fg: color.mix((brand-color.ink-fg, 15%), (brand-color.background, 85%)),
-  ink-light: color.mix((brand-color.ink-light, 15%), (brand-color.background, 85%)),
-  ink-soft: color.mix((brand-color.ink-soft, 15%), (brand-color.background, 85%)),
-  ink-subtle: color.mix((brand-color.ink-subtle, 15%), (brand-color.background, 85%)),
-  kpi-green: color.mix((brand-color.kpi-green, 15%), (brand-color.background, 85%)),
-  kpi-red: color.mix((brand-color.kpi-red, 15%), (brand-color.background, 85%)),
-  neutral-300: color.mix((brand-color.neutral-300, 15%), (brand-color.background, 85%)),
-  neutral-700: color.mix((brand-color.neutral-700, 15%), (brand-color.background, 85%)),
-  paper: color.mix((brand-color.paper, 15%), (brand-color.background, 85%)),
-  primary: color.mix((brand-color.primary, 15%), (brand-color.background, 85%)),
-  primary-active: color.mix((brand-color.primary-active, 15%), (brand-color.background, 85%)),
-  primary-text: color.mix((brand-color.primary-text, 15%), (brand-color.background, 85%)),
-  pure-black: color.mix((brand-color.pure-black, 15%), (brand-color.background, 85%)),
-  pure-white: color.mix((brand-color.pure-white, 15%), (brand-color.background, 85%)),
-  research-muted: color.mix((brand-color.research-muted, 15%), (brand-color.background, 85%)),
-  rule: color.mix((brand-color.rule, 15%), (brand-color.background, 85%)),
-  rule-cool: color.mix((brand-color.rule-cool, 15%), (brand-color.background, 85%)),
-  rule-ink: color.mix((brand-color.rule-ink, 15%), (brand-color.background, 85%)),
-  secondary: color.mix((brand-color.secondary, 15%), (brand-color.background, 85%)),
-  status-error: color.mix((brand-color.status-error, 15%), (brand-color.background, 85%)),
-  status-error-bg: color.mix((brand-color.status-error-bg, 15%), (brand-color.background, 85%)),
-  status-info: color.mix((brand-color.status-info, 15%), (brand-color.background, 85%)),
-  status-info-bg: color.mix((brand-color.status-info-bg, 15%), (brand-color.background, 85%)),
-  status-success: color.mix((brand-color.status-success, 15%), (brand-color.background, 85%)),
-  status-success-soft: color.mix((brand-color.status-success-soft, 15%), (brand-color.background, 85%)),
-  status-warning: color.mix((brand-color.status-warning, 15%), (brand-color.background, 85%)),
-  status-warning-bg: color.mix((brand-color.status-warning-bg, 15%), (brand-color.background, 85%)),
-  success: color.mix((brand-color.success, 15%), (brand-color.background, 85%)),
-  surface-slate: color.mix((brand-color.surface-slate, 15%), (brand-color.background, 85%)),
-  surface-sunken: color.mix((brand-color.surface-sunken, 15%), (brand-color.background, 85%)),
-  warning: color.mix((brand-color.warning, 15%), (brand-color.background, 85%))
-)
-#set page(fill: brand-color.background)
-#set text(fill: brand-color.foreground)
-#set table.hline(stroke: (paint: brand-color.foreground))
-#set line(stroke: (paint: brand-color.foreground))
-#let brand-logo = (
-  large: (
-    path: "_extensions/chanwe-brand/assets/Logo_Negro.png"
-  ),
-  medium: (
-    path: "_extensions/chanwe-brand/assets/Logo_Negro.png"
-  ),
-  small: (
-    path: "_extensions/chanwe-brand/assets/Logo_Negro.png"
-  )
-)
-#set text()
-#set par(leading: 0.87em)
-#show heading: set text(font: ("Schibsted Grotesk",), weight: 600, fill: rgb("#111319"), )
-#show heading: set par(leading: 0.4em)
-#show link: set text(weight: 500, fill: rgb("#fd3810"), )
+#let brand-color = (:)
+#let brand-color-background = (:)
+#let brand-logo = (:)
 
 #set page(
   paper: "a4",
@@ -4725,7 +4558,6 @@
   numbering: "1",
   columns: 1,
 )
-#set page(background: align(left+top, box(inset: 0.75in, image("/_extensions/chanwe-brand/assets/Logo_Negro.png", width: 1.5in))))
 
 // =============================================================
 // typst-show.typ - Quarto metadata -> chanwe-report() template call
@@ -4739,7 +4571,7 @@
   title: [chanwer Showcase],
   subtitle: [Every palette, scale, header treatment, surface, chart form and native Typst table pattern in the chanwer R package --- static output for chanwe-report-typst],
   author: "Alejandro Abraham",
-  date: "2026-10-30",
+  date: "2026-11-05",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",
