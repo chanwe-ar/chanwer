@@ -109,7 +109,7 @@
     grid(
       columns: (auto, 1fr, auto),
       align: (left + horizon, left + horizon, right + horizon),
-      box(fill: th.pill-fill, stroke: th.pill-stroke, radius: 3 * _su,
+      box(fill: th.pill-fill, stroke: th.pill-stroke, radius: _t.radius-pill,
         inset: (x: 16 * _su, y: 15 * _su), _social-mono(20, th.pill-fg, pill)),
       [],
       stack(dir: ltr, spacing: 28 * _su,
@@ -138,7 +138,7 @@
       columns: (auto, 1fr, auto),
       align: (left + horizon, left + horizon, right + horizon),
       if series != none {
-        box(fill: th.series-fill, radius: 3 * _su, inset: (x: 16 * _su, y: 15 * _su),
+        box(fill: th.series-fill, radius: _t.radius-pill, inset: (x: 16 * _su, y: 15 * _su),
           stack(dir: ltr, spacing: 12 * _su,
             _social-mono(19, _t.primary, "//", tracking: 0.18em),
             _social-mono(19, th.series-fg, series, tracking: 0.18em)))
@@ -289,7 +289,7 @@
   }
   v(1fr)
   if aside != none {
-    block(width: 100%, fill: _t.surface-sunken, radius: 4 * _su, inset: (x: 32 * _su, y: 30 * _su),
+    block(width: 100%, fill: _t.tint, radius: 16 * _su, inset: (x: 32 * _su, y: 30 * _su),
       grid(columns: (220 * _su, 1fr), column-gutter: 28 * _su, align: (left + top, left + top),
         pad(top: 8 * _su, _social-mono(18, _t.body-fg, if aside-label != none { aside-label } else { "Nota" }, tracking: 0.18em)),
         _social-body(30, _t.fg, aside, weight: _t.weight-regular)))
@@ -341,7 +341,7 @@
   v(40 * _su)
   block(width: 880 * _su, _social-display(58, _t.fg, caption, leading: 0.32em))
   v(40 * _su)
-  block(width: 100%, fill: _t.surface-slate, radius: 4 * _su,
+  block(width: 100%, fill: _t.tint, radius: 16 * _su,
     inset: (x: 48 * _su, top: 44 * _su, bottom: 40 * _su), {
       set par(leading: 0pt, spacing: 0pt)
       text(font: _t.font-display, weight: _t.weight-bold, fill: _t.fg, size: 280 * _su,

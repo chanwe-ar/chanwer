@@ -91,7 +91,9 @@
   #block(
   width: 100%,
   spacing: 0pt,
-  stroke: (left: 1pt + _t.primary),
+  // The rail and the sub-level number are slate since 2026-11-05: in the
+  // agenda orange is the chapter numeral's alone.
+  stroke: (left: 1pt + _t.rule-cool),
   inset: (left: 7mm, top: 3mm, bottom: 3mm),
 )[
   #set par(spacing: 0pt, leading: 0pt)
@@ -99,7 +101,7 @@
     columns: (12mm, auto, 1fr, auto),
     column-gutter: 3mm,
     align: (left + horizon, left + horizon, center + horizon, right + horizon),
-    text(font: _t.font-mono, size: 7.5pt, tracking: 0.1em, weight: _t.weight-regular, fill: _t.primary, num),
+    text(font: _t.font-mono, size: 7.5pt, tracking: 0.1em, weight: _t.weight-regular, fill: _t.fg-muted, num),
     // Mismo tono y peso que el texto corrido: el subnivel acompaña, no titula.
     text(font: _t.font-sans, size: 9.5pt, weight: _t.weight-body, fill: _t.body-fg, label),
     // La guía se dibuja en el hueco elástico, así que se estira sola.
@@ -401,13 +403,13 @@
           let n   = _h2.get().first()
           let pg  = counter(page).at(it.element.location()).first()
           // Numeración relativa al capítulo: 2.1, 2.2 — no un contador suelto.
-          // Sin filete por renglón: el riel naranja del subrenglón ya agrupa.
+          // Sin filete por renglón: el riel del subrenglón ya agrupa.
           // El aire va solo antes del primero, para que el riel salga entero.
           if n == 1 and numbered { v(3mm) }
           if n == 0 { v(3mm) }
           chanwe-toc-subrow(
             num: if numbered { str(h1n) + "." + str(n) }
-                 else { box(width: 7mm, height: 0.75pt, fill: _t.primary, baseline: -2pt) },
+                 else { box(width: 7mm, height: 0.75pt, fill: _t.fg-muted, baseline: -2pt) },
             label: it.element.body,
             page: _pad2(pg),
           )
@@ -447,16 +449,17 @@
 // editoriales), y un corte redondo que el brandbook no trae. Ahora es el
 // cuerpo de la marca, y la capitular, una letra de display, va en Schibsted.
 // =============================================================
-// El rotulo va un paso mas claro que el valor (`fg-subtle`, el tono de toda
-// la metadata) y el valor entra en el mismo chip contorneado que la portada
+// El rotulo va en `fg-muted`, el tono de toda la metadata sobre papel
+// (`fg-subtle` da 2,9:1 y la guia lo deja para texto grande o decorativo), y
+// el valor entra en el mismo chip contorneado que la portada
 // usa para el taggy: filete de 0.5pt, radio 2pt, mono en versalitas. Es un
 // `block` y no un `box` a proposito: asi un valor largo parte de linea dentro
 // del chip en vez de desbordar el riel de 60mm.
 #let chanwe-side-row(label: "", value: "", dark: false, accent: _t.primary) = {
-  // Sobre la hoja: rótulo y texto del chip en el mismo fg-subtle, el marco
+  // Sobre la hoja: rótulo y texto del chip en el mismo fg-muted, el marco
   // del chip en border-cool.
-  let lc = if dark { _t.white.transparentize(62%) } else { _t.fg-subtle }
-  let vc = if dark { _t.white                     } else { _t.fg-subtle }
+  let lc = if dark { _t.white.transparentize(62%) } else { _t.fg-muted }
+  let vc = if dark { _t.white                     } else { _t.fg-muted }
   let pc = if dark { _t.white.transparentize(75%) } else { _t.border-cool }
   // El aire interior del chip vive en una constante porque el rotulo se
   // sangra lo mismo: asi el rotulo se alinea con el texto del chip y no con
@@ -468,7 +471,7 @@
   // parte de linea adentro del chip en vez de desbordar, y una lista —los
   // keywords— apila un chip por item en vez de dejarlos fluir con el ancho de
   // su texto, que era lo unico que rompia la columna.
-  let pill(t) = block(width: 100%, stroke: 0.5pt + pc, radius: 2pt,
+  let pill(t) = block(width: 100%, stroke: 0.5pt + pc, radius: _t.radius-pill,
                       inset: pill-pad, chip-text(t))
   let values = if type(value) == array {
     stack(dir: ttb, spacing: 4pt, ..value.map(pill))
@@ -746,7 +749,7 @@
   // La divisoria entre las dos mitades es el mismo filete que cierra el
   // encabezado y abre el pie: `border` a 0.5pt, no el negro de la rampa.
   let div-stroke  = if divider { (bottom: 0.5pt + _t.border) } else { none }
-  let lc          = if dark { _t.white.transparentize(45%) } else { _t.fg-subtle }
+  let lc          = if dark { _t.white.transparentize(45%) } else { _t.fg-muted }
   let vc          = if dark { _t.white                     } else { _t.fg }
   let hair        = if on-primary { _t.white.transparentize(60%) } else if dark { _t.rule-ink } else { _t.rule }
 
@@ -759,7 +762,7 @@
   // Sobre obsidiana el relleno pasa a ink-soft.
   let chip(t, filled: false) = box(
     fill: if filled { accent } else if on-primary { _t.white.transparentize(80%) } else if dark { _t.ink-soft } else { _t.border-cool },
-    radius: 1pt,
+    radius: _t.radius-pill,
     inset: (x: 1.5mm, y: 1.2mm),
     text(font: _t.font-mono, size: 5.2pt, weight: _t.weight-regular, tracking: 0.1em,
          fill: if filled and on-primary { _t.primary } else if filled { _t.paper } else if dark { _t.white.transparentize(15%) } else { _t.fg },
@@ -1025,8 +1028,8 @@
 // CHAPTER SEPARATOR (full-page divider)
 // =============================================================
 // HTML .chapter-cover layout:
-//   - black background
-//   - subtle gray radial halo (top-left, low opacity)
+//   - paper background
+//   - the series contour art across the upper half
 //   - .cc-top   : mark left, doc id right (mono micro-type, white/60)
 //   - .cc-mid   : eyebrow + cc-num-row (giant 02 + title block)
 //   - .cc-bottom: meta items + page number
@@ -1044,22 +1047,22 @@
   _chanwe-cur-part.update(_ => (number: number, title: title, eyebrow: eyebrow))
 
   // Mismo papel que una pagina de cuerpo (`page-bg`, que es `callout-surface`):
-  // la portadilla se separa por su composicion, no por un tono distinto. El
-  // halo radial cierra contra ese mismo color, asi que se mueven juntos.
+  // la portadilla se separa por su composicion, no por un tono distinto.
   set page(
     paper: _chanwe-paper, margin: 0pt, fill: _t.callout-surface,
     header: none, footer: none,
-    background: place(top + left, dx: -50mm, dy: -50mm,
-      circle(radius: 145mm,
-        fill: gradient.radial(
-          _t.ink-fg.transparentize(90%),
-          _t.callout-surface.transparentize(100%),
-        ),
-        stroke: none,
-      )
-    ),
+    // The upper half carries the series art —the contour field of the
+    // brandbook's `documents/series`, in its report cut: lines only, no
+    // ground— run off the top right corner. Until 3.0.2 it was a grey radial
+    // halo, which printed as an empty half page.
+    background: place(top + right, dx: 52mm, dy: -24mm,
+      image(_chanwe-assets + "01-radar-macro.svg", width: 252mm)),
   )
   set text(fill: _t.fg)
+  // The divider is called from the document body, so it would inherit the
+  // body's `justify` (`chanwe.body-justify`, on by default): a long part
+  // title then broke over three lines with stretched spacing.
+  set par(justify: false)
 
   context {
     let doc = _chanwe-doc.get()
@@ -1080,7 +1083,7 @@
     #block(width: 100%)[
       // Mismo tono que el encabezado y el pie del cuerpo.
       #set text(font: _t.font-mono, size: 7pt, tracking: 0.22em,
-                fill: _t.fg-subtle)
+                fill: _t.fg-muted)
       #upper(_chanwe-clean-str(doc.taggy))
       #h(3mm)
       #text(fill: _t.primary, "//")
@@ -1095,7 +1098,7 @@
         #place(top + right, rotate(-90deg, origin: top + right,
           box(width: 52mm, align(right,
             text(font: _t.font-mono, size: 6.4pt, tracking: 0.22em,
-                 fill: _t.fg-subtle, upper(_chanwe-clean-str(_right)))))))
+                 fill: _t.fg-muted, upper(_chanwe-clean-str(_right)))))))
       ])
 
     #v(1fr)
@@ -1118,13 +1121,18 @@
       ),
       stack(
         dir: ttb, spacing: 9mm,
-        // Misma familia y prosa que el H1: display, peso 700 y su tracking.
+        // Misma familia y prosa que el H1: display, peso 700 y su tracking,
+        // y su interlineado propio (0.18em), para no heredar el del cuerpo
+        // (`chanwe.body-leading`) cuando el título parte de renglón.
         // El numeral gigante se queda en la serif itálica.
-        text(
-          font: _t.font-display, weight: _t.weight-display,
-          size: 51.75pt, tracking: -0.05em, fill: _t.fg,
-          title,
-        ),
+        block({
+          set par(leading: 0.18em)
+          text(
+            font: _t.font-display, weight: _t.weight-display,
+            size: 51.75pt, tracking: -0.05em, fill: _t.fg,
+            title,
+          )
+        }),
         // La bajada va en el slate de marca, un escalón más fina.
         block(width: 78mm, text(
           font: _t.font-sans, size: 14pt, weight: _t.weight-thin,
@@ -1145,7 +1153,7 @@
       {
         // Todo el pie en el mismo tono que el del cuerpo.
         set text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
-                 fill: _t.fg-subtle)
+                 fill: _t.fg-muted)
         upper(_chanwe-clean-str(doc.doc-id))
         if doc.edition != "" {
           h(14mm)
@@ -1153,7 +1161,7 @@
         }
       },
       text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
-           fill: _t.fg-subtle, upper(_pages)),
+           fill: _t.fg-muted, upper(_pages)),
     )
   ]
   }

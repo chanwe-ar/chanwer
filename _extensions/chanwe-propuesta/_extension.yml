@@ -22,6 +22,9 @@ contributes:
       filters:
         - ../chanwe-report/chanwe-filters.lua
       template-partials:
+        - ../chanwe-report/chanwe-brand-tokens.typ
+        - ../chanwe-report/chanwe-tokens.typ
+        - ../chanwe-report/chanwe-v2.typ
         - typst-template.typ
         - ../chanwe-report/chanwe-qr.typ
         - typst-show.typ

@@ -43,7 +43,10 @@
 
   --cw-color-text-primary: #{$brand-fg};
   --cw-color-text-secondary: #{$brand-fg-muted};
-  --cw-color-text-muted: #{$brand-fg-subtle};
+  /* Texto chico que se lee —etiquetas, pies, leyendas— va en `fg-muted`:
+     `fg-subtle` da 2,9:1 sobre papel y la guia de marca lo deja para
+     texto grande, decorativo o deshabilitado (2026-10-08). */
+  --cw-color-text-muted: #{$brand-fg-muted};
   --cw-color-text-inverse: #{$brand-paper};
 
   --cw-color-border-subtle: #{rgba($brand-ink, 0.10)};
@@ -124,6 +127,46 @@
   --chanwe-green-soft: #{$brand-status-success-soft};
   --chanwe-red-strong: var(--cw-color-status-error);
   --chanwe-red-soft: var(--cw-color-status-error-bg);
+
+  /* ── CHANWE v2 (brand-v2.md; chanwe-brand 3.0.0, T7.3) ──────────────
+     Every value below is generated: `$brand-*` from brand.yml's palette,
+     `$cw-*` from its generated Bootstrap block (scripts/generate-brand.rb,
+     from the hub's tokens.json). Panes hold content (white, hairline,
+     16px, the rest shadow on screen); controls are pills; grouping inside
+     a pane is the slate tint, never a grey fill. */
+  --cw-color-pane: #{$brand-pane};
+  --cw-color-canvas: #{$brand-canvas};
+  --cw-color-rule: #{$brand-rule};
+  --cw-color-tint: #{$brand-tint};
+  --cw-color-tint-strong: #{$brand-tint-strong};
+  --cw-color-ink-fg: #{$brand-ink-fg};
+  --cw-radius-hair: #{$cw-radius-hair};
+  --cw-radius-row: #{$cw-radius-row};
+  --cw-radius-pane: #{$cw-radius-pane};
+  --cw-radius-surface: #{$cw-radius-surface};
+  --cw-radius-band: #{$cw-radius-band};
+  --cw-radius-pill: #{$cw-radius-pill};
+  --cw-space-xs: #{$cw-space-xs};
+  --cw-space-sm: #{$cw-space-sm};
+  --cw-space-md: #{$cw-space-md};
+  --cw-space-lg: #{$cw-space-lg};
+  --cw-space-xl: #{$cw-space-xl};
+  --cw-control-sm: #{$cw-control-sm};
+  --cw-control-md: #{$cw-control-md};
+  --cw-text-label: #{$cw-text-label};
+  --cw-text-caption: #{$cw-text-caption};
+  --cw-text-control: #{$cw-text-control};
+  --cw-text-button: #{$cw-text-button};
+  --cw-text-body: #{$cw-text-body};
+  --cw-text-title: #{$cw-text-title};
+  --cw-shadow-rest: #{$cw-shadow-rest};
+  --cw-shadow-lift: #{$cw-shadow-lift};
+  --cw-shadow-overlay: #{$cw-shadow-overlay};
+  /* The pane in one line: what every content block below draws. */
+  --cw-pane-border: 1px solid var(--cw-color-rule);
+  /* The band's dot field: `ink-fg` dots on obsidian (brand-v2.md §2). */
+  --cw-band-dots: radial-gradient(circle at 1px 1px, #{rgba($brand-ink-fg, 0.55)} 1px, transparent 1.4px) 0 0 / 14px 14px;
+  --cw-band-sheen: linear-gradient(180deg, #{rgba($brand-pure-white, 0.06)}, transparent 30%);
 }
 
 
@@ -154,7 +197,13 @@
   overflow: hidden;
   min-height: clamp(21rem, 38vw, 34rem);
   padding: 0;
-  border-bottom: 1px solid var(--cw-color-border-strong);
+  /* v2: the cover floats on the page as a surface: a margin all round,
+     the band radius, the hairline and the rest shadow, instead of a
+     strip ruled at the foot. Its paper field and obsidian rail stay. */
+  margin: var(--cw-space-md) var(--cw-space-md) 0;
+  border: var(--cw-pane-border);
+  border-radius: var(--cw-radius-band);
+  box-shadow: var(--cw-shadow-rest);
 }
 
 .quarto-title-banner::before {
@@ -293,7 +342,7 @@
   font-weight: 500;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--cw-color-fg-subtle);
+  color: var(--cw-color-fg-muted);
   margin-bottom: 0.18rem;
 }
 
@@ -357,7 +406,7 @@
   align-items: center;
   gap: 0.5em;
   padding: 0.42em 0.95em;
-  border-radius: 4px;
+  border-radius: var(--cw-radius-pill);
   background: var(--cw-color-ink);
   color: var(--cw-color-rule-cool);
   font-family: var(--cw-font-mono);
@@ -435,7 +484,7 @@
   display: block;
   padding: 0.26rem;
   border: 1px solid #{rgba($brand-pure-white, 0.16)};
-  border-radius: 4px;
+  border-radius: var(--cw-radius-row);
   background: transparent;
   line-height: 0;
   pointer-events: auto;
@@ -460,7 +509,7 @@
   width: clamp(2.55rem, 3.4vw, 3.5rem);
   aspect-ratio: 1;
   padding: 0.12rem;
-  border-radius: 3px;
+  border-radius: var(--cw-radius-hair);
   background:
     var(--cw-contact-qr) center / contain no-repeat,
     #{$brand-pure-white};
@@ -530,15 +579,14 @@
    portada, y su texto en rule-cool: la regla de la marca para un
    texto sobre tinta. El naranja queda para el punto del titular, el
    filete de datum y el glifo del pie — los acentos, no las cajas.
-   Redondea con el radio de la marca (4px), igual que la pastilla de
-   serie del pie: las dos del campo editorial son la misma pieza y
-   antes una iba en angulo recto y la otra no. */
+   En v2 es una pastilla (999px), igual que la pastilla de serie del
+   pie: las dos del campo editorial son la misma pieza. */
 .quarto-title-banner .quarto-title > .quarto-categories .quarto-category:nth-child(1),
 .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(1) {
   background: var(--cw-color-ink) !important;
   color: var(--cw-color-rule-cool) !important;
-  border-radius: 4px;
-  padding: 0.3rem 0.55rem;
+  border-radius: var(--cw-radius-pill);
+  padding: 0.3rem 0.7rem;
   font-size: 0.6rem;
   font-weight: 500;
   letter-spacing: 0.16em;
@@ -570,20 +618,20 @@
 }
 
 .quarto-title-banner .quarto-title .chanwe-keyword-pills .quarto-category {
-  background: var(--cw-color-surface-sunken) !important;
+  background: var(--cw-color-tint) !important;
   color: var(--cw-color-fg-muted) !important;
   border: 1px solid var(--cw-color-border-subtle) !important;
   outline: none !important;
   box-shadow: none !important;
   opacity: 1 !important;
-  border-radius: 4px;
+  border-radius: var(--cw-radius-pill);
   font-family: var(--cw-font-mono);
   font-size: 0.58rem;
   line-height: 1.2;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  padding: 0.22rem 0.5rem;
+  padding: 0.22rem 0.65rem;
   text-decoration: none !important;
 }
 
@@ -794,35 +842,35 @@ mark, .mark {
   color: var(--cw-color-primary-active);
   font-weight: 600;
   padding: 0.08rem 0.32rem;
-  border-radius: 4px;
+  border-radius: var(--cw-radius-hair);
 }
 
-/* Inline code */
+/* Inline code (v2): a chip on the slate tint, row radius. */
 :not(pre) > code:not(.sourceCode),
 p code:not(.sourceCode),
 li code:not(.sourceCode),
 td code:not(.sourceCode) {
-  background: var(--cw-color-code-bg);
+  background: var(--cw-color-tint);
   color: var(--cw-color-neutral-700);
-  border-radius: 4px;
+  border-radius: var(--cw-radius-row);
   font-family: var(--cw-font-mono);
   font-size: 0.85em;
   padding: 0.08rem 0.32rem;
 }
 
-/* Callouts: Typst callout-contract colours on a 2px left rule and a
-   rotated-square glyph (the chanwe-glyph); transparent header with the
-   title in mono caps, ink. Colour lives on solid marks, never on text. */
+/* Callouts (v2): a pane — white, the `rule` hairline all round, 16px,
+   the rest shadow on screen. No coloured side bar and no coloured fill:
+   the role colour is one dot before the mono label, the only colour the
+   callout carries (brand-v2.md §6, Q1 B). The default style's title bar
+   is the slate tint, which groups inside the pane; `appearance="simple"`
+   keeps the title on the pane. */
 .callout {
   --cw-callout-accent: var(--cw-color-ink);
-  background-color: var(--cw-color-pure-white) !important;
-  /* El marco en `border-cool`, el rol que el reporte le da al callout,
-     y no el `border-default` neutro: misma luminancia (212 contra 213),
-     el tono frio es lo unico que se mueve, y asi el marco y la hairline
-     de la cabecera son el mismo gris. */
-  border: 1px solid var(--cw-color-border-cool) !important;
-  border-left: 2px solid var(--cw-callout-accent) !important;
-  border-radius: 4px;
+  background-color: var(--cw-color-pane) !important;
+  border: var(--cw-pane-border) !important;
+  border-radius: var(--cw-radius-surface);
+  box-shadow: var(--cw-shadow-rest);
+  overflow: hidden;
 }
 .callout.callout-note,
 .callout.callout-info { --cw-callout-accent: var(--cw-color-callout-note); }
@@ -833,12 +881,9 @@ td code:not(.sourceCode) {
 .callout.callout-caution,
 .callout.callout-alert { --cw-callout-accent: var(--cw-color-callout-caution); }
 
-/* Quarto le pone `padding: .4em .7em` al card del estilo simple —el
-   default no lo lleva—, asi que todo lo de adentro quedaba metido
-   10px a cada lado y la cabecera flotaba en vez de apoyarse en los
-   bordes. El aire lo ponen la cabecera y el cuerpo, igual que en el
-   default; las dos apariencias comparten geometria y se diferencian
-   solo en la barra. */
+/* Quarto le pone `padding: .4em .7em` al card del estilo simple: el aire
+   lo ponen la cabecera y el cuerpo, igual que en el default; las dos
+   apariencias comparten geometria y se diferencian solo en la barra. */
 .callout.callout-style-simple {
   padding: 0 !important;
 }
@@ -848,55 +893,50 @@ td code:not(.sourceCode) {
 }
 
 .callout > .callout-header {
-  /* Quarto le pone `opacity: 85%` a la cabecera del estilo default y
-     `75%` a la del simple. Con eso ningun color de la barra sale como
-     se declaro: medido sobre el render, el slate llegaba a #EDF2F7 en
-     vez de #EBF0F6, la hairline a #D6DCE3 y el glifo `//` a una
-     version palida de su acento. La marca no tiene colores al 85%. */
+  /* Quarto le pone `opacity: 85%` / `75%` a la cabecera: ningun color
+     saldria como se declaro. La marca no tiene colores al 85%. */
   opacity: 1 !important;
   background: transparent !important;
   border-bottom: 0 !important;
-  padding: 0.6rem 1.2rem 0.55rem !important;
+  padding: 0.7rem 1.25rem 0.6rem !important;
 }
 
-/* La barra de titulo va en `callout-header`, el mismo slate que el
-   bloque de cabecera del callout del reporte, cerrada por la hairline
-   `border-cool` que el reporte dibuja entre la cabecera y el cuerpo.
-   El radio interior es 2px del lado del filete de 2px y 3px del otro,
-   para no asomar una esquina viva adentro del card de 4px. Va **solo**
-   en el estilo default: `appearance="simple"` quiere decir, por
-   definicion, que el titulo se queda sin fondo. */
+/* The title bar groups inside the pane with the tint, closed by the
+   hairline: never a grey fill. Only in the default style. */
 .callout.callout-style-default > .callout-header {
-  background: var(--cw-color-callout-header) !important;
-  border-bottom: 1px solid var(--cw-color-border-cool) !important;
-  border-radius: 2px 3px 0 0;
+  background: var(--cw-color-tint) !important;
+  border-bottom: var(--cw-pane-border) !important;
+  border-radius: 0;
 }
 .callout .callout-title-container {
   display: flex;
   align-items: center;
   font-family: var(--cw-font-mono);
-  font-size: 0.7rem;
+  font-size: var(--cw-text-caption);
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--cw-color-ink);
 }
+/* The role colour: one dot, 8px, before the label. */
 .callout .callout-title-container::before {
-  content: "//";
+  content: "";
   display: inline-block;
   flex: none;
-  margin: 0 8px 0 1px;
-  color: var(--cw-callout-accent);
+  width: 8px;
+  height: 8px;
+  margin: 0 10px 0 1px;
+  border-radius: var(--cw-radius-pill);
+  background: var(--cw-callout-accent);
 }
 .callout .callout-icon-container {
   display: none !important;
 }
 .callout .callout-body,
 .callout .callout-body-container {
-  background-color: var(--cw-color-pure-white) !important;
-  /* `body-fg`, el mismo slate del cuerpo: el callout es un parrafo
-     del documento, no una caja aparte, y se lee igual que el resto.
-     El papel blanco es lo que lo despega de la hoja. */
+  background-color: var(--cw-color-pane) !important;
+  /* `body-fg`, el mismo slate del cuerpo: el callout se lee como el
+     resto del documento; el panel es lo que lo despega de la hoja. */
   color: var(--cw-color-body-fg) !important;
   font-size: 0.94rem;
   line-height: 1.58;
@@ -905,11 +945,10 @@ td code:not(.sourceCode) {
   padding: 0 !important;
 }
 .callout .callout-body-container {
-  padding: 0.45rem 1.2rem 1rem !important;
+  padding: 0.6rem 1.25rem 1.05rem !important;
 }
 /* El parrafo tambien en `body-fg`: sin esta regla Bootstrap le pone el
-   color de cuerpo del tema y el texto del callout salia en el negro
-   pleno de `fg`, mas oscuro que la prosa que lo rodea. */
+   color de cuerpo del tema y el texto del callout salia en `fg`. */
 .callout .callout-body-container p,
 .callout .callout-body-container li {
   color: var(--cw-color-body-fg) !important;
@@ -917,6 +956,7 @@ td code:not(.sourceCode) {
 .callout .callout-body-container a {
   color: var(--chanwe-blue-strong) !important;
 }
+
 /* Collapsible callouts: respond on press; open on the critically damped curve */
 .callout > .callout-header[data-bs-toggle] {
   cursor: pointer;
@@ -950,10 +990,6 @@ body {
   font-weight: 300;
 }
 
-
-.quarto-title-banner {
-  border-bottom: 0;
-}
 
 .quarto-title-banner .quarto-title .title {
   /* El tracking lo fija la regla del titular, mas arriba: -0.05em, el
@@ -1051,12 +1087,12 @@ main.content .chanwe-pill-label::before {
   background: var(--cw-color-primary);
 }
 
-/* One radius language: 4px like the banner keyword pills, callouts, code and figures */
+/* v2: every chip is a pill on the slate tint (brand-v2.md §3). */
 main.content .chanwe-pill {
-  padding: 0.28rem 0.6rem;
-  border: 1px solid var(--cw-color-border-default);
-  border-radius: 4px;
-  background: var(--cw-color-surface-sunken);
+  padding: 0.3rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: var(--cw-radius-pill);
+  background: var(--cw-color-tint);
   /* Mono y slate: la pastilla es un dato, no una frase. Va en la
      misma familia que su rotulo y en el color del cuerpo, asi el
      renglon entero se lee como metadato y el naranja del rotulo
@@ -1072,7 +1108,7 @@ main.content .chanwe-pill-accent {
   /* Outline chip, not a solid ink block: status metadata should not
      be the highest-contrast element in the banner. */
   border-color: var(--cw-color-ink);
-  background: transparent;
+  background: var(--cw-color-pane);
   color: var(--cw-color-ink);
   font-weight: 600;
 }
@@ -1185,10 +1221,13 @@ main.content h2.chanwe-area-heading {
   /* La losa crece un 50% en alto, y el reparto del relleno es
      asimetrico a proposito: el texto no queda centrado sino un paso
      por debajo del medio, apoyado contra el canto de abajo. */
-  padding: 2.4rem 1.15rem 1.34rem;
+  padding: 2.4rem 1.6rem 1.34rem;
+  /* v2: the section opener is the obsidian band (brand-v2.md §2):
+     24px, the dot field, the neutral top sheen, no orange bar — the
+     numeral is the one accent. */
   border: 0;
-  border-left: 4px solid var(--cw-color-primary);
-  border-radius: 4px;
+  border-radius: var(--cw-radius-band);
+  box-shadow: var(--cw-shadow-lift);
   /* La trama de la contratapa, la misma que el pie del documento:
      paso 14.4px y punto de 0.73px de radio, los numeros de
      `_chanwe-dot-field()`. Aca a alfa 0.25 —un 75% de transparencia—,
@@ -1196,10 +1235,11 @@ main.content h2.chanwe-area-heading {
      retícula. */
   --cw-dot-step: 14.4px;
   --cw-dot: #{rgba($brand-ink-fg, 0.25)};
-  background-color: var(--cw-color-ink-light);
+  background-color: var(--cw-color-ink);
   background-image:
+    var(--cw-band-sheen),
     radial-gradient(circle at center, var(--cw-dot) 0.73px, transparent 0.8px);
-  background-size: var(--cw-dot-step) var(--cw-dot-step);
+  background-size: 100% 100%, var(--cw-dot-step) var(--cw-dot-step);
   color: var(--cw-color-text-inverse) !important;
   font-size: clamp(1.56rem, 2.34vw, 2.145rem);
   line-height: 1.08;
@@ -1241,6 +1281,27 @@ main.content [role="doc-endnotes"] {
   padding-left: clamp(1.5rem, 4vw, 4.2rem);
 }
 
+/* El punto bermellon dibujado que cierra el titular principal (H1), como
+   en las portadas y los cierres: nunca un punto tipeado. Lo agrega
+   `chanwe-report/chanwe-title-dot.lua`, atado a la ultima palabra para que
+   nunca quede solo en un renglon; el H2 y los de abajo no lo llevan. Mide
+   0.22em, se separa 0.08em y se apoya en la linea de base. En el indice no
+   va. */
+main.content h1 .cw-title-end {
+  white-space: nowrap;
+}
+main.content h1 .cw-title-dot {
+  display: inline-block;
+  width: 0.22em;
+  height: 0.22em;
+  margin-left: 0.08em;
+  border-radius: 50%;
+  background: var(--cw-color-primary);
+}
+nav[role="doc-toc"] .cw-title-dot {
+  display: none;
+}
+
 main.content h1::after {
   content: "";
   display: block;
@@ -1266,6 +1327,21 @@ main.content h6 .header-section-number {
   color: var(--cw-color-primary) !important;
   display: inline-block;
   margin-right: 0.34em;
+  /* Cormorant Garamond sets old-style figures by default: the 3, 4, 5, 7 and
+     9 hang below the baseline, so a section numeral sat lower than its title
+     and the chapter's "3" crossed the rule under the H1. Lining figures stand
+     on the baseline, like the Instrument Serif numerals of the report. */
+  font-variant-numeric: lining-nums;
+}
+
+/* Orange is the top level's alone (2026-11-05, with the report): a numeral
+   with no dot ("3") keeps `primary`; a sub-level one ("3.1", "3.1.2") is the
+   slate of small text. With every level in orange nothing on the page was
+   the accent. The test is the number, not the tag: Quarto writes it in
+   `data-number`, and a document whose sections start at `##` has its top
+   level in an H2. The area heading (obsidian band) keeps its orange numeral. */
+main.content :is(h1, h2, h3, h4, h5, h6)[data-number*="."]:not(.chanwe-area-heading) .header-section-number {
+  color: var(--cw-color-fg-muted) !important;
 }
 
 main.content h1 .header-section-number {
@@ -1450,16 +1526,16 @@ main.content h6::after {
    asi que el indice se despega por ser mas blanco que el fondo. El
    alfa se queda por debajo de 1 —y con el `backdrop-filter`— porque
    lo que hace que flote es que el texto se adivine debajo. */
+/* v2: the index is glass (the pane at 72%, 18px blur), a 16px surface
+   with the hairline and the rest shadow (brand-v2.md §2, §4). */
 nav[role="doc-toc"] {
-  border: 0;
-  border-radius: 4px;
-  background: #{rgba($brand-pure-white, 0.82)};
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
-  box-shadow:
-    inset 0 1px 0 #{rgba($brand-pure-white, 0.75)},
-    0 1px 0 #{rgba($brand-ink, 0.06)};
-  padding: 0.8rem 0.85rem;
+  border: var(--cw-pane-border);
+  border-radius: var(--cw-radius-surface);
+  background: #{rgba($brand-pane, 0.72)};
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: var(--cw-shadow-rest);
+  padding: 0.85rem 0.7rem;
 }
 
 nav[role="doc-toc"] #toc-title,
@@ -1473,14 +1549,16 @@ nav[role="doc-toc"] h2 {
   line-height: 1;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--cw-color-fg-subtle);
+  color: var(--cw-color-fg-muted);
 }
 
 nav[role="doc-toc"] .nav-link {
-  border-left: 1px solid transparent;
-  margin: 0.1rem 0;
-  border-radius: 0;
-  padding: 0.16rem 0.45rem 0.16rem 0.34rem;
+  // Quarto draws a 1px left rule on every TOC link (!important on the
+  // active one); on a pill it curls into a bracket, so it goes.
+  border-left: 0 !important;
+  margin: 0.08rem 0;
+  border-radius: var(--cw-radius-pill);
+  padding: 0.22rem 0.6rem;
   font-size: 0.82rem;
   line-height: 1.25;
   color: var(--cw-color-fg-muted);
@@ -1525,16 +1603,21 @@ nav[role="doc-toc"] .header-section-number {
   font-weight: 400 !important;
 }
 
+/* In the contents too: the chapter number is orange, the sub-levels slate. */
+nav[role="doc-toc"] ul ul .header-section-number {
+  color: var(--cw-color-fg-muted) !important;
+}
+
 nav[role="doc-toc"] .nav-link:hover {
-  background: transparent;
+  background: var(--cw-color-tint);
   color: var(--cw-color-ink);
 }
 
-/* Quarto sets the active colour with !important; ink text, primary hairline */
+/* v2: the active item is a tint pill, never an orange bar (brand-v2.md
+   §6). Quarto sets the active colour with !important. */
 .sidebar nav[role="doc-toc"] .nav-link.active,
 nav[role="doc-toc"] .nav-link.active {
-  border-left-color: var(--cw-color-primary) !important;
-  background: transparent;
+  background: var(--cw-color-tint-strong);
   color: var(--cw-color-ink) !important;
   font-weight: 600;
 }
@@ -1568,14 +1651,15 @@ div.sourceCode {
    El relleno es del `pre` y de nadie mas: venia con 5px propios mas
    los 2/4px que el `code` de adentro trae de Bootstrap, y el texto
    quedaba pegado al canto. */
+/* v2: the code block is a pane (white, hairline, 16px, rest shadow):
+   no side bar, no grey fill. */
 pre,
 pre.sourceCode,
 div.sourceCode pre {
-  background-color: var(--cw-color-code-bg) !important;
-  border: 1px solid var(--cw-color-border-default) !important;
-  border-left: 2px solid var(--cw-color-fg-subtle) !important;
-  border-radius: 4px !important;
-  box-shadow: none;
+  background-color: var(--cw-color-pane) !important;
+  border: var(--cw-pane-border) !important;
+  border-radius: var(--cw-radius-surface) !important;
+  box-shadow: var(--cw-shadow-rest);
   font-family: var(--cw-font-mono);
   padding: 0.95rem 1.15rem !important;
 }
@@ -1597,46 +1681,46 @@ details.code-fold > summary {
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  margin-bottom: -1px;
-  padding: 0.42rem 0.75rem;
+  /* v2: the toggle is a control, so a pill in sentence case (Satoshi
+     500), on the tint; it sits above the pane instead of fusing with it. */
+  margin-bottom: 0.5rem;
+  min-height: var(--cw-control-sm);
+  padding: 0 0.95rem;
   list-style: none;
-  border: 1px solid var(--cw-color-border-default);
-  /* El mismo canto que la tarjeta de codigo a la que se engancha. */
-  border-left: 2px solid var(--cw-color-fg-subtle);
-  border-radius: 4px 4px 0 0;
-  background: var(--cw-color-code-bg);
-  color: var(--cw-color-fg-muted);
-  font-family: var(--cw-font-mono);
-  font-size: 0.68rem;
+  border: 1px solid transparent;
+  border-radius: var(--cw-radius-pill);
+  background: var(--cw-color-tint);
+  color: var(--cw-color-ink);
+  font-family: var(--cw-font-sans);
+  font-size: var(--cw-text-button);
   font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
   transition: color 120ms var(--cw-ease), border-color 120ms var(--cw-ease);
 }
 details.code-fold > summary::-webkit-details-marker {
   display: none;
 }
 details.code-fold > summary::before {
-  content: "//";
+  content: "";
   display: inline-block;
   flex: none;
-  margin: 0 8px 0 1px;
-  color: var(--cw-color-primary);
+  width: 6px;
+  height: 6px;
+  margin: 0 8px 0 0;
+  border-radius: var(--cw-radius-pill);
+  background: var(--cw-color-primary);
+  transition: transform 160ms var(--cw-ease);
 }
 details.code-fold > summary:hover {
-  color: var(--cw-color-ink);
+  background: var(--cw-color-tint-strong);
 }
 details.code-fold > summary:focus-visible {
   outline: 2px solid var(--cw-color-primary);
   outline-offset: 2px;
 }
-details.code-fold[open] > summary {
-  border-bottom-color: transparent;
-}
 details.code-fold[open] > summary + * pre,
 details.code-fold[open] > summary + * pre.sourceCode {
-  border-top-left-radius: 0 !important;
-  border-top-right-radius: 0 !important;
   margin-top: 0;
 }
 
@@ -1720,15 +1804,19 @@ code span.al {
 }
 
 
-/* Tables: the chanwe_gt() / chanwe_kbl() grammar — mono-caps column labels,
-   hairline rows, tabular figures — so markdown, gt and Typst tables read as one. */
+/* Tables (v2): a pane — white, the hairline all round, the dense 12px
+   radius, the rest shadow — with the header row on the slate tint and
+   hairline rows. Mono caps column labels and tabular figures stay: the
+   chanwe_gt() / chanwe_kbl() grammar, so markdown, gt and Typst tables
+   read as one. */
 table {
   border-collapse: separate;
   border-spacing: 0;
   overflow: hidden;
-  border-radius: 0;
-  border-top: 1px solid var(--cw-color-border-strong);
-  border-bottom: 1px solid var(--cw-color-border-strong);
+  border: var(--cw-pane-border);
+  border-radius: var(--cw-radius-pane);
+  background: var(--cw-color-pane);
+  box-shadow: var(--cw-shadow-rest);
   font-variant-numeric: tabular-nums;
 }
 
@@ -1736,24 +1824,23 @@ table {
    otherwise outranks `table thead th` for colour and padding. */
 main.content table thead th,
 table thead th {
-  background: transparent;
-  color: var(--cw-color-fg-subtle);
+  background: var(--cw-color-tint) !important;
+  color: var(--cw-color-fg-muted);
   border-top: 0 !important;
-  border-bottom: 1px solid var(--cw-color-border-strong) !important;
+  border-bottom: var(--cw-pane-border) !important;
   font-family: var(--cw-font-mono);
-  font-size: 0.64rem;
+  font-size: var(--cw-text-label);
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   vertical-align: bottom;
-  padding-top: 0.55rem;
-  padding-bottom: 0.5rem;
+  padding: 0.6rem 0.85rem 0.55rem;
 }
 
 main.content table tbody td,
 table tbody td {
-  border-bottom: 1px solid var(--cw-color-border-subtle);
-  padding: 0.55rem 0.5rem;
+  border-bottom: var(--cw-pane-border);
+  padding: 0.6rem 0.85rem;
   vertical-align: top;
 }
 
@@ -1763,16 +1850,16 @@ table tbody tr:last-child td {
 }
 
 /* Priority badges (.chanwe-priority-must / -should / -could / -future):
-   mono caps in ink; the level colour lives on the glyph, never on the text. */
+   v2 pills; mono caps in ink, the level colour on the dot, never on the text. */
 .chanwe-priority {
   --cw-priority-level: var(--cw-color-fg-subtle);
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.2rem 0.5rem 0.18rem;
-  border: 1px solid var(--cw-color-border-default);
-  border-radius: 4px;
-  background: #FFFFFF;
+  padding: 0.22rem 0.65rem 0.2rem;
+  border: var(--cw-pane-border);
+  border-radius: var(--cw-radius-pill);
+  background: var(--cw-color-pane);
   color: var(--cw-color-ink);
   font-family: var(--cw-font-mono);
   font-size: 0.6rem;
@@ -1787,8 +1874,8 @@ table tbody tr:last-child td {
   flex: none;
   width: 6px;
   height: 6px;
+  border-radius: var(--cw-radius-pill);
   background: var(--cw-priority-level);
-  transform: rotate(45deg);
 }
 .chanwe-priority-must { --cw-priority-level: var(--cw-color-primary); }
 .chanwe-priority-should { --cw-priority-level: var(--cw-color-callout-note); }
@@ -1805,33 +1892,25 @@ table tbody tr:nth-child(even) {
 
 .table-striped > tbody > tr:nth-of-type(odd) > *,
 .table-striped > tbody > tr:nth-of-type(even) > * {
-  background-color: var(--cw-color-neutral-0) !important;
+  background-color: var(--cw-color-pane) !important;
 }
 
-
-/* La cita, con el dibujo del reporte punto por punto (`show quote`
-   en `chanwe-report/typst-template.typ`): panel en `surface-sunken`
-   —un paso de slate mas claro que el abstract y el codigo, porque la
-   cita es un aparte y no un bloque de interfaz—, canto bermellon de
-   1.4pt a la izquierda, inset de 6mm a los lados y 5mm arriba y
-   abajo, y 6mm de aire por fuera. El cuerpo va en la serif italica a
-   1.32 veces el cuerpo —la proporcion de los 13.2pt del reporte
-   contra sus 10pt de cuerpo— en `fg-muted`.
-
-   Antes era un filete suelto sobre papel: se leia como un renglon
-   con una marca al lado, no como el aparte que es. */
+/* La cita (v2): un panel —blanco, filete, 16px, la sombra de reposo—
+   con la serif italica adentro. Sin el canto bermellon: en v2 el
+   naranja no marca bloques; la cita se despega por ser panel. El
+   cuerpo va en la serif italica, a 1.75rem: la Cormorant tiene una
+   altura de x muy corta (~0.36 del cuerpo) y a esa medida llega a
+   leerse un cuarto por encima de la prosa, que es como se lee un aparte. */
 /* `main.content` adelante: Pandoc emite `<blockquote class="blockquote">`
-   y Bootstrap le pone `.blockquote{font-size:1.0546875rem}`. Una
-   `blockquote` pelada (0,0,1) pierde contra esa clase (0,1,0), asi que
-   hasta 2026-09-25 el cuerpo de la cita no era el que dice esta regla
-   sino ~17.9px —practicamente el del texto corrido—, aunque el panel,
-   el filete, el color y la italica si se aplicaran. */
+   y Bootstrap le pone `.blockquote{font-size:1.0546875rem}`, que gana
+   contra una `blockquote` pelada. */
 main.content blockquote {
-  margin: 1.42rem 0;
-  border-left: 1.87px solid var(--cw-color-primary);
-  border-radius: 0;
-  background: var(--cw-color-surface-sunken);
-  padding: 1.18rem 1.42rem;
+  margin: 1.6rem 0;
+  border: var(--cw-pane-border);
+  border-radius: var(--cw-radius-surface);
+  background: var(--cw-color-pane);
+  box-shadow: var(--cw-shadow-rest);
+  padding: 1.35rem 1.6rem;
   color: var(--cw-color-fg-muted);
   font-family: var(--cw-font-serif);
   font-size: 1.75rem;
@@ -1867,27 +1946,27 @@ blockquote .attribution {
   display: block;
   margin-top: 1.5mm;
   font-size: 0.6em;
-  color: var(--cw-color-fg-subtle);
+  color: var(--cw-color-fg-muted);
 }
 
-/* Great Quote — full-bleed dark block */
+/* Great Quote (v2): the obsidian band — 24px, floating with a margin
+   (never edge to edge), the dot field and the neutral top sheen, the
+   lift depth. The mono eyebrow with the orange rule stays the label. */
 .great-quote {
-  background: var(--cw-color-surface-inverse);
+  background:
+    var(--cw-band-sheen),
+    var(--cw-band-dots),
+    var(--cw-color-surface-inverse);
   color: var(--cw-color-text-inverse);
   font-family: var(--cw-font-serif);
   font-style: italic;
   font-weight: 300;
-  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-size: clamp(2rem, 4vw, 3.4rem);
   line-height: 1.08;
-  padding: clamp(3.2rem, 7vw, 6rem) clamp(1.6rem, 7vw, 6rem);
-  margin-top: 3.6rem;
-  margin-bottom: 3.6rem;
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  padding: clamp(2.6rem, 5vw, 4.6rem) clamp(1.6rem, 5vw, 4.2rem);
+  margin: 3.4rem 0;
+  border-radius: var(--cw-radius-band);
+  box-shadow: var(--cw-shadow-lift);
 }
 .great-quote::before {
   content: "VERBATIM";
@@ -1914,16 +1993,16 @@ blockquote .attribution {
   margin-bottom: 0;
 }
 
-/* Chapter cover — HTML section divider */
+/* Chapter cover (v2): a surface floating in the page — 24px, the
+   hairline and the rest shadow — instead of a full-bleed strip. */
 .chapter-cover {
-  width: 100vw;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin: 3.8rem -50vw;
-  background: var(--cw-color-paper);
-  border-top: 1px solid var(--cw-color-border-strong);
-  border-bottom: 1px solid var(--cw-color-border-strong);
+  margin: 3.6rem 0;
+  overflow: hidden;
+  background: var(--cw-color-pane);
+  border: var(--cw-pane-border);
+  border-radius: var(--cw-radius-band);
+  box-shadow: var(--cw-shadow-rest);
 }
 
 .chapter-cover-media {
@@ -1938,14 +2017,14 @@ blockquote .attribution {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(16, 16, 16, 0.62), rgba(16, 16, 16, 0.16)),
-    linear-gradient(0deg, rgba(16, 16, 16, 0.3), rgba(16, 16, 16, 0));
+    linear-gradient(90deg, #{rgba($brand-ink, 0.62)}, #{rgba($brand-ink, 0.16)}),
+    linear-gradient(0deg, #{rgba($brand-ink, 0.3)}, #{rgba($brand-ink, 0)});
 }
 
 .chapter-cover-content {
-  max-width: min(920px, calc(100vw - 2.4rem));
+  max-width: 920px;
   margin: 0 auto;
-  padding: clamp(2.2rem, 5vw, 4.8rem) 0;
+  padding: clamp(2rem, 4vw, 3.6rem) clamp(1.4rem, 4vw, 3rem);
 }
 
 .chapter-cover-content::before {
@@ -1971,7 +2050,7 @@ blockquote .attribution {
   width: 82px;
   height: 4px;
   margin-top: 1.2rem;
-  border-radius: 4px;
+  border-radius: var(--cw-radius-pill);
   background: var(--cw-color-primary);
 }
 
@@ -2008,50 +2087,116 @@ blockquote .attribution {
 }
 
 
-/* Tabsets: feedback on press (100ms), colour on 120ms, hover only darkens */
+/* Tabsets (v2): a segmented pill — the tint track, the selected tab an
+   obsidian pill with paper text (brand-v2.md §7). Sentence case, Satoshi
+   500; feedback on press (100ms), colour on 160ms. */
 .panel-tabset > .nav-tabs {
-  border-bottom: 1px solid var(--cw-color-border-default);
-  gap: 0.3rem;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  border: 0;
+  border-radius: var(--cw-radius-pill);
+  background: var(--cw-color-tint);
+  margin-bottom: 0.75rem;
+  width: fit-content;
+  max-width: 100%;
+}
+
+/* The panel under the switch is a pane, not Bootstrap's three-sided box. */
+.panel-tabset > .tab-content {
+  border: var(--cw-pane-border);
+  border-radius: var(--cw-radius-surface);
+  background: var(--cw-color-pane);
+  box-shadow: var(--cw-shadow-rest);
+  padding: 1.1rem 1.25rem;
 }
 
 .panel-tabset > .nav-tabs .nav-link {
   border: 0;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  border-radius: 0;
-  padding: 0.5rem 0.55rem 0.55rem;
+  margin-bottom: 0;
+  border-radius: var(--cw-radius-pill);
+  min-height: var(--cw-control-sm);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.95rem;
   background: transparent;
+  font-size: var(--cw-text-button);
   font-weight: 500;
   color: var(--cw-color-fg-muted);
-  transition: color 120ms var(--cw-ease), border-color 120ms var(--cw-ease), transform 100ms var(--cw-ease);
+  transition: color 160ms var(--cw-ease), background-color 160ms var(--cw-ease), transform 100ms var(--cw-ease);
 }
 
 .panel-tabset > .nav-tabs .nav-link:hover {
   color: var(--cw-color-ink);
-  background: transparent;
+  background: var(--cw-color-tint);
   border-color: transparent;
 }
 
 .panel-tabset > .nav-tabs .nav-link:active {
-  transform: translateY(1px);
+  transform: scale(0.97);
 }
 
 .panel-tabset > .nav-tabs .nav-link.active {
-  color: var(--cw-color-ink);
-  font-weight: 600;
-  border-bottom-color: var(--cw-color-primary);
-  background: transparent;
+  color: var(--cw-color-paper);
+  font-weight: 500;
+  background: var(--cw-color-ink);
 }
 
 .panel-tabset > .nav-tabs .nav-link:focus-visible {
   outline: 2px solid var(--cw-color-primary);
-  outline-offset: -2px;
+  outline-offset: 2px;
 }
 
+/* Buttons (v2): pills (the radius comes from brand.yml's generated
+   Bootstrap block), sentence case, Satoshi 500. Primary: orange fill and
+   white text; secondary and outline: pane fill, hairline, ink text. */
+.btn {
+  font-family: var(--cw-font-sans);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.btn-primary {
+  --bs-btn-color: #{$brand-pure-white};
+  --bs-btn-hover-color: #{$brand-pure-white};
+  --bs-btn-active-color: #{$brand-pure-white};
+}
+.btn-secondary,
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-dark,
+.btn-light {
+  --bs-btn-bg: #{$brand-pane};
+  --bs-btn-color: #{$brand-ink};
+  --bs-btn-border-color: #{$brand-rule};
+  --bs-btn-hover-bg: #{$brand-pane};
+  --bs-btn-hover-color: #{$brand-ink};
+  --bs-btn-hover-border-color: #{$brand-border-cool};
+  --bs-btn-active-bg: #{$brand-pane};
+  --bs-btn-active-color: #{$brand-ink};
+}
 
+/* Fields (v2): pills on the pane, hairline; focus is a 2px orange ring. */
+.form-control,
+.form-select {
+  border-radius: var(--cw-radius-pill);
+  border: var(--cw-pane-border);
+  background-color: var(--cw-color-pane);
+}
+textarea.form-control {
+  border-radius: var(--cw-radius-surface);
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--cw-color-primary);
+  box-shadow: 0 0 0 2px var(--cw-color-primary);
+}
+
+/* v2: images inside content round to the pane radius (brand-v2.md 7). */
 img,
 .quarto-figure img {
-  border-radius: 4px;
+  border-radius: var(--cw-radius-pane);
   box-shadow: none;
 }
 
@@ -2178,6 +2323,7 @@ main.content .chanwe-figure-alt-footer {
 main.content .chanwe-figure-alt-footer-left {
   justify-self: start;
   padding: 0.45rem 1.05rem 0.425rem;
+  border-radius: var(--cw-radius-pill);
   background: var(--cw-color-primary);
   color: var(--cw-color-text-inverse);
   font-family: var(--cw-font-mono);
@@ -2210,7 +2356,7 @@ main.content .chanwe-figure-alt-footer-right {
 
 @media (max-width: 980px) {
   .page-columns .content {
-    border-radius: 4px;
+    border-radius: var(--cw-radius-surface);
     padding: 1.55rem;
   }
 }
@@ -2243,7 +2389,7 @@ main.content .chanwe-figure-alt-footer-right {
   align-items: center;
   column-gap: clamp(1.5rem, 4vw, 4rem);
   min-height: 148px;
-  margin: clamp(2.6rem, 3.2vw, 3.8rem) 0 clamp(1.1rem, 1.8vw, 1.8rem);
+  margin: clamp(2.6rem, 3.2vw, 3.8rem) var(--cw-space-md) var(--cw-space-md);
   padding: clamp(1.2rem, 2.2vw, 1.9rem) clamp(1rem, 2.8vw, 2.4rem);
   box-sizing: border-box;
   /* La trama de la contratapa del reporte: puntos, no rayado. Los
@@ -2259,6 +2405,9 @@ main.content .chanwe-figure-alt-footer-right {
   background-size: var(--cw-dot-step) var(--cw-dot-step);
   overflow: hidden;
   color: var(--cw-color-rule-cool);
+  /* v2: the closing band floats with a margin, 24px, lift depth. */
+  border-radius: var(--cw-radius-band);
+  box-shadow: var(--cw-shadow-lift);
 }
 
 /* El foco de la trama: en la contratapa los puntos se encienden en
@@ -2297,7 +2446,8 @@ main.content .chanwe-figure-alt-footer-right {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   line-height: 1.2;
-  padding: 0.3rem 0.55rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--cw-radius-pill);
 }
 
 .chanwe-footer-brand {

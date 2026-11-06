@@ -6,7 +6,7 @@
 // ---- BAR CHART ----------------------------------------------
 // data: array of (label, value) tuples, value ∈ [0, 1]
 // threshold: bars at or above this value get full opacity
-// label-color: auto resolves to _t.fg-subtle
+// label-color: auto resolves to _t.fg-muted
 #let chanwe-bar-chart(
   data,
   height:      50mm,
@@ -16,7 +16,7 @@
   label-color: auto,
   threshold:   0.7,
 ) = {
-  let lc = if label-color == auto { _t.fg-subtle } else { label-color }
+  let lc = if label-color == auto { _t.fg-muted } else { label-color }
   align(center,
     stack(dir: ltr, spacing: gap,
       ..data.map(((lbl, val)) =>
@@ -27,7 +27,8 @@
             height: height * val,
             fill: _t.primary.transparentize(if val >= threshold { 10% } else { 45% }),
             stroke: none,
-            radius: 1.5pt,
+            // v2 (Q3): bars with the plot's rounded ends.
+            radius: chanwe-plot.at("bar-radius") * 0.75pt,
           ),
           align(center, text(size: label-size, fill: lc, lbl)),
         )
@@ -49,14 +50,11 @@
   y-max:       1,
   colors:      auto,
 ) = {
-  // `meta.chart-palette-order` de brand.yml, en ese orden. La serie era
-  // monocroma —un acento y tres grises—; ahora son los ocho matices de la
-  // marca. `chart-red` va ultimo a proposito: esta a dE00 5.0 de `primary`,
-  // asi que nada choca hasta que un grafico pide las ocho series. Para
-  // volver a la version monocroma, pasar `colors:` a mano.
+  // The hub's categorical order (tokens.typ `chanwe-plot.categorical`, v2):
+  // the accent first, `chart-red` last, away from `primary` (dE00 5.0). Pass
+  // `colors:` for a focus chart (orange plus the slate ramp, Q3 C1).
   let palette = if colors == auto {
-    (_t.primary, _t.chart-blue, _t.chart-green, _t.chart-indigo,
-     _t.chart-orange, _t.chart-teal, _t.chart-purple, _t.chart-red)
+    chanwe-plot.at("categorical")
   } else { colors }
   let n = if series.len() > 0 { series.first().at(1).len() } else { 0 }
   if n == 0 { return [] }
@@ -87,7 +85,7 @@
         stack(dir: ltr,
           ..x-labels.enumerate().map(((i, lbl)) =>
             move(dx: x-step * i,
-              align(center, text(size: label-size, fill: _t.fg-subtle, lbl)))
+              align(center, text(size: label-size, fill: _t.fg-muted, lbl)))
           )
         )
       )

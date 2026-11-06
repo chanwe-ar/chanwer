@@ -11,6 +11,7 @@ contributes:
     - filters/figure-frame.lua
     - filters/mark-highlight.lua
     - filters/area-heading.lua
+    - ../chanwe-report/chanwe-title-dot.lua
   formats:
     html:
       filters:
@@ -20,29 +21,22 @@ contributes:
         - filters/figure-frame.lua
         - filters/mark-highlight.lua
         - filters/area-heading.lua
+        - ../chanwe-report/chanwe-title-dot.lua
       title-block-banner: true
       toc: true
       toc-depth: 3
       respect-user-color-scheme: false
       embed-resources: true
+      # The brand layer first (it defines the `$brand-*` variables), then the
+      # rules that read them. They used to sit in brand.yml; see the header
+      # of assets/chanwe-brand-rules.scss for why they moved.
+      theme:
+        - assets/chanwe-brand-rules.scss
       css:
+        - assets/fonts-web.css
         - assets/self-contained-assets.css
       include-after-body:
         - assets/title-banner-layout.html
-    typst:
-      highlight-style: none
-      toc: true
-      toc-depth: 2
-      number-sections: true
-      papersize: us-letter
-      chanwe-assets: "_extensions/chanwe-brand/assets/"
-      font-paths:
-        - assets/fonts
-      filters:
-        - filters/typst-brand.lua
-      template-partials:
-        - typst-template.typ
-        - typst-show.typ
   metadata:
     project:
       brand: brand.yml

@@ -1,3 +1,8 @@
+# chanwer (development version)
+
+* The bundled `_extensions/` are chanwe-brand 3.2.0 (the v2 covers and inserts);
+  the showcases were re-rendered with them. They are not part of the package.
+
 # chanwer 3.0.1
 
 * The KPI hero value (and every Cormorant Garamond run) is set in lining

@@ -4,90 +4,22 @@
 // =============================================================
 
 // ---------- Design tokens ------------------------------------
-#let chanwe-tokens = (
-  paper:       rgb("#F8FAFC"),
-  ink:         rgb("#111319"),
-  // Surfaces that sit ON ink — dark panels and hairlines.
-  ink-soft:    rgb("#37393F"),
-  ink-fg:      rgb("#64748B"),
-  ink-subtle:  rgb("#646464"),
-  fg:          rgb("#111319"),
-  fg-muted:    rgb("#475569"),
-  fg-subtle:   rgb("#8A94A6"),
-  // Texto corrido: un punto por encima de `fg`, que queda para titulares.
-  body-fg:     rgb("#475569"),
-  callout-surface: rgb("#F8FAFC"),
-  // Barra de título del callout y su marco, en slate.
-  callout-header: rgb("#EBF0F6"),
-  border-cool: rgb("#CFD6DF"),
-  // Filete sobre obsidiana.
-  rule-ink: rgb("#434D5D"),
-  // Slate medio paso bajo el papel: portadas de sección.
-  surface-sunken: rgb("#F1F5F9"),
-  // Dos pasos de slate por debajo de la hoja: la página del abstract.
-  surface-slate:  rgb("#EBF0F6"),
-  // Hairlines: `rule` warm on paper, `rule-cool` for lede panels.
-  rule:        rgb("#E2E8F0"),
-  rule-cool:   rgb("#C6CDD6"),
-  emphasis:    rgb("#484848"),
-  primary:     rgb("#FD3810"),
-  neutral-300: rgb("#D4D4D4"),
-  neutral-700: rgb("#525252"),
-  border:      rgb("#1113191A"),
-  // Blanco y negro puros (brand.yml `pure-white` / `pure-black`). El
-  // blanco es todo lo que se dibuja sobre primary y sobre obsidiana; el
-  // negro sólo tinta sombras y topes transparentes de degradado en la
-  // portada. Ningún parcial escribe `white` ni `black` a secas.
-  white:       rgb("#FFFFFF"),
-  black:       rgb("#000000"),
-  // Gris de la portada research (`research-muted`).
-  research-muted: rgb("#99999E"),
-  // Los ocho matices de la serie (`chart-*` + `primary`), calibrados sobre
-  // la HIG de Apple. Son la paleta de `chanwe-charts.typ` y, a la vez, la de
-  // los callouts de abajo: una sola familia para las dos cosas.
-  chart-blue:   rgb("#007AFF"),
-  chart-green:  rgb("#34C759"),
-  chart-indigo: rgb("#5856D6"),
-  chart-orange: rgb("#FF9500"),
-  chart-red:    rgb("#FF3B30"),
-  chart-teal:   rgb("#00C7BE"),
-  chart-purple: rgb("#AF52DE"),
-  // Los siete tipos de callout (`callout-*`). Cada uno es uno de los matices
-  // de arriba; `important` es `primary` y no se mueve.
-  callout-note:      rgb("#007AFF"),
-  callout-tip:       rgb("#00C7BE"),
-  callout-warning:   rgb("#FF9500"),
-  callout-important: rgb("#FD3810"),
-  callout-caution:   rgb("#AF52DE"),
-  callout-do:        rgb("#34C759"),
-  callout-dont:      rgb("#FF3B30"),
-  // Semáforos: la ficha del KPI y el estado del resumen ejecutivo doble.
-  kpi-green:           rgb("#147705"),
-  kpi-red:             rgb("#CC1914"),
-  exec-status-good:    rgb("#15803D"),
-  exec-status-regular: rgb("#D97706"),
-  exec-status-bad:     rgb("#CC1914"),
-  // Pesos tipográficos por rol (brand.yml `meta.weights`). Cada `weight:`
-  // del reporte lee uno de estos, nunca un número.
-  weight-hairline:  100,
-  weight-thin:      200,
-  weight-body:      300,
-  weight-body-plus: 400,  // era 350; Satoshi no tiene ese corte y Typst desempataba 300/400 al azar
-  weight-regular:   400,
-  weight-medium:    500,
-  weight-display:   600,
-  weight-bold:      700,
-  font-display: ("Schibsted Grotesk", "Helvetica Neue", "Arial"),
-  font-serif:   ("Cormorant Garamond", "Georgia", "Times New Roman"),
-  // La serif de display: numerales del índice y bajada de contratapa.
-  // Distinta de font-serif, que es la itálica del cuerpo.
-  font-serif-display:  ("Instrument Serif", "Georgia", "Times New Roman"),
-  font-sans:    ("Satoshi", "Helvetica Neue", "Arial"),
-  font-mono:    ("JetBrains Mono", "Menlo", "Courier New"),
-)
+// The token table is generated (brand-v2 T7.1): chanwe-brand-tokens.typ is the hub's
+// tokens.typ and chanwe-tokens.typ builds `_t` on it (scripts/generate-brand.rb).
+$chanwe-brand-tokens.typ()$
+$chanwe-tokens.typ()$
+$chanwe-v2.typ()$
 
-// expose tokens as a global so partials and user code can use them
-#let _t = chanwe-tokens
+
+// El punto bermellón dibujado que cierra un titular principal: la portada,
+// el H1. A escala del titular, como el de la portada (36pt → disco de 8pt,
+// 3pt de aire, base corrida 2pt): 0.22 del cuerpo, 0.083 de aire. Sin glue
+// entre el titular y la caja, para que el punto nunca quede solo en un
+// renglón. Solo el H1 lo lleva; el H2 y los de abajo, no.
+#let _chanwe-title-dot(size, fill: _t.primary) = box(baseline: -size * 2 / 36, {
+  h(size * 3 / 36)
+  circle(radius: size * 4 / 36, fill: fill, stroke: none)
+})
 
 // El tamaño de hoja del formato. Vive en una sola constante porque las
 // páginas a sangre (portadas, contratapa, divisores, citas a página
@@ -145,7 +77,7 @@
     columns: (18mm, 1fr),
     column-gutter: 4mm,
     align: (left + top, left + top),
-    text(font: _t.font-mono, size: 7pt, tracking: 0.20em, fill: _t.fg-subtle, upper(label)),
+    text(font: _t.font-mono, size: 7pt, tracking: 0.20em, fill: _t.fg-muted, upper(label)),
     block(spacing: 0pt)[
       #set par(spacing: 0pt, leading: 0.9em)
       #text(font: _t.font-display, tracking: -0.05em, size: 10pt, weight: _t.weight-display, fill: _t.fg, value)
@@ -169,7 +101,7 @@
 } else if inverse == "dark" {
   (text: _t.fg-subtle, accent: _t.primary, rule: _t.rule-ink, logo: "Logo_Gris.svg")
 } else {
-  (text: _t.fg-subtle, accent: _t.primary, rule: _t.border, logo: "Logo_Negro.svg")
+  (text: _t.fg-muted, accent: _t.primary, rule: _t.border, logo: "Logo_Negro.svg")
 }
 
 #let chanwe-header(section, topic, inverse: none) = context {
@@ -342,6 +274,12 @@ $chanwe-charts.typ()$
   // body
   body,
 ) = {
+  // Pandoc escapes `/`, `-`, `_` inside quoted YAML strings (`\/\/` for a
+  // `//`); the captions are printed as text, so they go through the clean
+  // helper once, here, like doc-id and edition below.
+  let hero-caption-1 = _chanwe-clean-str(hero-caption-1)
+  let hero-caption-2 = _chanwe-clean-str(hero-caption-2)
+  let hero-caption-3 = _chanwe-clean-str(hero-caption-3)
   // ---- store metadata in global state -----------------------
   _chanwe-doc.update((doc-id: _chanwe-clean-str(doc-id), edition: _chanwe-clean-str(edition), taggy: taggy, meta-rows: meta-rows, section: section, topic: topic))
 
@@ -372,11 +310,12 @@ $chanwe-charts.typ()$
   // Superíndice y subíndice un poco más grandes que el 0.6em de fábrica.
   set super(size: 0.68em)
   set sub(size: 0.68em)
+  // v2: a pane on the slate tint, 16px corners.
   show math.equation.where(block: true): it => block(
     width: 100%,
-    fill: _t.callout-header,
-    stroke: 0.5pt + _t.neutral-300,
-    radius: 4pt,
+    fill: _t.tint,
+    stroke: cw-hairline + _t.rule,
+    radius: _t.radius-surface,
     inset: (x: 10mm, y: 8mm),
   )[
     #set text(fill: _t.fg-muted, weight: _t.weight-thin)
@@ -393,24 +332,26 @@ $chanwe-charts.typ()$
   // cuerpo, asi que un renglon con chip no separa mas que uno sin chip.
   // Medido: 17.64pt de interlineado en ambos casos. Subir mas el inset o el
   // cuerpo rompe esa paridad.
+  // v2: the chip sits on the slate tint, a pill with no frame.
   show raw.where(block: false): it => box(
-    fill: _t.surface-slate,
-    stroke: 0.5pt + _t.border-cool,
+    fill: _t.tint,
+    stroke: none,
     inset: (x: 5.5pt, y: 4.2pt),
-    radius: 2pt,
+    radius: _t.radius-pill,
     baseline: 4.20pt,
     text(font: _t.font-mono, size: 1.035em, fill: _t.fg-muted, it),
   )
   // El panel de código va con el mismo marco slate que el chip en línea y el
   // callout —un filete fino a todo el contorno, no un canto naranja— y con
-  // las esquinas a 4pt, que es el radio de todos los paneles del reporte.
+  // las esquinas a 3pt (los 4px de la marca), que es el radio de todos los paneles del reporte.
   // Entero o a la página siguiente: partido, el rótulo "# python · N lines"
   // quedaba solo al pie de una página y el código arrancaba en la otra con un
   // marco nuevo, como si fueran dos paneles.
+  // v2: the code panel is a pane on the slate tint, the dense radius (12px).
   show raw.where(block: true): it => block(
-    fill: _t.surface-slate,
-    stroke: 0.5pt + _t.border-cool,
-    radius: 4pt,
+    fill: _t.tint,
+    stroke: cw-hairline + _t.rule,
+    radius: _t.radius-pane,
     inset: (x: 4mm, y: 3mm),
     width: 100%,
     breakable: false,
@@ -422,7 +363,7 @@ $chanwe-charts.typ()$
     #set par(spacing: 0pt)
     #if it.lang != none {
       text(
-        font: _t.font-mono, size: 7.5pt, fill: _t.fg-subtle,
+        font: _t.font-mono, size: 7.5pt, fill: _t.fg-muted,
         "# " + it.lang + " · " + str(it.lines.len()) + " lines",
       )
       v(2.5mm)
@@ -436,7 +377,7 @@ $chanwe-charts.typ()$
   // slate en vez del negro.
   set footnote.entry(separator: line(length: 38%, stroke: 0.5pt + _t.rule))
   show footnote.entry: it => {
-    set text(font: _t.font-sans, size: 8pt, weight: _t.weight-body, fill: _t.fg-subtle)
+    set text(font: _t.font-sans, size: 8pt, weight: _t.weight-body, fill: _t.fg-muted)
     it
   }
 
@@ -447,11 +388,16 @@ $chanwe-charts.typ()$
   // del numeral que reemplaza —largo 1.5× su cuerpo, grosor con él—, así el
   // H1 lo lleva grande y el H4 chico. Antes el numeral salía igual y
   // mostraba el valor del último encabezado numerado.
-  let _h-mark(it, numeral, size) = if it.numbering != none {
+  //
+  // Orange is the chapter's alone (decided 2026-11-05): the H1 keeps its
+  // numeral —or its rule— in `primary`; from the H2 down the numeral and the
+  // rule are `fg-muted`. With every level in orange nothing on the page was
+  // the accent, and the agenda repeated it line after line.
+  let _h-mark(it, numeral, size, fill: _t.fg-muted) = if it.numbering != none {
     (align: left + bottom, body: numeral)
   } else {
     (align: left + horizon,
-     body: box(width: size * 1.5, height: 0.5pt + size * 0.03, fill: _t.primary))
+     body: box(width: size * 1.5, height: 0.5pt + size * 0.03, fill: fill))
   }
   show heading.where(level: 1): it => {
     pagebreak(weak: true)
@@ -459,26 +405,16 @@ $chanwe-charts.typ()$
     // cuerpo (15mm x 0.3 = 4.5mm): se recupera ese aire para que la losa
     // quede pegada al filete del header.
     v(-4.5mm)
-    // La cabecera de capítulo va sobre una losa de obsidiana que sangra de
-    // orilla a orilla: el eyebrow, el titular y el filete quedan adentro.
-    context move(dx: -18mm, block(
-      width: page.width,
-      fill: _t.ink,
-      // La losa arranca pegada al encabezado; el aire va por dentro, así que
-      // el eyebrow y el titular bajan sin mover el borde del rectángulo.
-      inset: (left: 18mm, right: 18mm, top: 14mm, bottom: 14.5mm),
-      clip: true,
-    )[
-      // La misma trama de puntos de la contratapa, plana y recortada por la
-      // losa. Se corre por el inset para cubrir el rectángulo entero.
-      #place(top + left, dx: -18mm, dy: -14mm,
-        _chanwe-dot-field(width: page.width, height: 140mm,
-                          ramp: (88%, 58%)))
+    // v2-print: the chapter opener is the obsidian band (brand-v2 §2, §7):
+    // floating inside the text block with its 24px corners, the dot field and
+    // the neutral sheen — no longer a slab bled from edge to edge. The eyebrow
+    // rule, the numeral and the title stay inside.
+    cw-band(inset: (left: 12mm, right: 12mm, top: 12mm, bottom: 11mm))[
       #block(above: 0pt, below: 0pt, rect(width: 50pt, height: 0.9pt, fill: _t.primary, stroke: none))
-      #v(12mm)
+      #v(10mm)
       #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
         weight: _t.weight-body, size: 50pt, fill: _t.primary,
-        _pad2(counter(heading).get().first())), 50pt)
+        _pad2(counter(heading).get().first())), 50pt, fill: _t.primary)
       #grid(
         columns: (auto, 1fr),
         column-gutter: 8mm,
@@ -488,21 +424,17 @@ $chanwe-charts.typ()$
           #set par(leading: 0.18em)
           // Mismo peso que el titular de portada.
           #text(font: _t.font-display, size: 33pt, weight: _t.weight-display,
-               tracking: -0.05em, fill: _t.rule-cool, it.body)
+               tracking: -0.05em, fill: _t.rule-cool, it.body)#_chanwe-title-dot(33pt)
         ],
       )
-      #v(1.5mm)
-      // Mismo filete que parte la portadilla, en clave oscura.
-      #line(length: 100%, stroke: 0.5pt + _t.rule-ink.transparentize(50%))
-    ])
-    // El `below` del bloque no sobrevive al `move`, así que el aire que separa
-    // la losa del primer párrafo se pone acá.
-    v(14.4mm)
+    ]
+    // The air between the band and the first paragraph.
+    v(12mm)
   }
   show heading.where(level: 2): it => block(above: 12mm, below: 6mm)[
     #set par(leading: 0.2em)
     #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-      weight: _t.weight-body, size: 21pt, fill: _t.primary, counter(heading).display("1.1")), 21pt)
+      weight: _t.weight-body, size: 21pt, fill: _t.fg-muted, counter(heading).display("1.1")), 21pt)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 6mm,
@@ -521,7 +453,7 @@ $chanwe-charts.typ()$
   show heading.where(level: 3): it => block(above: 10mm, below: 5.5mm)[
     #set par(leading: 0.2em)
     #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-      weight: _t.weight-body, size: 14.8pt, fill: _t.primary, counter(heading).display("1.1.1")), 14.8pt)
+      weight: _t.weight-body, size: 14.8pt, fill: _t.fg-muted, counter(heading).display("1.1.1")), 14.8pt)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4.7mm,
@@ -536,7 +468,7 @@ $chanwe-charts.typ()$
     // Dos puntos por debajo del titular: a cuatro cifras el numeral ya
     // pesa bastante y a la proporción del H2 se comía el título.
     #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-      weight: _t.weight-body, size: 11.8pt, fill: _t.primary, counter(heading).display("1.1.1.1")), 11.8pt)
+      weight: _t.weight-body, size: 11.8pt, fill: _t.fg-muted, counter(heading).display("1.1.1.1")), 11.8pt)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4.4mm,
@@ -579,12 +511,11 @@ $chanwe-charts.typ()$
   // (`surface-sunken`, no `surface-slate`): la cita es un aparte, no un
   // bloque de interfaz. Vale igual para `> …` y para `#pullquote`, que
   // emite este mismo `quote`.
-  show quote: it => block(
+  // v2-print: the quote is a pane (white, hairline, 16px), no orange edge.
+  // The orange is one dot before the attribution.
+  show quote: it => cw-pane(
     above: 6mm, below: 6mm,
-    width: 100%,
-    fill: _t.surface-sunken,
-    inset: (left: 6mm, right: 6mm, top: 5mm, bottom: 5mm),
-    stroke: (left: 1.4pt + _t.primary),
+    inset: (x: _t.space-lg, y: _t.space-md + 1mm),
   )[
     // El aire de párrafo del cuerpo (2.6em) se colaba entre la cita y su
     // atribución y las separaba un renglón entero; adentro del panel baja a
@@ -592,8 +523,10 @@ $chanwe-charts.typ()$
     #set par(leading: 0.425em, spacing: 0.5em)
     #text(font: _t.font-serif, size: 13.2pt, weight: _t.weight-body, style: "italic", fill: _t.fg-muted, it.body)
     #if it.attribution != none {
-      v(1.5mm)
-      text(font: _t.font-serif, size: 8.75pt, weight: _t.weight-body, style: "italic", fill: _t.fg-subtle, [— #it.attribution])
+      v(2mm)
+      cw-dot(_t.primary, size: 4pt, baseline: -1pt)
+      h(_t.space-xs)
+      cw-label(it.attribution, size: 6.5pt)
     }
   ]
 
@@ -601,30 +534,37 @@ $chanwe-charts.typ()$
   // Los dos filetes que encierran el encabezado van en slate, no en el negro
   // de la rampa: la tabla se lee con el mismo peso de línea que la banda de
   // hallazgos y el marco del callout.
+  // v2-print: a table is a pane (white, hairline, the dense 12px corners)
+  // with its header row on the slate tint and hairline rows; no outer rules.
   set table(
-    fill: none,
+    fill: (col, row) => if row == 0 { _t.tint } else { none },
     stroke: (col, row) => (
-      top:    if row == 0 { 0.5pt + _t.border-cool } else { none },
-      bottom: if row == 0 { 0.5pt + _t.border-cool } else { 0.4pt + _t.border },
+      bottom: if row == 0 { cw-hairline + _t.rule } else { 0.4pt + _t.rule },
     ),
     inset: (x: 4mm, y: 3.5mm),
   )
+  // The pane takes the table's own width (a narrow table does not get a
+  // full-width frame) and keeps the table breakable.
+  show table: it => layout(size => {
+    let w = calc.min(measure(it, width: size.width).width, size.width)
+    block(
+      stroke: cw-hairline + _t.rule, radius: _t.radius-pane, clip: true,
+      fill: _t.pane, width: w, breakable: true, it,
+    )
+  })
   show table.cell: set text(
     size: 7pt, weight: _t.weight-thin, fill: _t.fg,
   )
   // Los nombres de columna en mono y negrita: son rótulos, no prosa. Un punto
   // por debajo del cuerpo, así el peso los distingue sin que el cuerpo mande.
   show table.cell.where(y: 0): set text(
-    font: _t.font-mono, size: 6pt, weight: _t.weight-bold,
-    tracking: 0.02em, fill: _t.ink,
+    font: _t.font-mono, size: 6pt, weight: _t.weight-medium,
+    tracking: 0.1em, fill: _t.fg-muted,
   )
+  show table.cell.where(y: 0): it => upper(it)
   show figure.where(kind: table): it => {
     v(12mm, weak: true)
     it.body
-    v(-0.25pt)
-    // El filete de cierre acompaña a los del encabezado: si se quedaba en
-    // obsidiana, la tabla tenía una línea negra y tres slate.
-    line(length: 100%, stroke: 0.5pt + _t.border-cool)
     v(2mm)
     it.caption
     v(12mm, weak: true)
@@ -711,9 +651,13 @@ $chanwe-charts.typ()$
   }
 
   // ---- body pages -------------------------------------------
+  // `background: none` clears the corner logo Quarto's own template stamps
+  // on every page when the project declares a `brand:` with a logo (a book
+  // that also renders to HTML needs one). The format draws its own marks.
   set page(
     paper: _chanwe-paper,
     margin: (top: 15mm, bottom: 15mm, x: 18mm),
+    background: none,
     header: chanwe-header(section, topic),
     footer: chanwe-footer(_chanwe-clean-str(doc-id), _chanwe-clean-str(edition)),
   )
@@ -774,6 +718,10 @@ $chanwe-charts.typ()$
       justify: if body-justify != none { body-justify } else { false  },
       spacing: _body-spacing,
     )
+    // A heading is never justified: `body-justify: true` reached the H1 band
+    // and the H2–H4 rows and spread a short title across the measure, with
+    // hyphens («Net-works»). Hyphenation follows `justify`, so it stops too.
+    show heading: set par(justify: false)
     // Listas de definición. Quarto trae en su `definitions.typ` una regla
     // `show terms.item` que apila el término y, en un bloque aparte, la
     // definición: ese bloque hereda el aire de párrafo del cuerpo (2.6em) y

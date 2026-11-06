@@ -46,6 +46,15 @@ $endif$
 $if(chanwe.rail-eyebrow)$
   rail-eyebrow: "$chanwe.rail-eyebrow$",
 $endif$
+$if(chanwe.hero-caption-1)$
+  hero-caption-1: "$chanwe.hero-caption-1$",
+$endif$
+$if(chanwe.hero-caption-2)$
+  hero-caption-2: "$chanwe.hero-caption-2$",
+$endif$
+$if(chanwe.hero-caption-3)$
+  hero-caption-3: "$chanwe.hero-caption-3$",
+$endif$
 $if(chanwe.cover-eyebrow)$
   cover-eyebrow: "$chanwe.cover-eyebrow$",
 $endif$

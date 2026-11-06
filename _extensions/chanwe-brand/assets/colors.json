@@ -12,9 +12,21 @@
       "internal_name": "primary",
       "code": "#FD3810",
       "aliases": [
-        "primary-text",
-        "primary-active",
-        "callout-important"
+
+      ]
+    },
+    {
+      "internal_name": "primary-text",
+      "code": "#FD3810",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "primary-active",
+      "code": "#FD3810",
+      "aliases": [
+
       ]
     },
     {
@@ -123,6 +135,13 @@
       ]
     },
     {
+      "internal_name": "surface-raised",
+      "code": "#FFFFFF",
+      "aliases": [
+
+      ]
+    },
+    {
       "internal_name": "callout-header",
       "code": "#EBF0F6",
       "aliases": [
@@ -189,14 +208,14 @@
       "internal_name": "chart-blue",
       "code": "#007AFF",
       "aliases": [
-        "callout-note"
+
       ]
     },
     {
       "internal_name": "chart-green",
       "code": "#34C759",
       "aliases": [
-        "callout-do"
+
       ]
     },
     {
@@ -210,28 +229,77 @@
       "internal_name": "chart-orange",
       "code": "#FF9500",
       "aliases": [
-        "callout-warning"
+
       ]
     },
     {
       "internal_name": "chart-red",
       "code": "#FF3B30",
       "aliases": [
-        "callout-dont"
+
       ]
     },
     {
       "internal_name": "chart-teal",
       "code": "#00C7BE",
       "aliases": [
-        "callout-tip"
+
       ]
     },
     {
       "internal_name": "chart-purple",
       "code": "#AF52DE",
       "aliases": [
-        "callout-caution"
+
+      ]
+    },
+    {
+      "internal_name": "callout-note",
+      "code": "#007AFF",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "callout-tip",
+      "code": "#00C7BE",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "callout-warning",
+      "code": "#FF9500",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "callout-important",
+      "code": "#FD3810",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "callout-caution",
+      "code": "#AF52DE",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "callout-do",
+      "code": "#34C759",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "callout-dont",
+      "code": "#FF3B30",
+      "aliases": [
+
       ]
     },
     {
@@ -405,6 +473,48 @@
     {
       "internal_name": "chart-gray",
       "code": "#71706C",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "violet",
+      "code": "#7C3AED",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "violet-soft",
+      "code": "#EFE7FD",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "canvas",
+      "code": "#E9EEF4",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "pane",
+      "code": "#FFFFFF",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "tint",
+      "code": "#64748B21",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "tint-strong",
+      "code": "#64748B36",
       "aliases": [
 
       ]
