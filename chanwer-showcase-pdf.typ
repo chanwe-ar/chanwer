@@ -214,90 +214,336 @@
 // =============================================================
 
 // ---------- Design tokens ------------------------------------
-#let chanwe-tokens = (
-  paper:       rgb("#F8FAFC"),
-  ink:         rgb("#111319"),
-  // Surfaces that sit ON ink — dark panels and hairlines.
-  ink-soft:    rgb("#37393F"),
-  ink-fg:      rgb("#64748B"),
-  ink-subtle:  rgb("#646464"),
-  fg:          rgb("#111319"),
-  fg-muted:    rgb("#475569"),
-  fg-subtle:   rgb("#8A94A6"),
-  // Texto corrido: un punto por encima de `fg`, que queda para titulares.
-  body-fg:     rgb("#475569"),
-  callout-surface: rgb("#F8FAFC"),
-  // Barra de título del callout y su marco, en slate.
-  callout-header: rgb("#EBF0F6"),
-  border-cool: rgb("#CFD6DF"),
-  // Filete sobre obsidiana.
-  rule-ink: rgb("#434D5D"),
-  // Slate medio paso bajo el papel: portadas de sección.
-  surface-sunken: rgb("#F1F5F9"),
-  // Dos pasos de slate por debajo de la hoja: la página del abstract.
-  surface-slate:  rgb("#EBF0F6"),
-  // Hairlines: `rule` warm on paper, `rule-cool` for lede panels.
-  rule:        rgb("#E2E8F0"),
-  rule-cool:   rgb("#C6CDD6"),
-  emphasis:    rgb("#484848"),
-  primary:     rgb("#FD3810"),
-  neutral-300: rgb("#D4D4D4"),
-  neutral-700: rgb("#525252"),
-  border:      rgb("#1113191A"),
-  // Blanco y negro puros (brand.yml `pure-white` / `pure-black`). El
-  // blanco es todo lo que se dibuja sobre primary y sobre obsidiana; el
-  // negro sólo tinta sombras y topes transparentes de degradado en la
-  // portada. Ningún parcial escribe `white` ni `black` a secas.
-  white:       rgb("#FFFFFF"),
-  black:       rgb("#000000"),
-  // Gris de la portada research (`research-muted`).
-  research-muted: rgb("#99999E"),
-  // Los ocho matices de la serie (`chart-*` + `primary`), calibrados sobre
-  // la HIG de Apple. Son la paleta de `chanwe-charts.typ` y, a la vez, la de
-  // los callouts de abajo: una sola familia para las dos cosas.
-  chart-blue:   rgb("#007AFF"),
-  chart-green:  rgb("#34C759"),
-  chart-indigo: rgb("#5856D6"),
-  chart-orange: rgb("#FF9500"),
-  chart-red:    rgb("#FF3B30"),
-  chart-teal:   rgb("#00C7BE"),
-  chart-purple: rgb("#AF52DE"),
-  // Los siete tipos de callout (`callout-*`). Cada uno es uno de los matices
-  // de arriba; `important` es `primary` y no se mueve.
-  callout-note:      rgb("#007AFF"),
-  callout-tip:       rgb("#00C7BE"),
-  callout-warning:   rgb("#FF9500"),
-  callout-important: rgb("#FD3810"),
-  callout-caution:   rgb("#AF52DE"),
-  callout-do:        rgb("#34C759"),
-  callout-dont:      rgb("#FF3B30"),
-  // Semáforos: la ficha del KPI y el estado del resumen ejecutivo doble.
-  kpi-green:           rgb("#147705"),
-  kpi-red:             rgb("#CC1914"),
-  exec-status-good:    rgb("#15803D"),
-  exec-status-regular: rgb("#D97706"),
-  exec-status-bad:     rgb("#CC1914"),
-  // Pesos tipográficos por rol (brand.yml `meta.weights`). Cada `weight:`
-  // del reporte lee uno de estos, nunca un número.
-  weight-hairline:  100,
-  weight-thin:      200,
-  weight-body:      300,
-  weight-body-plus: 400,  // era 350; Satoshi no tiene ese corte y Typst desempataba 300/400 al azar
-  weight-regular:   400,
-  weight-medium:    500,
-  weight-display:   600,
-  weight-bold:      700,
-  font-display: ("Schibsted Grotesk", "Helvetica Neue", "Arial"),
-  font-serif:   ("Cormorant Garamond", "Georgia", "Times New Roman"),
-  // La serif de display: numerales del índice y bajada de contratapa.
-  // Distinta de font-serif, que es la itálica del cuerpo.
-  font-serif-display:  ("Instrument Serif", "Georgia", "Times New Roman"),
-  font-sans:    ("Satoshi", "Helvetica Neue", "Arial"),
-  font-mono:    ("JetBrains Mono", "Menlo", "Courier New"),
+// The token table is generated (brand-v2 T7.1): chanwe-brand-tokens.typ is the hub's
+// tokens.typ and chanwe-tokens.typ builds `_t` on it (scripts/generate-brand.rb).
+// Generated from brand/tokens/tokens.json by scripts/brand-tokens.mjs. Do not edit; change tokens.json and run npm run brand:tokens.
+// Lengths are px numbers (multiply by 0.75pt in print); colours are rgb().
+#let chanwe-colors = (
+  "primary": rgb("#FD3810"),
+  "primary-text": rgb("#FD3810"),
+  "primary-active": rgb("#FD3810"),
+  "ink": rgb("#111319"),
+  "ink-light": rgb("#232A35"),
+  "ink-soft": rgb("#37393F"),
+  "ink-fg": rgb("#64748B"),
+  "ink-subtle": rgb("#646464"),
+  "rule-ink": rgb("#434D5D"),
+  "fg": rgb("#111319"),
+  "body-fg": rgb("#475569"),
+  "fg-muted": rgb("#475569"),
+  "fg-subtle": rgb("#8A94A6"),
+  "emphasis": rgb("#484848"),
+  "paper": rgb("#F8FAFC"),
+  "callout-surface": rgb("#F8FAFC"),
+  "surface-sunken": rgb("#F1F5F9"),
+  "surface-slate": rgb("#EBF0F6"),
+  "surface-raised": rgb("#FFFFFF"),
+  "callout-header": rgb("#EBF0F6"),
+  "pure-white": rgb("#FFFFFF"),
+  "pure-black": rgb("#000000"),
+  "rule": rgb("#E2E8F0"),
+  "rule-cool": rgb("#C6CDD6"),
+  "border-cool": rgb("#CFD6DF"),
+  "border": rgb("#1113191A"),
+  "neutral-300": rgb("#D4D4D4"),
+  "neutral-700": rgb("#525252"),
+  "chart-blue": rgb("#007AFF"),
+  "chart-green": rgb("#34C759"),
+  "chart-indigo": rgb("#5856D6"),
+  "chart-orange": rgb("#FF9500"),
+  "chart-red": rgb("#FF3B30"),
+  "chart-teal": rgb("#00C7BE"),
+  "chart-purple": rgb("#AF52DE"),
+  "callout-note": rgb("#007AFF"),
+  "callout-tip": rgb("#00C7BE"),
+  "callout-warning": rgb("#FF9500"),
+  "callout-important": rgb("#FD3810"),
+  "callout-caution": rgb("#AF52DE"),
+  "callout-do": rgb("#34C759"),
+  "callout-dont": rgb("#FF3B30"),
+  "research-muted": rgb("#99999E"),
+  "kpi-green": rgb("#147705"),
+  "kpi-red": rgb("#CC1914"),
+  "exec-status-good": rgb("#15803D"),
+  "exec-status-regular": rgb("#D97706"),
+  "exec-status-bad": rgb("#CC1914"),
+  "code-keyword": rgb("#FD3810"),
+  "code-string": rgb("#15803D"),
+  "code-number": rgb("#7C3AED"),
+  "code-operator": rgb("#0758E5"),
+  "code-function": rgb("#475569"),
+  "code-type": rgb("#353535"),
+  "code-comment": rgb("#928D86"),
+  "status-success": rgb("#1EB508"),
+  "status-success-soft": rgb("#C9FFC0"),
+  "status-error": rgb("#D32F2F"),
+  "status-error-bg": rgb("#FDECEA"),
+  "status-warning": rgb("#F9E710"),
+  "status-warning-bg": rgb("#FFF8B8"),
+  "status-info": rgb("#0C48ED"),
+  "status-info-bg": rgb("#B8CEFF"),
+  "chart-cyan": rgb("#11F7E6"),
+  "chart-cyan-soft": rgb("#B6FFF8"),
+  "chart-magenta": rgb("#EB03F2"),
+  "chart-gray": rgb("#71706C"),
+  "violet": rgb("#7C3AED"),
+  "violet-soft": rgb("#EFE7FD"),
+  "canvas": rgb("#E9EEF4"),
+  "pane": rgb("#FFFFFF"),
+)
+#let chanwe-colors-dark = (
+  "ink": rgb("#F4F6F9"),
+  "ink-fg": rgb("#94A3B8"),
+  "ink-subtle": rgb("#A1A6AE"),
+  "fg": rgb("#F4F6F9"),
+  "body-fg": rgb("#C3CAD4"),
+  "fg-muted": rgb("#C3CAD4"),
+  "fg-subtle": rgb("#8A94A6"),
+  "emphasis": rgb("#DDE2E9"),
+  "paper": rgb("#111319"),
+  "callout-surface": rgb("#161B23"),
+  "surface-sunken": rgb("#0B0D12"),
+  "surface-slate": rgb("#1F2631"),
+  "surface-raised": rgb("#1A1F28"),
+  "callout-header": rgb("#232A35"),
+  "rule": rgb("#2B333D"),
+  "rule-cool": rgb("#3A4555"),
+  "border-cool": rgb("#3F4A5B"),
+  "border": rgb("#F4F6F91A"),
+  "neutral-300": rgb("#3A4150"),
+  "neutral-700": rgb("#CDD3DB"),
+  "status-success-soft": rgb("#14361A"),
+  "status-error-bg": rgb("#3A1A1A"),
+  "status-warning-bg": rgb("#3A3512"),
+  "status-info-bg": rgb("#15274D"),
+  "violet-soft": rgb("#2C2150"),
+  "chart-cyan-soft": rgb("#0E3B38"),
+  "code-type": rgb("#D4D4D8"),
+  "code-function": rgb("#C3CAD4"),
+  "code-comment": rgb("#7E8A99"),
+  "research-muted": rgb("#7E8390"),
+  "canvas": rgb("#232A35"),
+  "pane": rgb("#111319"),
+)
+#let chanwe-radii = (
+  "hair": 2,
+  "card": 4,
+  "control": 4,
+  "window": 8,
+  "pane": 12,
+  "row": 8,
+  "pill": 999,
+  "surface": 16,
+  "band": 24,
+)
+#let chanwe-space = (
+  "2xs": 4,
+  "xs": 8,
+  "sm": 12,
+  "md": 16,
+  "lg": 24,
+  "xl": 32,
+  "2xl": 48,
+  "3xl": 80,
+  "section": 120,
+)
+#let chanwe-control = (
+  "xs": 28,
+  "sm": 32,
+  "md": 40,
+  "lg": 48,
+)
+#let chanwe-type = (
+  "label": 10,
+  "caption": 11,
+  "control": 12.5,
+  "button": 13,
+  "small": 13,
+  "body": 14,
+  "title": 14,
+  "lead": 15,
+  "h4": 18,
+  "h3": 22,
+  "h2": 28,
+  "h1": 36,
+  "display": 48,
+)
+#let chanwe-plot = (
+  "focus": rgb("#FD3810"),
+  "slate": (rgb("#232A35"), rgb("#475569"), rgb("#64748B"), rgb("#8A94A6"), rgb("#C6CDD6"),),
+  "categorical": (rgb("#FD3810"), rgb("#007AFF"), rgb("#00C7BE"), rgb("#5856D6"), rgb("#AF52DE"), rgb("#34C759"), rgb("#FF9500"), rgb("#FF3B30"),),
+  "grid": rgb("#64748B40"),
+  "axis-text": rgb("#64748B"),
+  "title": rgb("#111319"),
+  "background": rgb("#FFFFFF"),
+  "grid-width": 1,
+  "line-width": 2,
+  "point-size": 3,
+  "bar-radius": 3,
+)
+#let chanwe-fonts = (
+  "display": "Schibsted Grotesk",
+  "body": "Satoshi",
+  "mono": "JetBrains Mono",
+)// Generated by scripts/generate-brand.rb from brandbook/tokens.json: do not edit, run the script.
+// The `_t` table of every CHANWE Typst format. It is built on chanwe-brand-tokens.typ (the
+// hub's tokens.typ, copied byte for byte): colours by name from `chanwe-colors`, the v2
+// lengths from `chanwe-radii` / `chanwe-space` / `chanwe-type` in pt (a token px is 0.75pt),
+// plus the role weights (brand.yml meta.weights) and the two editorial serifs.
+#let _cw-pt(px) = px * 0.75pt
+#let chanwe-tokens = chanwe-colors + (
+  // `white` / `black` read `pure-white` / `pure-black`: no partial writes either word.
+  white: chanwe-colors.at("pure-white"),
+  black: chanwe-colors.at("pure-black"),
+  // v2 slate tint (depth.light): the text slate over the pane, for headers and grouping.
+  tint: chanwe-colors.at("ink-fg").transparentize(87%),
+  tint-strong: chanwe-colors.at("ink-fg").transparentize(79%),
+  band-sheen: chanwe-colors.at("pure-white").transparentize(95%),
+  band-edge: chanwe-colors.at("pure-white").transparentize(90%),
+  weight-hairline: 100,
+  weight-thin: 200,
+  weight-body: 300,
+  weight-body-plus: 400,
+  weight-regular: 400,
+  weight-medium: 500,
+  weight-display: 600,
+  weight-bold: 700,
+  font-display: (chanwe-fonts.display, "Helvetica Neue", "Arial"),
+  font-sans: (chanwe-fonts.body, "Helvetica Neue", "Arial"),
+  font-mono: (chanwe-fonts.mono, "Menlo", "Courier New"),
+  font-serif: ("Cormorant Garamond", "Georgia", "Times New Roman"),
+  font-serif-display: ("Instrument Serif", "Georgia", "Times New Roman"),
+  radius-hair: _cw-pt(chanwe-radii.at("hair")),
+  radius-row: _cw-pt(chanwe-radii.at("row")),
+  radius-pane: _cw-pt(chanwe-radii.at("pane")),
+  radius-surface: _cw-pt(chanwe-radii.at("surface")),
+  radius-band: _cw-pt(chanwe-radii.at("band")),
+  radius-pill: _cw-pt(chanwe-radii.at("pill")),
+  space-2xs: _cw-pt(chanwe-space.at("2xs")),
+  space-xs: _cw-pt(chanwe-space.at("xs")),
+  space-sm: _cw-pt(chanwe-space.at("sm")),
+  space-md: _cw-pt(chanwe-space.at("md")),
+  space-lg: _cw-pt(chanwe-space.at("lg")),
+  space-xl: _cw-pt(chanwe-space.at("xl")),
+  space-2xl: _cw-pt(chanwe-space.at("2xl")),
+  space-3xl: _cw-pt(chanwe-space.at("3xl")),
+  space-section: _cw-pt(chanwe-space.at("section")),
+  text-label: _cw-pt(chanwe-type.at("label")),
+  text-caption: _cw-pt(chanwe-type.at("caption")),
+  text-control: _cw-pt(chanwe-type.at("control")),
+  text-button: _cw-pt(chanwe-type.at("button")),
+  text-small: _cw-pt(chanwe-type.at("small")),
+  text-body: _cw-pt(chanwe-type.at("body")),
+  text-title: _cw-pt(chanwe-type.at("title")),
+  text-lead: _cw-pt(chanwe-type.at("lead")),
+  text-h4: _cw-pt(chanwe-type.at("h4")),
+  text-h3: _cw-pt(chanwe-type.at("h3")),
+  text-h2: _cw-pt(chanwe-type.at("h2")),
+  text-h1: _cw-pt(chanwe-type.at("h1")),
+  text-display: _cw-pt(chanwe-type.at("display")),
 )
 
 // expose tokens as a global so partials and user code can use them
-#let _t = chanwe-tokens
+#let _t = chanwe-tokens// =============================================================
+// chanwe-v2.typ — the CHANWE v2 shapes for paper ("v2-print", Q1 B of the
+// brand-v2 plan; the language is chanwe-brandbook brand/guidelines/brand-v2.md).
+//
+// Shared by every Typst format (listed by parent path under
+// `template-partials` and included right after the chanwe-tokens.typ partial).
+// It writes no value of its own: every colour, radius, space and size reads
+// the generated `_t` table.
+//
+//   cw-pane     white pane on paper: 1px hairline, 16px corners, no shadow
+//   cw-band     obsidian band: 24px corners, the dot field, the neutral sheen
+//   cw-dot      the role colour as a dot (callouts, statuses, new items)
+//   cw-label    a mono label: the only spaced capitals in v2
+//   cw-pill     a pill (chips, tags, deltas); sentence case unless a label
+// =============================================================
+
+// 1px, the hairline of a pane at rest (brand-v2 §4: `rest` is the hairline;
+// on paper there is no shadow).
+#let cw-hairline = 0.75pt
+
+#let cw-pane(
+  body,
+  fill: _t.pane,
+  stroke: cw-hairline + _t.rule,
+  radius: _t.radius-surface,
+  inset: (x: _t.space-lg, y: _t.space-md),
+  width: 100%,
+  ..args,
+) = block(fill: fill, stroke: stroke, radius: radius, inset: inset, width: width, ..args, body)
+
+#let cw-dot(color, size: 5pt, baseline: -0.4pt) = box(
+  baseline: baseline,
+  circle(radius: size / 2, fill: color, stroke: none),
+)
+
+#let cw-label(body, fill: _t.fg-muted, size: _t.text-label, weight: _t.weight-medium, tracking: 0.14em) = text(
+  font: _t.font-mono, size: size, weight: weight, tracking: tracking, fill: fill, upper(body),
+)
+
+#let cw-pill(
+  body,
+  fill: none,
+  stroke: cw-hairline + _t.rule,
+  inset: (x: _t.space-xs, y: _t.space-2xs),
+  baseline: 25%,
+) = box(fill: fill, stroke: stroke, radius: _t.radius-pill, inset: inset, baseline: baseline, body)
+
+// The dot field of the band: a flat tiling of `ink-fg` dots, faint. Typst's
+// `tiling` keeps the file small (one cell, repeated by the viewer).
+#let cw-dot-field(step: 3.8mm, dot: 0.6pt, color: _t.ink-fg, transparency: 35%) = tiling(
+  size: (step, step),
+  place(center + horizon, circle(radius: dot, fill: color.transparentize(transparency), stroke: none)),
+)
+
+// The obsidian band (brand-v2 §2, §7): one per page at most, floating with
+// a margin (never edge to edge), 24px corners, the dot field and the neutral
+// top sheen over its top 30%, a 1px light edge on top. Text on it is
+// `rule-cool` for display and `fg-subtle` for labels (CLAUDE.md).
+#let cw-band(
+  body,
+  inset: (x: _t.space-xl, y: _t.space-xl),
+  radius: _t.radius-band,
+  width: 100%,
+  height: auto,
+  dots: true,
+  ..args,
+) = block(
+  fill: _t.ink,
+  radius: radius,
+  width: width,
+  clip: true,
+  inset: 0pt,
+  stroke: none,
+  ..args,
+  block(
+    width: 100%,
+    inset: 0pt,
+    spacing: 0pt,
+    fill: if dots { cw-dot-field() } else { none },
+    block(
+      width: 100%,
+      height: height,
+      spacing: 0pt,
+      inset: inset,
+      stroke: (top: cw-hairline + _t.band-edge),
+      fill: gradient.linear((_t.band-sheen, 0%), (_t.band-sheen.transparentize(100%), 30%), (_t.band-sheen.transparentize(100%), 100%), angle: 90deg),
+      body,
+    ),
+  ),
+)
+
+// El punto bermellón dibujado que cierra un titular principal: la portada,
+// el H1. A escala del titular, como el de la portada (36pt → disco de 8pt,
+// 3pt de aire, base corrida 2pt): 0.22 del cuerpo, 0.083 de aire. Sin glue
+// entre el titular y la caja, para que el punto nunca quede solo en un
+// renglón. Solo el H1 lo lleva; el H2 y los de abajo, no.
+#let _chanwe-title-dot(size, fill: _t.primary) = box(baseline: -size * 2 / 36, {
+  h(size * 3 / 36)
+  circle(radius: size * 4 / 36, fill: fill, stroke: none)
+})
 
 // El tamaño de hoja del formato. Vive en una sola constante porque las
 // páginas a sangre (portadas, contratapa, divisores, citas a página
@@ -355,7 +601,7 @@
     columns: (18mm, 1fr),
     column-gutter: 4mm,
     align: (left + top, left + top),
-    text(font: _t.font-mono, size: 7pt, tracking: 0.20em, fill: _t.fg-subtle, upper(label)),
+    text(font: _t.font-mono, size: 7pt, tracking: 0.20em, fill: _t.fg-muted, upper(label)),
     block(spacing: 0pt)[
       #set par(spacing: 0pt, leading: 0.9em)
       #text(font: _t.font-display, tracking: -0.05em, size: 10pt, weight: _t.weight-display, fill: _t.fg, value)
@@ -379,7 +625,7 @@
 } else if inverse == "dark" {
   (text: _t.fg-subtle, accent: _t.primary, rule: _t.rule-ink, logo: "Logo_Gris.svg")
 } else {
-  (text: _t.fg-subtle, accent: _t.primary, rule: _t.border, logo: "Logo_Negro.svg")
+  (text: _t.fg-muted, accent: _t.primary, rule: _t.border, logo: "Logo_Negro.svg")
 }
 
 #let chanwe-header(section, topic, inverse: none) = context {
@@ -497,8 +743,8 @@
   card:         none,     // color de la tarjeta interior — idem
   pad-outer:    2mm,      // aire entre el filete y la tarjeta
   pad-inner:    0.8mm,    // zona tranquila de la tarjeta alrededor del código
-  radius-outer: 1.4mm,
-  radius-inner: 0.8mm,
+  radius-outer: 3pt,
+  radius-inner: 1.5pt,
 ) = box(
   stroke: 0.5pt + edge,
   radius: radius-outer,
@@ -711,6 +957,13 @@
   let rail-w = _chanwe-page-w * 0.26
   let pad = 10.583mm
   let content-w = field-w - pad * 2
+  // v2: the rail is a floating band, 6mm from three paper edges (brand-v2 §2:
+  // "bands float with a margin, never edge to edge"). The field's foot band
+  // grows by the same 6mm, so its hairline still meets the rail's.
+  let rail-gap = 6mm
+  let rail-band-w = rail-w - rail-gap
+  let rail-band-h = _chanwe-page-h - rail-gap * 2
+  let foot-h = 13.758mm
 
   set page(
     paper: _chanwe-paper,
@@ -736,13 +989,12 @@
         // del observatorio a la derecha, repartida en la altura.
         #let masthead-h = 11.4mm
         #grid(
-          rows: (26.6mm, 1fr, auto, 13.758mm),
+          rows: (26.6mm, 1fr, auto, foot-h + rail-gap),
           row-gutter: 0pt,
 
           block(
           width: 100%,
           height: 26.6mm,
-          stroke: (bottom: 0.5pt + _publication-rule),
           inset: (left: pad, right: pad, top: 7.6mm, bottom: 7.6mm),
         )[
           #grid(
@@ -755,7 +1007,7 @@
                 // texto en blanco.
                 box(
                   stroke: 0.5pt + _publication-muted,
-                  radius: 2pt,
+                  radius: _t.radius-pill,
                   inset: (x: 3.06mm, y: 1.44mm),
                   text(
                     font: _t.font-mono, size: 6.5pt, weight: _t.weight-regular,
@@ -765,7 +1017,7 @@
               #place(top + left,
                 box(
                   fill: _publication-ink,
-                  radius: 2pt,
+                  radius: _t.radius-pill,
                   inset: (x: 3.06mm, y: 1.44mm),
                   // Texto sobre tinta en rule-cool, no en blanco.
                   text(
@@ -797,22 +1049,22 @@
           )
         ],
 
-          // ── Campo de arte: la fila elástica. El radar sangra de lado a
-          // lado, sin caja blanca que lo encierre.
-          block(width: 100%, height: 100%, clip: true)[
-          // El arte entra un 30% más grande y centrado: la banda recorta el
-          // sobrante por los cuatro lados.
-          // 190% deja 45% de sobrante por lado; el corrimiento no puede
-          // pasar de eso sin destapar el papel por abajo.
-          #place(center + horizon, dy: -39%,
-                 image(art, width: 190%, height: 190%, fit: "cover"))
-          // Velo de papel al 80% sobre el arte: Typst no expone opacidad
-          // sobre imágenes, así que la tinta rebajada se consigue con el
-          // papel encima a esa opacidad. Subir el velo baja la imagen: al
-          // 80% (antes 75%) el arte queda un 5% más transparente.
-          #place(top + left, rect(width: 100%, height: 100%, stroke: none,
-                                  fill: _publication-paper.transparentize(20%)))
-        ],
+          // ── Campo de arte: la fila elástica. v2: the photograph floats inside
+          // the margins with the band's 24px corners, and the veil drops from
+          // 80% to 45% of paper: bleeding behind a heavy veil it read as a
+          // white page.
+          block(width: 100%, height: 100%, inset: (x: pad, bottom: 8mm))[
+            #block(width: 100%, height: 100%, clip: true, radius: _t.radius-band)[
+              // 190% deja 45% de sobrante por lado; el corrimiento no puede
+              // pasar de eso sin destapar el papel por abajo.
+              #place(center + horizon, dy: -39%,
+                     image(art, width: 190%, height: 190%, fit: "cover"))
+              // Typst no expone opacidad sobre imágenes: el velo es el papel
+              // encima, a esa opacidad.
+              #place(top + left, rect(width: 100%, height: 100%, stroke: none,
+                                      fill: _publication-paper.transparentize(55%)))
+            ]
+          ],
 
           // ── Losa: ledger de datos y, debajo, el titular con su línea
           // bermellón. De alto automático: crece con el titular.
@@ -823,8 +1075,8 @@
             // como inset para que el texto no se mueva.
             move(dx: -pad, block(
               width: field-w,
-              stroke: (top: 0.5pt + _publication-rule, bottom: 0.5pt + _publication-rule),
-              inset: (left: pad, right: pad, top: 8.4mm, bottom: 8.4mm),
+              stroke: (bottom: 0.5pt + _publication-rule),
+              inset: (left: pad, right: pad, top: 0mm, bottom: 8.4mm),
               spacing: 0pt,
             )[
               #grid(
@@ -895,15 +1147,15 @@
           // con su sello. Comparte banda con el pie del riel.
           block(
           width: 100%,
-          height: 13.758mm,
+          height: foot-h + rail-gap,
           fill: _publication-paper,
           stroke: (top: 0.5pt + _publication-rule),
-          inset: (left: pad, right: 11.112mm),
+          inset: (left: pad, right: 11.112mm, bottom: rail-gap),
         )[
           #align(horizon, grid(
             columns: (1fr, auto),
             align: (left + horizon, right + horizon),
-            box(fill: _t.primary, radius: 2pt, inset: (x: 3.4mm, y: 1.6mm))[
+            box(fill: _t.primary, radius: _t.radius-pill, inset: (x: 3.4mm, y: 1.6mm))[
               #set text(font: _t.font-mono, size: 7.2pt, weight: _t.weight-medium, tracking: 0.18em, fill: _t.white)
               #text(weight: _t.weight-bold, "//")
               #h(3.2mm)
@@ -925,7 +1177,8 @@
       ],
 
       // ══ Riel obsidiana ══════════════════════════════════════
-      block(width: 100%, height: _chanwe-page-h, fill: _publication-ink, clip: true)[
+      block(width: 100%, height: _chanwe-page-h, inset: (top: rail-gap, right: rail-gap))[
+      #cw-band(width: rail-band-w, height: rail-band-h, inset: 0pt)[
 
         // ── QR: tarjeta blanca arriba, con el dominio debajo.
         // El QR va centrado en el riel. Llevaba 3mm a la derecha para caer
@@ -946,13 +1199,13 @@
         ]
 
         // ── Legal rotado, pegado al borde izquierdo.
-        #place(center + horizon, dx: -22mm,
+        #place(center + horizon, dx: -19mm,
           rotate(-90deg, origin: center + horizon,
             box(width: 175mm)[
               #set align(center)
               #text(
                 font: _t.font-mono, size: 6.2pt, weight: _t.weight-regular,
-                tracking: 0.24em, fill: _t.ink-fg.transparentize(40%), upper(copyright),
+                tracking: 0.24em, fill: _t.fg-subtle, upper(copyright),
               )
             ]
           )
@@ -961,16 +1214,16 @@
         // ── El wordmark, rotado y grande.
         #place(center + horizon,
           rotate(-90deg, origin: center + horizon,
-            image(rail-wordmark, width: 55.5mm, fit: "contain")
+            image(rail-wordmark, width: 52mm, fit: "contain")
           )
         )
 
         // ── Pie del riel, con su filete.
         #place(bottom + left, dy: 0mm,
           block(
-            width: rail-w,
-            height: 13.5mm,
-            stroke: (top: 0.5pt + _t.white.transparentize(82%)),
+            width: rail-band-w,
+            height: foot-h,
+            stroke: (top: 0.5pt + _t.rule-ink),
           )[
             #align(center + horizon, {
               set text(font: _t.font-mono, size: 5.6pt, weight: _t.weight-regular, tracking: 0.16em)
@@ -980,7 +1233,7 @@
               text(fill: _t.rule-cool, upper(rail-location-2))
             })
           ])
-      ],
+      ]],
     )
   ]
 
@@ -1029,7 +1282,14 @@
 
   set page(
     paper: _chanwe-paper, margin: 0pt, header: none, footer: none, fill: _t.ink,
-    background: _chanwe-dot-field(),
+    // v2: the series contour art (the hub's dark cut, its ground is `ink`) runs
+    // off the top right corner, with the dot field over it. Until 3.1 the upper
+    // two thirds of the back cover were empty.
+    background: {
+      place(top + right, dx: 62mm, dy: 2mm,
+        image(_chanwe-assets + "01-radar-macro-dark.svg", width: 262mm))
+      _chanwe-dot-field()
+    },
     foreground: if cover-edge != none {
       place(right + top, dx: -3mm, dy: 14mm,
         rotate(-90deg, origin: right + horizon,
@@ -1106,58 +1366,56 @@
             pad-inner: 1mm,
           ),
         )
-        #v(18mm)
-        #line(length: 100%, stroke: 0.5pt + _t.white.transparentize(84%))
-        #v(4.5mm)
-        // Pie en tres partes: serie, referencia del documento y plaza.
-        #grid(
-          columns: (1fr, 1fr, 1fr),
-          align: (left + horizon, center + horizon, right + horizon),
-          {
-            set text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em)
-            text(fill: _t.primary, "//")
-            h(2.2mm)
-            // Mismo gris que la referencia y la plaza: un solo tono en el renglón.
-            text(fill: _t.ink-subtle, upper(_chanwe-clean-str(series)))
-          },
-          text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.08em,
-               fill: _t.ink-subtle, _chanwe-clean-str(doc-ref)),
-          text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
-               fill: _t.ink-subtle, upper(_chanwe-clean-str(place-label))),
-        )
-        #if back-cols.len() > 0 {
-          v(8mm)
-          grid(
-            columns: back-cols.map(_ => 1fr),
-            column-gutter: 8mm,
-            // Primera columna a la izquierda, última a la derecha, las del
-            // medio centradas: las tres apoyan en los bordes del pie.
-            ..back-cols.enumerate().map(((i, col)) => {
-              let (label, value, sub) = col
-              let al = if i == 0 { left } else if i == back-cols.len() - 1 { right } else { center }
-              block(spacing: 0pt, width: 100%)[
-                #set align(al)
-                // Las tres líneas en JetBrains Mono, en versalita, al mismo
-                // cuerpo y peso y con el mismo aire entre una y otra: rótulo,
-                // valor y bajada son un solo renglón de servicio.
-                #set par(spacing: 0pt, leading: 0pt)
-                // Mismo cuerpo y peso que la referencia del pie (6pt / 300);
-                // rótulo y bajada en su mismo gris (ink-subtle), el valor en
-                // rule-cool.
-                #text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.20em,
-                      fill: _t.ink-subtle, upper(_chanwe-clean-str(label)))
-                #v(3mm)
-                #text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
-                      fill: _t.rule-cool, upper(_chanwe-clean-str(value)))
-                #if sub != none and sub != "" {
-                  v(3mm)
-                  text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
-                       fill: _t.ink-subtle, upper(_chanwe-clean-str(sub)))
-                }
-              ]
-            })
+        #v(11mm)
+        // v2: the document's details are a pane at the foot: on obsidian a pane
+        // is one step up (`ink-light`) with the `rule-ink` hairline. Labels on
+        // ink read `fg-subtle` (6:1); `ink-subtle` was too faint at 6pt.
+        #block(
+          width: 100%, fill: _t.ink-light, radius: _t.radius-surface,
+          stroke: cw-hairline + _t.rule-ink,
+          inset: (x: 7mm, top: 6mm, bottom: 6mm),
+        )[
+          #if back-cols.len() > 0 {
+            grid(
+              columns: back-cols.map(_ => 1fr),
+              column-gutter: 8mm,
+              ..back-cols.map(col => {
+                let (label, value, sub) = col
+                block(spacing: 0pt, width: 100%)[
+                  #set par(spacing: 0pt, leading: 0pt)
+                  #text(font: _t.font-mono, size: 6pt, weight: _t.weight-regular, tracking: 0.20em,
+                        fill: _t.fg-subtle, upper(_chanwe-clean-str(label)))
+                  #v(3mm)
+                  #text(font: _t.font-mono, size: 6.4pt, weight: _t.weight-regular, tracking: 0.12em,
+                        fill: _t.rule-cool, upper(_chanwe-clean-str(value)))
+                  #if sub != none and sub != "" {
+                    v(3mm)
+                    text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
+                         fill: _t.fg-subtle, upper(_chanwe-clean-str(sub)))
+                  }
+                ]
+              })
+            )
+            v(5mm)
+            line(length: 100%, stroke: 0.5pt + _t.rule-ink)
+            v(4mm)
+          }
+          // Pie en tres partes: serie, referencia del documento y plaza.
+          #grid(
+            columns: (1fr, 1fr, 1fr),
+            align: (left + horizon, center + horizon, right + horizon),
+            {
+              set text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em)
+              text(fill: _t.primary, "//")
+              h(2.2mm)
+              text(fill: _t.fg-subtle, upper(_chanwe-clean-str(series)))
+            },
+            text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.08em,
+                 fill: _t.fg-subtle, _chanwe-clean-str(doc-ref)),
+            text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
+                 fill: _t.fg-subtle, upper(_chanwe-clean-str(place-label))),
           )
-        }
+        ]
       ],
     )
   ]
@@ -1456,9 +1714,10 @@
 // `tone` pinta marco y texto del mismo color, para las superficies donde el
 // slate del marco y el fg-muted del texto no se leen: border-cool sobre
 // obsidiana, blanco sobre naranja.
-#let _chip-label(body, tone: none, size: 5.2pt, inset: (x: 1.5mm, y: 1.2mm)) = box(
+#let _chip-label(body, tone: none, size: 5.2pt, inset: (x: 1.8mm, y: 1.2mm)) = box(
   stroke: 0.3pt + (if tone != none { tone } else { _t.border-cool }),
-  radius: 0pt,
+  // v2: every chip is a pill.
+  radius: _t.radius-pill,
   inset: inset,
   text(font: _t.font-mono, size: size, weight: _t.weight-medium, tracking: 0.1em,
        fill: if tone != none { tone } else { _t.fg-muted }, upper(body)),
@@ -1516,45 +1775,30 @@
   let type-label = if eyebrow != none { upper(eyebrow) } else { auto-label }
   let display-title = if title != none { title } else { type-label }
 
-  block(
-    fill: _t.callout-surface,
-    // Marco a canto vivo y más fino que el filete interno: el cuadro encierra
-    // sin dibujarse, y la separación entre el rótulo y el cuerpo es lo que
-    // pesa adentro.
-    //
-    // El tipo de aviso lo dice el canto izquierdo, no un punto: la barra vive
-    // en el borde del cuadro, así que el color se lee de reojo sin meter un
-    // objeto más adentro del rótulo.
-    stroke: (left: 0.3mm + accent, rest: 0.3pt + _t.border-cool),
-    // Esquinas a 4pt como el panel de código; `clip` recorta la banda del
-    // rótulo a la misma curva.
-    radius: 4pt,
-    width: 100%,
+  // v2-print (brand-v2 Q1 B): the callout is a pane — white on paper, the
+  // 1px hairline, 16px corners, no shadow. The kind is a dot in its role
+  // colour before the mono label, on the slate tint of the title row; no
+  // side bar, no coloured fill. `clip` trims the tint row to the corners.
+  cw-pane(
+    fill: _t.pane,
     inset: 0pt,
     above: 10mm,
     below: 10mm,
     breakable: false,
     clip: true,
   )[
-    // La banda del rótulo mide 28.6pt: un 15% menos que los 33.7pt de la
-    // vuelta anterior, que ya eran un 15% menos que los 39.6pt originales.
-    // El inset sale de esa cuenta —el título mide 6.5pt y el resto se reparte
-    // arriba y abajo—, no de un número redondo, asi que si cambia el cuerpo
-    // del título hay que volver a medir la banda y repartir la diferencia.
-    #block(fill: _t.callout-header, inset: (x: 4.5mm, top: 3.89mm, bottom: 3.89mm), width: 100%, spacing: 0pt)[
+    #block(fill: _t.tint, inset: (x: _t.space-lg, y: _t.space-sm), width: 100%, spacing: 0pt)[
       #grid(
         columns: (auto, 1fr),
-        column-gutter: 5pt,
+        column-gutter: _t.space-xs,
         align: left + horizon,
-        text(font: _t.font-mono, size: 7pt, fill: _t.fg-subtle, "//"),
-        // El rótulo en JetBrains Mono: es un renglón de servicio, no un
-        // titular. Mismo peso que el resto de los rótulos mono del formato.
-        text(font: _t.font-mono, size: 8pt, weight: _t.weight-medium, tracking: 0.12em, fill: _t.ink, upper(display-title)),
+        cw-dot(accent, size: 5.5pt, baseline: 0pt),
+        // A service line, not a heading: JetBrains Mono, the label weight.
+        cw-label(display-title, fill: _t.ink, size: 7.5pt, tracking: 0.12em),
       )
     ]
-    // Mismo grosor y mismo tono que el marco: un solo filete para todo el cuadro.
-    #block(spacing: 0pt)[#line(length: 100%, stroke: 0.3pt + _t.border-cool)]
-    #block(inset: (x: 4.5mm, y: 5mm), width: 100%, spacing: 0pt)[
+    #block(spacing: 0pt)[#line(length: 100%, stroke: cw-hairline + _t.rule)]
+    #block(inset: (x: _t.space-lg, y: _t.space-md), width: 100%, spacing: 0pt)[
       #set block(spacing: 0.85em)
       #set text(fill: _t.fg-muted, size: 9.5pt)
       #content
@@ -1571,6 +1815,26 @@
   block: true, attribution: attribution, body,
 )
 
+// v2-print: an insert floats inside the text block. Until 3.0.2 the quote,
+// figure, summary and zone inserts bled to both paper edges with square
+// corners, while the chapter band of the same page floated with 24px ones;
+// now they are the same family (brand-v2 §2: "bands float with a margin,
+// never edge to edge"). Obsidian is the band itself (dot field, sheen);
+// slate and orange take its corners; white is a pane with the hairline.
+// `gap` is the air above and below: two inserts in a row no longer touch
+// (edge to edge they read as one striped band; floating, as a collision).
+// An insert never splits across two pages (it did not when it was a `move`).
+#let _cw-insert(color, bg, inset, gap: 8mm, body) = if color == "dark" {
+  cw-band(inset: inset, above: gap, below: gap, breakable: false, body)
+} else {
+  block(
+    width: 100%, fill: bg, radius: _t.radius-band, inset: inset, above: gap, below: gap,
+    breakable: false,
+    stroke: if bg == _t.white { cw-hairline + _t.rule } else { none },
+    body,
+  )
+}
+
 // `light` va sobre surface-slate (#EBF0F6), el mismo slate del abstract y
 // de los paneles de código; `slate` y `beige` siguen valiendo como alias.
 #let _gq-scheme(color, inset: false) = if color == "light" or color == "slate" or color == "beige" {
@@ -1580,7 +1844,7 @@
     quote:  _t.fg,
     emph:   _t.primary,
     attr:   _t.fg,
-    source: _t.fg-subtle,
+    source: _t.fg-muted,
     line:   _t.primary,
   )
 } else if color == "primary" {
@@ -1625,14 +1889,18 @@
     // sus propios 28pt y caía 26mm más abajo que en el inserto.
     #v(5mm)
     #set par(leading: 0.32em)
-    #block(width: 100%)[
-      // Un 15% más que la cita del inserto (28pt): a página completa la cita
-      // tiene la hoja entera para respirar.
-      #text(
-        font: _t.font-serif, size: 32.2pt, style: "italic", weight: _t.weight-body,
+    // The quote takes the page: the largest of these sizes that keeps it
+    // within 150mm of height, so a short line is set at 64pt and a long
+    // paragraph falls back to the 32.2pt it always had. Until 3.0.2 every
+    // quote was 32.2pt, and a one-line quote left the page empty.
+    #layout(size => {
+      let q(sz) = block(width: 100%, text(
+        font: _t.font-serif, size: sz, style: "italic", weight: _t.weight-body,
         tracking: -0.025em, fill: s.quote,
-      )[\u{201C}#body\u{201D}]
-    ]
+      )[\u{201C}#body\u{201D}])
+      let fit = (64pt, 56pt, 48pt, 40pt).find(sz => measure(q(sz), width: size.width).height <= 150mm)
+      q(if fit == none { 32.2pt } else { fit })
+    })
     #v(1fr)
     // El filete cierra siempre, con o sin firma. La firma pesa —tres veces
     // el cuerpo que tenía— y la fuente va en la ficha de marco, en blanco
@@ -1670,12 +1938,7 @@
   let rule-fill = if on-primary { _t.white } else if on-dark { _t.rule-cool } else { _t.border-cool }
   let rule-w    = if on-primary { 0.2pt } else { 0.3pt }
   let chip-tone = if on-primary { _t.white } else if on-dark { _t.rule-cool } else { none }
-  move(dx: -18mm,
-    block(
-      width: 210mm,
-      fill: s.bg,
-      inset: (x: 22mm, top: 12mm, bottom: 14mm),
-    )[
+  _cw-insert(color, s.bg, (x: 12mm, top: 12mm, bottom: 12mm))[
       #show emph: it => text(fill: s.emph, style: "italic", it.body)
       #set par(leading: 0.32em)
       #chanwe-eyebrow(eyebrow, color: s.eyebrow, with-rule: true)
@@ -1714,7 +1977,6 @@
         )
       }
     ]
-  )
 }
 
 #let inset-great-figure(
@@ -1796,6 +2058,7 @@
         if source-label != none {
           box(
             fill: if on-primary { _t.white } else { _t.primary },
+            radius: _t.radius-pill,
             inset: (x: 4mm, y: 1.6mm),
             text(font: _t.font-mono, size: 4.7pt, weight: _t.weight-display, tracking: 0.16em,
                  fill: if on-primary { _t.primary } else { _t.white }, upper(source-label)),
@@ -1815,22 +2078,16 @@
     (text-col, plot-col)
   }
 
-  move(dx: -18mm,
-    block(
-      width: 210mm,
-      fill: s.bg,
-      inset: (x: 22mm, top: 20mm, bottom: 20mm),
-    )[
+  _cw-insert(color, s.bg, (x: 12mm, y: 14mm))[
       #show emph: it => text(fill: s.emph, style: "italic", it.body)
       #grid(
         columns: col-widths,
-        column-gutter: 14mm,
+        column-gutter: 12mm,
         align: (left + top, left + top),
         first-col,
         second-col,
       )
     ]
-  )
 }
 
 #let inset-great-summary(
@@ -1851,12 +2108,7 @@
     (bg: _t.white, eyebrow: _t.primary, title: _t.ink, rule: _t.primary, body: _t.body-fg)
   }
   let borders = not ("white", "light", "slate", "beige", "dark", "primary").contains(color)
-  move(dx: -18mm,
-    block(
-      width: 210mm,
-      fill: s.bg,
-      inset: (x: 22mm, top: 0pt, bottom: 0pt),
-    )[
+  _cw-insert(color, s.bg, (x: 12mm, top: 0pt, bottom: 0pt))[
       #if borders { line(length: 100%, stroke: 0.5pt + _t.ink) }
       #block(width: 100%, inset: (top: 12mm, bottom: 14mm))[
         #grid(
@@ -1886,7 +2138,6 @@
       ]
       #if borders { line(length: 100%, stroke: 0.5pt + _t.ink) }
     ]
-  )
 }
 
 // El hallazgo se reparte en cuatro franjas: el numeral suelto contra el margen,
@@ -1915,10 +2166,10 @@
    accent: _t.white, rule: _t.white.transparentize(60%), label: _t.white.transparentize(30%), chip: _t.white)
 } else if color == "light" or color == "slate" or color == "beige" {
   (bg: _t.surface-slate, numeral: _t.primary, title: _t.ink, body: _t.fg-muted,
-   accent: _t.primary, rule: _t.rule, label: _t.fg-subtle, chip: none)
+   accent: _t.primary, rule: _t.rule, label: _t.fg-muted, chip: none)
 } else {
   (bg: none, numeral: _t.primary, title: _t.ink, body: _t.fg-muted,
-   accent: _t.primary, rule: _t.rule, label: _t.fg-subtle, chip: none)
+   accent: _t.primary, rule: _t.rule, label: _t.fg-muted, chip: none)
 }
 
 // `height` fija el alto de la fila: la celda del texto —y con ella el filete
@@ -1942,9 +2193,9 @@
       fill: s.numeral, number,
     )),
 
-    // El filete naranja es el borde izquierdo de la celda, no una línea aparte:
-    // así mide exactamente el alto de la fila sin tener que calcularlo.
-    grid.cell(stroke: (left: 0.5pt + s.accent), inset: (left: 4mm))[
+    // v2 (Ale, 2026-10-30, opción C): sin filete lateral; el hallazgo es un panel
+    // y el numeral naranja es la única señal.
+    grid.cell(inset: (left: 0mm))[
       #block(below: 3.4mm)[
         #set par(leading: 0.45em)
         #text(font: _t.font-display, tracking: -0.05em, size: 10.8pt, weight: _t.weight-display, fill: s.title, title)
@@ -1958,14 +2209,14 @@
       #body
     ],
 
+    // El tema arriba a la derecha, alineado con el título: la etiqueta mono y
+    // debajo, pegada, la pill.
     if topic != "" {
-      align(right)[
-        #set par(spacing: 0pt)
-        #text(font: _t.font-mono, size: 5.2pt, weight: _t.weight-regular, tracking: 0.18em,
-              fill: s.label, upper(topic-label))
-        #v(1.6mm)
-        #_chip-label(topic, tone: s.chip)
-      ]
+      align(right + top, stack(dir: ttb, spacing: 1.4mm,
+        align(right, text(font: _t.font-mono, size: 5.2pt, weight: _t.weight-regular, tracking: 0.18em,
+              fill: s.label, upper(topic-label))),
+        align(right, _chip-label(topic, tone: s.chip)),
+      ))
     } else { [] },
   )
 }
@@ -1974,21 +2225,28 @@
 // entre ítems —mismo grosor, mismo tono—, así que la lista se lee como un
 // pentagrama parejo y no como una banda con bordes pesados. `color` mantiene
 // las variantes en panel para los documentos que ya las usan.
+#let _gf-panes(color) = color in ("white", "light", "slate", "beige")
 #let _gf-frame(color, body) = {
   let s = _gf-scheme(color)
-  if s.bg == none {
+  if _gf-panes(color) {
+    block(width: 100%, fill: _t.surface-slate, radius: _t.radius-surface, inset: 4mm,
+      above: 10mm, below: 10mm)[#body]
+  } else if s.bg == none {
     block(width: 100%, inset: 0pt, above: 10mm, below: 10mm,
       stroke: (top: 0.3pt + s.rule, bottom: 0.3pt + s.rule))[#body]
   } else {
-    block(width: 100%, fill: s.bg, radius: 4pt, inset: (x: 6mm),
+    block(width: 100%, fill: s.bg, radius: _t.radius-surface, inset: (x: 6mm),
       above: 10mm, below: 10mm)[#body]
   }
 }
 
 #let great-findings(number: "01", title: "", topic: "", topic-label: "Tema", color: "white", body) = {
-  _gf-frame(color, block(width: 100%, inset: (y: _gf-pad-y), spacing: 0pt)[
-    #_great-findings-row(number: number, title: title, topic: topic, topic-label: topic-label, scheme: _gf-scheme(color), body)
-  ])
+  let row = _great-findings-row(number: number, title: title, topic: topic, topic-label: topic-label, scheme: _gf-scheme(color), body)
+  _gf-frame(color, if _gf-panes(color) {
+    cw-pane(inset: (x: 6mm, y: _gf-pad-y), spacing: 0pt, row)
+  } else {
+    block(width: 100%, inset: (y: _gf-pad-y), spacing: 0pt, row)
+  })
 }
 
 // item used inside a great-findings-grid (the frame is the wrapper's job)
@@ -2029,12 +2287,18 @@
   }
   _gf-frame(color, layout(size => {
     let floor = if row-height != none { row-height } else { 0pt }
-    let h = calc.max(floor, ..items.map(it => measure(block(width: size.width, render(it, auto))).height))
+    let w = if _gf-panes(color) { size.width - 12mm } else { size.width }
+    let h = calc.max(floor, ..items.map(it => measure(block(width: w, render(it, auto))).height))
     // La fila mide el bloque menos el aire de arriba y abajo.
     let row-h = h - 2 * _gf-pad-y
     for (i, it) in items.enumerate() {
-      if i > 0 { _gf-rule(s) }
-      render(it, row-h)
+      if _gf-panes(color) {
+        if i > 0 { v(3mm) }
+        cw-pane(inset: (x: 6mm, y: 0mm), spacing: 0pt, render(it, row-h))
+      } else {
+        if i > 0 { _gf-rule(s) }
+        render(it, row-h)
+      }
     }
   }))
 }
@@ -2196,7 +2460,7 @@
           #if unit-note != "" {
             v(2.2mm)
             text(font: _t.font-mono, size: 5.4pt, weight: _t.weight-regular, tracking: 0.14em,
-                 fill: _t.fg-subtle, upper(unit-note))
+                 fill: _t.fg-muted, upper(unit-note))
           }
         ],
       ),
@@ -2214,7 +2478,7 @@
           column-gutter: 3mm,
           align: (left + horizon, left + horizon),
           if delta != "" {
-            box(fill: chip-bg, radius: 1pt, inset: (x: 2.6mm, y: 1.15mm),
+            box(fill: chip-bg, radius: _t.radius-pill, inset: (x: 2.6mm, y: 1.15mm),
               text(font: _t.font-mono, size: 5.9pt, weight: _t.weight-regular, tracking: 0.08em,
                    fill: chip-fg,
                    if dir-symbol != "" { dir-symbol + " " + delta } else { delta }))
@@ -2239,7 +2503,7 @@
           align: (left + horizon, center + horizon, right + horizon),
           ..(from-label, state-label, to-label).map(l =>
             text(font: _t.font-mono, size: 4.4pt, weight: _t.weight-regular, tracking: 0.16em,
-                 fill: _t.fg-subtle, upper(l))),
+                 fill: _t.fg-muted, upper(l))),
         )
       } else { [] },
     )
@@ -2256,34 +2520,19 @@
 // visiblemente mas larga que las otras dos—. Asi las tres columnas miden lo
 // mismo y la primera sigue alineada al margen del texto, como el cuerpo.
 #let kpi-grid(cols: 4, rows: auto, items) = {
-  let nrows = calc.ceil(items.len() / cols)
-  let band-h = (_kpi-card-h + 2 * _kpi-pad-y) * nrows
-  layout(size => {
-    let cw = (size.width - _kpi-gutter * (cols - 1)) / cols
-    block(
-      width: 100%,
-      above: 11mm, below: 12mm,
-      inset: 0pt,
-      stroke: (top: 0.5pt + _t.border, bottom: 0.5pt + _t.border),
-    )[
-      #for i in range(1, cols) {
-        place(top + left,
-          dx: (cw + _kpi-gutter) * i - _kpi-gutter / 2,
-          line(end: (0mm, band-h), stroke: 0.5pt + _t.border))
-      }
-      #grid(
-        columns: range(cols).map(_ => 1fr),
-        rows: if rows == auto { auto } else { range(rows).map(_ => auto) },
-        column-gutter: _kpi-gutter,
-        row-gutter: 0mm,
-        ..items.map(it => grid.cell(inset: (y: _kpi-pad-y), it)),
-      )
-    ]
-  })
+  // v2-print: every KPI is its own tile, a pane (white on paper, hairline,
+  // 16px corners, no shadow), instead of one band split by rules.
+  block(width: 100%, above: 11mm, below: 12mm, grid(
+    columns: range(cols).map(_ => 1fr),
+    rows: if rows == auto { auto } else { range(rows).map(_ => auto) },
+    column-gutter: _t.space-sm,
+    row-gutter: _t.space-sm,
+    ..items.map(it => cw-pane(inset: (x: _t.space-md, y: _kpi-pad-y), breakable: false, it)),
+  ))
 }
 
 // =============================================================
-// ZONE HIGHLIGHT — full-bleed background color zone
+// ZONE HIGHLIGHT — a floating background colour zone (v2: 24px corners)
 // =============================================================
 // color: "light" (por defecto) | "white" | "dark" | "primary"
 // ("slate"/"beige" valen por light, "orange" por primary y "metallic", que
@@ -2306,13 +2555,7 @@
   let on-color = if color == "dark" { _t.rule-cool } else { _t.white }
 
   if above != none { v(above) }
-  move(dx: -18mm,
-    block(
-      width: 210mm,
-      fill: bg,
-      inset: (x: 22mm, top: margin, bottom: margin),
-      spacing: 0pt,
-    )[
+  _cw-insert(color, bg, (x: 10mm, top: margin, bottom: margin), gap: 0pt)[
       // Un `set` adentro de un `if` no llega a ninguna parte: el bloque del
       // `if` termina en esa misma línea y la regla muere con él. La forma que
       // sí aplica es `set ... if`. Y `strong` necesita su propia regla porque
@@ -2336,7 +2579,6 @@
         parts.first()
       }
     ]
-  )
   if below != none { v(below) }
 }
 
@@ -2400,6 +2642,7 @@
     if bottom-left != none {
       box(
         fill: _t.primary,
+        radius: _t.radius-pill,
         inset: (x: 4mm, y: 1.6mm),
         text(
           font: _t.font-mono,
@@ -2509,6 +2752,9 @@
 
 #let _ch-bar-w = 1.6pt
 
+// A card is a pane, so `white` is the default since 2026-11-05 (it was
+// `light`, the slate tint, which on a memo's first page —lede plus four
+// cards— read as a grey block); `light` is still there for grouping.
 // Esquema por variante: white · light · dark · primary, como el resto de los
 // Divs del reporte. La barra usa el mismo vocabulario que el panel: `accent`
 // toma `primary`, `light` (slate) o `dark` (obsidiana), resuelto contra el
@@ -2520,10 +2766,10 @@
   (bg: _t.primary, eyebrow: _t.white.transparentize(30%), title: _t.white, body: _t.white,
    bar-primary: _t.white, bar-light: _t.white.transparentize(55%), bar-dark: _t.ink)
 } else if color == "white" {
-  (bg: _t.white, eyebrow: _t.fg-subtle, title: _t.ink, body: _t.fg-muted,
+  (bg: _t.white, eyebrow: _t.fg-muted, title: _t.ink, body: _t.fg-muted,
    bar-primary: _t.primary, bar-light: _t.rule-cool, bar-dark: _t.ink)
 } else {
-  (bg: _t.surface-slate, eyebrow: _t.fg-subtle, title: _t.ink, body: _t.fg-muted,
+  (bg: _t.tint, eyebrow: _t.fg-muted, title: _t.ink, body: _t.fg-muted,
    bar-primary: _t.primary, bar-light: _t.rule-cool, bar-dark: _t.ink)
 }
 
@@ -2540,14 +2786,15 @@
   else { s.bar-dark }
 }
 
-#let _ch-cell(eyebrow, title, body, s, wide: false) = grid.cell(
-  fill: s.bg,
+#let _ch-cell(eyebrow, title, body, s, wide: false, dot: none) = block(
+  width: 100%,
   inset: if wide { (left: 5mm, right: 5mm, top: 3.4mm, bottom: 3.4mm) }
          else { (left: 4mm, right: 4mm, top: 3.4mm, bottom: 3.4mm) },
 )[
   #set block(spacing: 0pt)
   #set par(leading: 0.68em, spacing: 0.7em)
   #if eyebrow != none {
+    if dot != none { cw-dot(dot, size: 4.5pt, baseline: -0.6pt); h(1.6mm) }
     text(font: _t.font-mono, size: 5.9pt, weight: _t.weight-medium, tracking: 0.18em,
          fill: s.eyebrow, upper(eyebrow))
     v(2.2mm)
@@ -2563,34 +2810,32 @@
 ]
 
 // La tarjeta suelta: a todo el ancho, cuerpo al tamaño del texto corrido.
-#let card-highlight(eyebrow: none, title: none, accent: none, color: "light", body) = {
+// v2-print: a card is a pane with 16px corners (hairline on the white and
+// light schemes), and its accent is a dot before the eyebrow instead of the
+// side bar of v1.
+#let _ch-card(s, accent, index, wide, eyebrow, title, body) = block(
+  width: 100%, fill: s.bg, radius: _t.radius-surface, clip: true, breakable: false,
+  stroke: if s.bg == _t.ink or s.bg == _t.primary { none } else { cw-hairline + _t.rule },
+  inset: 0pt,
+  _ch-cell(eyebrow, title, body, s, wide: wide, dot: _ch-bar(accent, s, index)),
+)
+
+#let card-highlight(eyebrow: none, title: none, accent: none, color: "white", body) = {
   let s = _ch-scheme(color)
-  block(width: 100%, above: 5mm, below: 5mm, breakable: false, grid(
-    columns: (_ch-bar-w, 1fr),
-    column-gutter: 0mm,
-    grid.cell(fill: _ch-bar(accent, s, none))[],
-    _ch-cell(eyebrow, title, body, s, wide: true),
-  ))
+  block(width: 100%, above: 5mm, below: 5mm, breakable: false,
+    _ch-card(s, accent, none, true, eyebrow, title, body))
 }
 
-// El set: `items` es una tupla de diccionarios (eyebrow, title, accent,
-// body). Cada tarjeta son dos celdas de la misma fila —barra y panel— y las
-// celdas se estiran a la altura de la fila, así las tarjetas quedan parejas
-// aunque una lleve dos líneas de bajada y otra cuatro. `cols` parte el set
-// en filas; sin él, todas las tarjetas van en una.
-#let card-highlight-set(color: "light", cols: none, items) = {
+#let card-highlight-set(color: "white", cols: none, items) = {
   let s = _ch-scheme(color)
   let n = if cols == none { items.len() } else { cols }
   let n = calc.max(1, calc.min(n, items.len()))
   block(width: 100%, above: 6mm, below: 6mm, grid(
-    columns: range(n).map(_ => (_ch-bar-w, 1fr)).flatten(),
-    column-gutter: range(2 * n - 1).map(j => if calc.rem(j, 2) == 0 { 0mm } else { 4mm }),
+    columns: range(n).map(_ => 1fr),
+    column-gutter: 4mm,
     row-gutter: 4mm,
-    ..items.enumerate().map(((i, c)) => (
-      grid.cell(fill: _ch-bar(c.at("accent", default: none), s, i))[],
-      _ch-cell(c.at("eyebrow", default: none), c.at("title", default: none),
-               c.at("body", default: []), s, wide: false),
-    )).flatten(),
+    ..items.enumerate().map(((i, c)) => _ch-card(s, c.at("accent", default: none), i, false,
+      c.at("eyebrow", default: none), c.at("title", default: none), c.at("body", default: []))),
   ))
 }// =============================================================
 // chanwe-lists.typ — listas de tareas (`- [ ]` / `- [x]`)
@@ -2718,7 +2963,9 @@
   #block(
   width: 100%,
   spacing: 0pt,
-  stroke: (left: 1pt + _t.primary),
+  // The rail and the sub-level number are slate since 2026-11-05: in the
+  // agenda orange is the chapter numeral's alone.
+  stroke: (left: 1pt + _t.rule-cool),
   inset: (left: 7mm, top: 3mm, bottom: 3mm),
 )[
   #set par(spacing: 0pt, leading: 0pt)
@@ -2726,7 +2973,7 @@
     columns: (12mm, auto, 1fr, auto),
     column-gutter: 3mm,
     align: (left + horizon, left + horizon, center + horizon, right + horizon),
-    text(font: _t.font-mono, size: 7.5pt, tracking: 0.1em, weight: _t.weight-regular, fill: _t.primary, num),
+    text(font: _t.font-mono, size: 7.5pt, tracking: 0.1em, weight: _t.weight-regular, fill: _t.fg-muted, num),
     // Mismo tono y peso que el texto corrido: el subnivel acompaña, no titula.
     text(font: _t.font-sans, size: 9.5pt, weight: _t.weight-body, fill: _t.body-fg, label),
     // La guía se dibuja en el hueco elástico, así que se estira sola.
@@ -3028,13 +3275,13 @@
           let n   = _h2.get().first()
           let pg  = counter(page).at(it.element.location()).first()
           // Numeración relativa al capítulo: 2.1, 2.2 — no un contador suelto.
-          // Sin filete por renglón: el riel naranja del subrenglón ya agrupa.
+          // Sin filete por renglón: el riel del subrenglón ya agrupa.
           // El aire va solo antes del primero, para que el riel salga entero.
           if n == 1 and numbered { v(3mm) }
           if n == 0 { v(3mm) }
           chanwe-toc-subrow(
             num: if numbered { str(h1n) + "." + str(n) }
-                 else { box(width: 7mm, height: 0.75pt, fill: _t.primary, baseline: -2pt) },
+                 else { box(width: 7mm, height: 0.75pt, fill: _t.fg-muted, baseline: -2pt) },
             label: it.element.body,
             page: _pad2(pg),
           )
@@ -3074,16 +3321,17 @@
 // editoriales), y un corte redondo que el brandbook no trae. Ahora es el
 // cuerpo de la marca, y la capitular, una letra de display, va en Schibsted.
 // =============================================================
-// El rotulo va un paso mas claro que el valor (`fg-subtle`, el tono de toda
-// la metadata) y el valor entra en el mismo chip contorneado que la portada
+// El rotulo va en `fg-muted`, el tono de toda la metadata sobre papel
+// (`fg-subtle` da 2,9:1 y la guia lo deja para texto grande o decorativo), y
+// el valor entra en el mismo chip contorneado que la portada
 // usa para el taggy: filete de 0.5pt, radio 2pt, mono en versalitas. Es un
 // `block` y no un `box` a proposito: asi un valor largo parte de linea dentro
 // del chip en vez de desbordar el riel de 60mm.
 #let chanwe-side-row(label: "", value: "", dark: false, accent: _t.primary) = {
-  // Sobre la hoja: rótulo y texto del chip en el mismo fg-subtle, el marco
+  // Sobre la hoja: rótulo y texto del chip en el mismo fg-muted, el marco
   // del chip en border-cool.
-  let lc = if dark { _t.white.transparentize(62%) } else { _t.fg-subtle }
-  let vc = if dark { _t.white                     } else { _t.fg-subtle }
+  let lc = if dark { _t.white.transparentize(62%) } else { _t.fg-muted }
+  let vc = if dark { _t.white                     } else { _t.fg-muted }
   let pc = if dark { _t.white.transparentize(75%) } else { _t.border-cool }
   // El aire interior del chip vive en una constante porque el rotulo se
   // sangra lo mismo: asi el rotulo se alinea con el texto del chip y no con
@@ -3095,7 +3343,7 @@
   // parte de linea adentro del chip en vez de desbordar, y una lista —los
   // keywords— apila un chip por item en vez de dejarlos fluir con el ancho de
   // su texto, que era lo unico que rompia la columna.
-  let pill(t) = block(width: 100%, stroke: 0.5pt + pc, radius: 2pt,
+  let pill(t) = block(width: 100%, stroke: 0.5pt + pc, radius: _t.radius-pill,
                       inset: pill-pad, chip-text(t))
   let values = if type(value) == array {
     stack(dir: ttb, spacing: 4pt, ..value.map(pill))
@@ -3373,7 +3621,7 @@
   // La divisoria entre las dos mitades es el mismo filete que cierra el
   // encabezado y abre el pie: `border` a 0.5pt, no el negro de la rampa.
   let div-stroke  = if divider { (bottom: 0.5pt + _t.border) } else { none }
-  let lc          = if dark { _t.white.transparentize(45%) } else { _t.fg-subtle }
+  let lc          = if dark { _t.white.transparentize(45%) } else { _t.fg-muted }
   let vc          = if dark { _t.white                     } else { _t.fg }
   let hair        = if on-primary { _t.white.transparentize(60%) } else if dark { _t.rule-ink } else { _t.rule }
 
@@ -3386,7 +3634,7 @@
   // Sobre obsidiana el relleno pasa a ink-soft.
   let chip(t, filled: false) = box(
     fill: if filled { accent } else if on-primary { _t.white.transparentize(80%) } else if dark { _t.ink-soft } else { _t.border-cool },
-    radius: 1pt,
+    radius: _t.radius-pill,
     inset: (x: 1.5mm, y: 1.2mm),
     text(font: _t.font-mono, size: 5.2pt, weight: _t.weight-regular, tracking: 0.1em,
          fill: if filled and on-primary { _t.primary } else if filled { _t.paper } else if dark { _t.white.transparentize(15%) } else { _t.fg },
@@ -3652,8 +3900,8 @@
 // CHAPTER SEPARATOR (full-page divider)
 // =============================================================
 // HTML .chapter-cover layout:
-//   - black background
-//   - subtle gray radial halo (top-left, low opacity)
+//   - paper background
+//   - the series contour art across the upper half
 //   - .cc-top   : mark left, doc id right (mono micro-type, white/60)
 //   - .cc-mid   : eyebrow + cc-num-row (giant 02 + title block)
 //   - .cc-bottom: meta items + page number
@@ -3671,22 +3919,22 @@
   _chanwe-cur-part.update(_ => (number: number, title: title, eyebrow: eyebrow))
 
   // Mismo papel que una pagina de cuerpo (`page-bg`, que es `callout-surface`):
-  // la portadilla se separa por su composicion, no por un tono distinto. El
-  // halo radial cierra contra ese mismo color, asi que se mueven juntos.
+  // la portadilla se separa por su composicion, no por un tono distinto.
   set page(
     paper: _chanwe-paper, margin: 0pt, fill: _t.callout-surface,
     header: none, footer: none,
-    background: place(top + left, dx: -50mm, dy: -50mm,
-      circle(radius: 145mm,
-        fill: gradient.radial(
-          _t.ink-fg.transparentize(90%),
-          _t.callout-surface.transparentize(100%),
-        ),
-        stroke: none,
-      )
-    ),
+    // The upper half carries the series art —the contour field of the
+    // brandbook's `documents/series`, in its report cut: lines only, no
+    // ground— run off the top right corner. Until 3.0.2 it was a grey radial
+    // halo, which printed as an empty half page.
+    background: place(top + right, dx: 52mm, dy: -24mm,
+      image(_chanwe-assets + "01-radar-macro.svg", width: 252mm)),
   )
   set text(fill: _t.fg)
+  // The divider is called from the document body, so it would inherit the
+  // body's `justify` (`chanwe.body-justify`, on by default): a long part
+  // title then broke over three lines with stretched spacing.
+  set par(justify: false)
 
   context {
     let doc = _chanwe-doc.get()
@@ -3707,7 +3955,7 @@
     #block(width: 100%)[
       // Mismo tono que el encabezado y el pie del cuerpo.
       #set text(font: _t.font-mono, size: 7pt, tracking: 0.22em,
-                fill: _t.fg-subtle)
+                fill: _t.fg-muted)
       #upper(_chanwe-clean-str(doc.taggy))
       #h(3mm)
       #text(fill: _t.primary, "//")
@@ -3722,7 +3970,7 @@
         #place(top + right, rotate(-90deg, origin: top + right,
           box(width: 52mm, align(right,
             text(font: _t.font-mono, size: 6.4pt, tracking: 0.22em,
-                 fill: _t.fg-subtle, upper(_chanwe-clean-str(_right)))))))
+                 fill: _t.fg-muted, upper(_chanwe-clean-str(_right)))))))
       ])
 
     #v(1fr)
@@ -3745,13 +3993,18 @@
       ),
       stack(
         dir: ttb, spacing: 9mm,
-        // Misma familia y prosa que el H1: display, peso 700 y su tracking.
+        // Misma familia y prosa que el H1: display, peso 700 y su tracking,
+        // y su interlineado propio (0.18em), para no heredar el del cuerpo
+        // (`chanwe.body-leading`) cuando el título parte de renglón.
         // El numeral gigante se queda en la serif itálica.
-        text(
-          font: _t.font-display, weight: _t.weight-display,
-          size: 51.75pt, tracking: -0.05em, fill: _t.fg,
-          title,
-        ),
+        block({
+          set par(leading: 0.18em)
+          text(
+            font: _t.font-display, weight: _t.weight-display,
+            size: 51.75pt, tracking: -0.05em, fill: _t.fg,
+            title,
+          )
+        }),
         // La bajada va en el slate de marca, un escalón más fina.
         block(width: 78mm, text(
           font: _t.font-sans, size: 14pt, weight: _t.weight-thin,
@@ -3772,7 +4025,7 @@
       {
         // Todo el pie en el mismo tono que el del cuerpo.
         set text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
-                 fill: _t.fg-subtle)
+                 fill: _t.fg-muted)
         upper(_chanwe-clean-str(doc.doc-id))
         if doc.edition != "" {
           h(14mm)
@@ -3780,7 +4033,7 @@
         }
       },
       text(font: _t.font-mono, size: 8pt, tracking: 0.18em,
-           fill: _t.fg-subtle, upper(_pages)),
+           fill: _t.fg-muted, upper(_pages)),
     )
   ]
   }
@@ -3911,7 +4164,7 @@
 // ---- BAR CHART ----------------------------------------------
 // data: array of (label, value) tuples, value ∈ [0, 1]
 // threshold: bars at or above this value get full opacity
-// label-color: auto resolves to _t.fg-subtle
+// label-color: auto resolves to _t.fg-muted
 #let chanwe-bar-chart(
   data,
   height:      50mm,
@@ -3921,7 +4174,7 @@
   label-color: auto,
   threshold:   0.7,
 ) = {
-  let lc = if label-color == auto { _t.fg-subtle } else { label-color }
+  let lc = if label-color == auto { _t.fg-muted } else { label-color }
   align(center,
     stack(dir: ltr, spacing: gap,
       ..data.map(((lbl, val)) =>
@@ -3932,7 +4185,8 @@
             height: height * val,
             fill: _t.primary.transparentize(if val >= threshold { 10% } else { 45% }),
             stroke: none,
-            radius: 1.5pt,
+            // v2 (Q3): bars with the plot's rounded ends.
+            radius: chanwe-plot.at("bar-radius") * 0.75pt,
           ),
           align(center, text(size: label-size, fill: lc, lbl)),
         )
@@ -3954,14 +4208,11 @@
   y-max:       1,
   colors:      auto,
 ) = {
-  // `meta.chart-palette-order` de brand.yml, en ese orden. La serie era
-  // monocroma —un acento y tres grises—; ahora son los ocho matices de la
-  // marca. `chart-red` va ultimo a proposito: esta a dE00 5.0 de `primary`,
-  // asi que nada choca hasta que un grafico pide las ocho series. Para
-  // volver a la version monocroma, pasar `colors:` a mano.
+  // The hub's categorical order (tokens.typ `chanwe-plot.categorical`, v2):
+  // the accent first, `chart-red` last, away from `primary` (dE00 5.0). Pass
+  // `colors:` for a focus chart (orange plus the slate ramp, Q3 C1).
   let palette = if colors == auto {
-    (_t.primary, _t.chart-blue, _t.chart-green, _t.chart-indigo,
-     _t.chart-orange, _t.chart-teal, _t.chart-purple, _t.chart-red)
+    chanwe-plot.at("categorical")
   } else { colors }
   let n = if series.len() > 0 { series.first().at(1).len() } else { 0 }
   if n == 0 { return [] }
@@ -3992,7 +4243,7 @@
         stack(dir: ltr,
           ..x-labels.enumerate().map(((i, lbl)) =>
             move(dx: x-step * i,
-              align(center, text(size: label-size, fill: _t.fg-subtle, lbl)))
+              align(center, text(size: label-size, fill: _t.fg-muted, lbl)))
           )
         )
       )
@@ -4081,6 +4332,12 @@
   // body
   body,
 ) = {
+  // Pandoc escapes `/`, `-`, `_` inside quoted YAML strings (`\/\/` for a
+  // `//`); the captions are printed as text, so they go through the clean
+  // helper once, here, like doc-id and edition below.
+  let hero-caption-1 = _chanwe-clean-str(hero-caption-1)
+  let hero-caption-2 = _chanwe-clean-str(hero-caption-2)
+  let hero-caption-3 = _chanwe-clean-str(hero-caption-3)
   // ---- store metadata in global state -----------------------
   _chanwe-doc.update((doc-id: _chanwe-clean-str(doc-id), edition: _chanwe-clean-str(edition), taggy: taggy, meta-rows: meta-rows, section: section, topic: topic))
 
@@ -4111,11 +4368,12 @@
   // Superíndice y subíndice un poco más grandes que el 0.6em de fábrica.
   set super(size: 0.68em)
   set sub(size: 0.68em)
+  // v2: a pane on the slate tint, 16px corners.
   show math.equation.where(block: true): it => block(
     width: 100%,
-    fill: _t.callout-header,
-    stroke: 0.5pt + _t.neutral-300,
-    radius: 4pt,
+    fill: _t.tint,
+    stroke: cw-hairline + _t.rule,
+    radius: _t.radius-surface,
     inset: (x: 10mm, y: 8mm),
   )[
     #set text(fill: _t.fg-muted, weight: _t.weight-thin)
@@ -4132,24 +4390,26 @@
   // cuerpo, asi que un renglon con chip no separa mas que uno sin chip.
   // Medido: 17.64pt de interlineado en ambos casos. Subir mas el inset o el
   // cuerpo rompe esa paridad.
+  // v2: the chip sits on the slate tint, a pill with no frame.
   show raw.where(block: false): it => box(
-    fill: _t.surface-slate,
-    stroke: 0.5pt + _t.border-cool,
+    fill: _t.tint,
+    stroke: none,
     inset: (x: 5.5pt, y: 4.2pt),
-    radius: 2pt,
+    radius: _t.radius-pill,
     baseline: 4.20pt,
     text(font: _t.font-mono, size: 1.035em, fill: _t.fg-muted, it),
   )
   // El panel de código va con el mismo marco slate que el chip en línea y el
   // callout —un filete fino a todo el contorno, no un canto naranja— y con
-  // las esquinas a 4pt, que es el radio de todos los paneles del reporte.
+  // las esquinas a 3pt (los 4px de la marca), que es el radio de todos los paneles del reporte.
   // Entero o a la página siguiente: partido, el rótulo "# python · N lines"
   // quedaba solo al pie de una página y el código arrancaba en la otra con un
   // marco nuevo, como si fueran dos paneles.
+  // v2: the code panel is a pane on the slate tint, the dense radius (12px).
   show raw.where(block: true): it => block(
-    fill: _t.surface-slate,
-    stroke: 0.5pt + _t.border-cool,
-    radius: 4pt,
+    fill: _t.tint,
+    stroke: cw-hairline + _t.rule,
+    radius: _t.radius-pane,
     inset: (x: 4mm, y: 3mm),
     width: 100%,
     breakable: false,
@@ -4161,7 +4421,7 @@
     #set par(spacing: 0pt)
     #if it.lang != none {
       text(
-        font: _t.font-mono, size: 7.5pt, fill: _t.fg-subtle,
+        font: _t.font-mono, size: 7.5pt, fill: _t.fg-muted,
         "# " + it.lang + " · " + str(it.lines.len()) + " lines",
       )
       v(2.5mm)
@@ -4175,7 +4435,7 @@
   // slate en vez del negro.
   set footnote.entry(separator: line(length: 38%, stroke: 0.5pt + _t.rule))
   show footnote.entry: it => {
-    set text(font: _t.font-sans, size: 8pt, weight: _t.weight-body, fill: _t.fg-subtle)
+    set text(font: _t.font-sans, size: 8pt, weight: _t.weight-body, fill: _t.fg-muted)
     it
   }
 
@@ -4186,11 +4446,16 @@
   // del numeral que reemplaza —largo 1.5× su cuerpo, grosor con él—, así el
   // H1 lo lleva grande y el H4 chico. Antes el numeral salía igual y
   // mostraba el valor del último encabezado numerado.
-  let _h-mark(it, numeral, size) = if it.numbering != none {
+  //
+  // Orange is the chapter's alone (decided 2026-11-05): the H1 keeps its
+  // numeral —or its rule— in `primary`; from the H2 down the numeral and the
+  // rule are `fg-muted`. With every level in orange nothing on the page was
+  // the accent, and the agenda repeated it line after line.
+  let _h-mark(it, numeral, size, fill: _t.fg-muted) = if it.numbering != none {
     (align: left + bottom, body: numeral)
   } else {
     (align: left + horizon,
-     body: box(width: size * 1.5, height: 0.5pt + size * 0.03, fill: _t.primary))
+     body: box(width: size * 1.5, height: 0.5pt + size * 0.03, fill: fill))
   }
   show heading.where(level: 1): it => {
     pagebreak(weak: true)
@@ -4198,26 +4463,16 @@
     // cuerpo (15mm x 0.3 = 4.5mm): se recupera ese aire para que la losa
     // quede pegada al filete del header.
     v(-4.5mm)
-    // La cabecera de capítulo va sobre una losa de obsidiana que sangra de
-    // orilla a orilla: el eyebrow, el titular y el filete quedan adentro.
-    context move(dx: -18mm, block(
-      width: page.width,
-      fill: _t.ink,
-      // La losa arranca pegada al encabezado; el aire va por dentro, así que
-      // el eyebrow y el titular bajan sin mover el borde del rectángulo.
-      inset: (left: 18mm, right: 18mm, top: 14mm, bottom: 14.5mm),
-      clip: true,
-    )[
-      // La misma trama de puntos de la contratapa, plana y recortada por la
-      // losa. Se corre por el inset para cubrir el rectángulo entero.
-      #place(top + left, dx: -18mm, dy: -14mm,
-        _chanwe-dot-field(width: page.width, height: 140mm,
-                          ramp: (88%, 58%)))
+    // v2-print: the chapter opener is the obsidian band (brand-v2 §2, §7):
+    // floating inside the text block with its 24px corners, the dot field and
+    // the neutral sheen — no longer a slab bled from edge to edge. The eyebrow
+    // rule, the numeral and the title stay inside.
+    cw-band(inset: (left: 12mm, right: 12mm, top: 12mm, bottom: 11mm))[
       #block(above: 0pt, below: 0pt, rect(width: 50pt, height: 0.9pt, fill: _t.primary, stroke: none))
-      #v(12mm)
+      #v(10mm)
       #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
         weight: _t.weight-body, size: 50pt, fill: _t.primary,
-        _pad2(counter(heading).get().first())), 50pt)
+        _pad2(counter(heading).get().first())), 50pt, fill: _t.primary)
       #grid(
         columns: (auto, 1fr),
         column-gutter: 8mm,
@@ -4227,21 +4482,17 @@
           #set par(leading: 0.18em)
           // Mismo peso que el titular de portada.
           #text(font: _t.font-display, size: 33pt, weight: _t.weight-display,
-               tracking: -0.05em, fill: _t.rule-cool, it.body)
+               tracking: -0.05em, fill: _t.rule-cool, it.body)#_chanwe-title-dot(33pt)
         ],
       )
-      #v(1.5mm)
-      // Mismo filete que parte la portadilla, en clave oscura.
-      #line(length: 100%, stroke: 0.5pt + _t.rule-ink.transparentize(50%))
-    ])
-    // El `below` del bloque no sobrevive al `move`, así que el aire que separa
-    // la losa del primer párrafo se pone acá.
-    v(14.4mm)
+    ]
+    // The air between the band and the first paragraph.
+    v(12mm)
   }
   show heading.where(level: 2): it => block(above: 12mm, below: 6mm)[
     #set par(leading: 0.2em)
     #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-      weight: _t.weight-body, size: 21pt, fill: _t.primary, counter(heading).display("1.1")), 21pt)
+      weight: _t.weight-body, size: 21pt, fill: _t.fg-muted, counter(heading).display("1.1")), 21pt)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 6mm,
@@ -4260,7 +4511,7 @@
   show heading.where(level: 3): it => block(above: 10mm, below: 5.5mm)[
     #set par(leading: 0.2em)
     #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-      weight: _t.weight-body, size: 14.8pt, fill: _t.primary, counter(heading).display("1.1.1")), 14.8pt)
+      weight: _t.weight-body, size: 14.8pt, fill: _t.fg-muted, counter(heading).display("1.1.1")), 14.8pt)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4.7mm,
@@ -4275,7 +4526,7 @@
     // Dos puntos por debajo del titular: a cuatro cifras el numeral ya
     // pesa bastante y a la proporción del H2 se comía el título.
     #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-      weight: _t.weight-body, size: 11.8pt, fill: _t.primary, counter(heading).display("1.1.1.1")), 11.8pt)
+      weight: _t.weight-body, size: 11.8pt, fill: _t.fg-muted, counter(heading).display("1.1.1.1")), 11.8pt)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4.4mm,
@@ -4318,12 +4569,11 @@
   // (`surface-sunken`, no `surface-slate`): la cita es un aparte, no un
   // bloque de interfaz. Vale igual para `> …` y para `#pullquote`, que
   // emite este mismo `quote`.
-  show quote: it => block(
+  // v2-print: the quote is a pane (white, hairline, 16px), no orange edge.
+  // The orange is one dot before the attribution.
+  show quote: it => cw-pane(
     above: 6mm, below: 6mm,
-    width: 100%,
-    fill: _t.surface-sunken,
-    inset: (left: 6mm, right: 6mm, top: 5mm, bottom: 5mm),
-    stroke: (left: 1.4pt + _t.primary),
+    inset: (x: _t.space-lg, y: _t.space-md + 1mm),
   )[
     // El aire de párrafo del cuerpo (2.6em) se colaba entre la cita y su
     // atribución y las separaba un renglón entero; adentro del panel baja a
@@ -4331,8 +4581,10 @@
     #set par(leading: 0.425em, spacing: 0.5em)
     #text(font: _t.font-serif, size: 13.2pt, weight: _t.weight-body, style: "italic", fill: _t.fg-muted, it.body)
     #if it.attribution != none {
-      v(1.5mm)
-      text(font: _t.font-serif, size: 8.75pt, weight: _t.weight-body, style: "italic", fill: _t.fg-subtle, [— #it.attribution])
+      v(2mm)
+      cw-dot(_t.primary, size: 4pt, baseline: -1pt)
+      h(_t.space-xs)
+      cw-label(it.attribution, size: 6.5pt)
     }
   ]
 
@@ -4340,30 +4592,37 @@
   // Los dos filetes que encierran el encabezado van en slate, no en el negro
   // de la rampa: la tabla se lee con el mismo peso de línea que la banda de
   // hallazgos y el marco del callout.
+  // v2-print: a table is a pane (white, hairline, the dense 12px corners)
+  // with its header row on the slate tint and hairline rows; no outer rules.
   set table(
-    fill: none,
+    fill: (col, row) => if row == 0 { _t.tint } else { none },
     stroke: (col, row) => (
-      top:    if row == 0 { 0.5pt + _t.border-cool } else { none },
-      bottom: if row == 0 { 0.5pt + _t.border-cool } else { 0.4pt + _t.border },
+      bottom: if row == 0 { cw-hairline + _t.rule } else { 0.4pt + _t.rule },
     ),
     inset: (x: 4mm, y: 3.5mm),
   )
+  // The pane takes the table's own width (a narrow table does not get a
+  // full-width frame) and keeps the table breakable.
+  show table: it => layout(size => {
+    let w = calc.min(measure(it, width: size.width).width, size.width)
+    block(
+      stroke: cw-hairline + _t.rule, radius: _t.radius-pane, clip: true,
+      fill: _t.pane, width: w, breakable: true, it,
+    )
+  })
   show table.cell: set text(
     size: 7pt, weight: _t.weight-thin, fill: _t.fg,
   )
   // Los nombres de columna en mono y negrita: son rótulos, no prosa. Un punto
   // por debajo del cuerpo, así el peso los distingue sin que el cuerpo mande.
   show table.cell.where(y: 0): set text(
-    font: _t.font-mono, size: 6pt, weight: _t.weight-bold,
-    tracking: 0.02em, fill: _t.ink,
+    font: _t.font-mono, size: 6pt, weight: _t.weight-medium,
+    tracking: 0.1em, fill: _t.fg-muted,
   )
+  show table.cell.where(y: 0): it => upper(it)
   show figure.where(kind: table): it => {
     v(12mm, weak: true)
     it.body
-    v(-0.25pt)
-    // El filete de cierre acompaña a los del encabezado: si se quedaba en
-    // obsidiana, la tabla tenía una línea negra y tres slate.
-    line(length: 100%, stroke: 0.5pt + _t.border-cool)
     v(2mm)
     it.caption
     v(12mm, weak: true)
@@ -4450,9 +4709,13 @@
   }
 
   // ---- body pages -------------------------------------------
+  // `background: none` clears the corner logo Quarto's own template stamps
+  // on every page when the project declares a `brand:` with a logo (a book
+  // that also renders to HTML needs one). The format draws its own marks.
   set page(
     paper: _chanwe-paper,
     margin: (top: 15mm, bottom: 15mm, x: 18mm),
+    background: none,
     header: chanwe-header(section, topic),
     footer: chanwe-footer(_chanwe-clean-str(doc-id), _chanwe-clean-str(edition)),
   )
@@ -4513,6 +4776,10 @@
       justify: if body-justify != none { body-justify } else { false  },
       spacing: _body-spacing,
     )
+    // A heading is never justified: `body-justify: true` reached the H1 band
+    // and the H2–H4 rows and spread a short title across the measure, with
+    // hyphens («Net-works»). Hyphenation follows `justify`, so it stops too.
+    show heading: set par(justify: false)
     // Listas de definición. Quarto trae en su `definitions.typ` una regla
     // `show terms.item` que apila el término y, en un bloque aparte, la
     // definición: ese bloque hereda el aire de párrafo del cuerpo (2.6em) y
@@ -4571,7 +4838,7 @@
   title: [chanwer Showcase],
   subtitle: [Every palette, scale, header treatment, surface, chart form and native Typst table pattern in the chanwer R package --- static output for chanwe-report-typst],
   author: "Alejandro Abraham",
-  date: "2026-11-05",
+  date: "2026-11-06",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",

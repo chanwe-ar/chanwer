@@ -200,6 +200,13 @@
   let rail-w = _chanwe-page-w * 0.26
   let pad = 10.583mm
   let content-w = field-w - pad * 2
+  // v2: the rail is a floating band, 6mm from three paper edges (brand-v2 §2:
+  // "bands float with a margin, never edge to edge"). The field's foot band
+  // grows by the same 6mm, so its hairline still meets the rail's.
+  let rail-gap = 6mm
+  let rail-band-w = rail-w - rail-gap
+  let rail-band-h = _chanwe-page-h - rail-gap * 2
+  let foot-h = 13.758mm
 
   set page(
     paper: _chanwe-paper,
@@ -225,13 +232,12 @@
         // del observatorio a la derecha, repartida en la altura.
         #let masthead-h = 11.4mm
         #grid(
-          rows: (26.6mm, 1fr, auto, 13.758mm),
+          rows: (26.6mm, 1fr, auto, foot-h + rail-gap),
           row-gutter: 0pt,
 
           block(
           width: 100%,
           height: 26.6mm,
-          stroke: (bottom: 0.5pt + _publication-rule),
           inset: (left: pad, right: pad, top: 7.6mm, bottom: 7.6mm),
         )[
           #grid(
@@ -244,7 +250,7 @@
                 // texto en blanco.
                 box(
                   stroke: 0.5pt + _publication-muted,
-                  radius: 2pt,
+                  radius: _t.radius-pill,
                   inset: (x: 3.06mm, y: 1.44mm),
                   text(
                     font: _t.font-mono, size: 6.5pt, weight: _t.weight-regular,
@@ -254,7 +260,7 @@
               #place(top + left,
                 box(
                   fill: _publication-ink,
-                  radius: 2pt,
+                  radius: _t.radius-pill,
                   inset: (x: 3.06mm, y: 1.44mm),
                   // Texto sobre tinta en rule-cool, no en blanco.
                   text(
@@ -286,22 +292,22 @@
           )
         ],
 
-          // ── Campo de arte: la fila elástica. El radar sangra de lado a
-          // lado, sin caja blanca que lo encierre.
-          block(width: 100%, height: 100%, clip: true)[
-          // El arte entra un 30% más grande y centrado: la banda recorta el
-          // sobrante por los cuatro lados.
-          // 190% deja 45% de sobrante por lado; el corrimiento no puede
-          // pasar de eso sin destapar el papel por abajo.
-          #place(center + horizon, dy: -39%,
-                 image(art, width: 190%, height: 190%, fit: "cover"))
-          // Velo de papel al 80% sobre el arte: Typst no expone opacidad
-          // sobre imágenes, así que la tinta rebajada se consigue con el
-          // papel encima a esa opacidad. Subir el velo baja la imagen: al
-          // 80% (antes 75%) el arte queda un 5% más transparente.
-          #place(top + left, rect(width: 100%, height: 100%, stroke: none,
-                                  fill: _publication-paper.transparentize(20%)))
-        ],
+          // ── Campo de arte: la fila elástica. v2: the photograph floats inside
+          // the margins with the band's 24px corners, and the veil drops from
+          // 80% to 45% of paper: bleeding behind a heavy veil it read as a
+          // white page.
+          block(width: 100%, height: 100%, inset: (x: pad, bottom: 8mm))[
+            #block(width: 100%, height: 100%, clip: true, radius: _t.radius-band)[
+              // 190% deja 45% de sobrante por lado; el corrimiento no puede
+              // pasar de eso sin destapar el papel por abajo.
+              #place(center + horizon, dy: -39%,
+                     image(art, width: 190%, height: 190%, fit: "cover"))
+              // Typst no expone opacidad sobre imágenes: el velo es el papel
+              // encima, a esa opacidad.
+              #place(top + left, rect(width: 100%, height: 100%, stroke: none,
+                                      fill: _publication-paper.transparentize(55%)))
+            ]
+          ],
 
           // ── Losa: ledger de datos y, debajo, el titular con su línea
           // bermellón. De alto automático: crece con el titular.
@@ -312,8 +318,8 @@
             // como inset para que el texto no se mueva.
             move(dx: -pad, block(
               width: field-w,
-              stroke: (top: 0.5pt + _publication-rule, bottom: 0.5pt + _publication-rule),
-              inset: (left: pad, right: pad, top: 8.4mm, bottom: 8.4mm),
+              stroke: (bottom: 0.5pt + _publication-rule),
+              inset: (left: pad, right: pad, top: 0mm, bottom: 8.4mm),
               spacing: 0pt,
             )[
               #grid(
@@ -384,15 +390,15 @@
           // con su sello. Comparte banda con el pie del riel.
           block(
           width: 100%,
-          height: 13.758mm,
+          height: foot-h + rail-gap,
           fill: _publication-paper,
           stroke: (top: 0.5pt + _publication-rule),
-          inset: (left: pad, right: 11.112mm),
+          inset: (left: pad, right: 11.112mm, bottom: rail-gap),
         )[
           #align(horizon, grid(
             columns: (1fr, auto),
             align: (left + horizon, right + horizon),
-            box(fill: _t.primary, radius: 2pt, inset: (x: 3.4mm, y: 1.6mm))[
+            box(fill: _t.primary, radius: _t.radius-pill, inset: (x: 3.4mm, y: 1.6mm))[
               #set text(font: _t.font-mono, size: 7.2pt, weight: _t.weight-medium, tracking: 0.18em, fill: _t.white)
               #text(weight: _t.weight-bold, "//")
               #h(3.2mm)
@@ -414,7 +420,8 @@
       ],
 
       // ══ Riel obsidiana ══════════════════════════════════════
-      block(width: 100%, height: _chanwe-page-h, fill: _publication-ink, clip: true)[
+      block(width: 100%, height: _chanwe-page-h, inset: (top: rail-gap, right: rail-gap))[
+      #cw-band(width: rail-band-w, height: rail-band-h, inset: 0pt)[
 
         // ── QR: tarjeta blanca arriba, con el dominio debajo.
         // El QR va centrado en el riel. Llevaba 3mm a la derecha para caer
@@ -435,13 +442,13 @@
         ]
 
         // ── Legal rotado, pegado al borde izquierdo.
-        #place(center + horizon, dx: -22mm,
+        #place(center + horizon, dx: -19mm,
           rotate(-90deg, origin: center + horizon,
             box(width: 175mm)[
               #set align(center)
               #text(
                 font: _t.font-mono, size: 6.2pt, weight: _t.weight-regular,
-                tracking: 0.24em, fill: _t.ink-fg.transparentize(40%), upper(copyright),
+                tracking: 0.24em, fill: _t.fg-subtle, upper(copyright),
               )
             ]
           )
@@ -450,16 +457,16 @@
         // ── El wordmark, rotado y grande.
         #place(center + horizon,
           rotate(-90deg, origin: center + horizon,
-            image(rail-wordmark, width: 55.5mm, fit: "contain")
+            image(rail-wordmark, width: 52mm, fit: "contain")
           )
         )
 
         // ── Pie del riel, con su filete.
         #place(bottom + left, dy: 0mm,
           block(
-            width: rail-w,
-            height: 13.5mm,
-            stroke: (top: 0.5pt + _t.white.transparentize(82%)),
+            width: rail-band-w,
+            height: foot-h,
+            stroke: (top: 0.5pt + _t.rule-ink),
           )[
             #align(center + horizon, {
               set text(font: _t.font-mono, size: 5.6pt, weight: _t.weight-regular, tracking: 0.16em)
@@ -469,7 +476,7 @@
               text(fill: _t.rule-cool, upper(rail-location-2))
             })
           ])
-      ],
+      ]],
     )
   ]
 
@@ -518,7 +525,14 @@
 
   set page(
     paper: _chanwe-paper, margin: 0pt, header: none, footer: none, fill: _t.ink,
-    background: _chanwe-dot-field(),
+    // v2: the series contour art (the hub's dark cut, its ground is `ink`) runs
+    // off the top right corner, with the dot field over it. Until 3.1 the upper
+    // two thirds of the back cover were empty.
+    background: {
+      place(top + right, dx: 62mm, dy: 2mm,
+        image(_chanwe-assets + "01-radar-macro-dark.svg", width: 262mm))
+      _chanwe-dot-field()
+    },
     foreground: if cover-edge != none {
       place(right + top, dx: -3mm, dy: 14mm,
         rotate(-90deg, origin: right + horizon,
@@ -595,58 +609,56 @@
             pad-inner: 1mm,
           ),
         )
-        #v(18mm)
-        #line(length: 100%, stroke: 0.5pt + _t.white.transparentize(84%))
-        #v(4.5mm)
-        // Pie en tres partes: serie, referencia del documento y plaza.
-        #grid(
-          columns: (1fr, 1fr, 1fr),
-          align: (left + horizon, center + horizon, right + horizon),
-          {
-            set text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em)
-            text(fill: _t.primary, "//")
-            h(2.2mm)
-            // Mismo gris que la referencia y la plaza: un solo tono en el renglón.
-            text(fill: _t.ink-subtle, upper(_chanwe-clean-str(series)))
-          },
-          text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.08em,
-               fill: _t.ink-subtle, _chanwe-clean-str(doc-ref)),
-          text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
-               fill: _t.ink-subtle, upper(_chanwe-clean-str(place-label))),
-        )
-        #if back-cols.len() > 0 {
-          v(8mm)
-          grid(
-            columns: back-cols.map(_ => 1fr),
-            column-gutter: 8mm,
-            // Primera columna a la izquierda, última a la derecha, las del
-            // medio centradas: las tres apoyan en los bordes del pie.
-            ..back-cols.enumerate().map(((i, col)) => {
-              let (label, value, sub) = col
-              let al = if i == 0 { left } else if i == back-cols.len() - 1 { right } else { center }
-              block(spacing: 0pt, width: 100%)[
-                #set align(al)
-                // Las tres líneas en JetBrains Mono, en versalita, al mismo
-                // cuerpo y peso y con el mismo aire entre una y otra: rótulo,
-                // valor y bajada son un solo renglón de servicio.
-                #set par(spacing: 0pt, leading: 0pt)
-                // Mismo cuerpo y peso que la referencia del pie (6pt / 300);
-                // rótulo y bajada en su mismo gris (ink-subtle), el valor en
-                // rule-cool.
-                #text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.20em,
-                      fill: _t.ink-subtle, upper(_chanwe-clean-str(label)))
-                #v(3mm)
-                #text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
-                      fill: _t.rule-cool, upper(_chanwe-clean-str(value)))
-                #if sub != none and sub != "" {
-                  v(3mm)
-                  text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
-                       fill: _t.ink-subtle, upper(_chanwe-clean-str(sub)))
-                }
-              ]
-            })
+        #v(11mm)
+        // v2: the document's details are a pane at the foot: on obsidian a pane
+        // is one step up (`ink-light`) with the `rule-ink` hairline. Labels on
+        // ink read `fg-subtle` (6:1); `ink-subtle` was too faint at 6pt.
+        #block(
+          width: 100%, fill: _t.ink-light, radius: _t.radius-surface,
+          stroke: cw-hairline + _t.rule-ink,
+          inset: (x: 7mm, top: 6mm, bottom: 6mm),
+        )[
+          #if back-cols.len() > 0 {
+            grid(
+              columns: back-cols.map(_ => 1fr),
+              column-gutter: 8mm,
+              ..back-cols.map(col => {
+                let (label, value, sub) = col
+                block(spacing: 0pt, width: 100%)[
+                  #set par(spacing: 0pt, leading: 0pt)
+                  #text(font: _t.font-mono, size: 6pt, weight: _t.weight-regular, tracking: 0.20em,
+                        fill: _t.fg-subtle, upper(_chanwe-clean-str(label)))
+                  #v(3mm)
+                  #text(font: _t.font-mono, size: 6.4pt, weight: _t.weight-regular, tracking: 0.12em,
+                        fill: _t.rule-cool, upper(_chanwe-clean-str(value)))
+                  #if sub != none and sub != "" {
+                    v(3mm)
+                    text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
+                         fill: _t.fg-subtle, upper(_chanwe-clean-str(sub)))
+                  }
+                ]
+              })
+            )
+            v(5mm)
+            line(length: 100%, stroke: 0.5pt + _t.rule-ink)
+            v(4mm)
+          }
+          // Pie en tres partes: serie, referencia del documento y plaza.
+          #grid(
+            columns: (1fr, 1fr, 1fr),
+            align: (left + horizon, center + horizon, right + horizon),
+            {
+              set text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em)
+              text(fill: _t.primary, "//")
+              h(2.2mm)
+              text(fill: _t.fg-subtle, upper(_chanwe-clean-str(series)))
+            },
+            text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.08em,
+                 fill: _t.fg-subtle, _chanwe-clean-str(doc-ref)),
+            text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
+                 fill: _t.fg-subtle, upper(_chanwe-clean-str(place-label))),
           )
-        }
+        ]
       ],
     )
   ]

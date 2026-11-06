@@ -9,8 +9,9 @@
 --     ::: {.card-highlight eyebrow="…" title="…"}  …  :::
 --   :::
 --
--- `accent` (the bar) takes primary · light · dark, like `color` (the panel),
--- which takes white · light · dark · primary. Runs top-down so a set consumes its own cards.
+-- `accent` (the dot) takes primary · light · dark, like `color` (the panel),
+-- which takes white (the default: the v2 pane) · light · dark · primary.
+-- Runs top-down so a set consumes its own cards.
 
 local function attr(el, key)
   local v = el.attributes[key]
@@ -40,7 +41,7 @@ end
 
 local function Div(el)
   if el.classes:includes("card-highlight-set") then
-    local color = attr(el, "color") or "light"
+    local color = attr(el, "color") or "white"
     local cols = attr(el, "cols")
     local items = {}
     for _, b in ipairs(el.content) do
@@ -56,7 +57,7 @@ local function Div(el)
     return pandoc.RawBlock("typst", call)
   elseif el.classes:includes("card-highlight") then
     local parts = card_args(el)
-    parts[#parts + 1] = 'color: "' .. (attr(el, "color") or "light") .. '"'
+    parts[#parts + 1] = 'color: "' .. (attr(el, "color") or "white") .. '"'
     local call = "#card-highlight(" .. table.concat(parts, ", ") .. ")[\n"
       .. typst_blocks(el.content) .. "\n]"
     return pandoc.RawBlock("typst", call)

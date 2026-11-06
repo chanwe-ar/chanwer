@@ -33,8 +33,8 @@
   card:         none,     // color de la tarjeta interior — idem
   pad-outer:    2mm,      // aire entre el filete y la tarjeta
   pad-inner:    0.8mm,    // zona tranquila de la tarjeta alrededor del código
-  radius-outer: 1.4mm,
-  radius-inner: 0.8mm,
+  radius-outer: 3pt,
+  radius-inner: 1.5pt,
 ) = box(
   stroke: 0.5pt + edge,
   radius: radius-outer,

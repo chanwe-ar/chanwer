@@ -27,6 +27,9 @@ contributes:
         - chanwe-cards.lua
         - chanwe-filters.lua
       template-partials:
+        - chanwe-brand-tokens.typ
+        - chanwe-tokens.typ
+        - chanwe-v2.typ
         - typst-template.typ
         - chanwe-cards.typ
         - chanwe-qr.typ
