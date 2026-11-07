@@ -33,3 +33,4 @@
 ^scripts$
 ^CLAUDE\.md$
 ^\.env\.example$
+^chanwer-options.*$
