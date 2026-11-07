@@ -1,5 +1,9 @@
 # chanwer (development version)
 
+* `chanwe_kbl()`: a signed column (`chanwe_col_signed()`) renders as pills, like the
+  KPI pane's variations; the total row opens with a 0.75pt ink rule and sets its
+  figures in the medium weight instead of a tint fill (`total_fill` now defaults to
+  `FALSE`); `density = "compact"` is compact: 6.5pt body, 3.4pt row inset.
 * The chart header, option A (Ale, 2026-11-07): `chanwe_kpi()` draws a slate pane at
   the right of the header, with the unit and date as a label, the value in Schibsted
   Grotesk and the variations as green and red pills; the serif value and the

@@ -32,7 +32,7 @@ chanwe_kbl(
   fmt = list(),
   col_colors = list(),
   n_total = 0,
-  total_fill = TRUE,
+  total_fill = FALSE,
   vlines = NULL,
   highlight_cols = NULL,
   highlight_color = NULL,
@@ -132,7 +132,9 @@ same column as text. For the standard positive/negative treatment use
 get a heavier rule above them, no row dividers, and (optionally) a
 highlight fill. Default \code{0} (no total rows).}
 
-\item{total_fill}{Logical. Fill total rows with the slate tint.
+\item{total_fill}{Logical. Fill total rows with the slate tint. Default
+\code{FALSE} since 3.2.0: a total row is set off by a 0.75pt ink rule
+above it and the medium weight, not by a fill (the tint is the header's).
 Only used when \code{n_total > 0}. Default \code{TRUE}.}
 
 \item{vlines}{Optional integer vector of column indices at which to draw

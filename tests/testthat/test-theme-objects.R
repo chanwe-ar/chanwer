@@ -137,6 +137,9 @@ test_that("diverging scale runs red -> neutral -> green with signed poles", {
 test_that("chanwe_col_signed maps sign to the canonical tokens", {
   fn <- chanwe_col_signed()
   out <- fn(c(2.5, -1.25, 0, NA))
+  # the attribute tells chanwe_kbl() to draw the column as pills
+  expect_true(isTRUE(attr(out, "chanwe_pill")))
+  out <- as.vector(out)
 
   expect_identical(out, c(
     'rgb("#147705")', 'rgb("#CC1914")', 'rgb("#475569")', 'rgb("#475569")'
@@ -144,13 +147,13 @@ test_that("chanwe_col_signed maps sign to the canonical tokens", {
 
   # flip = TRUE for smaller-is-better metrics
   expect_identical(
-    chanwe_col_signed(flip = TRUE)(c(-3, 4)),
+    as.vector(chanwe_col_signed(flip = TRUE)(c(-3, 4))),
     c('rgb("#147705")', 'rgb("#CC1914")')
   )
 
   # custom threshold
   expect_identical(
-    chanwe_col_signed(threshold = 10)(c(15, 5)),
+    as.vector(chanwe_col_signed(threshold = 10)(c(15, 5))),
     c('rgb("#147705")', 'rgb("#CC1914")')
   )
 
