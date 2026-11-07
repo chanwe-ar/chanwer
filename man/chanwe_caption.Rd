@@ -4,10 +4,15 @@
 \alias{chanwe_caption}
 \title{Chanwe Caption Helper}
 \usage{
-chanwe_caption(text)
+chanwe_caption(text, stamp = NULL)
 }
 \arguments{
-\item{text}{Caption text, e.g. source line or data note.}
+\item{text}{Caption text, e.g. source line or data note. A leading
+\verb{Source:} / \verb{Fuente ·} reads in the subtle tone, the fact after it in the
+caption's own.}
+
+\item{stamp}{Optional right-aligned mono stamp on the same line
+(\code{"CHW · BCRA · 05 MAY 2026"}).}
 }
 \value{
 A character string for \code{labs(caption = ...)}.

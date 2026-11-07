@@ -101,6 +101,7 @@ new_element_chanwe_subtitle <- function(
   rule_colour = "#CFD6DF",
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
+  display_family = "Schibsted Grotesk SemiBold",
   kpi_label_colour = "#475569",
   gap_ln = 6,
   sub_bot = 20,
@@ -126,6 +127,7 @@ new_element_chanwe_subtitle <- function(
       italic_family = italic_family,
       mono_family = mono_family,
       mono_thin_family = mono_thin_family,
+      display_family = display_family,
       kpi_label_colour = kpi_label_colour,
       gap_ln = gap_ln,
       sub_bot = sub_bot,
@@ -361,6 +363,7 @@ heightDetails.cw_title_tree <- function(x) {
   italic_family = "Cormorant Garamond",
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
+  display_family = "Schibsted Grotesk SemiBold",
   kpi_label_colour = "#475569",
   gap_ln = 6,
   sub_bot = 20,
@@ -380,6 +383,7 @@ heightDetails.cw_title_tree <- function(x) {
     italic_family = italic_family,
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
+    display_family = display_family,
     kpi_label_colour = kpi_label_colour,
     gap_ln = gap_ln,
     sub_bot = sub_bot,
@@ -400,14 +404,13 @@ heightDetails.cw_title_tree <- function(x) {
   gap_ln <- if (x$draw_middle && has_sub) (x$gap_ln %||_% 6) else 0
   ln_h <- if (x$draw_middle && (has_sub || has_kpi)) 0.3 else 0
   gap_n <- if (has_n) 3 else 0
-  # KPI panel section (sits in what would otherwise be the bottom padding)
-  kpi_panel_h <- if (has_kpi) 35 else 0
-  kpi_top_pad <- if (has_kpi) 4 else 0
-  kpi_bot_pad <- if (has_kpi) 2 else 0
-  kpi_bot_ln_h <- if (has_kpi) 0.3 else 0
-  kpi_bot_sep <- if (has_kpi) 16 else 0
+  # The KPI pane (2026-11-07, option A): a slate pane at the right of the
+  # header, spanning the subtitle row and what is below it. The subtitle text
+  # sits at its left, on the pane's first row.
+  kpi_pane_h <- if (has_kpi) 50 else 0
+  kpi_bot_sep <- if (has_kpi) 12 else 0
   bot <- if (has_kpi) {
-    kpi_top_pad + kpi_panel_h + kpi_bot_pad + kpi_bot_ln_h + kpi_bot_sep
+    max(0, kpi_pane_h - s_h - gap_ln - ln_h - gap_n - n_h) + kpi_bot_sep
   } else {
     x$sub_bot %||_% 20
   }
@@ -422,14 +425,81 @@ heightDetails.cw_title_tree <- function(x) {
     gap_ln = gap_ln,
     ln_h = ln_h,
     gap_n = gap_n,
-    kpi_panel_h = kpi_panel_h,
-    kpi_top_pad = kpi_top_pad,
-    kpi_bot_pad = kpi_bot_pad,
-    kpi_bot_ln_h = kpi_bot_ln_h,
+    kpi_pane_h = kpi_pane_h,
     kpi_bot_sep = kpi_bot_sep,
     has_sub = has_sub,
     total = total
   )
+}
+
+# The KPI pane: the latest value with its label, unit and date, and the
+# variations as pills, on the slate tint with the `pane` radius, anchored to
+# the header's right edge. Widths are measured at draw time (grobwidth).
+.cw_kpi_pane <- function(x, d) {
+  kpi <- x$kpi_data
+  mono_fam <- x$mono_family %||_% "JetBrains Mono"
+  colors <- chanwe_get_colors()
+  signed <- chanwe_get_signed()
+  fg_muted <- x$kpi_label_colour %||_% colors[["fg-muted"]]
+  pad <- 11
+  gap_x <- 5
+  pane_top <- d$total - d$top
+  pane_bot <- d$kpi_bot_sep
+  pane_h <- pane_top - pane_bot
+  pt <- function(v) grid::unit(v, "pt")
+  w_of <- function(g) grid::convertWidth(grid::grobWidth(g), "pt", valueOnly = TRUE)
+
+  # rows, from the top: label · value · pills
+  label <- toupper(paste(Filter(nzchar, c(kpi$unit, kpi$date)), collapse = " \u00b7 "))
+  lbl_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 4.6, col = fg_muted)
+  val_gp <- grid::gpar(fontfamily = x$display_family %||_% "Schibsted Grotesk SemiBold",
+                       fontsize = 16, col = x$ink_col)
+  pill_gp <- function(col) grid::gpar(fontfamily = mono_fam, fontsize = 5, col = col)
+
+  lbl_g <- grid::textGrob(label, gp = lbl_gp)
+  val_g <- grid::textGrob(kpi$value, gp = val_gp)
+  pills <- lapply(kpi$metrics, function(m) {
+    valence <- m$valence %||_% m$dir
+    col <- if (valence > 0L) signed[["positive"]] else if (valence < 0L) signed[["negative"]] else signed[["neutral"]]
+    arrow <- if (m$dir > 0L) "\u2191 " else if (m$dir < 0L) "\u2193 " else ""
+    list(label = toupper(m$label), text = paste0(arrow, m$value), col = col,
+         lg = grid::textGrob(toupper(m$label), gp = grid::gpar(fontfamily = mono_fam, fontsize = 4.4, col = col)),
+         tg = grid::textGrob(paste0(arrow, m$value), gp = pill_gp(col)))
+  })
+  pill_pad <- 6
+  pill_h <- 12
+  pill_w <- vapply(pills, function(p) w_of(p$lg) + 3 + w_of(p$tg) + 2 * pill_pad, numeric(1))
+  pills_w <- if (length(pills)) sum(pill_w) + gap_x * (length(pills) - 1) else 0
+  inner_w <- max(w_of(lbl_g), w_of(val_g), pills_w)
+  pane_w <- inner_w + 2 * pad
+  x0 <- grid::unit(1, "npc") - pt(pane_w)
+  xi <- x0 + pt(pad)
+
+  out <- grid::gList(grid::roundrectGrob(
+    x = x0, y = pt(pane_bot), width = pt(pane_w), height = pt(pane_h),
+    just = c("left", "bottom"), r = pt(chanwe_tokens$radii$pane * 0.75),
+    gp = grid::gpar(fill = colors[["tint"]], col = NA)
+  ))
+  y_lbl <- pane_top - 9
+  y_val <- pane_top - 23
+  y_pill <- pane_bot + 7 + pill_h / 2
+  out <- grid::gList(out,
+    grid::editGrob(lbl_g, x = xi, y = pt(y_lbl), just = c("left", "center")),
+    grid::editGrob(val_g, x = xi, y = pt(y_val), just = c("left", "center")))
+  cx <- 0
+  for (i in seq_along(pills)) {
+    p <- pills[[i]]
+    px <- xi + pt(cx)
+    out <- grid::gList(out,
+      grid::roundrectGrob(x = px, y = pt(y_pill), width = pt(pill_w[i]), height = pt(pill_h),
+        just = c("left", "center"), r = pt(pill_h / 2),
+        gp = grid::gpar(fill = grDevices::adjustcolor(p$col, alpha.f = 0.1), col = NA)),
+      grid::editGrob(p$lg, x = px + pt(pill_pad), y = pt(y_pill), just = c("left", "center"),
+        gp = grid::gpar(fontfamily = mono_fam, fontsize = 4.4, col = grDevices::adjustcolor(p$col, alpha.f = 0.7))),
+      grid::editGrob(p$tg, x = px + pt(pill_pad + w_of(p$lg) + 3), y = pt(y_pill), just = c("left", "center")))
+    cx <- cx + pill_w[i] + gap_x
+  }
+  grid::gTree(children = out)
 }
 
 #' @method makeContent cw_subtitle_tree
@@ -479,139 +549,7 @@ makeContent.cw_subtitle_tree <- function(x) {
   }
 
   if (d$has_kpi) {
-    kpi <- x$kpi_data
-    mono_fam <- x$mono_family %||_% "JetBrains Mono"
-    ink <- x$ink_col
-    fg_muted <- x$kpi_label_colour %||_% chanwe_get_colors()[["fg-muted"]]
-    # canonical signed tokens — same pair as chanwe_col_signed() and the
-    # diverging scale poles
-    signed <- chanwe_get_signed()
-    green <- signed[["positive"]]
-    red <- signed[["negative"]]
-    neutral <- signed[["neutral"]]
-
-    # y-coordinates from bottom of the whole grob
-    kpi_bot_ln_y <- d$kpi_bot_sep + d$kpi_bot_ln_h / 2
-    kpi_center_y <- d$kpi_bot_sep +
-      d$kpi_bot_ln_h +
-      d$kpi_bot_pad +
-      d$kpi_panel_h / 2
-
-    # Bottom separator line (between KPI panel and chart)
-    ch <- grid::gList(
-      ch,
-      grid::linesGrob(
-        x = grid::unit(c(0, 1), "npc"),
-        y = grid::unit(c(kpi_bot_ln_y, kpi_bot_ln_y), "pt"),
-        gp = grid::gpar(col = x$rule_col, lwd = 0.4, lend = "square")
-      )
-    )
-
-    # Hero value — Cormorant Garamond italic, shared with report italics.
-    val_gp <- grid::gpar(
-      fontfamily = x$italic_family %||_% "Cormorant Garamond",
-      fontface = "italic",
-      fontsize = 18,
-      col = ink
-    )
-    val_g <- grid::textGrob(
-      kpi$value,
-      x = grid::unit(0, "npc"),
-      y = grid::unit(kpi_center_y, "pt"),
-      just = c("left", "center"),
-      gp = val_gp
-    )
-    ch <- grid::gList(ch, val_g)
-
-    # Unit + date block, positioned right of the hero value.
-    # Micro-type floor: nothing in the KPI panel renders below 3.8pt.
-    side_x <- grid::unit(1, "grobwidth", val_g) + grid::unit(11, "pt")
-    unit_gp <- grid::gpar(
-      fontfamily = mono_fam,
-      fontsize = 4.2,
-      col = fg_muted
-    )
-    date_gp <- grid::gpar(fontfamily = mono_fam, fontsize = 5.0, col = fg_muted)
-
-    if (nzchar(kpi$unit)) {
-      ch <- grid::gList(
-        ch,
-        grid::textGrob(
-          kpi$unit,
-          x = side_x,
-          y = grid::unit(kpi_center_y + 5, "pt"),
-          just = c("left", "center"),
-          gp = unit_gp
-        )
-      )
-    }
-    if (nzchar(kpi$date)) {
-      ch <- grid::gList(
-        ch,
-        grid::textGrob(
-          kpi$date,
-          x = side_x,
-          y = grid::unit(kpi_center_y - 1, "pt"),
-          just = c("left", "center"),
-          gp = date_gp
-        )
-      )
-    }
-
-    # Metric columns — anchored to the right edge of the plot
-    mono_thin <- x$mono_thin_family %||_% mono_fam
-    n_metrics <- length(kpi$metrics)
-    if (n_metrics > 0L) {
-      col_right <- 0.99 # right anchor (right-edge of rightmost column)
-      col_step <- 0.13 # spacing between column right-edges
-      lbl_gp <- grid::gpar(
-        fontfamily = mono_fam,
-        fontsize = 3.8,
-        col = fg_muted
-      )
-      for (i in seq_along(kpi$metrics)) {
-        m <- kpi$metrics[[i]]
-        col_x <- col_right - (n_metrics - i) * col_step
-        # arrow encodes the MOVEMENT (direction); color encodes the VALENCE
-        valence <- m$valence %||_% m$dir
-        m_col <- if (valence > 0L) {
-          green
-        } else if (valence < 0L) {
-          red
-        } else {
-          neutral
-        }
-        arrow <- if (m$dir > 0L) {
-          "\u25B2 " # up triangle
-        } else if (m$dir < 0L) {
-          "\u25BC " # down triangle
-        } else {
-          ""
-        }
-        val_m_gp <- grid::gpar(
-          fontfamily = mono_fam,
-          fontsize = 5.6,
-          col = m_col
-        )
-        ch <- grid::gList(
-          ch,
-          grid::textGrob(
-            toupper(m$label),
-            x = grid::unit(col_x, "npc"),
-            y = grid::unit(kpi_center_y - 4, "pt"),
-            just = c("right", "center"),
-            gp = lbl_gp
-          ),
-          grid::textGrob(
-            paste0(arrow, m$value),
-            x = grid::unit(col_x, "npc"),
-            y = grid::unit(kpi_center_y - 10, "pt"),
-            just = c("right", "center"),
-            gp = val_m_gp
-          )
-        )
-      }
-    }
+    ch <- grid::gList(ch, .cw_kpi_pane(x, d))
   }
 
   grid::setChildren(x, ch)
@@ -634,10 +572,14 @@ heightDetails.cw_subtitle_tree <- function(x) {
   ink_col,
   rule_col = ink_col,
   stamp_fill = "#FD3810",
-  stamp = TRUE
+  stamp = TRUE,
+  stamp_text = NULL,
+  lead_col = "#8A94A6"
 ) {
   grid::gTree(
     stamp = stamp,
+    stamp_text = stamp_text,
+    lead_col = lead_col,
     rule_col = rule_col,
     stamp_fill = stamp_fill,
     cap_text = cap_text,
@@ -661,10 +603,10 @@ heightDetails.cw_subtitle_tree <- function(x) {
   stamp <- !isFALSE(x$stamp)
   pad_y <- if (stamp) fs * 0.9 else 0 # stamp inset, top and bottom
   box_h <- c_h + 2 * pad_y
-  top <- if (stamp) 16 else 10 # space between the chart and what follows it
+  top <- 16 # space between the chart (or the legend) and the footer's rule
   bot <- 4 # bottom padding
-  tln_h <- if (stamp) 0.4 else 0 # separator line, the stamp's only
-  gap1 <- if (stamp) 6 else 0 # gap between the stamp and that line
+  tln_h <- 0.4 # the footer's rule: what separates the figure from its source
+  gap1 <- 8 # gap between the rule and the text
   gap2 <- if (x$draw_bottom) 6 else 0
   bln_h <- if (x$draw_bottom) 0.4 else 0
   total <- bot + bln_h + gap2 + box_h + gap1 + tln_h + top
@@ -693,12 +635,24 @@ makeContent.cw_caption_tree <- function(x) {
   box_y <- d$bot + d$bln_h + d$gap2 + d$box_h / 2
   tln_y <- d$bot + d$bln_h + d$gap2 + d$box_h + d$gap1 + d$tln_h / 2
 
+  # "Fuente · Motor Trend" splits at the first colon or middle dot: the word
+  # in the subtle tone, the fact in the caption's own.
+  parts <- if (!isFALSE(x$stamp)) NULL else regmatches(x$cap_text, regexec("^([^:\u00b7]{1,16})\\s*[:\u00b7]\\s*(.+)$", x$cap_text))[[1]]
+  lead_g <- if (length(parts) == 3L) grid::textGrob(
+    toupper(parts[2L]), x = grid::unit(0, "pt"), y = grid::unit(box_y, "pt"),
+    just = c("left", "center"), gp = grid::gpar(fontfamily = x$cap_gp$fontfamily, fontsize = x$cap_gp$fontsize, col = x$lead_col %||_% "#8A94A6")
+  )
+  cap_x <- if (length(parts) == 3L) grid::unit(1, "grobwidth", lead_g) + grid::unit(x$cap_gp$fontsize * 0.9, "pt") else grid::unit(d$pad_x, "pt")
   cap_g <- grid::textGrob(
-    toupper(x$cap_text),
-    x = grid::unit(d$pad_x, "pt"),
+    toupper(if (length(parts) == 3L) parts[3L] else x$cap_text),
+    x = cap_x,
     y = grid::unit(box_y, "pt"),
     just = c("left", "center"),
     gp = x$cap_gp
+  )
+  stamp_g <- if (!is.null(x$stamp_text) && nzchar(x$stamp_text)) grid::textGrob(
+    toupper(x$stamp_text), x = grid::unit(1, "npc"), y = grid::unit(box_y, "pt"),
+    just = c("right", "center"), gp = grid::gpar(fontfamily = x$cap_gp$fontfamily, fontsize = x$cap_gp$fontsize * 0.9, col = x$lead_col %||_% "#8A94A6")
   )
   box_g <- grid::rectGrob(
     x = grid::unit(0, "npc"),
@@ -718,8 +672,10 @@ makeContent.cw_caption_tree <- function(x) {
   }
   ch <- grid::gList(
     if (!isFALSE(x$stamp)) box_g,
+    lead_g,
     cap_g,
-    if (!isFALSE(x$stamp)) rule(tln_y),
+    stamp_g,
+    rule(tln_y),
     if (x$draw_bottom) rule(bln_y)
   )
   grid::setChildren(x, ch)
@@ -839,6 +795,9 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
   ink <- element$ink_colour %||_% "#111319"
   primary <- element$primary_colour %||_% "#FD3810"
   cap_size <- element$size %||_% 9
+  cap_parts <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
+  label <- cap_parts[1L]
+  stamp_text <- if (length(cap_parts) >= 2L) cap_parts[2L] else NULL
 
   rule <- element$rule_colour %||_% "#CFD6DF"
   # The chanwe-report figure-frame stamp: white mono caps on the primary
@@ -872,7 +831,9 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
     ink,
     rule_col = rule,
     stamp_fill = primary,
-    stamp = stamp
+    stamp = stamp,
+    stamp_text = stamp_text,
+    lead_col = element$lead_colour %||_% "#8A94A6"
   )
 }
 

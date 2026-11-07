@@ -312,6 +312,7 @@ theme_chanwe <- function(
     rule_colour = colors[["border-cool"]],
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
+    display_family = title_family,
     kpi_label_colour = kpi_label_colour,
     gap_ln = if (compact_title) 10 else 14,
     sub_bot = if (compact_title) 16 else 20,
@@ -359,7 +360,7 @@ theme_chanwe <- function(
         size = compact_size
       ),
       axis.title.x = ggplot2::element_text(
-        hjust = 1,
+        hjust = 0.5,
         margin = ggplot2::margin(t = type_tk$caption * px)
       ),
       axis.title.y = ggplot2::element_text(
@@ -400,10 +401,12 @@ theme_chanwe <- function(
       # Legend: mono labels at the compact size; keys sized as pills (the
       # pill glyph is draw_key_chanwe_pill(), the default of
       # geom_chanwe_col() / geom_chanwe_bar()).
+      # 2026-11-07: the legend sits under the plot, centred, as a row of
+      # dots and mono labels; it used to hang at the bottom-left.
       legend.position = legend_position,
-      legend.justification = c(0, 0),
-      legend.box.just = "left",
-      legend.location = "plot",
+      legend.justification = "center",
+      legend.box.just = "center",
+      legend.location = "panel",
       legend.title = ggplot2::element_text(
         family = mono_family,
         color = plot_tk$`axis-text`,
@@ -688,7 +691,11 @@ chanwe_subtitle <- function(text, note = NULL, kpi = NULL) {
 #' to `labs(caption = )` receive the same treatment; this helper exists to
 #' keep call sites explicit and future-proof.
 #'
-#' @param text Caption text, e.g. source line or data note.
+#' @param text Caption text, e.g. source line or data note. A leading
+#'   `Source:` / `Fuente ·` reads in the subtle tone, the fact after it in the
+#'   caption's own.
+#' @param stamp Optional right-aligned mono stamp on the same line
+#'   (`"CHW · BCRA · 05 MAY 2026"`).
 #'
 #' @return A character string for `labs(caption = ...)`.
 #' @export
@@ -702,8 +709,9 @@ chanwe_subtitle <- function(text, note = NULL, kpi = NULL) {
 #'   ggplot2::geom_point() +
 #'   ggplot2::labs(caption = chanwe_caption("Source: mtcars")) +
 #'   theme_chanwe()
-chanwe_caption <- function(text) {
-  as.character(text)
+chanwe_caption <- function(text, stamp = NULL) {
+  if (is.null(stamp) || !nzchar(stamp)) return(as.character(text))
+  paste(as.character(text), as.character(stamp), sep = .CW_SEP)
 }
 
 #' Chanwe Discrete Color Scales
