@@ -4,7 +4,7 @@
 \alias{chanwe_title}
 \title{Chanwe Title Helper}
 \usage{
-chanwe_title(text, eyebrow = NULL)
+chanwe_title(text, eyebrow = NULL, stamp = NULL)
 }
 \arguments{
 \item{text}{Main title string. Rendered in Schibsted Grotesk SemiBold by \code{\link[=theme_chanwe]{theme_chanwe()}}.}

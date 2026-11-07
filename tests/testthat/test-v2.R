@@ -16,8 +16,10 @@ test_that("theme_chanwe follows the Q3 look", {
   compact <- chanwe_tokens$type$caption * px
   expect_equal(th$axis.text$size, compact)
   expect_identical(th$axis.text$colour, chanwe_tokens$plot$`axis-text`)
-  expect_equal(th$legend.text$size, compact)
-  expect_equal(th$plot.caption$size, compact)
+  # the legend's pills and the footer read a step below the axis labels
+  expect_equal(th$legend.text$size, compact * 0.9)
+  expect_s3_class(th$legend.text, "element_chanwe_legend_text")
+  expect_equal(th$plot.caption$size, compact * 0.85)
   expect_false(th$plot.caption$stamp)
   expect_identical(th$plot.title$colour, chanwe_tokens$plot$title)
 

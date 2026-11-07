@@ -1,5 +1,11 @@
 # chanwer (development version)
 
+* The chart's frame (Ale, 2026-11-07): the eyebrow sits on an obsidian band across
+  the header, with `chanwe_title(stamp = )` at its right (`eyebrow_style = "rule"`
+  keeps the short rule); the plot's surface is a pane with the `pane` radius and
+  the `rule` hairline (`pane = FALSE` to drop it; `plot_padding` now 14); each
+  legend entry is a hairline pill around its key and label; the footer's text is a
+  step smaller.
 * `chanwe_kbl()`: a signed column (`chanwe_col_signed()`) renders as pills, like the
   KPI pane's variations; the total row opens with a 0.75pt ink rule and sets its
   figures in the medium weight instead of a tint fill (`total_fill` now defaults to
