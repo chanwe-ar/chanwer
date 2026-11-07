@@ -1,6 +1,9 @@
-# Helpers for chanwer-options.qmd: the option sheets for charts. Each sheet
-# draws four cards (A is the current design) that differ in one part only.
-# Prototype code for choosing a direction, not package API.
+# Helpers for chanwer-options.qmd, round 2: Ale's choices combined. A chart
+# is a card: an outer frame (simple, shadow or none), a header card (A band,
+# C numeral, D split, or the dark band), an optional KPI (A pane, B strip,
+# C rail), the body (A grid with a "main" series, B extremes with direct
+# labels), a legend (A flat pill, C in the header) and a flat footer (A rule
+# with the stamp, B tint strip). Prototype code for choosing, not package API.
 
 library(grid)
 library(ggplot2)
@@ -10,10 +13,12 @@ sg <- chanwe_get_signed()
 P <- cw[["primary"]]; INK <- cw[["ink"]]; MU <- cw[["fg-muted"]]; SU <- cw[["fg-subtle"]]
 RULE <- cw[["rule"]]; COOL <- cw[["rule-cool"]]; TINT <- "#EBF0F6"; WHITE <- "#FFFFFF"
 PAPER <- "#F8FAFC"; GREEN <- sg[["positive"]]; RED <- sg[["negative"]]
+EMPH <- if (!is.null(cw[["emphasis"]])) cw[["emphasis"]] else "#484848"
+SLATE <- c("#475569", "#8A94A6", "#C6CDD6")
 F_DISP <- "Schibsted Grotesk SemiBold"; F_MONO <- "JetBrains Mono"; F_SANS <- "Satoshi"
-F_SANSM <- "Satoshi Medium"; F_SERIF <- "Instrument Serif"; F_ITAL <- "Cormorant Garamond"
+F_SERIF <- "Instrument Serif"; F_ITAL <- "Cormorant Garamond"
 
-# ── data: monthly reserves, two series ──────────────────────────────────────
+# ── data ─────────────────────────────────────────────────────────────────────
 set.seed(7)
 n <- 24
 res <- data.frame(
@@ -25,17 +30,26 @@ res <- data.frame(
   )
 )
 res$serie <- factor(res$serie, levels = c("Brutas", "Netas"))
-SERIES <- c(Brutas = P, Netas = MU)
+SERIES <- c(Brutas = P, Netas = SLATE[1])
 last <- res[res$date == max(res$date), ]
+region <- data.frame(name = c("Brasil", "México", "Argentina", "Chile", "Colombia", "Perú"),
+                     value = c(355, 228, 39.5, 46, 59, 74))
+monthly <- data.frame(date = seq(as.Date("2025-01-01"), by = "month", length.out = 12),
+                      value = c(1.2, 0.8, 1.6, 2.1, 1.4, 0.9, 1.7, 2.4, 1.9, 2.6, 2.2, 3.1))
+scat <- data.frame(name = c("Arg", "Bra", "Chi", "Col", "Méx", "Per", "Uru", "Par", "Bol", "Ecu"),
+                   x = c(39.5, 355, 46, 59, 228, 74, 17, 10, 3, 6),
+                   y = c(4.8, 3.1, 4.4, 2.9, 3.6, 5.1, 3.9, 4.2, 6.1, 2.4))
 
-# ── grid primitives (y measured from the top of the current viewport) ──────
+# ── grid primitives (y from the top of the current viewport) ────────────────
 X <- function(x) if (inherits(x, "unit")) x else if (x < 0) unit(1, "npc") - unit(-x, "pt") else unit(x, "pt")
 Y <- function(y) unit(1, "npc") - unit(y, "pt")
-gp_t <- function(fam, size, col) gpar(fontfamily = fam, fontsize = size, col = col)
-txt <- function(lbl, x, y, fam, size, col, just = c("left", "center")) {
-  grid.text(lbl, x = X(x), y = Y(y), just = just, gp = gp_t(fam, size, col))
+gp_t <- function(fam, size, col, face = "plain") gpar(fontfamily = fam, fontsize = size, col = col, fontface = face)
+txt <- function(lbl, x, y, fam, size, col, just = c("left", "center"), face = "plain") {
+  grid.text(lbl, x = X(x), y = Y(y), just = just, gp = gp_t(fam, size, col, face))
 }
-tw <- function(lbl, fam, size) convertWidth(grobWidth(textGrob(lbl, gp = gp_t(fam, size, "black"))), "pt", valueOnly = TRUE)
+tw <- function(lbl, fam, size, face = "plain") {
+  convertWidth(grobWidth(textGrob(lbl, gp = gp_t(fam, size, "black", face))), "pt", valueOnly = TRUE)
+}
 rr <- function(x, y, w, h, fill, col = NA, r = h / 2, lwd = .5, just = c("left", "top")) {
   grid.roundrect(x = X(x), y = Y(y), width = unit(w, "pt"), height = unit(h, "pt"), just = just,
                  r = unit(r, "pt"), gp = gpar(fill = fill, col = col, lwd = lwd))
@@ -43,263 +57,288 @@ rr <- function(x, y, w, h, fill, col = NA, r = h / 2, lwd = .5, just = c("left",
 hline <- function(x0, x1, y, col = RULE, lwd = .5) {
   grid.lines(x = unit.c(X(x0), X(x1)), y = unit.c(Y(y), Y(y)), gp = gpar(col = col, lwd = lwd))
 }
+vline <- function(x, y0, y1, col = RULE, lwd = .5) {
+  grid.lines(x = unit.c(X(x), X(x)), y = unit.c(Y(y0), Y(y1)), gp = gpar(col = col, lwd = lwd))
+}
 dot <- function(x, y, r, col) grid.circle(x = X(x), y = Y(y), r = unit(r, "pt"), gp = gpar(fill = col, col = NA))
-mono <- function(lbl, x, y, size = 4.8, col = MU, just = c("left", "center")) txt(toupper(lbl), x, y, F_MONO, size, col, just)
-# A pill sized to its text, from its left edge; returns its width in pt.
-pill <- function(lbl, x, y, fill, col, size = 4.6, fam = F_MONO, stroke = NA, pad = 5, h = 10) {
-  w <- tw(toupper(lbl), fam, size) + 2 * pad
-  rr(x, y - h / 2, w, h, fill, stroke, lwd = .5)
-  txt(toupper(lbl), x + pad, y, fam, size, col)
+mono <- function(lbl, x, y, size = 4.6, col = MU, just = c("left", "center")) txt(toupper(lbl), x, y, F_MONO, size, col, just)
+pill <- function(lbl, x, y, fill, col, size = 3.9, pad = 3.6, h = 8.5, stroke = NA) {
+  w <- tw(toupper(lbl), F_MONO, size) + 2 * pad
+  rr(x, y - h / 2, w, h, fill, stroke)
+  txt(toupper(lbl), x + pad, y, F_MONO, size, col)
   w
 }
 
 TITLE <- "Reservas internacionales"
-SUBTITLE <- "Brutas y netas, en USD mil millones."
+SUBTITLE <- "Brutas y netas, en miles de millones de dólares"
 EYEBROW <- "BCRA · Sector externo"
 STAMP <- "CHW · RM-07 · 2026"
 
-# ── headers: each draws from the top and returns its height ─────────────────
-hdr_band <- function(W, pad, two_col = FALSE) {
-  rr(pad, pad, W - 2 * pad, 13, INK)
-  dot(pad + 8, pad + 6.5, 1.6, P)
-  mono(EYEBROW, pad + 14, pad + 6.5, 4.6, COOL)
-  mono(STAMP, -(pad + 8), pad + 6.5, 4.2, SU, c("right", "center"))
-  if (two_col) {
-    # Two columns: the title wraps beside the KPI pane.
-    txt("Reservas", pad, pad + 27, F_DISP, 11, INK)
-    txt("internacionales", pad, pad + 40, F_DISP, 11, INK)
-    txt("Brutas y netas, en USD mil millones.", pad, pad + 53, F_SANS, 6, MU)
-    return(pad + 64)
+# ── the title block: Schibsted at the display weight over the brand's editorial
+# italic (Cormorant Garamond in `emphasis`), as the report's ledes. Wraps to
+# two lines beside a KPI pane. Returns the subtitle's y.
+title_block <- function(x, y, wrap_w = Inf, on_dark = FALSE, size = 11.5) {
+  tcol <- if (on_dark) COOL else INK
+  scol <- if (on_dark) SU else EMPH
+  if (tw(TITLE, F_DISP, size) > wrap_w) {
+    txt("Reservas", x, y, F_DISP, size, tcol)
+    txt("internacionales", x, y + size + 1.5, F_DISP, size, tcol)
+    y <- y + size + 1.5
   }
-  txt(TITLE, pad, pad + 27, F_DISP, 11, INK)
-  txt(SUBTITLE, pad, pad + 38, F_SANS, 6, MU)
-  pad + 44
-}
-hdr_rule <- function(W, pad) {
-  hline(pad, pad + 12, pad + 5, P, 1)
-  mono(EYEBROW, pad + 16, pad + 5, 4.6, P)
-  mono(STAMP, -pad, pad + 5, 4.2, SU, c("right", "center"))
-  txt(TITLE, pad, pad + 18, F_DISP, 11, INK)
-  txt(SUBTITLE, pad, pad + 29, F_SANS, 6, MU)
-  pad + 35
-}
-hdr_numeral <- function(W, pad) {
-  txt("07", pad - 1, pad + 15, F_SERIF, 30, P)
-  x <- pad + 34
-  dot(x + 1.5, pad + 5, 1.5, P)
-  mono(EYEBROW, x + 6, pad + 5, 4.6, INK)
-  txt(TITLE, x, pad + 18, F_DISP, 11, INK)
-  txt(SUBTITLE, x, pad + 29, F_SANS, 6, MU)
-  mono(STAMP, -pad, pad + 5, 4.2, SU, c("right", "center"))
-  pad + 35
-}
-hdr_split <- function(W, pad) {
-  txt(TITLE, pad, pad + 8, F_DISP, 11, INK)
-  txt(SUBTITLE, pad, pad + 19, F_SANS, 6, MU)
-  xr <- W - pad
-  grid.lines(x = unit.c(X(-(pad + 74)), X(-(pad + 74))), y = unit.c(Y(pad + 1), Y(pad + 22)), gp = gpar(col = RULE, lwd = .5))
-  dot(W - pad - 66, pad + 5, 1.5, P)
-  mono(EYEBROW, -(pad), pad + 5, 4.4, INK, c("right", "center"))
-  mono(STAMP, -(pad), pad + 15, 4.2, SU, c("right", "center"))
-  pad + 28
+  else txt(TITLE, x, y, F_DISP, size, tcol)
+  if (tw(SUBTITLE, F_ITAL, 8.2, "italic") > wrap_w) {
+    txt("Brutas y netas, en miles", x, y + 11, F_ITAL, 8.2, scol, face = "italic")
+    txt("de millones de dólares", x, y + 20, F_ITAL, 8.2, scol, face = "italic")
+    return(y + 20)
+  }
+  txt(SUBTITLE, x, y + 11, F_ITAL, 8.2, scol, face = "italic")
+  y + 11
 }
 
-# ── KPI blocks ───────────────────────────────────────────────────────────────
+# ── header cards. Each draws inside [pad, W - pad] from y = pad and returns the
+# y where it ends. `right_w` reserves the KPI pane's column at the right.
+hdr_card <- function(kind, W, pad, right_w = 0, legend = FALSE) {
+  x0 <- pad; w <- W - 2 * pad; ip <- 8
+  dark <- kind == "dark"
+  h <- switch(kind, A = 46, C = 42, D = 38, dark = 44)
+  if (right_w > 0) h <- h + 22
+  rr(x0, pad, w, h, if (dark) INK else TINT, r = 8)
+  if (dark) {  # the dot field of the report's band
+    for (xx in seq(x0 + 5, x0 + w - 3, by = 7)) for (yy in seq(pad + 4, pad + h - 3, by = 7)) dot(xx, yy, .32, "#64748B")
+  }
+  inner_w <- w - 2 * ip - (if (right_w > 0) right_w + 8 else 0)
+  y <- pad + ip
+  if (kind == "A") {
+    rr(x0 + 5, pad + 5, w - 10, 11, INK)
+    dot(x0 + 12, pad + 10.5, 1.5, P)
+    mono(EYEBROW, x0 + 17, pad + 10.5, 4.3, COOL)
+    mono(STAMP, -(x0 + 12), pad + 10.5, 4, SU, c("right", "center"))
+    end <- title_block(x0 + ip, pad + 27, inner_w)
+  } else if (kind == "C") {
+    txt("07", x0 + ip - 1, pad + 21, F_SERIF, 30, P)
+    xt <- x0 + ip + 32
+    dot(xt + 1.5, y + 3, 1.4, P); mono(EYEBROW, xt + 6, y + 3, 4.3, INK)
+    mono(STAMP, -(x0 + ip), y + 3, 4, SU, c("right", "center"))
+    end <- title_block(xt, y + 15, inner_w - 32)
+  } else if (kind == "D") {
+    end <- title_block(x0 + ip, y + 6, inner_w - 84)
+    xr <- W - pad - ip
+    vline(xr - 82, y + 1, y + 21, COOL)
+    ew <- tw(toupper(EYEBROW), F_MONO, 4.2)
+    dot(xr - ew - 4, y + 5, 1.4, P); mono(EYEBROW, xr, y + 5, 4.2, INK, c("right", "center"))
+    mono(STAMP, xr, y + 16, 4, SU, c("right", "center"))
+  } else {
+    dot(x0 + ip + 1.5, y + 3, 1.5, P); mono(EYEBROW, x0 + ip + 7, y + 3, 4.3, P)
+    mono(STAMP, -(x0 + ip), y + 3, 4, SU, c("right", "center"))
+    end <- title_block(x0 + ip, y + 16, inner_w, on_dark = TRUE)
+  }
+  if (legend) legend_header(W - pad - ip, end, dark)
+  pad + h
+}
+
+# ── KPI: A pane inside the header card, B strip, C rail ─────────────────────
 KPI <- list(value = "39,5", unit = "USD MM · Dic 2025",
             d = list(c("MoM", "↑ 2,1 %", "up"), c("QoQ", "↓ 0,4 %", "down"), c("YoY", "↑ 17,8 %", "up")))
-kpi_pills <- function(x, y, size = 4.2, gap = 3) {
+kpi_pills <- function(x, y, stack = FALSE) {
   for (m in KPI$d) {
     col <- if (m[3] == "up") GREEN else RED
-    fill <- grDevices::adjustcolor(col, alpha.f = .12)
-    w <- pill(paste(m[1], m[2]), x, y, fill, col, size = size, pad = 4, h = 9)
-    x <- x + w + gap
+    w <- pill(paste(m[1], m[2]), x, y, grDevices::adjustcolor(col, alpha.f = .12), col)
+    if (stack) y <- y + 11 else x <- x + w + 2.5
   }
-  x
 }
-kpi_pane <- function(W, top, h) {   # right column, from the title row down
-  w <- 118
-  x0 <- W - 11 - w
-  rr(x0, top, w, h, TINT, r = 8)
-  mono(KPI$unit, x0 + 8, top + 8, 4, MU)
-  txt(KPI$value, x0 + 8, top + 21, F_DISP, 14, INK)
-  kpi_pills(x0 + 8, top + h - 9, 3.9, 2.5)
+KPI_PANE_W <- 112
+kpi_pane <- function(W, pad, top, h) {
+  x0 <- W - pad - 8 - KPI_PANE_W
+  rr(x0, top, KPI_PANE_W, h, PAPER, r = 7)
+  mono(KPI$unit, x0 + 7, top + 8, 3.8, MU)
+  txt(KPI$value, x0 + 7, top + 20, F_DISP, 13, INK)
+  kpi_pills(x0 + 7, top + h - 8)
 }
-kpi_strip <- function(W, pad, y) {
-  txt(KPI$value, pad, y + 7, F_DISP, 15, INK)
-  x <- pad + tw(KPI$value, F_DISP, 15) + 5
-  mono(KPI$unit, x, y + 9, 4, MU)
-  x <- x + tw(toupper(KPI$unit), F_MONO, 4) + 8
-  kpi_pills(x, y + 8)
-  y + 18
+kpi_strip <- function(pad, y) {
+  txt(KPI$value, pad + 2, y + 7, F_DISP, 15, INK)
+  x <- pad + 2 + tw(KPI$value, F_DISP, 15) + 5
+  mono(KPI$unit, x, y + 9, 3.9, MU)
+  kpi_pills(x + tw(toupper(KPI$unit), F_MONO, 3.9) + 8, y + 8)
+  y + 17
 }
-kpi_rail <- function(x, y, h) {  # left column of the body
-  txt(KPI$value, x, y + 12, F_DISP, 17, INK)
-  mono(KPI$unit, x, y + 25, 3.9, MU)
-  yy <- y + 38
-  for (m in KPI$d) {
-    col <- if (m[3] == "up") GREEN else RED
-    pill(paste(m[1], m[2]), x, yy, grDevices::adjustcolor(col, alpha.f = .12), col, size = 4, pad = 4, h = 9)
-    yy <- yy + 12
-  }
-  grid.lines(x = unit.c(X(x + 58), X(x + 58)), y = unit.c(Y(y + 2), Y(y + h - 2)), gp = gpar(col = RULE, lwd = .5))
+kpi_rail <- function(x, y, h) {
+  txt(KPI$value, x, y + 11, F_DISP, 16, INK)
+  mono(KPI$unit, x, y + 23, 3.7, MU)
+  kpi_pills(x, y + 35, stack = TRUE)
+  vline(x + 56, y + 2, y + h - 2)
 }
 
-# ── the plot body ────────────────────────────────────────────────────────────
-body_plot <- function(style = "grid", legend = "pill", kpi = "none") {
-  lims <- c(22, 42)
-  p <- ggplot(res, aes(date, value, colour = serie))
-  if (style == "bands") {
-    bands <- data.frame(ymin = c(22, 30, 40), ymax = c(25, 35, 42))
-    p <- p + geom_rect(data = bands, aes(xmin = -Inf, xmax = Inf, ymin = ymin, ymax = ymax),
-                       inherit.aes = FALSE, fill = TINT, colour = NA)
-  }
-  if (style == "terminal") {
-    fld <- expand.grid(date = seq(min(res$date), max(res$date), by = "month"), value = seq(22, 42, by = 1.25))
-    p <- p + geom_point(data = fld, aes(date, value), inherit.aes = FALSE, colour = SU, alpha = .45, size = .12)
-  }
-  if (style == "annot") {
-    p <- p +
-      annotate("rect", xmin = as.Date("2024-09-01"), xmax = as.Date("2025-03-01"), ymin = -Inf, ymax = Inf, fill = TINT) +
-      annotate("text", x = as.Date("2024-09-15"), y = 41.2, label = "ACUERDO FMI", hjust = 0, family = F_MONO, size = 1.4, colour = MU) +
-      geom_hline(yintercept = 38, colour = INK, linewidth = .2, linetype = "22") +
-      annotate("text", x = min(res$date), y = 38.9, label = "META · 38,0", hjust = 0, family = F_MONO, size = 1.4, colour = INK)
-  }
-  if (style == "minmax") {
-    p <- p + geom_hline(yintercept = 22, colour = INK, linewidth = .3)
-  }
-  p <- p + geom_line(linewidth = if (style == "minmax") .5 else .45, lineend = "round")
-  if (style == "terminal") p <- p + geom_point(size = .35)
-  if (style == "annot") {
-    p <- p + geom_area(data = res[res$serie == "Brutas", ], aes(date, value), inherit.aes = FALSE, fill = P, alpha = .06)
-  }
-  if (legend == "direct" || style == "minmax") {
-    p <- p + geom_text(data = last, aes(label = paste0(toupper(serie), "  ", format(round(value, 1), decimal.mark = ","))),
-                       hjust = 0, nudge_x = 12, family = F_MONO, size = 1.45, show.legend = FALSE)
-  }
-  if (kpi == "end" || style == "annot") {
-    b <- last[last$serie == "Brutas", ]
-    p <- p + geom_point(data = b, size = 2.6, alpha = .18) + geom_point(data = b, size = 1)
-    if (kpi == "end") {
-      p <- p + annotate("label", x = b$date - 40, y = b$value - 4.5,
-                        label = "39,5   MoM ↑ 2,1 %   YoY ↑ 17,8 %", family = F_MONO, size = 1.5,
-                        fill = INK, colour = "white", label.r = unit(5, "pt"),
-                        label.padding = unit(3.2, "pt"), hjust = 1)
-    }
-  }
-  right_exp <- if (legend == "direct" || style == "minmax") .2 else .02
-  brk <- if (style == "minmax") c(22, 42) else c(25, 30, 35, 40)
-  p <- p +
-    scale_colour_manual(values = SERIES) +
-    scale_x_date(date_labels = "%b %y", date_breaks = "6 months", expand = expansion(mult = c(.01, right_exp))) +
-    scale_y_continuous(limits = lims, breaks = brk, expand = expansion(0)) +
-    labs(x = NULL, y = NULL) +
-    theme_chanwe(base_text_size = 6, pane = FALSE, legend_position = "none",
-                 grid = if (style %in% c("bands", "minmax")) "none" else "y") +
-    theme(plot.margin = margin(2, 2, 0, 0), plot.background = element_rect(fill = NA, colour = NA),
-          panel.background = element_rect(fill = NA, colour = NA),
-          axis.text = element_text(size = 4.4))
-  if (style == "terminal") {
-    p <- p + theme(panel.grid.major.y = element_line(colour = COOL, linewidth = .2, linetype = "22"),
-                   axis.line.x = element_line(colour = COOL, linewidth = .25),
-                   axis.ticks.x = element_line(colour = P, linewidth = .3),
-                   axis.ticks.length.x = unit(2.4, "pt"))
-  }
-  if (style == "minmax") {
-    p <- p + theme(panel.grid.major.y = element_line(colour = COOL, linewidth = .2))
-  }
-  p
-}
-
-# ── legends and footers ──────────────────────────────────────────────────────
-legend_pill <- function(W, y) {
-  labs_ <- c("BRUTAS", "NETAS")
-  ws <- vapply(labs_, function(l) tw(l, F_MONO, 4.4), numeric(1))
-  total <- sum(ws) + 2 * 8 + 10 + 14
+# ── legends: A one flat pill under the plot, C in the header card ───────────
+legend_pill <- function(W, y, keys) {
+  labs_ <- toupper(names(keys))
+  ws <- vapply(labs_, function(l) tw(l, F_MONO, 4.1), numeric(1))
+  total <- sum(ws) + 12 + 18 * (length(labs_) - 1) + 5.5 * length(labs_) - 6
   x0 <- (W - total) / 2
-  rr(x0, y - 6, total, 12, NA, RULE)
-  x <- x0 + 7
+  rr(x0, y - 4.5, total, 9, NA, RULE)
+  x <- x0 + 6
   for (i in seq_along(labs_)) {
-    dot(x + 2, y, 2, SERIES[[i]]); txt(labs_[i], x + 6, y, F_MONO, 4.4, MU); x <- x + ws[i] + 14
+    dot(x + 1.8, y, 1.8, keys[[i]]); txt(labs_[i], x + 5.5, y, F_MONO, 4.1, MU)
+    x <- x + ws[i] + 18
   }
 }
-legend_header <- function(W, pad, y) {
-  x <- W - pad
-  for (i in rev(seq_along(SERIES))) {
-    l <- toupper(names(SERIES)[i]); w <- tw(l, F_MONO, 4.4)
-    txt(l, x - w, y, F_MONO, 4.4, MU); dot(x - w - 4, y, 2, SERIES[[i]]); x <- x - w - 14
+legend_header <- function(xr, y, dark = FALSE, keys = SERIES) {
+  x <- xr
+  for (i in rev(seq_along(keys))) {
+    l <- toupper(names(keys)[i]); w <- tw(l, F_MONO, 4.2)
+    txt(l, x - w, y, F_MONO, 4.2, if (dark) COOL else MU); dot(x - w - 3.8, y, 1.8, keys[[i]])
+    x <- x - w - 14
   }
 }
-legend_inset <- function(x, y) {
-  for (i in seq_along(SERIES)) {
-    dot(x + 2, y, 2, SERIES[[i]]); txt(toupper(names(SERIES)[i]), x + 6, y, F_MONO, 4.4, INK)
-    x <- x + tw(toupper(names(SERIES)[i]), F_MONO, 4.4) + 16
-  }
-}
-FOOT_H <- c(rule = 22, tint = 22, notes = 30, mark = 18)
-footer <- function(kind, W, H, pad) {
+
+# ── footers, both flat: A rule and the stamp pill, B tint strip ─────────────
+FOOT_H <- c(A = 15, B = 15)
+footer <- function(kind, W, H, pad, frame) {
   y0 <- H - FOOT_H[[kind]]
-  src <- function(y) { mono("Fuente", pad, y, 4.2, SU); mono("BCRA · elaboración propia", pad + 22, y, 4.2, MU) }
-  if (kind == "rule") {
-    hline(pad, -pad, y0 + 2, RULE)
-    src(y0 + 12)
-    w <- tw(STAMP, F_MONO, 3.9) + 10
-    rr(W - pad - w, y0 + 7, w, 10, WHITE); txt(STAMP, W - pad - w + 5, y0 + 12, F_MONO, 3.9, MU)
-  } else if (kind == "tint") {
-    rr(0.25, y0, W - .5, FOOT_H[[kind]] - .25, TINT, r = 9)
-    grid.rect(x = X(0.25), y = Y(y0), width = unit(W - .5, "pt"), height = unit(9, "pt"), just = c("left", "top"), gp = gpar(fill = TINT, col = NA))
-    hline(0.25, -0.25, y0, RULE)
-    src(y0 + 11)
-    mono(STAMP, -pad, y0 + 11, 3.9, MU, c("right", "center"))
-  } else if (kind == "notes") {
-    hline(pad, -pad, y0 + 2, RULE)
-    src(y0 + 10)
-    mono(STAMP, -pad, y0 + 10, 3.9, SU, c("right", "center"))
-    txt("Nota: las reservas netas descuentan swaps, encajes y obligaciones de corto plazo.", pad, y0 + 20, F_ITAL, 6, MU)
-  } else if (kind == "mark") {
-    src(y0 + 9)
-    w <- tw("chanwe", F_SANSM, 8)
-    txt("chanwe", -(pad + 4), y0 + 9, F_SANSM, 8, INK, c("right", "center"))
-    dot(W - pad - 1.5, y0 + 10.5, 1.3, P)
+  src <- function(y) { mono("Fuente", pad, y, 4, SU); mono("BCRA · elaboración propia", pad + 20, y, 4, MU) }
+  if (kind == "A") {
+    hline(pad, -pad, y0, RULE)
+    src(y0 + 7.5)
+    w <- tw(STAMP, F_MONO, 3.7) + 8
+    rr(W - pad - w, y0 + 3.5, w, 8, WHITE)
+    txt(STAMP, W - pad - w + 4, y0 + 7.5, F_MONO, 3.7, MU)
+  } else {
+    if (frame == "none") {
+      rr(pad, y0 + 1, W - 2 * pad, FOOT_H[[kind]] - 2, TINT, r = 6.5)
+      src(y0 + 7.5); mono(STAMP, -(pad + 6), y0 + 7.5, 3.7, MU, c("right", "center"))
+      return(invisible())
+    }
+    rr(0.5, y0, W - 1, FOOT_H[[kind]] - .5, TINT, r = 9)
+    grid.rect(x = X(0.5), y = Y(y0), width = unit(W - 1, "pt"), height = unit(8, "pt"),
+              just = c("left", "top"), gp = gpar(fill = TINT, col = NA))
+    src(y0 + 7.5)
+    mono(STAMP, -pad, y0 + 7.5, 3.7, MU, c("right", "center"))
   }
 }
 
-# ── a card: the whole chart ─────────────────────────────────────────────────
-card <- function(W, H, header = "band", kpi = "none", body = "grid", legend = "pill", foot = "rule") {
-  pad <- 11
-  rr(0.25, 0.25, W - .5, H - .5, PAPER, RULE, r = 9)
-  hdr_fun <- switch(header, band = hdr_band, rule = hdr_rule, numeral = hdr_numeral, split = hdr_split)
-  y <- if (header == "band") hdr_fun(W, pad, two_col = kpi == "pane") else hdr_fun(W, pad)
-  if (legend == "header") legend_header(W, pad, y - 9)
-  if (kpi == "pane") kpi_pane(W, pad + 19, 45)
-  if (kpi == "strip") y <- kpi_strip(W, pad, y + 2)
-  y <- y + 6
-  bottom <- H - FOOT_H[[foot]] - (if (legend == "pill") 18 else 2)
-  x0 <- pad
-  if (kpi == "rail") { kpi_rail(pad, y, bottom - y); x0 <- pad + 64 }
-  pushViewport(viewport(x = unit(x0, "pt"), y = Y(y), width = unit(W - x0 - pad, "pt"), height = unit(bottom - y, "pt"), just = c("left", "top")))
-  grid.draw(ggplotGrob(body_plot(body, legend, kpi)))
-  popViewport()
-  if (legend == "inset") legend_inset(x0 + 22, y + 6)
-  if (legend == "pill") legend_pill(W, bottom + 8)
-  footer(foot, W, H, pad)
+# ── the body. A: horizontal grid, and the main series carries the accent, a
+# halo on its last point and its value in an ink pill (others in slate, their
+# value in mono). B: extremes only, an ink base, each series named at its end.
+ink_label <- function(...) {
+  geom_label(..., family = F_MONO, size = 1.5, fill = INK, colour = "white",
+             label.r = unit(4, "pt"), label.padding = unit(2.3, "pt"))
+}
+base_theme <- function(grid = "y") {
+  theme_chanwe(base_text_size = 6, pane = FALSE, legend_position = "none", grid = grid) +
+    theme(plot.margin = margin(2, 2, 0, 0), plot.background = element_rect(fill = NA, colour = NA),
+          panel.background = element_rect(fill = NA, colour = NA), axis.text = element_text(size = 4.3))
+}
+num <- function(v) format(round(v, 1), decimal.mark = ",")
+body_plot <- function(body = "A", type = "line") {
+  if (type == "line") {
+    p <- ggplot(res, aes(date, value, colour = serie))
+    if (body == "B") p <- p + geom_hline(yintercept = 22, colour = INK, linewidth = .3)
+    p <- p + geom_line(linewidth = .45, lineend = "round")
+    if (body == "A") {
+      b <- last[last$serie == "Brutas", ]; o <- last[last$serie != "Brutas", ]
+      p <- p + geom_point(data = b, size = 3.2, alpha = .18) + geom_point(data = b, size = 1.1) +
+        ink_label(data = b, aes(label = num(value)), hjust = -0.22) +
+        geom_point(data = o, size = .8) +
+        geom_text(data = o, aes(label = num(value)), hjust = -.5, family = F_MONO, size = 1.4)
+    } else {
+      p <- p + geom_text(data = last, aes(label = paste0(toupper(serie), "  ", num(value))),
+                         hjust = 0, nudge_x = 12, family = F_MONO, size = 1.45)
+    }
+    p <- p + scale_colour_manual(values = SERIES) +
+      scale_x_date(date_labels = "%b %y", date_breaks = "6 months", expand = expansion(mult = c(.01, .17))) +
+      scale_y_continuous(limits = c(22, 42), breaks = if (body == "B") c(22, 42) else c(25, 30, 35, 40),
+                         expand = expansion(0)) +
+      labs(x = NULL, y = NULL) + base_theme(if (body == "B") "none" else "y")
+    if (body == "B") p <- p + theme(panel.grid.major.y = element_line(colour = COOL, linewidth = .2))
+    return(p)
+  }
+  if (type == "bar") {   # a ranking: the main bar in the accent, its value in the ink pill
+    d <- region; d$main <- d$name == "Argentina"
+    d$name <- stats::reorder(d$name, d$value)
+    return(ggplot(d, aes(value, name, fill = main)) +
+      geom_chanwe_col(width = .62, orientation = "y") +
+      geom_text(data = d[!d$main, ], aes(label = num(value)), hjust = -.25, family = F_MONO, size = 1.4, colour = SLATE[1]) +
+      ink_label(data = d[d$main, ], aes(label = num(value)), hjust = -.15) +
+      scale_fill_manual(values = c(`TRUE` = P, `FALSE` = SLATE[3]), guide = "none") +
+      scale_x_continuous(expand = expansion(mult = c(0, .16))) + labs(x = NULL, y = NULL) +
+      base_theme("x") + theme(axis.text.y = element_text(size = 4.6, colour = INK)))
+  }
+  if (type == "column") {  # columns over time: the last month is the main one
+    d <- monthly; d$main <- d$date == max(d$date)
+    return(ggplot(d, aes(date, value, fill = main)) + geom_chanwe_col(width = 20) +
+      ink_label(data = d[d$main, ], aes(label = num(value)), vjust = -.4) +
+      scale_fill_manual(values = c(`TRUE` = P, `FALSE` = SLATE[3]), guide = "none") +
+      scale_x_date(date_labels = "%b", date_breaks = "2 months") +
+      scale_y_continuous(expand = expansion(mult = c(0, .24))) + labs(x = NULL, y = NULL) + base_theme("y"))
+  }
+  if (type == "scatter") {  # the main point: accent, halo and its name in the ink pill
+    d <- scat; d$main <- d$name == "Arg"
+    return(ggplot(d, aes(x, y)) +
+      geom_point(data = d[!d$main, ], colour = SLATE[2], size = 1.4) +
+      geom_text(data = d[!d$main, ], aes(label = toupper(name)), family = F_MONO, size = 1.3, colour = SLATE[1], vjust = -1.2) +
+      geom_point(data = d[d$main, ], colour = P, size = 3.6, alpha = .18) +
+      geom_point(data = d[d$main, ], colour = P, size = 1.5) +
+      ink_label(data = d[d$main, ], aes(label = "ARGENTINA · 4,8 %"), hjust = -.12) +
+      scale_x_log10(expand = expansion(mult = c(.05, .2))) + labs(x = NULL, y = NULL) + base_theme("y"))
+  }
 }
 
-# A sheet: four cards, two by two, each under its letter and name.
-sheet <- function(options) {
+# ── a chart card ─────────────────────────────────────────────────────────────
+card <- function(W, H, header = "A", kpi = "none", body = "A", type = "line", legend = "A", foot = "A", frame = "simple") {
+  pad <- 10
+  if (frame == "shadow") {   # a soft offset shadow, no hairline
+    for (i in 6:1) rr(0.5 + i * .2, 1 + i * .55, W - 1 - i * .4, H - 3, grDevices::adjustcolor(INK, alpha.f = .011 * (7 - i)), r = 10 + i)
+    rr(0.5, 0.5, W - 1, H - 3, PAPER, NA, r = 10)
+    H <- H - 2.5
+  } else if (frame == "simple") {
+    rr(0.25, 0.25, W - .5, H - .5, PAPER, RULE, r = 9)
+  } else {
+    pad <- 1
+  }
+  is_line <- type == "line"
+  keys <- if (is_line) SERIES else c(Argentina = P, Resto = SLATE[3])
+  right_w <- if (kpi == "A") KPI_PANE_W else 0
+  y <- hdr_card(header, W, pad, right_w, legend = legend == "C")
+  if (kpi == "A") {
+    top <- pad + (if (header == "A") 20 else 7)
+    kpi_pane(W, pad, top, y - 7 - top)
+  }
+  if (kpi == "B") y <- kpi_strip(pad, y + 4)
+  y <- y + 7
+  bottom <- H - FOOT_H[[foot]] - (if (legend == "A") 15 else 4)
+  x0 <- pad
+  if (kpi == "C") { kpi_rail(pad + 2, y, bottom - y); x0 <- pad + 62 }
+  pushViewport(viewport(x = unit(x0, "pt"), y = Y(y), width = unit(W - x0 - pad, "pt"),
+                        height = unit(bottom - y, "pt"), just = c("left", "top")))
+  grid.draw(ggplotGrob(body_plot(body, type)))
+  popViewport()
+  if (legend == "A") legend_pill(W, bottom + 7, keys)
+  footer(foot, W, H, pad, frame)
+}
+
+# A sheet of cards, `ncol` per row, each under its name.
+sheet <- function(options, ncol = 2) {
   grid.newpage()
-  lay <- grid.layout(2, 2, widths = unit(c(1, 1), "null"), heights = unit(c(1, 1), "null"))
-  pushViewport(viewport(layout = lay))
+  nrow <- ceiling(length(options) / ncol)
+  pushViewport(viewport(layout = grid.layout(nrow, ncol)))
   for (i in seq_along(options)) {
     o <- options[[i]]
-    pushViewport(viewport(layout.pos.row = (i - 1) %/% 2 + 1, layout.pos.col = (i - 1) %% 2 + 1))
+    pushViewport(viewport(layout.pos.row = (i - 1) %/% ncol + 1, layout.pos.col = (i - 1) %% ncol + 1))
     pushViewport(viewport(x = .5, y = .5, width = unit(1, "npc") - unit(10, "pt"), height = unit(1, "npc") - unit(8, "pt")))
     vp_w <- convertWidth(unit(1, "npc"), "pt", valueOnly = TRUE)
     vp_h <- convertHeight(unit(1, "npc"), "pt", valueOnly = TRUE)
-    dot(3, 5, 2.2, if (i == 1) INK else P)
-    txt(paste0(LETTERS[i], " · ", o$name), 9, 5, F_MONO, 5.4, INK)
+    dot(3, 5, 2.2, if (isTRUE(o$default)) INK else P)
+    txt(o$name, 9, 5, F_MONO, 5.4, INK)
     pushViewport(viewport(x = 0, y = 0, width = unit(vp_w, "pt"), height = unit(vp_h - 13, "pt"), just = c("left", "bottom")))
     do.call(card, c(list(W = vp_w, H = vp_h - 13), o$args))
     popViewport(3)
   }
   popViewport()
+}
+
+# One card filling the figure: a combination, drawn at the size of a
+# half-width card and shown at full width, so it reads as a real chart.
+one <- function(...) {
+  grid.newpage()
+  card(convertWidth(unit(1, "npc"), "pt", valueOnly = TRUE),
+       convertHeight(unit(1, "npc"), "pt", valueOnly = TRUE), ...)
 }
