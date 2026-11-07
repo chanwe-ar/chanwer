@@ -1,0 +1,405 @@
+---
+title: "Gráficos y tablas: opciones"
+subtitle: "Cuatro opciones para cada parte de un gráfico y de una tabla, para elegir"
+author: "Chanwe"
+date: today
+lang: es
+brand: false
+format:
+  chanwe-report-typst:
+    keep-typ: false
+execute:
+  echo: false
+  warning: false
+  message: false
+  dev: ragg_png
+  fig-format: png
+  fig-dpi: 300
+chanwe:
+  document: "CHW · DEV"
+  edition: "OPCIONES / 2026"
+  section: "R Package"
+  topic: "chanwer · opciones"
+  cover: false
+  toc: false
+  back-cover: false
+  page-bg: "F8FAFC"
+---
+
+```{r}
+#| label: setup
+#| include: false
+devtools::load_all(".", quiet = TRUE)
+chanwe_load_fonts()
+knitr::opts_chunk$set(dev = "ragg_png", dev.args = list(bg = "transparent"),
+                      fig.width = 7.08, fig.height = 5.7, dpi = 300)
+source("chanwer-options-helpers.R")
+```
+
+# Cómo leer este documento {.unnumbered}
+
+Cada lámina cambia **una sola parte** y deja las demás como están hoy, para que la diferencia se vea sola. La opción **A es siempre la actual**; B, C y D son alternativas. Para elegir, alcanza con una letra por parte: por ejemplo, *cabecera A, KPI C, cuerpo B, leyenda A, pie A*. Las partes se combinan entre sí.
+
+Las opciones están dibujadas como prototipo, a medio tamaño (dos por fila). En el paquete, cada elección se vuelve un argumento de `theme_chanwe()` o de `chanwe_kbl()`, y la elegida pasa a ser el valor por defecto.
+
+**Lectura de diseño (impeccable + taste).** El marco ya es propio: banda de obsidiana, pane, leyenda en una pastilla, pie con sello. Lo que todavía se parece a cualquier gráfico es el **interior**. La grilla, los ejes y las series son los de ggplot, y no hay una capa editorial: nada le dice al lector qué mirar (una meta, un período, el último dato). Las láminas de cuerpo y de KPI apuntan ahí. En las tablas, el valor está en codificar la variación y agrupar las filas, no en más filetes.
+
+# Gráficos
+
+{{< pagebreak >}}
+
+## Cabecera
+
+```{r}
+#| label: chart-header
+sheet(list(
+  list(name = "Actual · banda de obsidiana", args = list(header = "band")),
+  list(name = "Filete y rótulo", args = list(header = "rule")),
+  list(name = "Numeral de figura", args = list(header = "numeral")),
+  list(name = "Dos columnas", args = list(header = "split"))
+))
+```
+
+- **A · Banda de obsidiana.** El rótulo y el sello en una pastilla negra a lo ancho. Es la más reconocible como Chanwe y la que separa mejor un gráfico del texto que lo rodea.
+- **B · Filete y rótulo.** El gesto de rótulo de toda la marca: filete naranja y mono. Más liviana; un informe con muchos gráficos respira más.
+- **C · Numeral de figura.** El número del gráfico en Instrument Serif naranja, como los capítulos del informe. Convierte el gráfico en una pieza citable ("ver 07").
+- **D · Dos columnas.** Título a la izquierda; rótulo y sello a la derecha, separados por un filete vertical. La más sobria, de consultora.
+
+{{< pagebreak >}}
+
+## KPI
+
+```{r}
+#| label: chart-kpi
+sheet(list(
+  list(name = "Actual · pane a la derecha", args = list(kpi = "pane")),
+  list(name = "Franja bajo el título", args = list(kpi = "strip")),
+  list(name = "Riel a la izquierda", args = list(kpi = "rail")),
+  list(name = "En el último dato", args = list(kpi = "end"))
+))
+```
+
+- **A · Pane a la derecha.** La cabecera en dos columnas: el título se parte y el dato vive en su pane.
+- **B · Franja bajo el título.** El dato en una línea: valor, unidad y variaciones. Le devuelve altura al gráfico.
+- **C · Riel a la izquierda.** El dato como columna propia junto al gráfico, con las variaciones apiladas. Para gráficos protagonistas, a página completa.
+- **D · En el último dato.** El dato se anota donde ocurre: halo en el último punto y una llamada de obsidiana. La más editorial: el número y la serie se leen juntos.
+
+{{< pagebreak >}}
+
+## Cuerpo
+
+```{r}
+#| label: chart-body
+sheet(list(
+  list(name = "Actual · grilla horizontal", args = list(body = "grid")),
+  list(name = "Extremos y base de tinta", args = list(body = "minmax", legend = "direct")),
+  list(name = "Franjas de tinte", args = list(body = "bands")),
+  list(name = "Anotado", args = list(body = "annot"))
+))
+```
+
+- **A · Grilla horizontal.** Cuatro líneas slate y ejes en mono.
+- **B · Extremos y base de tinta.** Sólo el mínimo y el máximo del eje, una base de tinta y el último valor escrito al final de cada serie. Más papel, más dato.
+- **C · Franjas de tinte.** Sin líneas: bandas alternas de tinte dan la escala. Funciona muy bien impreso.
+- **D · Anotado.** El kit editorial: un período sombreado y rotulado, una meta en línea discontinua, el área de la serie protagonista al 6 % y el último dato con halo. Es la opción que más acerca el gráfico a una publicación de research. Se puede sumar a cualquiera de las otras tres.
+
+{{< pagebreak >}}
+
+## Leyenda
+
+```{r}
+#| label: chart-legend
+sheet(list(
+  list(name = "Actual · una pastilla", args = list(legend = "pill")),
+  list(name = "Rótulos directos", args = list(legend = "direct")),
+  list(name = "En la cabecera", args = list(legend = "header")),
+  list(name = "Dentro del panel", args = list(legend = "inset"))
+))
+```
+
+- **A · Una pastilla.** Todas las series en una pastilla centrada, bajo el gráfico.
+- **B · Rótulos directos.** El nombre y el último valor al final de cada línea; no hay leyenda que leer aparte. Lo mejor hasta tres series.
+- **C · En la cabecera.** Puntos y nombres a la derecha del título: la leyenda se lee antes que el gráfico.
+- **D · Dentro del panel.** Arriba a la izquierda, sobre el área libre del gráfico. Ahorra una fila.
+
+{{< pagebreak >}}
+
+## Pie
+
+```{r}
+#| label: chart-footer
+sheet(list(
+  list(name = "Actual · filete y sello", args = list(foot = "rule")),
+  list(name = "Franja de tinte", args = list(foot = "tint")),
+  list(name = "Con nota", args = list(foot = "notes")),
+  list(name = "Con la marca", args = list(foot = "mark"))
+))
+```
+
+- **A · Filete y sello.** Filete, fuente en mono y el sello en una pastilla blanca.
+- **B · Franja de tinte.** El pie es el borde inferior de la pane, en tinte: se lee como la base de la tarjeta.
+- **C · Con nota.** La fuente y, debajo, una nota metodológica en la cursiva editorial. Para research, donde la nota es parte del dato.
+- **D · Con la marca.** Sin filete: la fuente a la izquierda y la palabra *chanwe* con su punto a la derecha. Para gráficos que viajan sueltos (redes, mails).
+
+# Tablas
+
+```{=typst}
+#let _o-rows = (
+  ("Norte", "412,1", "438,0", 6.3),
+  ("Centro", "388,4", "371,2", -4.4),
+  ("Oeste", "251,9", "266,3", 5.7),
+  ("Sur", "188,1", "201,5", 7.1),
+)
+#let _o-tot = ("Total", "1.240,5", "1.277,0", 2.9)
+#let _o-mono(s, size: 5.2pt, fill: _t.fg-muted, weight: _t.weight-regular, tracking: 0.12em) = text(
+  font: _t.font-mono, size: size, weight: weight, tracking: tracking, fill: fill, upper(s))
+#let _o-num(s, weight: _t.weight-thin) = text(font: _t.font-mono, size: 6.8pt, weight: weight, fill: _t.fg, s)
+#let _o-pct(v) = (if v > 0 { "+" } else { "−" }) + str(calc.abs(v)).replace(".", ",") + " %"
+#let _o-col(v) = if v > 0 { _t.kpi-green } else if v < 0 { _t.kpi-red } else { _t.fg-muted }
+#let _o-stamp = "CHW · FIN-03 · 2026"
+
+#let _o-head(kind, src-top: false) = {
+  let title = text(font: _t.font-display, size: 11pt, weight: _t.weight-display, tracking: -0.04em, fill: _t.fg, "Ingresos por región")
+  let sub = text(font: _t.font-sans, size: 6.8pt, weight: _t.weight-body, fill: _t.fg-muted, "Primer y segundo trimestre de 2026, en USD miles.")
+  let aside = if src-top { _o-mono("Fuente · cierre contable", size: 4.6pt) } else { _o-mono(_o-stamp, size: 4.6pt, fill: _t.fg-subtle) }
+  set par(spacing: 0pt, leading: 0.5em)
+  if kind == "rule" {
+    block(width: 100%, inset: (x: 4mm, top: 4mm, bottom: 3.6mm), {
+      grid(columns: (1fr, auto), align: (left + horizon, right + horizon),
+        { box(baseline: -1.7pt, line(length: 5mm, stroke: 0.9pt + _t.primary)); h(2mm); _o-mono("Finanzas · Cierre", fill: _t.primary) },
+        aside)
+      v(2.8mm); title; v(1.4mm); sub
+    })
+  } else if kind == "band" {
+    block(width: 100%, inset: (x: 3mm, top: 3mm, bottom: 3.6mm), {
+      block(width: 100%, fill: _t.ink, radius: _t.radius-pill, inset: (x: 3mm, y: 1.7mm),
+        grid(columns: (1fr, auto), align: (left + horizon, right + horizon),
+          { box(baseline: -0.2pt, cw-dot(_t.primary, size: 3.4pt)); h(1.6mm); _o-mono("Finanzas · Cierre", size: 4.8pt, fill: _t.rule-cool) },
+          if src-top { _o-mono("Fuente · cierre contable", size: 4.4pt, fill: _t.fg-subtle) } else { _o-mono(_o-stamp, size: 4.4pt, fill: _t.fg-subtle) }))
+      v(3.2mm)
+      pad(x: 1mm, { title; v(1.4mm); sub })
+    })
+  } else if kind == "numeral" {
+    block(width: 100%, inset: (x: 4mm, top: 3.6mm, bottom: 3.6mm),
+      grid(columns: (auto, 1fr, auto), column-gutter: 3.4mm, align: (left + top, left + top, right + top),
+        text(font: _t.font-serif-display, style: "italic", size: 30pt, fill: _t.primary, top-edge: "cap-height", bottom-edge: "baseline", "07"),
+        { box(baseline: -0.2pt, cw-dot(_t.primary, size: 3.2pt)); h(1.4mm); _o-mono("Finanzas · Cierre", size: 4.8pt, fill: _t.fg); v(2.4mm); title; v(1.4mm); sub },
+        aside))
+  } else if kind == "tint" {
+    block(width: 100%, fill: _t.tint, inset: (x: 4mm, top: 3.8mm, bottom: 3.8mm),
+      grid(columns: (1fr, auto), align: (left + top, right + top),
+        { title; v(1.4mm); sub },
+        { _o-mono("Finanzas · Cierre", size: 4.8pt, fill: _t.fg); v(1.6mm); aside }))
+  }
+}
+
+#let _o-delta(v, kind, fill, inset) = {
+  let c = _o-col(v)
+  let body = if kind == "pill" {
+    box(fill: c.transparentize(88%), radius: _t.radius-pill, inset: (x: 1.8mm, y: 0.9mm),
+      text(font: _t.font-mono, size: 6.2pt, weight: _t.weight-medium, fill: c, _o-pct(v)))
+  } else if kind == "arrow" {
+    text(font: _t.font-mono, size: 6.6pt, weight: _t.weight-medium, fill: c, (if v > 0 { "↑ " } else { "↓ " }) + _o-pct(v))
+  } else if kind == "bar" {
+    let half = 5mm
+    let w = calc.min(calc.abs(v) / 8, 1) * half
+    box(width: 2 * half, height: 2.6mm, baseline: 0.6mm, {
+      place(left + horizon, dx: half - 0.25pt, line(angle: 90deg, length: 3.4mm, stroke: 0.5pt + _t.rule-cool))
+      if v > 0 { place(left + horizon, dx: half, rect(width: w, height: 2mm, fill: c, radius: 0.8pt)) }
+      else { place(left + horizon, dx: half - w, rect(width: w, height: 2mm, fill: c, radius: 0.8pt)) }
+    })
+    h(1.2mm)
+    box(text(font: _t.font-mono, size: 6pt, fill: c, _o-pct(v)))
+  } else if kind == "heat" {
+    text(font: _t.font-mono, size: 6.6pt, weight: _t.weight-medium, fill: _t.fg, _o-pct(v))
+  }
+  let f = if kind == "heat" { c.transparentize(100% - calc.min(calc.abs(v) / 8, 1) * 30%) } else { fill }
+  grid.cell(fill: f, inset: inset, align: right + horizon, body)
+}
+
+#let otable(hdr: "rule", lab: "tint", rows: "hair", vals: "pill", foot: "mono") = block(
+  width: 100%, stroke: 0.5pt + _t.rule, radius: _t.radius-pane, clip: true, fill: _t.pane, breakable: false, {
+  set block(spacing: 0pt)
+  set par(spacing: 0pt, leading: 0.45em)
+  _o-head(hdr, src-top: foot == "top")
+  let ix = 3.6mm
+  let iy = if rows == "open" { 2.6mm } else { 2mm }
+  let al(i) = if i == 0 { left + horizon } else { right + horizon }
+  let names = ("Región", "Q1", "Q2", "Var. QoQ")
+  let units = ("", "USD K", "USD K", "%")
+  let note = if foot == "notes" { super(text(size: 5pt, "1")) } else { [] }
+  let cells = ()
+  if lab == "spanner" {
+    cells.push(grid.cell(inset: (x: ix, top: 2.2mm, bottom: 0.4mm), []))
+    cells.push(grid.cell(colspan: 2, align: center, inset: (x: ix, top: 2.2mm, bottom: 0.4mm),
+      { _o-mono("2026 · USD K", fill: _t.fg, weight: _t.weight-medium); v(1mm); line(length: 100%, stroke: 0.5pt + _t.rule-cool) }))
+    cells.push(grid.cell(inset: (x: ix, top: 2.2mm, bottom: 0.4mm), []))
+  }
+  for (i, n) in names.enumerate() {
+    let content = if lab == "sans" {
+      { text(font: _t.font-sans, size: 7pt, weight: _t.weight-medium, fill: _t.fg, n); if i == 3 { note }
+        if units.at(i) != "" { linebreak(); _o-mono(units.at(i), size: 4.4pt, fill: _t.fg-subtle) } }
+    } else {
+      let suffix = ""
+      { _o-mono(n + suffix, fill: if lab == "ink" { _t.fg } else { _t.fg-muted }); if i == 3 { note } }
+    }
+    cells.push(grid.cell(fill: if lab == "tint" { _t.tint } else { none }, inset: (x: ix, y: 2.2mm), align: al(i), content))
+  }
+  cells.push(grid.hline(stroke: if lab == "ink" { 0.75pt + _t.ink } else { 0.5pt + _t.rule }))
+  let groups = if rows == "open" { (("Interior", (0, 1)), ("Costa", (2, 3))) } else { ((none, (0, 1, 2, 3)),) }
+  let k = 0
+  for (gname, idxs) in groups {
+    if gname != none {
+      cells.push(grid.cell(colspan: 4, inset: (x: ix, top: 2.8mm, bottom: 0.4mm),
+        { box(baseline: -0.2pt, cw-dot(_t.primary, size: 3pt)); h(1.4mm); _o-mono(gname, size: 4.8pt, fill: _t.fg) }))
+    }
+    for j in idxs {
+      let r = _o-rows.at(j)
+      let f = if rows == "zebra" and calc.odd(k) { _t.tint } else { none }
+      let name = text(font: _t.font-sans, size: 7pt, weight: _t.weight-medium, fill: _t.fg, r.at(0))
+      let reg = if rows == "leaders" {
+        box(width: 100%, { name; h(1.6mm); box(width: 1fr, repeat(text(size: 6pt, fill: _t.rule-cool, "·  "))) })
+      } else { name }
+      cells.push(grid.cell(fill: f, inset: (x: ix, y: iy), align: left + horizon, reg))
+      cells.push(grid.cell(fill: f, inset: (x: ix, y: iy), align: right + horizon, _o-num(r.at(1))))
+      cells.push(grid.cell(fill: f, inset: (x: ix, y: iy), align: right + horizon, _o-num(r.at(2))))
+      cells.push(_o-delta(r.at(3), vals, f, (x: ix, y: iy)))
+      if rows == "hair" and j != idxs.last() { cells.push(grid.hline(stroke: 0.5pt + _t.rule)) }
+      k += 1
+    }
+  }
+  cells.push(grid.hline(stroke: 0.75pt + _t.ink))
+  let t = _o-tot
+  cells.push(grid.cell(inset: (x: ix, y: iy), align: left + horizon, text(font: _t.font-sans, size: 7pt, weight: _t.weight-display, fill: _t.fg, t.at(0))))
+  cells.push(grid.cell(inset: (x: ix, y: iy), align: right + horizon, _o-num(t.at(1), weight: _t.weight-medium)))
+  cells.push(grid.cell(inset: (x: ix, y: iy), align: right + horizon, _o-num(t.at(2), weight: _t.weight-medium)))
+  cells.push(_o-delta(t.at(3), vals, none, (x: ix, y: iy)))
+  let src = { _o-mono("Fuente", size: 4.6pt, fill: _t.fg-subtle); h(2mm); _o-mono("Cierre contable · simulado", size: 4.6pt) }
+  if foot == "mono" {
+    cells.push(grid.hline(stroke: 0.5pt + _t.rule))
+    cells.push(grid.cell(colspan: 4, inset: (x: ix, y: 2.4mm), src))
+  } else if foot == "pill" {
+    cells.push(grid.hline(stroke: 0.5pt + _t.rule))
+    cells.push(grid.cell(colspan: 4, inset: (x: ix, y: 2mm),
+      grid(columns: (1fr, auto), align: (left + horizon, right + horizon), src,
+        box(fill: _t.white, radius: _t.radius-pill, inset: (x: 2.2mm, y: 1.1mm), _o-mono(_o-stamp, size: 4.4pt)))))
+  } else if foot == "notes" {
+    cells.push(grid.hline(stroke: 0.5pt + _t.rule))
+    cells.push(grid.cell(colspan: 4, inset: (x: ix, top: 2.4mm, bottom: 2.6mm), {
+      src; v(1.6mm)
+      text(font: _t.font-serif, style: "italic", size: 7pt, fill: _t.fg-muted)[#super("1") Variación del segundo trimestre sobre el primero.]
+    }))
+  }
+  grid(columns: (1.3fr, 1fr, 1fr, if vals == "bar" { 1.7fr } else { 1.15fr }), ..cells)
+})
+
+#let _o-sheet(options) = grid(columns: (1fr, 1fr), column-gutter: 5mm, row-gutter: 6mm,
+  ..options.enumerate().map(((i, o)) => {
+    set par(spacing: 0pt)
+    box(baseline: -0.2pt, cw-dot(if i == 0 { _t.ink } else { _t.primary }, size: 4pt))
+    h(1.6mm)
+    text(font: _t.font-mono, size: 6pt, weight: _t.weight-medium, tracking: 0.04em, fill: _t.fg,
+      ("A", "B", "C", "D").at(i) + " · " + o.at(0))
+    v(2mm)
+    o.at(1)
+  }))
+```
+
+{{< pagebreak >}}
+
+## Cabecera
+
+```{=typst}
+#_o-sheet((
+  ("Actual · filete y rótulo", otable(hdr: "rule")),
+  ("Banda de obsidiana, como los gráficos", otable(hdr: "band")),
+  ("Numeral de tabla", otable(hdr: "numeral")),
+  ("Cabecera en tinte", otable(hdr: "tint")),
+))
+```
+
+- **A · Filete y rótulo.** Lo actual: filete naranja, rótulo en mono, título y bajada.
+- **B · Banda de obsidiana.** La misma cabecera que los gráficos (si eligen la A allá). Tablas y gráficos se leen como una sola familia.
+- **C · Numeral de tabla.** Como el numeral de figura: la tabla se cita por su número.
+- **D · Cabecera en tinte.** Título dentro de una franja de tinte, rótulo y sello a la derecha. Muy de informe de consultora.
+
+{{< pagebreak >}}
+
+## Rótulos de columna
+
+```{=typst}
+#_o-sheet((
+  ("Actual · mono sobre tinte", otable(lab: "tint")),
+  ("Mono con filete de tinta", otable(lab: "ink")),
+  ("Con encabezado agrupado", otable(lab: "spanner")),
+  ("En frase, con unidad", otable(lab: "sans")),
+))
+```
+
+- **A · Mono sobre tinte.** La fila de rótulos en tinte.
+- **B · Mono con filete de tinta.** Sin relleno: un filete de tinta debajo, los rótulos en el negro de la marca. Más tipográfico.
+- **C · Encabezado agrupado.** "2026 · USD K" sobre Q1 y Q2, con su filete: la unidad se dice una vez.
+- **D · En frase, con unidad.** Rótulos en Satoshi y en minúscula, la unidad en mono debajo. El más legible para tablas largas.
+
+{{< pagebreak >}}
+
+## Filas
+
+```{=typst}
+#_o-sheet((
+  ("Actual · filetes finos", otable(rows: "hair")),
+  ("Cebra de tinte", otable(rows: "zebra")),
+  ("Grupos, sin filetes", otable(rows: "open")),
+  ("Con guía de puntos", otable(rows: "leaders")),
+))
+```
+
+- **A · Filetes finos.** Un filete entre filas.
+- **B · Cebra de tinte.** Filas alternas en tinte, sin líneas. Ayuda a seguir la fila en tablas anchas.
+- **C · Grupos, sin filetes.** Las filas se agrupan bajo un rótulo con punto (Interior, Costa), con más aire. La estructura la da el grupo, no la línea.
+- **D · Guía de puntos.** Una guía punteada lleva el ojo del nombre al número, como en un índice.
+
+{{< pagebreak >}}
+
+## Valores y totales
+
+```{=typst}
+#_o-sheet((
+  ("Actual · pastillas con signo", otable(vals: "pill")),
+  ("Flecha y color", otable(vals: "arrow")),
+  ("Barra en la celda", otable(vals: "bar")),
+  ("Celda de calor", otable(vals: "heat")),
+))
+```
+
+- **A · Pastillas con signo.** Verde y rojo sobre su propio tinte; el total abre con un filete de tinta.
+- **B · Flecha y color.** Sin relleno: flecha y cifra en el color del signo. Más liviana con muchas columnas de variación.
+- **C · Barra en la celda.** Una barra divergente desde el centro muestra la magnitud además del signo: la tabla se vuelve un gráfico chico. La más innovadora y la que más ayuda a comparar.
+- **D · Celda de calor.** La celda se tiñe con la intensidad de la variación; la cifra queda en tinta.
+
+{{< pagebreak >}}
+
+## Pie
+
+```{=typst}
+#_o-sheet((
+  ("Actual · fuente en mono", otable(foot: "mono")),
+  ("Fuente y sello, como los gráficos", otable(foot: "pill")),
+  ("Con nota numerada", otable(foot: "notes")),
+  ("Fuente en la cabecera", otable(foot: "top")),
+))
+```
+
+- **A · Fuente en mono.** La fuente sola, al pie.
+- **B · Fuente y sello.** El mismo pie que los gráficos: fuente a la izquierda, sello en pastilla blanca a la derecha.
+- **C · Con nota numerada.** La llamada en el rótulo (¹) y la nota en la cursiva editorial al pie.
+- **D · Fuente en la cabecera.** Sin pie: la fuente sube a la cabecera, donde estaba el sello. La tabla termina en su total.
+
+# Recomendación {.unnumbered}
+
+Para research y consultoría, con una voz propia:
+
+- **Gráficos:** cabecera **A**, KPI **D** cuando haya un solo dato (y **A** cuando haya varios), cuerpo **B** con las anotaciones de **D** como kit, leyenda **B** hasta tres series y **A** desde cuatro, pie **C** en research y **A** en el resto.
+- **Tablas:** cabecera **B** (la misma familia que los gráficos), rótulos **C**, filas **C**, valores **C**, pie **B**.
+
+Es la combinación que más se aleja de "un ggplot con colores de marca" sin salir de la marca: el lector ve primero qué pasó (el último dato, la meta, la magnitud de cada variación) y después cómo se mide.
