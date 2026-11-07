@@ -4968,10 +4968,8 @@
   volume: "MENDOZA · ARGENTINA",
   chapter: "Design System",
   section: "R Package",
-  topic: "chanwer v3.0",
+  topic: "chanwer v3.1",
   rail-eyebrow: "VISUAL REFERENCE",
-  hero-image: "\_extensions/chanwe-report/assets/bg\_mountains.jpg",
-  hero-img-position: 10,
   cover: true,
   toc: true,
   toc-eyebrow: "Document map",
@@ -4984,7 +4982,7 @@
   abstract-show: ("document", "edition", "author", "status"),
   abstract-takeaway: "One color system and one header grammar, mapped to every chart and table: the same tokens drive eyebrows, KPI arrows, table deltas, and this document.",
   meta-rows: (
-    ("Package", "chanwer v3.0", "R design system"),
+    ("Package", "chanwer v3.1", "R design system"),
     ("Format", "chanwe-report-typst", "Quarto extension"),
     ("Author", "Chanwe", "Alejandro Abraham"),
   ),
@@ -4996,6 +4994,7 @@
     ("Repo", "chanwe-ar/chanwer", "github.com"),
     ("Document", "CHW · DEV", "Showcase / 2026"),
   ),
+  publication-art: "\_extensions/chanwe-report/assets/cover-snow-ridge.jpg",
   page-bg: rgb("#F8FAFC"),
   doc,
 )
