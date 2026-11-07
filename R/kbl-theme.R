@@ -72,7 +72,9 @@
 #' @param n_total Number of trailing rows to treat as total rows. Total rows
 #'   get a heavier rule above them, no row dividers, and (optionally) a
 #'   highlight fill. Default \code{0} (no total rows).
-#' @param total_fill Logical. Fill total rows with the slate tint.
+#' @param total_fill Logical. Fill total rows with the slate tint. Default
+#'   \code{FALSE} since 3.2.0: a total row is set off by a 0.75pt ink rule
+#'   above it and the medium weight, not by a fill (the tint is the header's).
 #'   Only used when \code{n_total > 0}. Default \code{TRUE}.
 #' @param vlines Optional integer vector of column indices at which to draw
 #'   vertical divider lines (Typst \code{table.vline} x positions).
@@ -136,7 +138,7 @@ chanwe_kbl <- function(
   fmt = list(),
   col_colors = list(),
   n_total = 0,
-  total_fill = TRUE,
+  total_fill = FALSE,
   vlines = NULL,
   highlight_cols = NULL,
   highlight_color = NULL,
@@ -168,7 +170,7 @@ chanwe_kbl <- function(
   } else if (sp) {
     "10pt"
   } else {
-    "5pt"
+    "3.4pt"
   }
   title_pt <- if (!is.null(title_size)) {
     title_size
@@ -190,14 +192,14 @@ chanwe_kbl <- function(
   } else if (sp) {
     "10pt"
   } else {
-    "7pt"
+    "6.5pt"
   }
   label_pt <- if (!is.null(header_size)) {
     header_size
   } else if (sp) {
     "8pt"
   } else {
-    "7pt"
+    "6pt"
   }
   note_pt <- if (!is.null(note_size)) {
     note_size
@@ -327,7 +329,9 @@ chanwe_kbl <- function(
   # column labels, closing the body) are border-cool 0.5pt; the total rule
   # one slate step darker; row dividers the lighter `rule` slate.
   rule_color <- if (isTRUE(pane)) typst_rgb(hairline) else typst_rgb(tokens[["border-cool"]])
-  total_rule_color <- typst_rgb(tokens[["rule-cool"]])
+  # The total row opens with an ink rule: the only rule in the table that is
+  # not a hairline (2026-11-07).
+  total_rule_color <- "_t.ink"
   row_divider_color <- hairline
 
   # code builder
@@ -452,7 +456,7 @@ chanwe_kbl <- function(
   for (i in seq_len(nr)) {
     is_total <- i >= total_start
     if (is_total && i == total_start) {
-      p("    table.hline(stroke: 0.7pt + ", total_rule_color, "),")
+      p("    table.hline(stroke: 0.75pt + ", total_rule_color, "),")
     }
     for (j in seq_len(n)) {
       val <- esc(fmt_data[[j]][i])
@@ -462,13 +466,17 @@ chanwe_kbl <- function(
       # text cells read in Satoshi, at the document body weight (300).
       is_figure <- identical(col_aligns[j], "right")
       cell_font <- if (is_figure) fonts$mono else fonts$body
-      weight <- if (is_first) {
+      weight <- if (is_first || (is_total && is_figure)) {
         '"medium"'
       } else if (is_figure) {
         '"thin"'
       } else {
         '"light"'
       }
+      # A signed column (chanwe_col_signed) renders its values as pills: the
+      # sign's colour as text on the same colour at 10%, as the KPI pane does.
+      is_pill <- !is.null(color_data[[j]]) && isTRUE(attr(color_data[[j]], "chanwe_pill")) &&
+        !is.na(data[[j]][i]) && nzchar(fmt_data[[j]][i])
       cell_fill <- if (is_total && total_fill) {
         paste0(', fill: rgb("', total_fill_color, '")')
       } else if (!is.null(highlight_cols) && j %in% highlight_cols) {
@@ -476,21 +484,17 @@ chanwe_kbl <- function(
       } else {
         ""
       }
-      p(
-        "    table.cell(align: ",
-        col_aligns[j],
-        cell_fill,
-        ")[",
-        '#text(font: "', cell_font, '", size: ',
-        body_pt,
-        ', fill: ',
-        fill,
-        ', weight: ',
-        weight,
-        ')[',
-        val,
-        "]],"
+      inner <- paste0(
+        '#text(font: "', cell_font, '", size: ', body_pt, ', fill: ', fill,
+        ', weight: ', if (is_pill) '"medium"' else weight, ')[', val, ']'
       )
+      if (is_pill) {
+        inner <- paste0(
+          '#box(fill: ', fill, '.transparentize(90%), radius: 99pt, inset: (x: 4pt, y: 2.2pt), baseline: 2.2pt)[',
+          inner, ']'
+        )
+      }
+      p("    table.cell(align: ", col_aligns[j], cell_fill, ")[", inner, "],")
     }
     if (i < nr && !is_total) {
       p('    table.hline(stroke: 0.4pt + rgb("', row_divider_color, '")),')
@@ -643,6 +647,8 @@ chanwe_col_signed <- function(
     below <- !is.na(x) & x < threshold
     out[above] <- above_col[above]
     out[below] <- below_col[below]
+    # chanwe_kbl() draws a signed column as pills.
+    attr(out, "chanwe_pill") <- TRUE
     out
   }
 }
