@@ -32,6 +32,7 @@ Imports:
     tools,
     utils
 Suggests:
+    S7,
     gt,
     highcharter,
     htmltools,

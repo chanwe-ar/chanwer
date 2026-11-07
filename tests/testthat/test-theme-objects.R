@@ -40,8 +40,9 @@ test_that("theme_chanwe background variants resolve to brand surfaces", {
   expect_identical(th_slate$plot.background$fill, "#EBF0F6")
   expect_identical(th_hex$plot.background$fill, "#123456")
   expect_identical(th_white$panel.background$fill, "#FFFFFF")
-  # the legend paints nothing of its own: the pills sit on the pane
-  expect_s3_class(th_white$legend.background, "element_blank")
+  # the legend is one hairline pill, with no fill of its own
+  expect_s3_class(th_white$legend.background, "element_chanwe_surface")
+  expect_true(is.na(th_white$legend.background$fill))
   # the surface is a pane: the hairline and the pane radius
   expect_s3_class(th_white$plot.background, "element_chanwe_surface")
   expect_identical(th_white$plot.background$colour, "#E2E8F0")
