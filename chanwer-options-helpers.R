@@ -114,78 +114,155 @@ title_block <- function(x, y, wrap_w = Inf, on_dark = FALSE) {
   y + d$sub_off
 }
 
-# ── header cards. Each draws inside [pad, W - pad] from y = pad and returns the
-# y where it ends. `right_w` reserves the KPI pane's column at the right.
-hdr_card <- function(kind, W, pad, right_w = 0, legend = FALSE, fill = "tint") {
-  x0 <- pad; w <- W - 2 * pad; ip <- d$ip
+# ── header cards: one layout for every combination (round 4).
+# A card has an optional band on top (A), then two columns: the left one holds
+# the eyebrow (C, dark), the title and the subtitle, with the numeral before it
+# (C); the right one holds, stacked from the top on one left edge, the meta
+# (D: eyebrow and stamp; C and dark: the stamp), the legend and the KPI pane.
+# A hairline divides the columns over the content's full height; the card is as
+# tall as its taller column. Text wraps by measured width, at word boundaries.
+wrap_lines <- function(text, fam, size, width) {
+  words <- strsplit(text, " ")[[1]]
+  lines <- character(0); cur <- ""
+  for (w in words) {
+    cand <- if (nzchar(cur)) paste(cur, w) else w
+    if (nzchar(cur) && tw(cand, fam, size) > width) { lines <- c(lines, cur); cur <- w } else cur <- cand
+  }
+  c(lines, cur)
+}
+eyebrow_line <- function(x, y, col, label_col) {
+  dot(x + 1.3, y, 1.3, P); mono(EYEBROW, x + 5.5, y, d$eye, label_col)
+}
+eyebrow_w <- function() tw(toupper(EYEBROW), F_MONO, d$eye) + 5.5
+# The pane is as wide as its pills; three rows (unit, value, pills) with air
+# between them. On a header with no fill it takes the tint, so it keeps an edge.
+kpi_pills_w <- function() {
+  sum(vapply(KPI$d, function(m) tw(toupper(paste(m[1], m[2])), F_MONO, 3.9) + 7.2, numeric(1))) + 2.5 * (length(KPI$d) - 1)
+}
+kpi_pane_w <- function() kpi_pills_w() + 14
+kpi_pane_h <- function() 43
+kpi_pane_at <- function(x0, top, h = kpi_pane_h(), fill = PAPER) {
+  rr(x0, top, kpi_pane_w(), h, fill, r = 6)
+  mono(KPI$unit, x0 + 7, top + 8.5, 3.7, MU)
+  txt(KPI$value, x0 + 7, top + 20.5, F_DISP, 13, INK)
+  kpi_pills(x0 + 7, top + h - 9)
+}
+# The pane as one row, when the right column has no room for it.
+kpi_row_at <- function(x0, top, w, fill = PAPER) {
+  h <- 18
+  rr(x0, top, w, h, fill, r = 6)
+  txt(KPI$value, x0 + 7, top + h / 2, F_DISP, 11.5, INK)
+  x <- x0 + 7 + tw(KPI$value, F_DISP, 11.5) + 5
+  mono(KPI$unit, x, top + h / 2 + .5, 3.7, MU)
+  kpi_pills(x0 + w - 7 - kpi_pills_w(), top + h / 2)
+  h
+}
+hdr_card <- function(kind, W, pad, legend = FALSE, kpi = FALSE, fill = "tint") {
   dark <- kind == "dark"
-  h <- if (kind == "D" && legend) d$h[["Dleg"]] else d$h[[kind]]
-  nw <- d$numeral * 1.05
-  # The width the title block gets, before drawing, so the card grows with it.
-  avail <- w - 2 * ip - (if (right_w > 0) right_w + 8 else 0)
-  if (legend && kind != "D") avail <- min(avail, w * 0.75 - 2 * ip)
-  avail <- avail - switch(kind, C = nw, D = 84, 0)
-  if (tw(TITLE, F_DISP, d$title) > avail) h <- h + d$wrap_t
-  if (tw(SUBTITLE, F_SANS, d$sub) > avail) h <- h + d$wrap_s
-  # The card's ground: the tint, or none (the header sits on the chart's own
-  # surface, transparent). The dark card always has its ink.
-  if (dark || fill != "none") rr(x0, pad, w, h, if (dark) INK else TINT, r = 7)
   bare <- !dark && fill == "none"
-  if (bare) {
-    h <- h - 2 * d$ip - (if (kind == "A") d$band_y else 0) + 2
-    d$ty[["A"]] <- d$ty[["A"]] - d$band_y
-    ip <- 0; d$band_y <- 0
+  x0 <- pad; w <- W - 2 * pad
+  ip <- if (bare) 0 else d$ip
+  tcol <- if (dark) COOL else INK; scol <- if (dark) SU else MU
+  line_t <- d$title * 1.14; line_s <- d$sub * 1.45; slot <- d$eye + 4.6
+
+  # ── the right column: what it holds, how wide and how tall
+  right <- list()
+  if (kind == "D") right <- c(right, list(list(type = "eyebrow", h = slot, w = eyebrow_w())))
+  # The pane goes in the right column when the title keeps at least its longest
+  # word on a line beside it; otherwise it becomes a row under the title block.
+  kpi_row <- FALSE
+  if (kpi) {
+    nw0 <- if (kind == "C") tw("07", F_SERIF, d$numeral) + 6 else 0
+    room <- w - 2 * ip - kpi_pane_w() - 18 - nw0
+    longest <- max(vapply(strsplit(TITLE, " ")[[1]], function(x) tw(x, F_DISP, d$title), numeric(1)))
+    kpi_row <- room < max(longest + 6, 118)
   }
-  if (dark) {  # the dot field of the report's band
-    for (xx in seq(x0 + 5, x0 + w - 3, by = 7)) for (yy in seq(pad + 4, pad + h - 3, by = 7)) dot(xx, yy, .26, grDevices::adjustcolor("#64748B", alpha.f = .45))
-  }
-  inner_w <- w - 2 * ip - (if (right_w > 0) right_w + 8 else 0)
-  # With the legend in the header, the card splits 75 / 25: the title block in
-  # the first column, the series stacked in the second, after a hairline.
-  leg_x <- NULL
-  if (legend && kind != "D") {
-    leg_x <- x0 + w * 0.75
-    inner_w <- min(inner_w, leg_x - x0 - 2 * ip)
-  }
-  y <- pad + ip
-  ey <- y + d$eye / 2 + .5
-  if (kind == "A") {
-    bh <- d$band_h; by <- pad + (if (bare) 0 else d$band_y)
-    rr(x0 + d$band_y, by, w - 2 * d$band_y, bh, INK)
-    dot(x0 + d$band_y + 6.5, by + bh / 2, 1.3, P)
-    mono(EYEBROW, x0 + d$band_y + 11, by + bh / 2, d$eye, COOL)
-    mono(STAMP, -(x0 + d$band_y + 6.5), by + bh / 2, d$stamp, SU, c("right", "center"))
-    end <- title_block(x0 + ip, pad + d$ty[["A"]], inner_w)
-  } else if (kind == "C") {
-    txt("07", x0 + ip - 1, pad + h / 2 - (if (h > d$h[["C"]]) 4 else 0), F_SERIF, d$numeral, P)
-    xt <- x0 + ip + nw
-    dot(xt + 1.3, ey, 1.3, P); mono(EYEBROW, xt + 5.5, ey, d$eye, INK)
-    mono(STAMP, -(x0 + ip), ey, d$stamp, SU, c("right", "center"))
-    end <- title_block(xt, y + d$ty[["C"]], inner_w - nw)
-  } else if (kind == "D") {
-    end <- title_block(x0 + ip, y + d$ty[["D"]], inner_w - 84)
-    xr <- W - pad - ip
-    vline(xr - 82, y, y + d$h[["D"]] - 2 * ip, COOL)
-    ew <- tw(toupper(EYEBROW), F_MONO, d$eye)
-    dot(xr - ew - 4, ey, 1.3, P); mono(EYEBROW, xr, ey, d$eye, INK, c("right", "center"))
-    mono(STAMP, xr, ey + d$eye + 5, d$stamp, SU, c("right", "center"))
-  } else {
-    dot(x0 + ip + 1.3, ey, 1.3, P); mono(EYEBROW, x0 + ip + 6, ey, d$eye, P)
-    mono(STAMP, -(x0 + ip), ey, d$stamp, SU, c("right", "center"))
-    end <- title_block(x0 + ip, y + d$ty[["dark"]], inner_w, on_dark = TRUE)
-  }
+  # C and dark: the stamp opens the right column only when the column has
+  # something else to hold; alone, it rides on the eyebrow's line.
+  stamp_inline <- kind %in% c("C", "dark") && !legend && !(kpi && !kpi_row)
+  if (kind == "D" || (kind %in% c("C", "dark") && !stamp_inline))
+    right <- c(right, list(list(type = "stamp", h = slot, w = tw(toupper(STAMP), F_MONO, d$stamp))))
   if (legend) {
-    if (kind == "D") {
-      # D already has a right column: the series go under its stamp.
-      legend_stack(W - pad - ip - 76, y + d$h[["D"]] - ip + 2, dark)
-    } else {
-      top <- if (kind == "A") pad + d$kpi_top else y
-      vline(leg_x, top, pad + h - ip, if (dark) "#434D5D" else COOL)
-      # Under the stamp when the stamp shares the column (C, dark).
-      first <- if (kind == "A") (top + pad + h - ip) / 2 - 4.5 * (length(SERIES) - 1) else ey + d$eye + 7
-      legend_stack(leg_x + 8, first, dark)
+    if (kind == "D") {   # D's column already holds two lines: the keys share one
+      kw <- sum(vapply(names(SERIES), function(k) tw(toupper(k), F_MONO, d$eye) + 6, numeric(1))) + 9 * (length(SERIES) - 1)
+      right <- c(right, list(list(type = "keys", h = slot + 0.6, w = kw)))
+    } else for (k in names(SERIES)) right <- c(right, list(list(type = "key", key = k, h = slot + 0.6, w = tw(toupper(k), F_MONO, d$eye) + 6)))
+  }
+  pane_fill <- if (bare) TINT else PAPER
+  if (kpi && !kpi_row) right <- c(right, list(list(type = "pane", h = kpi_pane_h(), w = kpi_pane_w())))
+  gap_group <- 3.5
+  right_w <- if (length(right)) max(vapply(right, `[[`, numeric(1), "w")) else 0
+  right_h <- if (length(right)) sum(vapply(right, `[[`, numeric(1), "h")) + gap_group * (kind != "A" && (legend || kpi) && length(right) > 1) else 0
+  col_gap <- if (length(right)) 18 else 0      # 9 each side of the hairline
+
+  # ── the left column
+  nw <- if (kind == "C") tw("07", F_SERIF, d$numeral) + 6 else 0
+  left_w <- w - 2 * ip - right_w - col_gap - nw
+  t_lines <- wrap_lines(TITLE, F_DISP, d$title, left_w)
+  s_lines <- wrap_lines(SUBTITLE, F_SANS, d$sub, left_w)
+  has_eye <- kind %in% c("C", "dark")
+  left_h <- (if (has_eye) slot + 1.5 else 0) + length(t_lines) * line_t + 1.5 + length(s_lines) * line_s
+
+  # ── the card
+  band <- kind == "A"
+  bo <- if (bare) 0 else d$band_y
+  band_block <- if (band) bo + d$band_h + (if (bare) 7 else 6.5) else 0
+  row_h <- if (kpi_row) 18 + 6 else 0
+  content_h <- max(left_h, right_h) + row_h
+  h <- band_block + (if (band) 0 else ip) + content_h + ip + (if (bare) 1 else 0)
+  if (!bare) rr(x0, pad, w, h, if (dark) INK else TINT, r = 7)
+  if (dark) for (xx in seq(x0 + 5, x0 + w - 3, by = 7)) for (yy in seq(pad + 4, pad + h - 3, by = 7))
+    dot(xx, yy, .26, grDevices::adjustcolor("#64748B", alpha.f = .45))
+
+  if (band) {
+    by <- pad + bo; bw <- w - 2 * bo
+    rr(x0 + bo, by, bw, d$band_h, INK)
+    eyebrow_line(x0 + bo + 5.5, by + d$band_h / 2, P, COOL)
+    mono(STAMP, -(pad + bo + 6), by + d$band_h / 2, d$stamp, SU, c("right", "center"))
+  }
+  top <- pad + (if (band) band_block else ip)
+
+  # left column
+  lx <- x0 + ip + nw
+  if (kind == "C") txt("07", x0 + ip - 1, top + left_h / 2 + 1, F_SERIF, d$numeral, P)
+  y <- top
+  if (has_eye) {
+    eyebrow_line(lx, y + slot / 2, P, if (dark) P else INK)
+    if (stamp_inline) mono(STAMP, -(pad + ip), y + slot / 2, d$stamp, SU, c("right", "center"))
+    y <- y + slot + 1.5
+  }
+  for (l in t_lines) { txt(l, lx, y + line_t / 2, F_DISP, d$title, tcol); y <- y + line_t }
+  y <- y + 1.5
+  for (l in s_lines) { txt(l, lx, y + line_s / 2, F_SANS, d$sub, scol); y <- y + line_s }
+
+  # right column, on one left edge, from the top of the content
+  if (length(right)) {
+    rx <- x0 + w - ip - right_w
+    vline(rx - col_gap / 2, top + 1, top + content_h - row_h - 1, if (dark) "#434D5D" else COOL)
+    y <- top
+    prev <- NULL
+    for (it in right) {
+      if (!is.null(prev) && prev %in% c("eyebrow", "stamp") && it$type %in% c("key", "keys", "pane")) y <- y + gap_group
+      if (it$type == "eyebrow") eyebrow_line(rx, y + it$h / 2, P, INK)
+      if (it$type == "stamp") mono(STAMP, rx, y + it$h / 2, d$stamp, SU)
+      if (it$type == "key") {
+        dot(rx + 1.6, y + it$h / 2, 1.6, SERIES[[it$key]])
+        txt(toupper(it$key), rx + 6, y + it$h / 2, F_MONO, d$eye, if (dark) COOL else MU)
+      }
+      if (it$type == "keys") {
+        kx <- rx
+        for (k in names(SERIES)) {
+          dot(kx + 1.6, y + it$h / 2, 1.6, SERIES[[k]])
+          txt(toupper(k), kx + 6, y + it$h / 2, F_MONO, d$eye, if (dark) COOL else MU)
+          kx <- kx + tw(toupper(k), F_MONO, d$eye) + 15
+        }
+      }
+      if (it$type == "pane") kpi_pane_at(rx, y, it$h, fill = pane_fill)
+      y <- y + it$h
+      prev <- it$type
     }
   }
+  if (kpi_row) kpi_row_at(x0 + ip, top + content_h - 18, w - 2 * ip, fill = pane_fill)
   pad + h
 }
 
@@ -198,14 +275,6 @@ kpi_pills <- function(x, y, stack = FALSE) {
     w <- pill(paste(m[1], m[2]), x, y, grDevices::adjustcolor(col, alpha.f = .12), col)
     if (stack) y <- y + 11 else x <- x + w + 2.5
   }
-}
-KPI_PANE_W <- 112
-kpi_pane <- function(W, pad, top, h) {
-  x0 <- W - pad - 8 - KPI_PANE_W
-  rr(x0, top, KPI_PANE_W, h, PAPER, r = 7)
-  mono(KPI$unit, x0 + 7, top + 8, 3.8, MU)
-  txt(KPI$value, x0 + 7, top + 20, F_DISP, 13, INK)
-  kpi_pills(x0 + 7, top + h - 8)
 }
 kpi_strip <- function(pad, y) {
   txt(KPI$value, pad + 2, y + 7, F_DISP, 15, INK)
@@ -360,12 +429,7 @@ card <- function(W, H, header = "A", kpi = "none", body = "A", type = "line", le
   }
   is_line <- type == "line"
   keys <- if (is_line) SERIES else c(Argentina = P, Resto = SLATE[3])
-  right_w <- if (kpi == "A") KPI_PANE_W else 0
-  y <- hdr_card(header, W, pad, right_w, legend = legend == "C", fill = hfill)
-  if (kpi == "A") {
-    top <- pad + (if (header == "A") d$kpi_top else d$ip - 1)
-    kpi_pane(W, pad, top, y - 7 - top)
-  }
+  y <- hdr_card(header, W, pad, legend = legend == "C", kpi = kpi == "A", fill = hfill)
   if (kpi == "B") y <- kpi_strip(pad, y + 4)
   y <- y + 7
   bottom <- H - d$foot_h - (if (legend == "A") 14 else 4)
@@ -405,4 +469,31 @@ one <- function(...) {
   grid.newpage()
   card(convertWidth(unit(1, "npc"), "pt", valueOnly = TRUE),
        convertHeight(unit(1, "npc"), "pt", valueOnly = TRUE), ...)
+}
+
+# Every header combination alone, for review: kinds × (plain, legend, KPI) ×
+# (tint, no fill), each at the width of a half-page chart.
+header_matrix <- function(kinds = c("A", "C", "D", "dark"), fills = c("tint", "none")) {
+  grid.newpage()
+  d <<- DIMS$compact
+  W <- convertWidth(unit(1, "npc"), "pt", valueOnly = TRUE)
+  colw <- (W - 14) / 2
+  y <- 0
+  cells <- list()
+  for (k in kinds) for (f in (if (k == "dark") "tint" else fills)) for (j in 0:2) cells <- c(cells, list(list(k = k, f = f, j = j)))
+  for (i in seq(1, length(cells), by = 2)) {
+    row_h <- 0
+    for (c in 0:1) {
+      if (i + c > length(cells)) next
+      cl <- cells[[i + c]]
+      pushViewport(viewport(x = unit(c * (colw + 14), "pt"), y = Y(y), width = unit(colw, "pt"),
+                            height = unit(160, "pt"), just = c("left", "top")))
+      lab <- c("sola", "leyenda C", "KPI A")[cl$j + 1]
+      txt(paste0(if (cl$k == "dark") "Obsidiana" else cl$k, if (cl$f == "none") " sin fondo" else "", " · ", lab), 2, 4, F_MONO, 4.6, MU)
+      hh <- hdr_card(cl$k, colw, 10, legend = cl$j == 1, kpi = cl$j == 2, fill = cl$f)
+      popViewport()
+      row_h <- max(row_h, hh)
+    }
+    y <- y + row_h + 8
+  }
 }
