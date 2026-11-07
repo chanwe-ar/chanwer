@@ -193,7 +193,7 @@ chanwe_gt <- function(
       "#%1$s .gt_row { font-variant-numeric: tabular-nums; }",
       "#%1$s .gt_row.gt_right { font-family:%6$s; font-size:12px; }",
       "#%1$s .gt_stub { color:%3$s; font-weight:500; }",
-      # Source note: the orange caption stamp (styled inline, see
+      # Source note: the quiet mono label (styled inline, see
       # chanwe_html_stamp_style())
       "#%1$s .gt_sourcenote { line-height:1 !important; }",
       # hairline above the source note, matching the reactable caption

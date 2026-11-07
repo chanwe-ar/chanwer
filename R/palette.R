@@ -533,12 +533,12 @@ chanwe_preview_palette <- function(palette = "all") {
   )
 
   ggplot2::ggplot(df, ggplot2::aes(x = col, y = -row)) +
-    ggplot2::geom_tile(
-      ggplot2::aes(fill = value),
-      color = chanwe_get_colors()[["pure-white"]],
-      linewidth = 0.8,
-      width = 0.95,
-      height = 0.95
+    ggplot2::layer(
+      geom = GeomChanweSwatch,
+      stat = "identity",
+      position = "identity",
+      mapping = ggplot2::aes(fill = value),
+      params = list(width = 0.94, height = 0.92)
     ) +
     ggplot2::geom_text(
       ggplot2::aes(label = label, color = label_col),
@@ -566,3 +566,21 @@ chanwe_preview_palette <- function(palette = "all") {
       )
     )
 }
+
+# A palette swatch is a v2 pane: the tile with the `pane` radius (12px = 9pt).
+GeomChanweSwatch <- ggplot2::ggproto(
+  "GeomChanweSwatch", ggplot2::GeomTile,
+  draw_panel = function(self, data, panel_params, coord, lineend = "mitre", linejoin = "mitre") {
+    d <- coord$transform(data, panel_params)
+    r <- grid::unit(chanwe_tokens$radii$pane * 0.75, "pt")
+    grobs <- lapply(seq_len(nrow(d)), function(i) {
+      grid::roundrectGrob(
+        x = d$xmin[i], y = d$ymin[i],
+        width = d$xmax[i] - d$xmin[i], height = d$ymax[i] - d$ymin[i],
+        default.units = "native", just = c("left", "bottom"), r = r,
+        gp = grid::gpar(fill = d$fill[i], col = NA)
+      )
+    })
+    do.call(grid::grobTree, grobs)
+  }
+)

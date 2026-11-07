@@ -43,13 +43,18 @@
 #let chanwe-line-chart(
   series,
   x-labels:    (),
-  width:       120mm,
+  width:       auto,
   height:      60mm,
   label-size:  7pt,
   y-min:       0,
   y-max:       1,
   colors:      auto,
 ) = {
+  // By default the chart takes the width it is given, like a figure.
+  if width == auto {
+    return layout(s => chanwe-line-chart(series, x-labels: x-labels, width: s.width, height: height,
+      label-size: label-size, y-min: y-min, y-max: y-max, colors: colors))
+  }
   // The hub's categorical order (tokens.typ `chanwe-plot.categorical`, v2):
   // the accent first, `chart-red` last, away from `primary` (dE00 5.0). Pass
   // `colors:` for a focus chart (orange plus the slate ramp, Q3 C1).
@@ -61,34 +66,47 @@
   let x-step = if n > 1 { width / (n - 1) } else { width }
   let y-range = y-max - y-min
 
+  // v2 chart grammar, the same as chanwer: horizontal slate gridlines only, no
+  // frame, round line ends, mono axis labels, a dot legend over the plot.
   // Sin cortar: el gráfico se dibuja con `place` dentro de un bloque de alto
   // fijo, así que partirlo no reparte el contenido —lo deja colgando fuera de
   // la caja de texto—. Si no entra, pasa entero a la página siguiente.
-  block(width: width, height: height + 10mm, breakable: false)[
-    #place(top + left,
-      rect(width: width, height: height,
-        fill: none, stroke: 0.5pt + _t.border)
-    )
-    #for (si, (name, vals)) in series.enumerate() {
-      let col = palette.at(calc.rem(si, palette.len()))
-      for i in range(vals.len() - 1) {
-        let x1 = x-step * i
-        let y1 = height * (1 - (vals.at(i) - y-min) / y-range)
-        let x2 = x-step * (i + 1)
-        let y2 = height * (1 - (vals.at(i + 1) - y-min) / y-range)
-        place(top + left, dx: x1, dy: y1,
-          line(end: (x2 - x1, y2 - y1), stroke: 1.5pt + col))
+  let named = series.filter(((name, _)) => name != none and name != "")
+  block(width: width, breakable: false, below: 6mm)[
+    #set block(spacing: 0pt)
+    #if named.len() > 0 {
+      for (si, (name, _)) in series.enumerate() {
+        box(cw-dot(palette.at(calc.rem(si, palette.len()))))
+        h(1.4mm)
+        text(font: _t.font-mono, size: label-size - 1pt, tracking: 0.08em, fill: _t.fg-muted, upper(name))
+        h(4mm)
       }
+      v(3mm)
     }
-    #if x-labels.len() > 0 {
-      place(bottom + left, dy: 8mm,
-        stack(dir: ltr,
-          ..x-labels.enumerate().map(((i, lbl)) =>
-            move(dx: x-step * i,
-              align(center, text(size: label-size, fill: _t.fg-muted, lbl)))
-          )
-        )
-      )
-    }
+    #block(width: width, height: height + 6mm)[
+      #for g in range(5) {
+        place(top + left, dy: height * g / 4,
+          line(length: width, stroke: 0.5pt + _t.rule))
+      }
+      #for (si, (name, vals)) in series.enumerate() {
+        let col = palette.at(calc.rem(si, palette.len()))
+        for i in range(vals.len() - 1) {
+          let x1 = x-step * i
+          let y1 = height * (1 - (vals.at(i) - y-min) / y-range)
+          let x2 = x-step * (i + 1)
+          let y2 = height * (1 - (vals.at(i + 1) - y-min) / y-range)
+          place(top + left, dx: x1, dy: y1,
+            line(end: (x2 - x1, y2 - y1), stroke: (paint: col, thickness: 1.5pt, cap: "round")))
+        }
+      }
+      #for (i, lbl) in x-labels.enumerate() {
+        let edge = if i == 0 { left } else if i == x-labels.len() - 1 { right } else { center }
+        let slot = 24mm
+        let dx = if i == 0 { 0mm } else if i == x-labels.len() - 1 { width - slot } else { x-step * i - slot / 2 }
+        place(top + left, dx: dx, dy: height + 2.2mm,
+          box(width: slot, align(edge,
+            text(font: _t.font-mono, size: label-size - 1pt, tracking: 0.04em, fill: _t.fg-muted, lbl))))
+      }
+    ]
   ]
 }

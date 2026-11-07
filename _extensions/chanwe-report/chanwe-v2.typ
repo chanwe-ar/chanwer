@@ -52,6 +52,56 @@
   place(center + horizon, circle(radius: dot, fill: color.transparentize(transparency), stroke: none)),
 )
 
+// One footer language (2026-11-07): every figure, table and page says the same
+// three things the same way. A dot and a mono label name the piece, the caption
+// follows it, and what closes a piece is quiet mono over a hairline. No stamp:
+// orange is the signal, and a pill under every figure made it wallpaper.
+#let cw-figure-head(label, gloss: none) = {
+  grid(
+    columns: (auto, 1fr),
+    column-gutter: 3.5mm,
+    align: left + top,
+    {
+      cw-dot(_t.primary, size: 4.2pt)
+      h(1.8mm)
+      cw-label(label, fill: _t.fg, size: 6pt)
+    },
+    if gloss != none {
+      text(font: _t.font-sans, size: 7.6pt, weight: _t.weight-body-plus, fill: _t.fg-muted, gloss)
+    },
+  )
+  v(3mm)
+}
+
+#let cw-figure-foot(left-slot, right-slot) = {
+  v(2.6mm)
+  line(length: 100%, stroke: 0.5pt + _t.rule)
+  v(1.8mm)
+  grid(
+    columns: (auto, 1fr),
+    column-gutter: 7mm,
+    align: (left + top, right + top),
+    if left-slot != none { cw-label(left-slot, size: 5.6pt, weight: _t.weight-regular) },
+    if right-slot != none {
+      text(font: _t.font-sans, size: 7.2pt, weight: _t.weight-body-plus, fill: _t.fg-muted, right-slot)
+    },
+  )
+}
+
+// A loose figure's caption, under it.
+#let cw-figure-caption(it) = align(left, text(
+  font: _t.font-mono, size: 5.6pt, weight: _t.weight-regular, tracking: 0.1em, fill: _t.fg-muted,
+  upper(it.supplement) + " " + it.counter.display() + "  ·  " + upper(it.body),
+))
+
+// The folio: where you are in full, the total a step back.
+#let cw-folio(strong: _t.fg, soft: _t.fg-muted) = context text(
+  font: _t.font-mono, size: 6.5pt, weight: _t.weight-medium, tracking: 0.1em, {
+    text(fill: strong, str(counter(page).get().first()))
+    text(fill: soft, weight: _t.weight-regular, " / " + str(counter(page).final().first()))
+  },
+)
+
 // The obsidian band (brand-v2 §2, §7): one per page at most, floating with
 // a margin (never edge to edge), 24px corners, the dot field and the neutral
 // top sheen over its top 30%, a 1px light edge on top. Text on it is

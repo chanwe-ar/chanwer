@@ -133,10 +133,11 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #'   the value axis of a column or line chart), `"x"` (vertical lines, for
 #'   horizontal bars, where the value axis is x) or `"none"`. One direction
 #'   only, never both.
-#' @param header_line When `TRUE` (default) draws the thin separator line that
+#' @param header_line When `TRUE` draws the thin separator line (off by default
+#'   since it stacked against the first gridline) that
 #'   visually closes the header area: the subtitle grob draws it between the
 #'   subtitle text and the chart, and when `has_subtitle = FALSE` the title grob
-#'   draws it below the title text. Set to `FALSE` to suppress the line entirely
+#'   draws it below the title text
 #'   (e.g. for minimal or embedded layouts).
 #'
 #' @section Header layout modes:
@@ -220,7 +221,7 @@ theme_chanwe <- function(
   plot_borders = "none",
   has_subtitle = TRUE,
   compact_title = TRUE,
-  header_line = TRUE,
+  header_line = FALSE,
   caption_style = c("mono", "stamp"),
   grid = c("y", "x", "none")
 ) {
@@ -288,9 +289,8 @@ theme_chanwe <- function(
     colour = plot_tk$title,
     eyebrow_family = mono_family,
     eyebrow_size = base_text_size * 0.62,
-    # Eyebrow and the caption stamp share the brand orange (#FD3810,
-    # the HTML section-number accent) so charts, tables and document chrome
-    # carry one accent.
+    # The eyebrow in the brand orange (#FD3810): charts, tables and document
+    # chrome carry one accent.
     eyebrow_colour = colors[["primary"]],
     ink_colour = colors[["ink"]],
     # Header and footer rules in slate, as in the chanwe-report figure frame
@@ -681,9 +681,10 @@ chanwe_subtitle <- function(text, note = NULL, kpi = NULL) {
 #' Chanwe Caption Helper
 #'
 #' Marks a string for the Chanwe caption treatment: [theme_chanwe()] renders
-#' the caption as the chanwe-report figure stamp -- a square orange box with
+#' the caption as one quiet mono line under the plot (with
+#' `caption_style = "stamp"`, the 2.x stamp -- a square orange box with
 #' the text in white JetBrains Mono caps -- under a thin slate separator
-#' line. Use inside `labs(caption = ...)`. Plain strings passed directly
+#' line). Use inside `labs(caption = ...)`. Plain strings passed directly
 #' to `labs(caption = )` receive the same treatment; this helper exists to
 #' keep call sites explicit and future-proof.
 #'

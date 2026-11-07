@@ -14,7 +14,7 @@ theme_chanwe(
   plot_borders = "none",
   has_subtitle = TRUE,
   compact_title = TRUE,
-  header_line = TRUE,
+  header_line = FALSE,
   caption_style = c("mono", "stamp"),
   grid = c("y", "x", "none")
 )
@@ -56,7 +56,8 @@ ways: top padding above the eyebrow 8 → 4 pt, gap between subtitle text
 and separator line 14 → 6 pt, and bottom padding below the separator line
 20 → 12 pt. Set to \code{FALSE} for the spacious layout.}
 
-\item{header_line}{When \code{TRUE} (default) draws the thin separator line that
+\item{header_line}{When \code{TRUE} draws the thin separator line (off by default
+since it stacked against the first gridline) that
 visually closes the header area: the subtitle grob draws it between the
 subtitle text and the chart, and when \code{has_subtitle = FALSE} the title grob
 draws it below the title text. Set to \code{FALSE} to suppress the line entirely

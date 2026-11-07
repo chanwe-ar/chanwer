@@ -53,7 +53,7 @@ Applies the Chanwe header grammar and chart chrome to an existing
 \code{highcharter} object: eyebrow / title / subtitle block anchored top-left
 in Schibsted Grotesk, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
 ticks, hairline y-grid, an ink tooltip in mono, no exporting menu or
-credits, and an optional caption drawn as the chanwe-report figure stamp
+credits, and an optional caption drawn as a quiet mono line
 (a square orange box with white mono caps) under a slate hairline.
 The y-axis title moves into the top-left corner of the plot area,
 rotated 90 degrees, on the same vertical line as the tick numbers rather

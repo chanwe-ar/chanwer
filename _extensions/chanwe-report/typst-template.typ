@@ -97,11 +97,11 @@ $chanwe-v2.typ()$
 // texto y el acento se quedan como están y sólo el wordmark cambia al corte
 // gris de la portada (rule-cool): el renglón de servicio es un riel.
 #let _hf-palette(inverse) = if inverse == "primary" {
-  (text: _t.white, accent: _t.white, rule: _t.white.transparentize(60%), logo: "Logo_Papel.svg")
+  (text: _t.white, strong: _t.white, accent: _t.white, rule: _t.white.transparentize(60%), logo: "Logo_Papel.svg")
 } else if inverse == "dark" {
-  (text: _t.fg-subtle, accent: _t.primary, rule: _t.rule-ink, logo: "Logo_Gris.svg")
+  (text: _t.fg-subtle, strong: _t.rule-cool, accent: _t.primary, rule: _t.rule-ink, logo: "Logo_Gris.svg")
 } else {
-  (text: _t.fg-muted, accent: _t.primary, rule: _t.border, logo: "Logo_Negro.svg")
+  (text: _t.fg-muted, strong: _t.fg, accent: _t.primary, rule: _t.border, logo: "Logo_Negro.svg")
 }
 
 #let chanwe-header(section, topic, inverse: none) = context {
@@ -123,8 +123,8 @@ $chanwe-v2.typ()$
           image(_chanwe-assets + c.logo, height: 3.5mm, fit: "contain"),
         )
       }),
-      // Mismo filete que separa los renglones del índice.
-      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + c.rule)),
+      // Inside the margins, like the band: nothing on a v2 page bleeds by default.
+      line(length: 100%, stroke: 0.5pt + c.rule),
     )
   ]
 }
@@ -136,7 +136,7 @@ $chanwe-v2.typ()$
     #grid(
       rows: (auto, 1fr),
       // Mismo filete que cierra el encabezado.
-      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + c.rule)),
+      line(length: 100%, stroke: 0.5pt + c.rule),
       align(horizon, {
         // Mismo tono que el encabezado: el pie es la otra mitad del mismo
         // renglón de servicio. Un solo tono para todo el renglón, el que ya
@@ -146,7 +146,7 @@ $chanwe-v2.typ()$
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
           [#upper[#doc-id #h(8pt) #edition]],
-          [#text(size: 6.9pt, upper(str(counter(page).get().first()) + " / " + str(counter(page).final().first())))],
+          cw-folio(strong: c.strong, soft: c.text),
         )
       }),
     )
@@ -191,6 +191,7 @@ $chanwe-cards.typ()$
 $chanwe-lists.typ()$
 $chanwe-pages.typ()$
 $chanwe-charts.typ()$
+$chanwe-site.typ()$
 
 // =============================================================
 // MAIN TEMPLATE FUNCTION (called by typst-show.typ)
@@ -375,9 +376,10 @@ $chanwe-charts.typ()$
   // Typst las deja en negro y con un filete negro al 30%. La nota es material
   // de servicio, como el pie de pagina: mismo tono (`ink-fg`) y un filete
   // slate en vez del negro.
-  set footnote.entry(separator: line(length: 38%, stroke: 0.5pt + _t.rule))
+  set footnote.entry(separator: line(length: 12mm, stroke: 0.5pt + _t.rule-cool), gap: 0.7em, clearance: 4mm)
   show footnote.entry: it => {
-    set text(font: _t.font-sans, size: 8pt, weight: _t.weight-body, fill: _t.fg-muted)
+    set text(font: _t.font-sans, size: 7.6pt, weight: _t.weight-body, fill: _t.fg-muted)
+    set par(leading: 0.55em, spacing: 0.6em)
     it
   }
 
@@ -401,10 +403,8 @@ $chanwe-charts.typ()$
   }
   show heading.where(level: 1): it => {
     pagebreak(weak: true)
-    // Typst deja el encabezado un 30% del margen superior por encima del
-    // cuerpo (15mm x 0.3 = 4.5mm): se recupera ese aire para que la losa
-    // quede pegada al filete del header.
-    v(-4.5mm)
+    // The header's rule sits 7mm above the text block; the band floats 5mm under it.
+    v(-2mm)
     // v2-print: the chapter opener is the obsidian band (brand-v2 §2, §7):
     // floating inside the text block with its 24px corners, the dot field and
     // the neutral sheen — no longer a slab bled from edge to edge. The eyebrow
@@ -561,7 +561,8 @@ $chanwe-charts.typ()$
     font: _t.font-mono, size: 6pt, weight: _t.weight-medium,
     tracking: 0.1em, fill: _t.fg-muted,
   )
-  show table.cell.where(y: 0): it => upper(it)
+  // A cell across the whole table is a title row (chanwe_kbl), not a column label.
+  show table.cell.where(y: 0): it => if it.colspan > 1 { it } else { upper(it) }
   show figure.where(kind: table): it => {
     v(12mm, weak: true)
     it.body
@@ -570,13 +571,9 @@ $chanwe-charts.typ()$
     v(12mm, weak: true)
   }
   show figure.where(kind: image): it => {
-    v(14mm, weak: true)
-    line(length: 100%, stroke: 0.3pt + _t.ink)
-    v(4mm)
+    v(12mm, weak: true)
     it.body
-    v(3mm)
-    line(length: 100%, stroke: 0.3pt + _t.ink)
-    v(1.5mm)
+    v(2.6mm)
     it.caption
     v(12mm, weak: true)
   }
@@ -585,18 +582,20 @@ $chanwe-charts.typ()$
   // arriba, sello de la serie abajo. Quarto las emite con `kind:
   // "quarto-float-fig"` / `"quarto-float-tbl"`, no como `image` / `table`,
   // así que las dos reglas de arriba no las alcanzan.
-  let _native-stamp = _chanwe-clean-str(publication-series)
-  show figure.where(kind: "quarto-float-fig"): it => chanwe-native-figure(it, stamp: _native-stamp)
-  show figure.where(kind: "quarto-float-tbl"): it => chanwe-native-figure(it, stamp: _native-stamp)
+  show figure.where(kind: "quarto-float-fig"): it => chanwe-native-figure(it)
+  show figure.where(kind: "quarto-float-tbl"): it => chanwe-native-figure(it)
   // Keep 3× more clear space after a figure or table footer before prose resumes.
   show figure: set block(above: 11mm, below: 12mm)
-  show figure.caption: it => align(left, text(
-    font: _t.font-mono, size: 5.5pt, weight: _t.weight-hairline, tracking: 0.10em,
-    fill: _t.ink, upper(it.supplement) + " " + it.counter.display() + "  ·  " + upper(it.body),
-  ))
+  show figure.caption: cw-figure-caption
 
   // ---- COVER (optional) -------------------------------------
-  if cover and cover-variant == "hero" {
+  if cover and cover-variant == "photo" {
+    // The site's hero as the whole page (chanwe-site.typ).
+    chanwe-photo-cover-page(
+      title: title, subtitle: subtitle, badge: taggy, doc-id: doc-id, edition: edition,
+      date: date, meta-rows: meta-rows, art: hero-image, wordmark: wordmark,
+    )
+  } else if cover and cover-variant == "hero" {
     // La portada que traia chanwe-report antes de la fusion. No recibe las
     // claves `publication-*`: esas son de la research.
     chanwe-hero-cover-page(
@@ -656,7 +655,11 @@ $chanwe-charts.typ()$
   // that also renders to HTML needs one). The format draws its own marks.
   set page(
     paper: _chanwe-paper,
-    margin: (top: 15mm, bottom: 15mm, x: 18mm),
+    // Room between the service lines and the page: the rule sits 7mm above the
+    // text block, where a heading at the top of a page used to touch it.
+    margin: (top: 19mm, bottom: 17mm, x: 18mm),
+    header-ascent: 7mm,
+    footer-descent: 5mm,
     background: none,
     header: chanwe-header(section, topic),
     footer: chanwe-footer(_chanwe-clean-str(doc-id), _chanwe-clean-str(edition)),

@@ -13,7 +13,8 @@
 #'
 #' @param data A data frame or tibble.
 #' @param title,subtitle,eyebrow Header block rendered above the table.
-#' @param caption Source note rendered below the table as the orange stamp.
+#' @param caption Source note rendered below the table as a mono label, in the
+#'   foot of the pane (or the orange stamp, see `caption_style`).
 #' @param signed Optional character vector of column names coloured by
 #'   valence (positive green, negative vermillion, zero/NA neutral).
 #' @param smaller_is_better Logical. Flip the valence mapping for `signed`

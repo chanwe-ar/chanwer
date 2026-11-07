@@ -21,6 +21,7 @@ contributes:
         - filters/figure-frame.lua
         - filters/mark-highlight.lua
         - filters/area-heading.lua
+        - ../chanwe-report/chanwe-site.lua
         - ../chanwe-report/chanwe-title-dot.lua
       title-block-banner: true
       toc: true

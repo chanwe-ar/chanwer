@@ -195,9 +195,8 @@ chanwe_html_header_tag <- function(
   )
 }
 
-# Source line as an htmltools tag (chanwe_caption() for HTML), styled as the
-# chanwe-report figure-frame stamp: a square primary box with white mono caps,
-# under a slate hairline.
+# Source line as an htmltools tag (chanwe_caption() for HTML): a quiet mono label
+# (or the 2.x stamp, see chanwe_html_stamp_style()).
 # As with chanwe_html_header_tag(), a `bg` puts the line on the table
 # background with the 12px side inset so the widget reads as one card.
 chanwe_html_caption_tag <- function(caption, bg = NULL, caption_style = NULL) {

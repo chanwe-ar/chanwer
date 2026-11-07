@@ -25,6 +25,7 @@ contributes:
       filters:
         - chanwe-lists.lua
         - chanwe-cards.lua
+        - chanwe-site.lua
         - chanwe-filters.lua
       template-partials:
         - chanwe-brand-tokens.typ
@@ -39,3 +40,4 @@ contributes:
         - chanwe-elements.typ
         - chanwe-pages.typ
         - chanwe-charts.typ
+        - chanwe-site.typ
