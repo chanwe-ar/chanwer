@@ -1,5 +1,10 @@
 project:
   type: default
+  # Only the .qmd files are documents. Markdown files here are notes for people
+  # and tools (README, AGENTS, ELEPHANT.md), and a note that opens with `---`
+  # broke `quarto preview` as unreadable front matter.
+  render:
+    - "*.qmd"
 format:
   typst:
     chanwe-assets: "_extensions/chanwe-report/assets/"
