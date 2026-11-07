@@ -43,7 +43,7 @@ source("chanwer-options-helpers.R")
 
 # Qué cambió {.unnumbered}
 
-Esta ronda arma lo elegido. En gráficos: cabecera **A** por defecto, con **C** y **D** como variantes, las tres como *card* compacta y con el título y la bajada nuevos (Schibsted y la cursiva editorial); KPI **A**, **B** y **C**; cuerpo **A** con la opción *main* (la serie principal se marca al final con su halo y su valor) y **B**; leyenda **A** más plana y **C**; pie **A** y **B** más planos; y el marco exterior en tres variantes: simple, con sombra y sin marco. Las tablas toman la misma cabecera, el mismo pie y el mismo marco, y suman láminas nuevas: densidad, estilo de celdas, totales y columnas especiales.
+Esta ronda arma lo elegido. En gráficos: cabecera **A** por defecto, con **C** y **D** como variantes, las tres como *card* compacta y con el título en Schibsted y la bajada en Satoshi; KPI **A**, **B** y **C**; cuerpo **A** con la opción *main* (la serie principal se marca al final con su halo y su valor) y **B**; leyenda **A** más plana y **C**; pie **A** y **B** más planos; y el marco exterior en tres variantes: simple, con sombra y sin marco. Las tablas toman la misma cabecera, el mismo pie y el mismo marco, y suman láminas nuevas: densidad, estilo de celdas, totales y columnas especiales.
 
 Primero van las **combinaciones**, a tamaño real; después, cada parte por separado. El punto negro marca la opción por defecto.
 
@@ -107,7 +107,7 @@ sheet(list(
 ))
 ```
 
-Las tres elegidas, ahora como una *card* de tinte, más bajas, con el título en Schibsted y la bajada en la cursiva editorial (Cormorant Garamond, en `emphasis`), la misma voz que las bajadas del informe. La cuarta es nueva: la cabecera entera como la banda de obsidiana de los capítulos, con la trama de puntos; para el gráfico protagonista de una sección.
+Las tres elegidas, ahora como una *card* de tinte, más bajas, con el título en Schibsted y la bajada en Satoshi. Con la leyenda en la cabecera (C), la card se divide 75 / 25: el título a la izquierda y las series apiladas a la derecha, tras un filete. La cuarta es nueva: la cabecera entera como la banda de obsidiana de los capítulos, con la trama de puntos; para el gráfico protagonista de una sección.
 
 ## KPI
 
@@ -196,8 +196,8 @@ sheet(list(
   text(font: _t.font-display, size: 11.5pt, weight: _t.weight-display, tracking: -0.04em,
        fill: if dark { _t.rule-cool } else { _t.fg }, "Ingresos por región")
   v(1.6mm)
-  text(font: _t.font-serif, style: "italic", size: 8.6pt, weight: _t.weight-body,
-       fill: if dark { _t.fg-subtle } else { _o-emph }, "Primer y segundo trimestre de 2026, en miles de dólares")
+  text(font: _t.font-sans, size: 7pt, weight: _t.weight-body,
+       fill: if dark { _t.fg-subtle } else { _t.fg-muted }, "Primer y segundo trimestre de 2026, en miles de dólares")
 }
 #let _o-head(kind) = pad(x: 2.4mm, top: 2.4mm, {
   let card(fill, body) = block(width: 100%, fill: fill, radius: 2.8mm, inset: (x: 3mm, y: 2.6mm), clip: true, body)
@@ -226,7 +226,7 @@ sheet(list(
       })))
   } else if kind == "dark" {
     block(width: 100%, fill: _t.ink, radius: 2.8mm, clip: true, {
-      place(top + left, rect(width: 100%, height: 100%, fill: cw-dot-field(step: 2.6mm, dot: 0.35pt), stroke: none))
+      place(top + left, rect(width: 100%, height: 100%, fill: cw-dot-field(step: 2.6mm, dot: 0.28pt, transparency: 62%), stroke: none))
       block(width: 100%, inset: (x: 3mm, y: 2.6mm), {
         grid(columns: (1fr, auto), align: (left + horizon, right + horizon),
           { box(baseline: -0.2pt, cw-dot(_t.primary, size: 3.2pt)); h(1.6mm); _o-mono("Finanzas · Cierre", size: 4.6pt, fill: _t.primary) },
