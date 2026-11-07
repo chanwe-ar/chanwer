@@ -27,8 +27,7 @@
 //
 // Se dibuja *antes* del capitulo siguiente, no despues del propio: desde
 // adentro del `outline` cada entrada se emite suelta y un subnivel no sabe si
-// es el ultimo de su capitulo. Por eso el ultimo de todos lo pone
-// `chanwe-agenda` a mano, despues del `outline`.
+// es el ultimo de su capitulo.
 #let _toc-chapter-rule = block(spacing: 0pt,
   pad(left: _toc-indent, line(length: 100%, stroke: 0.5pt + _t.border)))
 
@@ -328,9 +327,7 @@
                   text(font: _t.font-display, weight: _t.weight-display,
                        size: _toc-section-size, tracking: -0.05em,
                        fill: _t.fg, cur-part.title)
-                  text(font: _t.font-display, weight: _t.weight-display,
-                       size: _toc-section-size, tracking: -0.05em,
-                       fill: _t.primary, ".")
+                  _chanwe-title-dot(_toc-section-size)
                 },
                 [],
                 {
@@ -416,21 +413,9 @@
         }
       }
     }
+    // The agenda ends on its last row: a closing rule after it had nothing to
+    // separate, and on a full page it opened an empty one.
     outline(title: none, depth: 2)
-    // El cierre del ultimo capitulo. Adentro del `outline` no hay forma de
-    // saber cual es, asi que se emite aca, ya fuera de el. Misma regla que
-    // adentro: solo si el capitulo no tuvo subniveles.
-    context {
-      let h1s = query(heading.where(level: 1))
-      if h1s.len() > 0 {
-        let last-loc = h1s.last().location()
-        let had-sub = query(heading.where(level: 2).after(last-loc, inclusive: false)).len() > 0
-        if not had-sub {
-          v(7mm)
-          _toc-chapter-rule
-        }
-      }
-    }
   }
 }
 

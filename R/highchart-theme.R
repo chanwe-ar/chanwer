@@ -4,7 +4,7 @@
 #' `highcharter` object: eyebrow / title / subtitle block anchored top-left
 #' in Schibsted Grotesk, Satoshi body font, JetBrains Mono axis ticks, no axis lines or
 #' ticks, hairline y-grid, an ink tooltip in mono, no exporting menu or
-#' credits, and an optional caption drawn as the chanwe-report figure stamp
+#' credits, and an optional caption drawn as a quiet mono line
 #' (a square orange box with white mono caps) under a slate hairline.
 #' The y-axis title moves into the top-left corner of the plot area,
 #' rotated 90 degrees, on the same vertical line as the tick numbers rather
@@ -204,7 +204,7 @@ chanwe_highchart <- function(
           "    if (c.__cwHeaderRule) { c.__cwHeaderRule.attr({ d: td }); }",
           "    else { c.__cwHeaderRule = c.renderer.path(td).attr(ruleAttr).add(); }",
           "  }",
-          "  if (c.options.caption && c.options.caption.text && c.caption && c.caption.element) {",
+          "  if (%2$s && c.options.caption && c.options.caption.text && c.caption && c.caption.element) {",
           "    var capRect = c.caption.element.getBoundingClientRect();",
           "    var cx = capRect.left - contRect.left;",
           "    var cy = (capRect.top - contRect.top) - 16;",
@@ -215,7 +215,9 @@ chanwe_highchart <- function(
           "}",
           sep = "\n"
         ),
-        tk$hairline
+        tk$hairline,
+        # v2: the caption has no rule of its own; only the stamp keeps one.
+        if (chanwe_caption_style(caption_style) == "stamp") "true" else "false"
       )))
     ) |>
     highcharter::hc_colors(unname(chanwe_palette("chart"))) |>

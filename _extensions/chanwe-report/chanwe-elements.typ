@@ -339,29 +339,22 @@
     // izquierda y la glosa contra el margen derecho. Sobre obsidiana el filete
     // pasa a `rule-ink`, que es el que se dibuja sobre oscuro.
     #if source != none or source-label != none {
-      // Sobre naranja el filete va blanco y más fino, y el sello se invierte
-      // —blanco con el texto en naranja—: naranja sobre naranja no existía.
+      // The foot of a figure: quiet mono over a hairline, in the tone of the surface.
       let on-primary = color == "primary"
-      v(2.4mm)
-      line(length: 100%, stroke: (if on-primary { 0.2pt } else { 0.3pt })
-        + (if on-primary { _t.white } else if on-dark { _t.rule-ink } else { _t.border-cool }))
-      v(1.6mm)
+      let foot-tone = if on-primary { _t.white } else if on-dark { s.source } else { _t.fg-muted }
+      v(2.6mm)
+      line(length: 100%, stroke: 0.5pt
+        + (if on-primary { _t.white.transparentize(60%) } else if on-dark { _t.rule-ink } else { _t.rule }))
+      v(1.8mm)
       grid(
         columns: (auto, 1fr),
         column-gutter: 7mm,
-        align: (left + horizon, right + horizon),
+        align: (left + top, right + top),
         if source-label != none {
-          box(
-            fill: if on-primary { _t.white } else { _t.primary },
-            radius: _t.radius-pill,
-            inset: (x: 4mm, y: 1.6mm),
-            text(font: _t.font-mono, size: 4.7pt, weight: _t.weight-display, tracking: 0.16em,
-                 fill: if on-primary { _t.primary } else { _t.white }, upper(source-label)),
-          )
+          cw-label(source-label, size: 5.6pt, weight: _t.weight-regular, fill: foot-tone)
         } else { [] },
         if source != none {
-          text(font: _t.font-sans, size: 7.2pt, weight: _t.weight-body-plus,
-               fill: if on-dark { s.source } else { _t.fg-muted }, source)
+          text(font: _t.font-sans, size: 7.2pt, weight: _t.weight-body-plus, fill: foot-tone, source)
         } else { [] },
       )
     }
@@ -883,83 +876,15 @@
 // form the lower alt-footer. The body may contain a Markdown image,
 // generated plot, table, or raw Typst figure.
 // =============================================================
-// Fila superior del marco: rótulo mono con filete naranja a la izquierda,
-// glosa a la derecha, y el filete que cierra la fila. La comparten el marco
-// de figura y las figuras nativas de Quarto (ver `chanwe-native-figure`).
-#let _chanwe-frame-top(top-left, top-right) = {
-  grid(
-    columns: (5fr, 7fr),
-    column-gutter: 7mm,
-    align: (left + horizon, right + horizon),
-    if top-left != none {
-      grid(
-        columns: (8mm, 1fr),
-        column-gutter: 3mm,
-        align: left + horizon,
-        line(length: 8mm, stroke: 1.1pt + _t.primary),
-        text(
-          font: _t.font-mono,
-          size: 6pt,
-          weight: _t.weight-medium,
-          tracking: 0.18em,
-          fill: _t.ink,
-          upper(top-left),
-        ),
-      )
-    } else { [] },
-    if top-right != none {
-      align(right, text(
-        font: _t.font-sans,
-        size: 7.4pt,
-        weight: _t.weight-body-plus,
-        fill: _t.fg-muted,
-        top-right,
-      ))
-    } else { [] },
-  )
-  v(1.6mm)
-  line(length: 100%, stroke: 0.3pt + _t.border-cool)
-  v(2.4mm)
+// The frame's two rows are the shared footer language (chanwe-v2.typ).
+#let _chanwe-frame-top(top-left, top-right) = if top-left != none {
+  cw-figure-head(top-left, gloss: top-right)
+} else if top-right != none {
+  text(font: _t.font-sans, size: 7.6pt, weight: _t.weight-body-plus, fill: _t.fg-muted, top-right)
+  v(3mm)
 }
 
-// Fila inferior del marco: filete, sello naranja a la izquierda y glosa
-// contra el margen derecho. El pie de la derecha va contra el margen, como
-// el de arriba: los dos rótulos largos comparten el mismo canto y el sello
-// queda solo a la izquierda.
-#let _chanwe-frame-bottom(bottom-left, bottom-right) = {
-  v(2.4mm)
-  line(length: 100%, stroke: 0.3pt + _t.border-cool)
-  v(1.6mm)
-  grid(
-    columns: (auto, 1fr),
-    column-gutter: 7mm,
-    align: (left + horizon, right + horizon),
-    if bottom-left != none {
-      box(
-        fill: _t.primary,
-        radius: _t.radius-pill,
-        inset: (x: 4mm, y: 1.6mm),
-        text(
-          font: _t.font-mono,
-          size: 4.7pt,
-          weight: _t.weight-display,
-          tracking: 0.16em,
-          fill: _t.white,
-          upper(bottom-left),
-        ),
-      )
-    } else { [] },
-    if bottom-right != none {
-      text(
-        font: _t.font-sans,
-        size: 7.2pt,
-        weight: _t.weight-body-plus,
-        fill: _t.fg-muted,
-        bottom-right,
-      )
-    } else { [] },
-  )
-}
+#let _chanwe-frame-bottom(bottom-left, bottom-right) = cw-figure-foot(bottom-left, bottom-right)
 
 #let chanwe-figure-frame(
   top-left: none,
@@ -995,12 +920,12 @@
 }
 
 // Figura nativa de Quarto — `![pie](…){#fig-x}` o una tabla con
-// `: pie {#tbl-x}` — vestida con el mismo marco que `.chanwe-figure-frame`:
-// arriba el rótulo "FIGURA 1" / "TABLA 1" (el suplemento sigue a `lang`) con
-// el pie como glosa, y abajo el sello de la serie de la publicación. La
-// numeración y las referencias cruzadas (`@fig-x`) no cambian: el contador
-// es el de Quarto. `it` es el `figure` de tipo `quarto-float-*`.
-#let chanwe-native-figure(it, stamp: none) = block(
+// `: pie {#tbl-x}` — vestida con la cabeza del marco: "FIGURA 1" / "TABLA 1" (el
+// suplemento sigue a `lang`) y el pie al lado. Nada debajo: lo que cierra una
+// figura es su fuente, y esa la escribe el autor. La numeración y las referencias
+// cruzadas (`@fig-x`) no cambian: el contador es el de Quarto. `it` es el `figure`
+// de tipo `quarto-float-*`.
+#let chanwe-native-figure(it) = block(
   width: 100%, breakable: false, above: 11mm, below: 12mm,
 )[
   #set block(spacing: 0pt)
@@ -1009,7 +934,6 @@
     if it.caption != none { it.caption.body } else { none },
   )
   #block(width: 100%, it.body)
-  #_chanwe-frame-bottom(stamp, none)
 ]
 
 // El marco sin casilleros: un filete arriba y otro abajo, del mismo tono y

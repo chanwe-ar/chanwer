@@ -50,3 +50,10 @@
     height: 24px;
   }
 }
+
+/* The site's photograph, for the photo hero and the giant word: here so the
+   url() resolves relative to assets/ and is embedded. */
+:root {
+  --cw-art-mountains: url("bg_mountains.jpg");
+  --cw-art-wordmark: url("chanwe-giant-word.svg");
+}

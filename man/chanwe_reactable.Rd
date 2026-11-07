@@ -23,7 +23,8 @@ chanwe_reactable(
 
 \item{title, subtitle, eyebrow}{Header block rendered above the table.}
 
-\item{caption}{Source note rendered below the table as the orange stamp.}
+\item{caption}{Source note rendered below the table as a mono label, in the
+foot of the pane (or the orange stamp, see \code{caption_style}).}
 
 \item{signed}{Optional character vector of column names coloured by
 valence (positive green, negative vermillion, zero/NA neutral).}

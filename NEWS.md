@@ -1,7 +1,18 @@
 # chanwer (development version)
 
-* The bundled `_extensions/` are chanwe-brand 3.2.0 (the v2 covers and inserts);
-  the showcases were re-rendered with them. They are not part of the package.
+# chanwer 3.1.0
+
+* Footers read as one language (with chanwe-brand). The plot caption is one quiet
+  mono line under the panel, without the hairline over it; `plot_borders` draws a
+  real line instead of a row of box-drawing characters. `chanwe_highchart()` loses
+  its caption rule too. Palette swatches are rounded panes.
+* `theme_chanwe(header_line = )` now defaults to `FALSE`: the rule under the
+  subtitle stacked against the first gridline. The eyebrow's short rule is a real
+  orange line.
+* `chanwe_kbl()` titles keep the display tracking.
+* The bundled `_extensions/` are chanwe-brand 3.3.0 (the v2 covers and inserts, one
+  footer language); the showcases were re-rendered
+  with them. They are not part of the package.
 
 # chanwer 3.0.1
 

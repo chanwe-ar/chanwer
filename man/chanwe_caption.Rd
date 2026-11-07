@@ -14,9 +14,10 @@ A character string for \code{labs(caption = ...)}.
 }
 \description{
 Marks a string for the Chanwe caption treatment: \code{\link[=theme_chanwe]{theme_chanwe()}} renders
-the caption as the chanwe-report figure stamp -- a square orange box with
+the caption as one quiet mono line under the plot (with
+\code{caption_style = "stamp"}, the 2.x stamp -- a square orange box with
 the text in white JetBrains Mono caps -- under a thin slate separator
-line. Use inside \code{labs(caption = ...)}. Plain strings passed directly
+line). Use inside \code{labs(caption = ...)}. Plain strings passed directly
 to \code{labs(caption = )} receive the same treatment; this helper exists to
 keep call sites explicit and future-proof.
 }

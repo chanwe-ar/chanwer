@@ -303,9 +303,15 @@ makeContent.cw_title_tree <- function(x) {
   if (d$has_ey) {
     ch <- grid::gList(
       ch,
+      # The eyebrow gesture: a short orange rule, then the mono label.
+      grid::linesGrob(
+        x = grid::unit(c(0, 14), "pt"),
+        y = grid::unit(c(ey_y, ey_y), "pt"),
+        gp = grid::gpar(col = x$eyebrow_gp$col, lwd = 1, lend = "butt")
+      ),
       grid::textGrob(
-        paste0(.CW_EYEBROW_RULE, toupper(x$eyebrow_text)),
-        x = grid::unit(0, "npc"),
+        toupper(x$eyebrow_text),
+        x = grid::unit(19, "pt"),
         y = grid::unit(ey_y, "pt"),
         just = c("left", "center"),
         gp = x$eyebrow_gp
@@ -644,22 +650,23 @@ heightDetails.cw_subtitle_tree <- function(x) {
   )
 }
 
-# The caption is a mono label under a slate hairline (v2: JetBrains Mono at
-# the compact size); `caption_style = "stamp"` restores the chanwe-report
-# figure-frame stamp, a square orange box with the source line in white mono
-# caps.
+# The caption is one quiet mono line under the plot (v2: JetBrains Mono at the
+# compact size), with no rule of its own: the slate gridlines already close the
+# panel, and a hairline here stacked up against `plot_borders`.
+# `caption_style = "stamp"` restores the stamp of chanwer 2.x, a square orange
+# box with white mono caps under a hairline.
 .cw_caption_heights <- function(x) {
   c_h <- .cw_str_h(toupper(x$cap_text), x$cap_gp)
   fs <- x$cap_gp$fontsize %||_% 5
   stamp <- !isFALSE(x$stamp)
   pad_y <- if (stamp) fs * 0.9 else 0 # stamp inset, top and bottom
   box_h <- c_h + 2 * pad_y
-  top <- 16 # top padding: space between chart bottom and the separator line
+  top <- if (stamp) 16 else 10 # space between the chart and what follows it
   bot <- 4 # bottom padding
-  tln_h <- 0.4 # top separator line (always drawn)
-  gap1 <- 6 # gap between the stamp and the separator line above
-  gap2 <- if (x$draw_bottom) 4 else 0
-  bln_h <- if (x$draw_bottom) 0.3 else 0
+  tln_h <- if (stamp) 0.4 else 0 # separator line, the stamp's only
+  gap1 <- if (stamp) 6 else 0 # gap between the stamp and that line
+  gap2 <- if (x$draw_bottom) 6 else 0
+  bln_h <- if (x$draw_bottom) 0.4 else 0
   total <- bot + bln_h + gap2 + box_h + gap1 + tln_h + top
   list(
     c_h = c_h,
@@ -702,27 +709,19 @@ makeContent.cw_caption_tree <- function(x) {
     gp = grid::gpar(fill = x$stamp_fill, col = NA)
   )
 
+  rule <- function(y) {
+    grid::linesGrob(
+      x = grid::unit(c(0, 1), "npc"),
+      y = grid::unit(c(y, y), "pt"),
+      gp = grid::gpar(col = x$rule_col, lwd = 0.4, lend = "square")
+    )
+  }
   ch <- grid::gList(
     if (!isFALSE(x$stamp)) box_g,
     cap_g,
-    grid::linesGrob(
-      x = grid::unit(c(0, 1), "npc"),
-      y = grid::unit(c(tln_y, tln_y), "pt"),
-      gp = grid::gpar(col = x$rule_col, lwd = 0.4, lend = "square")
-    )
+    if (!isFALSE(x$stamp)) rule(tln_y),
+    if (x$draw_bottom) rule(bln_y)
   )
-  if (x$draw_bottom) {
-    ch <- grid::gList(
-      ch,
-      grid::textGrob(
-        strrep("\u2500", 400),
-        x = grid::unit(0, "npc"),
-        y = grid::unit(bln_y, "pt"),
-        just = c("left", "center"),
-        gp = x$sep_gp
-      )
-    )
-  }
   grid::setChildren(x, ch)
 }
 

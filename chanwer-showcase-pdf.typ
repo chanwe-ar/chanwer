@@ -498,6 +498,56 @@
   place(center + horizon, circle(radius: dot, fill: color.transparentize(transparency), stroke: none)),
 )
 
+// One footer language (2026-11-07): every figure, table and page says the same
+// three things the same way. A dot and a mono label name the piece, the caption
+// follows it, and what closes a piece is quiet mono over a hairline. No stamp:
+// orange is the signal, and a pill under every figure made it wallpaper.
+#let cw-figure-head(label, gloss: none) = {
+  grid(
+    columns: (auto, 1fr),
+    column-gutter: 3.5mm,
+    align: left + top,
+    {
+      cw-dot(_t.primary, size: 4.2pt)
+      h(1.8mm)
+      cw-label(label, fill: _t.fg, size: 6pt)
+    },
+    if gloss != none {
+      text(font: _t.font-sans, size: 7.6pt, weight: _t.weight-body-plus, fill: _t.fg-muted, gloss)
+    },
+  )
+  v(3mm)
+}
+
+#let cw-figure-foot(left-slot, right-slot) = {
+  v(2.6mm)
+  line(length: 100%, stroke: 0.5pt + _t.rule)
+  v(1.8mm)
+  grid(
+    columns: (auto, 1fr),
+    column-gutter: 7mm,
+    align: (left + top, right + top),
+    if left-slot != none { cw-label(left-slot, size: 5.6pt, weight: _t.weight-regular) },
+    if right-slot != none {
+      text(font: _t.font-sans, size: 7.2pt, weight: _t.weight-body-plus, fill: _t.fg-muted, right-slot)
+    },
+  )
+}
+
+// A loose figure's caption, under it.
+#let cw-figure-caption(it) = align(left, text(
+  font: _t.font-mono, size: 5.6pt, weight: _t.weight-regular, tracking: 0.1em, fill: _t.fg-muted,
+  upper(it.supplement) + " " + it.counter.display() + "  ·  " + upper(it.body),
+))
+
+// The folio: where you are in full, the total a step back.
+#let cw-folio(strong: _t.fg, soft: _t.fg-muted) = context text(
+  font: _t.font-mono, size: 6.5pt, weight: _t.weight-medium, tracking: 0.1em, {
+    text(fill: strong, str(counter(page).get().first()))
+    text(fill: soft, weight: _t.weight-regular, " / " + str(counter(page).final().first()))
+  },
+)
+
 // The obsidian band (brand-v2 §2, §7): one per page at most, floating with
 // a margin (never edge to edge), 24px corners, the dot field and the neutral
 // top sheen over its top 30%, a 1px light edge on top. Text on it is
@@ -621,11 +671,11 @@
 // texto y el acento se quedan como están y sólo el wordmark cambia al corte
 // gris de la portada (rule-cool): el renglón de servicio es un riel.
 #let _hf-palette(inverse) = if inverse == "primary" {
-  (text: _t.white, accent: _t.white, rule: _t.white.transparentize(60%), logo: "Logo_Papel.svg")
+  (text: _t.white, strong: _t.white, accent: _t.white, rule: _t.white.transparentize(60%), logo: "Logo_Papel.svg")
 } else if inverse == "dark" {
-  (text: _t.fg-subtle, accent: _t.primary, rule: _t.rule-ink, logo: "Logo_Gris.svg")
+  (text: _t.fg-subtle, strong: _t.rule-cool, accent: _t.primary, rule: _t.rule-ink, logo: "Logo_Gris.svg")
 } else {
-  (text: _t.fg-muted, accent: _t.primary, rule: _t.border, logo: "Logo_Negro.svg")
+  (text: _t.fg-muted, strong: _t.fg, accent: _t.primary, rule: _t.border, logo: "Logo_Negro.svg")
 }
 
 #let chanwe-header(section, topic, inverse: none) = context {
@@ -647,8 +697,8 @@
           image(_chanwe-assets + c.logo, height: 3.5mm, fit: "contain"),
         )
       }),
-      // Mismo filete que separa los renglones del índice.
-      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + c.rule)),
+      // Inside the margins, like the band: nothing on a v2 page bleeds by default.
+      line(length: 100%, stroke: 0.5pt + c.rule),
     )
   ]
 }
@@ -660,7 +710,7 @@
     #grid(
       rows: (auto, 1fr),
       // Mismo filete que cierra el encabezado.
-      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + c.rule)),
+      line(length: 100%, stroke: 0.5pt + c.rule),
       align(horizon, {
         // Mismo tono que el encabezado: el pie es la otra mitad del mismo
         // renglón de servicio. Un solo tono para todo el renglón, el que ya
@@ -670,7 +720,7 @@
           columns: (1fr, auto),
           align: (left + horizon, right + horizon),
           [#upper[#doc-id #h(8pt) #edition]],
-          [#text(size: 6.9pt, upper(str(counter(page).get().first()) + " / " + str(counter(page).final().first())))],
+          cw-folio(strong: c.strong, soft: c.text),
         )
       }),
     )
@@ -1110,16 +1160,11 @@
             v(14mm)
           }
 
-          // La línea de datum es el filete izquierdo del bloque, no un
-            // rectángulo de alto fijo: así mide exactamente lo que mide el
-            // texto. Y el texto mide de altura de mayúscula a línea de base
-            // (top-edge / bottom-edge), así que el filete arranca en el tope
-            // de la "R" y termina en la base de la última línea de la bajada.
+          // El titular y su bajada, sin filete al costado desde 2026-11-07. El texto
+            // mide de altura de mayúscula a línea de base (top-edge / bottom-edge).
             #block(
               width: content-w,
               spacing: 0pt,
-              stroke: (left: 0.8mm + _t.primary),
-              inset: (left: 6.4mm),
             )[
               #set text(top-edge: "cap-height", bottom-edge: "baseline")
               #block(width: 100%, spacing: 0pt)[
@@ -2044,29 +2089,22 @@
     // izquierda y la glosa contra el margen derecho. Sobre obsidiana el filete
     // pasa a `rule-ink`, que es el que se dibuja sobre oscuro.
     #if source != none or source-label != none {
-      // Sobre naranja el filete va blanco y más fino, y el sello se invierte
-      // —blanco con el texto en naranja—: naranja sobre naranja no existía.
+      // The foot of a figure: quiet mono over a hairline, in the tone of the surface.
       let on-primary = color == "primary"
-      v(2.4mm)
-      line(length: 100%, stroke: (if on-primary { 0.2pt } else { 0.3pt })
-        + (if on-primary { _t.white } else if on-dark { _t.rule-ink } else { _t.border-cool }))
-      v(1.6mm)
+      let foot-tone = if on-primary { _t.white } else if on-dark { s.source } else { _t.fg-muted }
+      v(2.6mm)
+      line(length: 100%, stroke: 0.5pt
+        + (if on-primary { _t.white.transparentize(60%) } else if on-dark { _t.rule-ink } else { _t.rule }))
+      v(1.8mm)
       grid(
         columns: (auto, 1fr),
         column-gutter: 7mm,
-        align: (left + horizon, right + horizon),
+        align: (left + top, right + top),
         if source-label != none {
-          box(
-            fill: if on-primary { _t.white } else { _t.primary },
-            radius: _t.radius-pill,
-            inset: (x: 4mm, y: 1.6mm),
-            text(font: _t.font-mono, size: 4.7pt, weight: _t.weight-display, tracking: 0.16em,
-                 fill: if on-primary { _t.primary } else { _t.white }, upper(source-label)),
-          )
+          cw-label(source-label, size: 5.6pt, weight: _t.weight-regular, fill: foot-tone)
         } else { [] },
         if source != none {
-          text(font: _t.font-sans, size: 7.2pt, weight: _t.weight-body-plus,
-               fill: if on-dark { s.source } else { _t.fg-muted }, source)
+          text(font: _t.font-sans, size: 7.2pt, weight: _t.weight-body-plus, fill: foot-tone, source)
         } else { [] },
       )
     }
@@ -2588,83 +2626,15 @@
 // form the lower alt-footer. The body may contain a Markdown image,
 // generated plot, table, or raw Typst figure.
 // =============================================================
-// Fila superior del marco: rótulo mono con filete naranja a la izquierda,
-// glosa a la derecha, y el filete que cierra la fila. La comparten el marco
-// de figura y las figuras nativas de Quarto (ver `chanwe-native-figure`).
-#let _chanwe-frame-top(top-left, top-right) = {
-  grid(
-    columns: (5fr, 7fr),
-    column-gutter: 7mm,
-    align: (left + horizon, right + horizon),
-    if top-left != none {
-      grid(
-        columns: (8mm, 1fr),
-        column-gutter: 3mm,
-        align: left + horizon,
-        line(length: 8mm, stroke: 1.1pt + _t.primary),
-        text(
-          font: _t.font-mono,
-          size: 6pt,
-          weight: _t.weight-medium,
-          tracking: 0.18em,
-          fill: _t.ink,
-          upper(top-left),
-        ),
-      )
-    } else { [] },
-    if top-right != none {
-      align(right, text(
-        font: _t.font-sans,
-        size: 7.4pt,
-        weight: _t.weight-body-plus,
-        fill: _t.fg-muted,
-        top-right,
-      ))
-    } else { [] },
-  )
-  v(1.6mm)
-  line(length: 100%, stroke: 0.3pt + _t.border-cool)
-  v(2.4mm)
+// The frame's two rows are the shared footer language (chanwe-v2.typ).
+#let _chanwe-frame-top(top-left, top-right) = if top-left != none {
+  cw-figure-head(top-left, gloss: top-right)
+} else if top-right != none {
+  text(font: _t.font-sans, size: 7.6pt, weight: _t.weight-body-plus, fill: _t.fg-muted, top-right)
+  v(3mm)
 }
 
-// Fila inferior del marco: filete, sello naranja a la izquierda y glosa
-// contra el margen derecho. El pie de la derecha va contra el margen, como
-// el de arriba: los dos rótulos largos comparten el mismo canto y el sello
-// queda solo a la izquierda.
-#let _chanwe-frame-bottom(bottom-left, bottom-right) = {
-  v(2.4mm)
-  line(length: 100%, stroke: 0.3pt + _t.border-cool)
-  v(1.6mm)
-  grid(
-    columns: (auto, 1fr),
-    column-gutter: 7mm,
-    align: (left + horizon, right + horizon),
-    if bottom-left != none {
-      box(
-        fill: _t.primary,
-        radius: _t.radius-pill,
-        inset: (x: 4mm, y: 1.6mm),
-        text(
-          font: _t.font-mono,
-          size: 4.7pt,
-          weight: _t.weight-display,
-          tracking: 0.16em,
-          fill: _t.white,
-          upper(bottom-left),
-        ),
-      )
-    } else { [] },
-    if bottom-right != none {
-      text(
-        font: _t.font-sans,
-        size: 7.2pt,
-        weight: _t.weight-body-plus,
-        fill: _t.fg-muted,
-        bottom-right,
-      )
-    } else { [] },
-  )
-}
+#let _chanwe-frame-bottom(bottom-left, bottom-right) = cw-figure-foot(bottom-left, bottom-right)
 
 #let chanwe-figure-frame(
   top-left: none,
@@ -2700,12 +2670,12 @@
 }
 
 // Figura nativa de Quarto — `![pie](…){#fig-x}` o una tabla con
-// `: pie {#tbl-x}` — vestida con el mismo marco que `.chanwe-figure-frame`:
-// arriba el rótulo "FIGURA 1" / "TABLA 1" (el suplemento sigue a `lang`) con
-// el pie como glosa, y abajo el sello de la serie de la publicación. La
-// numeración y las referencias cruzadas (`@fig-x`) no cambian: el contador
-// es el de Quarto. `it` es el `figure` de tipo `quarto-float-*`.
-#let chanwe-native-figure(it, stamp: none) = block(
+// `: pie {#tbl-x}` — vestida con la cabeza del marco: "FIGURA 1" / "TABLA 1" (el
+// suplemento sigue a `lang`) y el pie al lado. Nada debajo: lo que cierra una
+// figura es su fuente, y esa la escribe el autor. La numeración y las referencias
+// cruzadas (`@fig-x`) no cambian: el contador es el de Quarto. `it` es el `figure`
+// de tipo `quarto-float-*`.
+#let chanwe-native-figure(it) = block(
   width: 100%, breakable: false, above: 11mm, below: 12mm,
 )[
   #set block(spacing: 0pt)
@@ -2714,7 +2684,6 @@
     if it.caption != none { it.caption.body } else { none },
   )
   #block(width: 100%, it.body)
-  #_chanwe-frame-bottom(stamp, none)
 ]
 
 // El marco sin casilleros: un filete arriba y otro abajo, del mismo tono y
@@ -2899,8 +2868,7 @@
 //
 // Se dibuja *antes* del capitulo siguiente, no despues del propio: desde
 // adentro del `outline` cada entrada se emite suelta y un subnivel no sabe si
-// es el ultimo de su capitulo. Por eso el ultimo de todos lo pone
-// `chanwe-agenda` a mano, despues del `outline`.
+// es el ultimo de su capitulo.
 #let _toc-chapter-rule = block(spacing: 0pt,
   pad(left: _toc-indent, line(length: 100%, stroke: 0.5pt + _t.border)))
 
@@ -3200,9 +3168,7 @@
                   text(font: _t.font-display, weight: _t.weight-display,
                        size: _toc-section-size, tracking: -0.05em,
                        fill: _t.fg, cur-part.title)
-                  text(font: _t.font-display, weight: _t.weight-display,
-                       size: _toc-section-size, tracking: -0.05em,
-                       fill: _t.primary, ".")
+                  _chanwe-title-dot(_toc-section-size)
                 },
                 [],
                 {
@@ -3288,21 +3254,9 @@
         }
       }
     }
+    // The agenda ends on its last row: a closing rule after it had nothing to
+    // separate, and on a full page it opened an empty one.
     outline(title: none, depth: 2)
-    // El cierre del ultimo capitulo. Adentro del `outline` no hay forma de
-    // saber cual es, asi que se emite aca, ya fuera de el. Misma regla que
-    // adentro: solo si el capitulo no tuvo subniveles.
-    context {
-      let h1s = query(heading.where(level: 1))
-      if h1s.len() > 0 {
-        let last-loc = h1s.last().location()
-        let had-sub = query(heading.where(level: 2).after(last-loc, inclusive: false)).len() > 0
-        if not had-sub {
-          v(7mm)
-          _toc-chapter-rule
-        }
-      }
-    }
   }
 }
 
@@ -4201,13 +4155,18 @@
 #let chanwe-line-chart(
   series,
   x-labels:    (),
-  width:       120mm,
+  width:       auto,
   height:      60mm,
   label-size:  7pt,
   y-min:       0,
   y-max:       1,
   colors:      auto,
 ) = {
+  // By default the chart takes the width it is given, like a figure.
+  if width == auto {
+    return layout(s => chanwe-line-chart(series, x-labels: x-labels, width: s.width, height: height,
+      label-size: label-size, y-min: y-min, y-max: y-max, colors: colors))
+  }
   // The hub's categorical order (tokens.typ `chanwe-plot.categorical`, v2):
   // the accent first, `chart-red` last, away from `primary` (dE00 5.0). Pass
   // `colors:` for a focus chart (orange plus the slate ramp, Q3 C1).
@@ -4219,37 +4178,200 @@
   let x-step = if n > 1 { width / (n - 1) } else { width }
   let y-range = y-max - y-min
 
+  // v2 chart grammar, the same as chanwer: horizontal slate gridlines only, no
+  // frame, round line ends, mono axis labels, a dot legend over the plot.
   // Sin cortar: el gráfico se dibuja con `place` dentro de un bloque de alto
   // fijo, así que partirlo no reparte el contenido —lo deja colgando fuera de
   // la caja de texto—. Si no entra, pasa entero a la página siguiente.
-  block(width: width, height: height + 10mm, breakable: false)[
-    #place(top + left,
-      rect(width: width, height: height,
-        fill: none, stroke: 0.5pt + _t.border)
-    )
-    #for (si, (name, vals)) in series.enumerate() {
-      let col = palette.at(calc.rem(si, palette.len()))
-      for i in range(vals.len() - 1) {
-        let x1 = x-step * i
-        let y1 = height * (1 - (vals.at(i) - y-min) / y-range)
-        let x2 = x-step * (i + 1)
-        let y2 = height * (1 - (vals.at(i + 1) - y-min) / y-range)
-        place(top + left, dx: x1, dy: y1,
-          line(end: (x2 - x1, y2 - y1), stroke: 1.5pt + col))
+  let named = series.filter(((name, _)) => name != none and name != "")
+  block(width: width, breakable: false, below: 6mm)[
+    #set block(spacing: 0pt)
+    #if named.len() > 0 {
+      for (si, (name, _)) in series.enumerate() {
+        box(cw-dot(palette.at(calc.rem(si, palette.len()))))
+        h(1.4mm)
+        text(font: _t.font-mono, size: label-size - 1pt, tracking: 0.08em, fill: _t.fg-muted, upper(name))
+        h(4mm)
       }
+      v(3mm)
     }
-    #if x-labels.len() > 0 {
-      place(bottom + left, dy: 8mm,
-        stack(dir: ltr,
-          ..x-labels.enumerate().map(((i, lbl)) =>
-            move(dx: x-step * i,
-              align(center, text(size: label-size, fill: _t.fg-muted, lbl)))
-          )
-        )
-      )
-    }
+    #block(width: width, height: height + 6mm)[
+      #for g in range(5) {
+        place(top + left, dy: height * g / 4,
+          line(length: width, stroke: 0.5pt + _t.rule))
+      }
+      #for (si, (name, vals)) in series.enumerate() {
+        let col = palette.at(calc.rem(si, palette.len()))
+        for i in range(vals.len() - 1) {
+          let x1 = x-step * i
+          let y1 = height * (1 - (vals.at(i) - y-min) / y-range)
+          let x2 = x-step * (i + 1)
+          let y2 = height * (1 - (vals.at(i + 1) - y-min) / y-range)
+          place(top + left, dx: x1, dy: y1,
+            line(end: (x2 - x1, y2 - y1), stroke: (paint: col, thickness: 1.5pt, cap: "round")))
+        }
+      }
+      #for (i, lbl) in x-labels.enumerate() {
+        let edge = if i == 0 { left } else if i == x-labels.len() - 1 { right } else { center }
+        let slot = 24mm
+        let dx = if i == 0 { 0mm } else if i == x-labels.len() - 1 { width - slot } else { x-step * i - slot / 2 }
+        place(top + left, dx: dx, dy: height + 2.2mm,
+          box(width: slot, align(edge,
+            text(font: _t.font-mono, size: label-size - 1pt, tracking: 0.04em, fill: _t.fg-muted, lbl))))
+      }
+    ]
   ]
+}// =================================================================
+// chanwe-site.typ — the blocks of chanwe.ar's home, for paper.
+//
+// A shared partial + filter pair (chanwe-site.lua), read by the report and the
+// book; the HTML format draws the same Divs from chanwe-brand-rules.scss.
+//
+//   chanwe-chapter-label  a short rule, `/ 07` and the name in mono
+//   chanwe-statement-rows giant numerals beside statements, hairlines between
+//   chanwe-proof-card     the obsidian band: a huge figure, its label, a story
+//   chanwe-photo-hero     a rounded photo band with white display type
+//   chanwe-giant-word     the real wordmark, huge, with the photo inside it
+//   chanwe-photo-cover-page  the book's cover, and `chanwe.cover-variant: photo`
+//
+// White type is for the photograph only; on plain obsidian text stays
+// `rule-cool` (CLAUDE.md, "Text on obsidian"). No colour or weight is written.
+// =================================================================
+
+#let _site-art = _chanwe-assets + "bg_mountains.jpg"
+
+#let chanwe-chapter-label(number: none, body) = block(above: 12mm, below: 3mm, sticky: true,
+  grid(columns: (8mm, auto), column-gutter: 3mm, align: (left + horizon, left + horizon),
+    rect(width: 100%, height: 0.75pt, fill: _t.primary, stroke: none),
+    {
+      set text(font: _t.font-mono, size: 7.5pt, weight: _t.weight-medium, tracking: 0.14em, fill: _t.fg-muted)
+      if number != none { text(fill: _t.fg, "/ " + number); h(3mm) }
+      upper(body)
+    }))
+
+#let chanwe-statement-rows(items) = block(above: 8mm, below: 8mm, {
+  for (i, it) in items.enumerate() {
+    if i > 0 { line(length: 100%, stroke: cw-hairline + _t.rule) }
+    block(width: 100%, inset: (y: 7mm), breakable: false,
+      grid(columns: (42mm, 1fr), align: (left + top, left + top),
+        text(font: _t.font-display, size: 58pt, weight: _t.weight-bold, tracking: -0.05em, fill: _t.fg,
+          top-edge: "cap-height", bottom-edge: "baseline",
+          if i < 9 { "0" + str(i + 1) } else { str(i + 1) }),
+        {
+          set par(justify: false, leading: 0.5em, spacing: 0.8em)
+          set text(font: _t.font-sans, size: 14pt, weight: _t.weight-regular, fill: _t.fg, hyphenate: false)
+          show strong: set text(fill: _t.fg)
+          it
+        }))
+  }
+  line(length: 100%, stroke: cw-hairline + _t.rule)
+})
+
+#let chanwe-proof-card(figure: none, label: none, kicker: none, title: none, body) = block(above: 8mm, below: 8mm, breakable: false,
+  cw-band(inset: (x: 10mm, y: 10mm), grid(columns: (58mm, 1fr), column-gutter: 8mm, align: (left + horizon, left + top),
+    stack(dir: ttb, spacing: 5mm,
+      if figure != none {
+        text(font: _t.font-display, size: 62pt, weight: _t.weight-bold, tracking: -0.05em, fill: _t.rule-cool,
+          top-edge: "cap-height", bottom-edge: "baseline", figure)
+      },
+      if label != none { cw-label(label, fill: _t.fg-subtle) },
+    ),
+    {
+      set par(justify: false, leading: 0.6em, spacing: 0.8em)
+      set block(spacing: 0pt)
+      if kicker != none { block(below: 3mm, cw-label(kicker, fill: _t.fg-subtle)) }
+      if title != none {
+        block(below: 3mm, text(font: _t.font-display, size: 16pt, weight: _t.weight-display, tracking: -0.04em, fill: _t.rule-cool, hyphenate: false, title))
+      }
+      set text(size: 9.5pt, weight: _t.weight-body, fill: _t.rule-cool)
+      show strong: set text(fill: _t.rule-cool)
+      body
+    })))
+
+// The photograph, covering its box, darkened with obsidian towards the foot.
+#let _site-photo(art) = {
+  layout(size => {
+    let natural = measure(image(art))
+    let ratio = natural.width / natural.height
+    let w = calc.max(size.width / 1pt, size.height / 1pt * ratio) * 1pt
+    let h = w / ratio
+    place(top + left, dx: -(w - size.width) * 0.62, dy: -(h - size.height) * 0.4, image(art, width: w, height: h))
+  })
+  place(top + left, rect(width: 100%, height: 100%, stroke: none, fill: gradient.linear(angle: 90deg,
+    (_t.ink.transparentize(14%), 0%), (_t.ink.transparentize(24%), 45%), (_t.ink.transparentize(3%), 100%))))
+  // The dot field of every dark surface.
+  place(top + left, rect(width: 100%, height: 100%, stroke: none, fill: cw-dot-field()))
 }
+
+#let _site-dot-pill(body) = box(stroke: 0.75pt + _t.white.transparentize(55%), radius: _t.radius-pill, inset: (x: 3mm, y: 2mm),
+  stack(dir: ltr, spacing: 2mm,
+    circle(radius: 1.1pt, fill: _t.primary, stroke: none),
+    text(font: _t.font-mono, size: 6.5pt, weight: _t.weight-medium, tracking: 0.16em, fill: _t.white, upper(body))))
+
+#let _site-title(size, body) = {
+  set par(justify: false, leading: 0.2em)
+  text(font: _t.font-display, size: size, weight: _t.weight-display, tracking: -0.05em, fill: _t.white, hyphenate: false, body)
+  _chanwe-title-dot(size)
+}
+
+#let chanwe-photo-hero(kicker: none, title: none, lede: none, art: _site-art, height: 92mm) = block(above: 8mm, below: 8mm, breakable: false,
+  block(width: 100%, height: height, radius: _t.radius-band, clip: true, fill: _t.ink, {
+    _site-photo(art)
+    place(top + left, block(width: 100%, height: 100%, inset: 9mm, {
+      if kicker != none { _site-dot-pill(kicker) }
+      set block(spacing: 0pt)
+      set par(spacing: 0pt)
+      v(1fr)
+      if title != none { _site-title(34pt, title) }
+      if lede != none {
+        v(3mm)
+        set par(justify: false, leading: 0.4em)
+        text(font: _t.font-serif, size: 15pt, style: "italic", weight: _t.weight-regular, fill: _t.white, lede)
+      }
+    }))
+  }))
+
+// The real wordmark with the photograph inside it, never a font: a generated
+// vector asset (scripts/build-giant-word.rb), shared with the HTML format.
+#let chanwe-giant-word(caption: none) = block(above: 10mm, below: 8mm, breakable: false, width: 100%, {
+  image(_chanwe-assets + "chanwe-giant-word.svg", width: 100%)
+  if caption != none {
+    v(6mm)
+    align(center, cw-label(caption))
+  }
+})
+
+// `chanwe.cover-variant: photo`: the whole page is the site's hero.
+#let chanwe-photo-cover-page(title: none, subtitle: none, badge: none, doc-id: none, edition: none, date: none,
+  meta-rows: (), art: none, wordmark: none) = page(paper: _chanwe-paper, margin: 7mm, header: none, footer: none,
+  numbering: none, fill: _t.paper, background: none, foreground: none,
+  block(width: 100%, height: 100%, radius: _t.radius-band, clip: true, fill: _t.ink, {
+    _site-photo(if art != none { art } else { _site-art })
+    place(top + left, block(width: 100%, height: 100%, inset: 12mm, {
+      set par(justify: false)
+      grid(columns: (1fr, auto), align: (left + horizon, right + horizon),
+        image(if wordmark != none { wordmark } else { _chanwe-assets + "Logo_Papel.svg" }, height: 9mm, fit: "contain"),
+        if badge != none and badge != "" { _site-dot-pill(_chanwe-clean-str(badge)) })
+      v(1fr)
+      if title != none { _site-title(54pt, title) }
+      if subtitle != none {
+        v(5mm)
+        set par(leading: 0.42em)
+        text(font: _t.font-serif, size: 19pt, style: "italic", weight: _t.weight-regular, fill: _t.white, subtitle)
+      }
+      v(10mm)
+      line(length: 100%, stroke: 0.5pt + _t.white.transparentize(60%))
+      v(4mm)
+      if meta-rows.len() > 0 {
+        grid(columns: (1fr,) * calc.min(meta-rows.len(), 3), column-gutter: 6mm,
+          ..meta-rows.slice(0, calc.min(meta-rows.len(), 3)).map(((label, value, ..rest)) => {
+            text(font: _t.font-mono, size: 6.5pt, weight: _t.weight-medium, tracking: 0.16em, fill: _t.white.transparentize(25%), upper(_chanwe-clean-str(label)))
+            v(1.6mm)
+            text(font: _t.font-sans, size: 10pt, weight: _t.weight-regular, fill: _t.white, _chanwe-clean-str(value))
+          }))
+      }
+    }))
+  }))
 // =============================================================
 // MAIN TEMPLATE FUNCTION (called by typst-show.typ)
 // =============================================================
@@ -4433,9 +4555,10 @@
   // Typst las deja en negro y con un filete negro al 30%. La nota es material
   // de servicio, como el pie de pagina: mismo tono (`ink-fg`) y un filete
   // slate en vez del negro.
-  set footnote.entry(separator: line(length: 38%, stroke: 0.5pt + _t.rule))
+  set footnote.entry(separator: line(length: 12mm, stroke: 0.5pt + _t.rule-cool), gap: 0.7em, clearance: 4mm)
   show footnote.entry: it => {
-    set text(font: _t.font-sans, size: 8pt, weight: _t.weight-body, fill: _t.fg-muted)
+    set text(font: _t.font-sans, size: 7.6pt, weight: _t.weight-body, fill: _t.fg-muted)
+    set par(leading: 0.55em, spacing: 0.6em)
     it
   }
 
@@ -4459,10 +4582,8 @@
   }
   show heading.where(level: 1): it => {
     pagebreak(weak: true)
-    // Typst deja el encabezado un 30% del margen superior por encima del
-    // cuerpo (15mm x 0.3 = 4.5mm): se recupera ese aire para que la losa
-    // quede pegada al filete del header.
-    v(-4.5mm)
+    // The header's rule sits 7mm above the text block; the band floats 5mm under it.
+    v(-2mm)
     // v2-print: the chapter opener is the obsidian band (brand-v2 §2, §7):
     // floating inside the text block with its 24px corners, the dot field and
     // the neutral sheen — no longer a slab bled from edge to edge. The eyebrow
@@ -4619,7 +4740,8 @@
     font: _t.font-mono, size: 6pt, weight: _t.weight-medium,
     tracking: 0.1em, fill: _t.fg-muted,
   )
-  show table.cell.where(y: 0): it => upper(it)
+  // A cell across the whole table is a title row (chanwe_kbl), not a column label.
+  show table.cell.where(y: 0): it => if it.colspan > 1 { it } else { upper(it) }
   show figure.where(kind: table): it => {
     v(12mm, weak: true)
     it.body
@@ -4628,13 +4750,9 @@
     v(12mm, weak: true)
   }
   show figure.where(kind: image): it => {
-    v(14mm, weak: true)
-    line(length: 100%, stroke: 0.3pt + _t.ink)
-    v(4mm)
+    v(12mm, weak: true)
     it.body
-    v(3mm)
-    line(length: 100%, stroke: 0.3pt + _t.ink)
-    v(1.5mm)
+    v(2.6mm)
     it.caption
     v(12mm, weak: true)
   }
@@ -4643,18 +4761,20 @@
   // arriba, sello de la serie abajo. Quarto las emite con `kind:
   // "quarto-float-fig"` / `"quarto-float-tbl"`, no como `image` / `table`,
   // así que las dos reglas de arriba no las alcanzan.
-  let _native-stamp = _chanwe-clean-str(publication-series)
-  show figure.where(kind: "quarto-float-fig"): it => chanwe-native-figure(it, stamp: _native-stamp)
-  show figure.where(kind: "quarto-float-tbl"): it => chanwe-native-figure(it, stamp: _native-stamp)
+  show figure.where(kind: "quarto-float-fig"): it => chanwe-native-figure(it)
+  show figure.where(kind: "quarto-float-tbl"): it => chanwe-native-figure(it)
   // Keep 3× more clear space after a figure or table footer before prose resumes.
   show figure: set block(above: 11mm, below: 12mm)
-  show figure.caption: it => align(left, text(
-    font: _t.font-mono, size: 5.5pt, weight: _t.weight-hairline, tracking: 0.10em,
-    fill: _t.ink, upper(it.supplement) + " " + it.counter.display() + "  ·  " + upper(it.body),
-  ))
+  show figure.caption: cw-figure-caption
 
   // ---- COVER (optional) -------------------------------------
-  if cover and cover-variant == "hero" {
+  if cover and cover-variant == "photo" {
+    // The site's hero as the whole page (chanwe-site.typ).
+    chanwe-photo-cover-page(
+      title: title, subtitle: subtitle, badge: taggy, doc-id: doc-id, edition: edition,
+      date: date, meta-rows: meta-rows, art: hero-image, wordmark: wordmark,
+    )
+  } else if cover and cover-variant == "hero" {
     // La portada que traia chanwe-report antes de la fusion. No recibe las
     // claves `publication-*`: esas son de la research.
     chanwe-hero-cover-page(
@@ -4714,7 +4834,11 @@
   // that also renders to HTML needs one). The format draws its own marks.
   set page(
     paper: _chanwe-paper,
-    margin: (top: 15mm, bottom: 15mm, x: 18mm),
+    // Room between the service lines and the page: the rule sits 7mm above the
+    // text block, where a heading at the top of a page used to touch it.
+    margin: (top: 19mm, bottom: 17mm, x: 18mm),
+    header-ascent: 7mm,
+    footer-descent: 5mm,
     background: none,
     header: chanwe-header(section, topic),
     footer: chanwe-footer(_chanwe-clean-str(doc-id), _chanwe-clean-str(edition)),
@@ -4838,7 +4962,7 @@
   title: [chanwer Showcase],
   subtitle: [Every palette, scale, header treatment, surface, chart form and native Typst table pattern in the chanwer R package --- static output for chanwe-report-typst],
   author: "Alejandro Abraham",
-  date: "2026-11-06",
+  date: "2026-11-07",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",
@@ -5050,7 +5174,7 @@ One pair everywhere: `chanwe_palette("signed")` drives the KPI arrows, table del
     columns: (1fr, 1fr, 1fr, 1fr),
     align: (left, right, right, right,),
     table.header(
-      table.cell(align: left, colspan: 4, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[SIGNED - TABLES]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[Quarterly performance]],
+      table.cell(align: left, colspan: 4, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[SIGNED - TABLES]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[Quarterly performance]],
       table.cell(align: left, colspan: 4, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[Signed deltas via chanwe\_col\_signed() - flip marks Opex and Churn so color reads as valence]#v(8pt, weak: false)],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[METRIC]],
@@ -5249,7 +5373,7 @@ establece el piso de referencia para el análisis diferencial.
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · SPACIOUS · PAPER]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[bg · paper]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · SPACIOUS · PAPER]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[bg · paper]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[MODEL]],
@@ -5339,7 +5463,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · SPACIOUS · WHITE]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[bg · white]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · SPACIOUS · WHITE]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[bg · white]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[density · spacious]#v(8pt, weak: false)],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[MODEL]],
@@ -5429,7 +5553,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · SPACIOUS · SUNKEN]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[bg · sunken]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · SPACIOUS · SUNKEN]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[bg · sunken]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[top\_border = FALSE]#v(8pt, weak: false)],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[MODEL]],
@@ -5518,7 +5642,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · SPACIOUS · SLATE]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[bg · slate]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · SPACIOUS · SLATE]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[bg · slate]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[padding = 0  ·  top\_border = FALSE]#v(8pt, weak: false)],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[MODEL]],
@@ -5607,7 +5731,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, right, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLES - SPACIOUS]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[Fleet summary by cylinder count]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLES - SPACIOUS]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[Fleet summary by cylinder count]],
       table.cell(align: left, colspan: 5, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[Spacious density - the presentation default]#v(8pt, weak: false)],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[CYLINDERS]],
@@ -5665,7 +5789,7 @@ supplement: "Table",
     columns: (2.2fr, 1fr, 0.8fr, 1fr, 1.1fr, 1.6fr),
     align: (left, right, left, right, right, left,),
     table.header(
-      table.cell(align: left, colspan: 6, inset: (top: 5pt, bottom: 3pt, x: 2.5mm))[#v(2pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLES - COMPACT]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[Vehicle detail]],
+      table.cell(align: left, colspan: 6, inset: (top: 5pt, bottom: 3pt, x: 2.5mm))[#v(2pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLES - COMPACT]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[Vehicle detail]],
       table.cell(align: left, colspan: 6, inset: (top: 3pt, bottom: 5pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[Compact density for dense reporting tables - explicit col\_widths]#v(4pt, weak: false)],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 14pt, bottom: 5pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[MODEL]],
@@ -5765,7 +5889,7 @@ supplement: "Table",
     align: (left, right, right, right,),
     table.vline(x: 3, stroke: 0.4pt + rgb("#E2E8F0")),
     table.header(
-      table.cell(align: left, colspan: 4, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLES - TOTALS + HIGHLIGHT]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[Revenue by region]],
+      table.cell(align: left, colspan: 4, inset: (top: 10pt, bottom: 3pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLES - TOTALS + HIGHLIGHT]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[Revenue by region]],
       table.cell(align: left, colspan: 4, inset: (top: 3pt, bottom: 10pt, x: 2.5mm))[#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted, weight: "regular")[Total row via n\_total; QoQ column highlighted and signed; vline separates quarters from the delta]#v(8pt, weak: false)],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 20pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[REGION]],
@@ -5834,7 +5958,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[title only · no subtitle]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[title only · no subtitle]],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 18pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[MODEL]],
       table.cell(align: right, inset: (top: 18pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[MPG]],
@@ -5927,7 +6051,7 @@ supplement: "Table",
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     align: (left, right, left, right, right,),
     table.header(
-      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold")[title only · zone-highlight]],
+      table.cell(align: left, colspan: 5, inset: (top: 10pt, bottom: 14pt, x: 2.5mm))[#v(4pt, weak: false)#chanwe-eyebrow(with-rule: true, size: 4pt, color: rgb("#FD3810"))[TABLE · COMPACT HERO]#v(-6pt, weak: false)#text(font: "Schibsted Grotesk", size: 13pt, fill: _t.ink, weight: "semibold", tracking: -0.05em)[title only · zone-highlight]],
       table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
       table.cell(align: left, inset: (top: 18pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[MODEL]],
       table.cell(align: right, inset: (top: 18pt, bottom: 10pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[MPG]],

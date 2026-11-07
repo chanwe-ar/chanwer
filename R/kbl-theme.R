@@ -377,7 +377,7 @@ chanwe_kbl <- function(
           inner,
           '#text(font: "', fonts$display, '", size: ',
           title_pt,
-          ', fill: _t.ink, weight: "semibold")[',
+          ', fill: _t.ink, weight: "semibold", tracking: -0.05em)[',
           esc(title),
           ']'
         )
@@ -497,8 +497,8 @@ chanwe_kbl <- function(
     }
   }
 
-  # One closing rule, then the footer: the chanwe-report figure-frame stamp,
-  # a square primary box with the source line in white mono caps.
+  # One closing rule, then the footer: the source line as a quiet mono label
+  # (or the 2.x stamp with caption_style = "stamp").
   if (!isTRUE(pane) || !is.null(caption)) {
     p("    table.hline(stroke: 0.5pt + ", rule_color, "),")
   }

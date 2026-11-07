@@ -353,16 +353,11 @@
             v(14mm)
           }
 
-          // La línea de datum es el filete izquierdo del bloque, no un
-            // rectángulo de alto fijo: así mide exactamente lo que mide el
-            // texto. Y el texto mide de altura de mayúscula a línea de base
-            // (top-edge / bottom-edge), así que el filete arranca en el tope
-            // de la "R" y termina en la base de la última línea de la bajada.
+          // El titular y su bajada, sin filete al costado desde 2026-11-07. El texto
+            // mide de altura de mayúscula a línea de base (top-edge / bottom-edge).
             #block(
               width: content-w,
               spacing: 0pt,
-              stroke: (left: 0.8mm + _t.primary),
-              inset: (left: 6.4mm),
             )[
               #set text(top-edge: "cap-height", bottom-edge: "baseline")
               #block(width: 100%, spacing: 0pt)[
