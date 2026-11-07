@@ -60,7 +60,7 @@ and separator line 14 → 6 pt, and bottom padding below the separator line
 since it stacked against the first gridline) that
 visually closes the header area: the subtitle grob draws it between the
 subtitle text and the chart, and when \code{has_subtitle = FALSE} the title grob
-draws it below the title text. Set to \code{FALSE} to suppress the line entirely
+draws it below the title text
 (e.g. for minimal or embedded layouts).}
 
 \item{caption_style}{\code{"mono"} (default, v2): the caption is a JetBrains

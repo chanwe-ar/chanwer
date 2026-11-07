@@ -1,5 +1,12 @@
 # chanwer (development version)
 
+* The chart header, option A (Ale, 2026-11-07): `chanwe_kpi()` draws a slate pane at
+  the right of the header, with the unit and date as a label, the value in Schibsted
+  Grotesk and the variations as green and red pills; the serif value and the
+  right-anchored columns are gone. The legend is centred under the plot. The footer
+  has its rule back, with more air: `chanwe_caption()` reads a leading `Fuente ·` /
+  `Source:` in the subtle tone and takes a `stamp` for a right-aligned mono line
+  (`CHW · BCRA · 05 MAY 2026`). The x-axis title is centred.
 # chanwer 3.1.0
 
 * Footers read as one language (with chanwe-brand). The plot caption is one quiet
