@@ -101,7 +101,7 @@ source("chanwer-options-helpers.R")
       tb,
       block(stroke: (left: 0.5pt + _t.rule-cool), inset: (left: 3mm, y: 0.4mm), {
         set par(spacing: 0pt)
-        align(right, eye()); v(dm.after * 0.8); align(right, stamp)
+        eye(); v(dm.after * 0.8); stamp
       })))
   } else if kind == "dark" {
     block(width: 100%, fill: _t.ink, radius: 2.4mm, clip: true, {
@@ -291,6 +291,32 @@ source("chanwer-options-helpers.R")
 Esta ronda arma lo elegido. En gráficos: cabecera **A** por defecto, con **C** y **D** como variantes, las tres como *card* compacta y con el título en Schibsted y la bajada en Satoshi; KPI **A**, **B** y **C**; cuerpo **A** con la opción *main* (la serie principal se marca al final con su halo y su valor) y **B**; leyenda **A** más plana y **C**; pie **A** y **B** más planos; y el marco exterior en tres variantes: simple, con sombra y sin marco. Las tablas toman la misma cabecera, el mismo pie y el mismo marco, y suman láminas nuevas: densidad, estilo de celdas, totales y columnas especiales.
 
 Primero van las **combinaciones**, a tamaño real; después, cada parte por separado. El punto negro marca la opción por defecto.
+
+# Ronda 4: todas las cabeceras {.unnumbered}
+
+Cada combinación de cabecera (A, C, D y obsidiana; con y sin fondo; sola, con la leyenda y con el KPI) sale de **una sola regla de composición**, en lugar de una posición a mano por caso:
+
+- **Dos columnas.** A la izquierda, el rótulo (C, obsidiana), el título y la bajada, con el numeral delante en C. A la derecha, apilado desde arriba sobre **un mismo borde izquierdo**: el rótulo y el sello (D), el sello (C, obsidiana), la leyenda y el KPI.
+- **Una columna sólo si tiene algo.** El sello solo no abre columna: va en la línea del rótulo. En D, con la leyenda, las series comparten una línea bajo el sello.
+- **El filete divide el alto del contenido**, de arriba a abajo, y la card mide lo que mide la columna más alta.
+- **El KPI se acomoda al ancho.** Si el título conserva al lado su palabra más larga, el KPI va en la columna; si no, baja a una fila bajo el título, con el valor a la izquierda y las variaciones a la derecha. Sin fondo, el KPI toma el tinte para no perder su borde.
+- **El texto se parte por palabras**, medido, nunca a mano.
+
+```{r}
+#| label: header-matrix-1
+#| fig-height: 8.6
+header_matrix(kinds = c("A", "C"))
+```
+
+{{< pagebreak >}}
+
+```{r}
+#| label: header-matrix-2
+#| fig-height: 6.4
+header_matrix(kinds = c("D", "dark"))
+```
+
+{{< pagebreak >}}
 
 # Ronda 3: cabecera y pie compactos {.unnumbered}
 
