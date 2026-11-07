@@ -3,8 +3,12 @@
 * The chart's frame (Ale, 2026-11-07): the eyebrow sits on an obsidian band across
   the header, with `chanwe_title(stamp = )` at its right (`eyebrow_style = "rule"`
   keeps the short rule); the plot's surface is a pane with the `pane` radius and
-  the `rule` hairline (`pane = FALSE` to drop it; `plot_padding` now 14); each
-  legend entry is a hairline pill around its key and label; the footer's text is a
+  the `rule` hairline (`pane = FALSE` to drop it; `plot_padding` now 14); the
+  legend is one hairline pill around every entry; with a KPI pane the header
+  splits into two columns (title and subtitle at the left, the pane from the
+  title's top at the right); the footer's stamp sits in a flat white pill. On
+  ggplot2 4.0 the pane is an S7 subclass of `element_rect` (S7 in Suggests),
+  since 4.0 drops a plot background that is not one; the footer's text is a
   step smaller.
 * `chanwe_kbl()`: a signed column (`chanwe_col_signed()`) renders as pills, like the
   KPI pane's variations; the total row opens with a 0.75pt ink rule and sets its

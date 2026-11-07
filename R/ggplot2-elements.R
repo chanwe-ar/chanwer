@@ -1,5 +1,5 @@
 #' @importFrom ggplot2 element_grob
-#' @importFrom grid makeContent heightDetails widthDetails
+#' @importFrom grid makeContent heightDetails
 
 # Internal separator for structured label encoding — unlikely in normal text
 .CW_SEP <- "\x1F"
@@ -300,6 +300,11 @@ new_element_chanwe_caption <- function(
   )
 }
 
+# The title's drawn geometry, read by the subtitle when it draws the KPI pane
+# (ggplot2 renders plot.title before plot.subtitle): the pane rises to the
+# top of the title text, so the header reads as two columns.
+.cw_state <- new.env(parent = emptyenv())
+
 #' @method makeContent cw_title_tree
 #' @export
 makeContent.cw_title_tree <- function(x) {
@@ -401,6 +406,7 @@ heightDetails.cw_title_tree <- function(x) {
   sep_gp,
   ink_col,
   kpi_data = NULL,
+  lift = 0,
   italic_family = "Cormorant Garamond",
   mono_family = "JetBrains Mono",
   mono_thin_family = "JetBrains Mono Thin",
@@ -421,6 +427,7 @@ heightDetails.cw_title_tree <- function(x) {
     sep_gp = sep_gp,
     ink_col = ink_col,
     kpi_data = kpi_data,
+    lift = lift,
     italic_family = italic_family,
     mono_family = mono_family,
     mono_thin_family = mono_thin_family,
@@ -448,7 +455,7 @@ heightDetails.cw_title_tree <- function(x) {
   # The KPI pane (2026-11-07, option A): a slate pane at the right of the
   # header, spanning the subtitle row and what is below it. The subtitle text
   # sits at its left, on the pane's first row.
-  kpi_pane_h <- if (has_kpi) 50 else 0
+  kpi_pane_h <- if (has_kpi) 52 else 0
   kpi_bot_sep <- if (has_kpi) 12 else 0
   bot <- if (has_kpi) {
     max(0, kpi_pane_h - s_h - gap_ln - ln_h - gap_n - n_h) + kpi_bot_sep
@@ -484,9 +491,13 @@ heightDetails.cw_title_tree <- function(x) {
   fg_muted <- x$kpi_label_colour %||_% colors[["fg-muted"]]
   pad <- 11
   gap_x <- 5
-  pane_top <- d$total - d$top
+  # Up to the title's top when the title drew before us (two columns: the
+  # title and subtitle at the left, the pane at the right).
+  lift <- x$lift %||_% 0
+  pane_top <- d$total + lift
   pane_bot <- d$kpi_bot_sep
   pane_h <- pane_top - pane_bot
+  cy <- pane_bot + pane_h / 2
   pt <- function(v) grid::unit(v, "pt")
   w_of <- function(g) grid::convertWidth(grid::grobWidth(g), "pt", valueOnly = TRUE)
 
@@ -521,9 +532,10 @@ heightDetails.cw_title_tree <- function(x) {
     just = c("left", "bottom"), r = pt(chanwe_tokens$radii$pane * 0.75),
     gp = grid::gpar(fill = colors[["tint"]], col = NA)
   ))
-  y_lbl <- pane_top - 9
-  y_val <- pane_top - 23
-  y_pill <- pane_bot + 7 + pill_h / 2
+  # The three rows from the pane's top; the pills sit on its foot.
+  y_lbl <- pane_top - 12
+  y_val <- pane_top - 31
+  y_pill <- pane_bot + 9 + pill_h / 2
   out <- grid::gList(out,
     grid::editGrob(lbl_g, x = xi, y = pt(y_lbl), just = c("left", "center")),
     grid::editGrob(val_g, x = xi, y = pt(y_val), just = c("left", "center")))
@@ -691,10 +703,22 @@ makeContent.cw_caption_tree <- function(x) {
     just = c("left", "center"),
     gp = x$cap_gp
   )
-  stamp_g <- if (!is.null(x$stamp_text) && nzchar(x$stamp_text)) grid::textGrob(
-    toupper(x$stamp_text), x = grid::unit(1, "npc"), y = grid::unit(box_y, "pt"),
-    just = c("right", "center"), gp = grid::gpar(fontfamily = x$cap_gp$fontfamily, fontsize = x$cap_gp$fontsize * 0.9, col = x$lead_col %||_% "#8A94A6")
-  )
+  # The stamp sits in a flat white pill at the right (2026-11-07).
+  stamp_g <- if (!is.null(x$stamp_text) && nzchar(x$stamp_text)) {
+    fs <- x$cap_gp$fontsize
+    pad <- fs * 1.1
+    st <- grid::textGrob(
+      toupper(x$stamp_text), x = grid::unit(1, "npc") - grid::unit(pad, "pt"), y = grid::unit(box_y, "pt"),
+      just = c("right", "center"), gp = grid::gpar(fontfamily = x$cap_gp$fontfamily, fontsize = fs * 0.9, col = x$cap_gp$col)
+    )
+    pill <- grid::roundrectGrob(
+      x = grid::unit(1, "npc"), y = grid::unit(box_y, "pt"), just = c("right", "center"),
+      width = grid::unit(1, "grobwidth", st) + grid::unit(2 * pad, "pt"),
+      height = grid::unit(fs * 2.1, "pt"), r = grid::unit(fs * 1.05, "pt"),
+      gp = grid::gpar(fill = x$pill_fill %||_% "#FFFFFF", col = NA)
+    )
+    grid::gTree(children = grid::gList(pill, st))
+  }
   box_g <- grid::rectGrob(
     x = grid::unit(0, "npc"),
     y = grid::unit(box_y, "pt"),
@@ -761,7 +785,7 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
   )
 
   margin_bottom <- as.numeric(element$margin[3L] %||_% 2)
-  .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink,
+  tree <- .cw_title_tree(title_text, eyebrow_text, draw_top, title_gp, eyebrow_gp, ink,
                  margin_bottom = margin_bottom,
                  draw_bottom_line = isTRUE(element$draw_bottom_line),
                  top_pad = element$top_pad %||_% 8,
@@ -770,6 +794,12 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
                  stamp_text = stamp_text,
                  band_text_col = element$band_text_colour %||_% "#C6CDD6",
                  band_stamp_col = element$band_stamp_colour %||_% "#8A94A6")
+  # ggplot2 builds plot.title before plot.subtitle: hand the subtitle the
+  # height of the title's text (and its bottom margin), so a KPI pane can
+  # rise to the title's top and the header reads as two columns.
+  d <- .cw_title_heights(tree)
+  .cw_state$title_lift <- d$bot + d$t_h
+  tree
 }
 
 #' @method element_grob element_chanwe_subtitle
@@ -790,6 +820,8 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
   note_text <- if (length(parts) >= 2L && nzchar(parts[2L])) parts[2L] else NULL
   kpi_str <- if (length(parts) >= 3L && nzchar(parts[3L])) parts[3L] else NULL
   kpi_data <- .cw_parse_kpi(kpi_str)
+  lift <- .cw_state$title_lift %||_% 0
+  .cw_state$title_lift <- NULL
 
   sub_size <- element$size %||_% 9
   sub_gp <- grid::gpar(
@@ -818,6 +850,7 @@ element_grob.element_chanwe_subtitle <- function(element, label = "", ...) {
     sep_gp,
     ink,
     kpi_data = kpi_data,
+    lift = lift,
     italic_family = italic_fam,
     mono_family = mono_fam,
     mono_thin_family = mono_thin_fam,
@@ -890,7 +923,27 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
 # ─────────────────────────────────────────────────────────────────────────────
 # The plot's surface as a pane (2026-11-07): the `pane` radius and the `rule`
 # hairline, so a chart reads like a chanwe_kbl() table or a KPI tile.
+# ggplot2 4.0 elements are S7 objects, and it drops a plot.background that is
+# not one: there the surface is an S7 subclass of element_rect (built once, on
+# first use, so the package still loads with ggplot2 3.5).
+.cw_surface_s7 <- new.env(parent = emptyenv())
+
 new_element_chanwe_surface <- function(fill = "#F8FAFC", colour = "#E2E8F0", radius = 9, linewidth = 0.5) {
+  if (utils::packageVersion("ggplot2") >= "4.0.0") {
+    if (is.null(.cw_surface_s7$class)) {
+      .cw_surface_s7$class <- S7::new_class(
+        "element_chanwe_surface", parent = ggplot2::element_rect, package = NULL,
+        properties = list(radius = S7::class_numeric),
+        constructor = function(fill = NULL, colour = NULL, linewidth = NULL, radius = 9) {
+          S7::new_object(
+            ggplot2::element_rect(fill = fill, colour = colour, linewidth = linewidth),
+            radius = radius
+          )
+        }
+      )
+    }
+    return(.cw_surface_s7$class(fill = fill, colour = colour, linewidth = linewidth, radius = radius))
+  }
   structure(
     list(fill = fill, colour = colour, linewidth = linewidth, linetype = 1, radius = radius,
          inherit.blank = FALSE),
@@ -901,47 +954,11 @@ new_element_chanwe_surface <- function(fill = "#F8FAFC", colour = "#E2E8F0", rad
 #' @method element_grob element_chanwe_surface
 #' @export
 element_grob.element_chanwe_surface <- function(element, x = 0.5, y = 0.5, width = 1, height = 1, ...) {
+  r <- element$radius %||_% 9
   grid::roundrectGrob(
-    x = x, y = y, width = width, height = height, r = grid::unit(element$radius %||_% 9, "pt"),
+    x = x, y = y, width = width, height = height,
+    # a pill asks for more than half its height: grid caps it at half (snpc)
+    r = if (r >= 99) grid::unit(0.5, "snpc") else grid::unit(r, "pt"),
     gp = grid::gpar(fill = element$fill, col = element$colour, lwd = (element$linewidth %||_% 0.5) * ggplot2::.pt)
   )
 }
-
-# The legend's label as a pill (2026-11-07): a hairline pill around the key
-# and the label, as the series chips of the proposal. The pill reaches back
-# over the key cell, which sits `key_reach` pt to the left of the label.
-new_element_chanwe_legend_text <- function(family = "JetBrains Mono", size = 8, colour = "#475569",
-                                           pill_colour = "#E2E8F0", key_reach = 14, pad = 7) {
-  structure(
-    list(family = family, face = "plain", colour = colour, size = size, hjust = 0, vjust = 0.5,
-         angle = 0, lineheight = 1, margin = ggplot2::margin(0, pad + 8, 0, 4), debug = FALSE,
-         inherit.blank = FALSE, pill_colour = pill_colour, key_reach = key_reach, pad = pad),
-    class = c("element_chanwe_legend_text", "element_text", "element")
-  )
-}
-
-#' @method element_grob element_chanwe_legend_text
-#' @export
-element_grob.element_chanwe_legend_text <- function(element, label = "", ...) {
-  if (is.null(label) || identical(label, "")) return(grid::nullGrob())
-  gp <- grid::gpar(fontfamily = element$family, fontsize = element$size, col = element$colour)
-  txt <- grid::textGrob(label, x = grid::unit(4, "pt"), just = c("left", "center"), gp = gp)
-  pad <- element$pad %||_% 7
-  reach <- element$key_reach %||_% 14
-  pill <- grid::roundrectGrob(
-    x = grid::unit(-reach, "pt"), y = grid::unit(0.5, "npc"), just = c("left", "center"),
-    width = grid::unit(1, "grobwidth", txt) + grid::unit(reach + 4 + pad, "pt"),
-    height = grid::unit(element$size + 9, "pt"), r = grid::unit(element$size / 2 + 4.5, "pt"),
-    gp = grid::gpar(fill = NA, col = element$pill_colour, lwd = 0.5 * ggplot2::.pt)
-  )
-  g <- grid::gTree(children = grid::gList(pill, txt), cl = "cw_legend_pill")
-  attr(g, "width") <- grid::unit(1, "grobwidth", txt) + grid::unit(4 + pad, "pt")
-  g
-}
-
-#' @method widthDetails cw_legend_pill
-#' @export
-widthDetails.cw_legend_pill <- function(x) attr(x, "width")
-#' @method heightDetails cw_legend_pill
-#' @export
-heightDetails.cw_legend_pill <- function(x) grid::unit(20, "pt")

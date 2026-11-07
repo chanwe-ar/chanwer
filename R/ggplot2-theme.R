@@ -429,13 +429,17 @@ theme_chanwe <- function(
         face = "plain",
         size = compact_size
       ),
-      # Each legend entry is a pill: the key and the label inside a hairline
-      # (new_element_chanwe_legend_text), the entries 10px apart.
-      legend.text = new_element_chanwe_legend_text(
-        family = mono_family, size = compact_size * 0.9, colour = colors[["fg-muted"]],
-        pill_colour = colors[["rule"]], key_reach = 8 * px + 6, pad = 7
+      legend.text = ggplot2::element_text(
+        family = mono_family,
+        color = colors[["fg-muted"]],
+        size = compact_size * 0.9,
+        margin = ggplot2::margin(l = 4 * px)
       ),
-      legend.background = ggplot2::element_blank(),
+      # The legend is one pill (2026-11-07): a hairline around every entry.
+      legend.background = new_element_chanwe_surface(
+        fill = NA, colour = colors[["rule"]], radius = 99, linewidth = 0.5
+      ),
+      legend.margin = ggplot2::margin(5 * px, 12 * px, 5 * px, 10 * px),
       legend.key = ggplot2::element_rect(
         fill = NA,
         color = NA
@@ -446,7 +450,7 @@ theme_chanwe <- function(
       ),
       legend.key.width = grid::unit(8 * px, "pt"),
       legend.key.height = grid::unit(8 * px, "pt"),
-      legend.key.spacing.x = grid::unit(20 * px, "pt"),
+      legend.key.spacing.x = grid::unit(14 * px, "pt"),
       legend.key.spacing.y = grid::unit(4 * px, "pt"),
       panel.spacing = grid::unit(1.0, "lines"),
       plot.subtitle = subtitle_element,
