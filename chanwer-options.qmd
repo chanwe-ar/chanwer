@@ -65,8 +65,8 @@ source("chanwer-options-helpers.R")
 #let _o-dims = (
   regular: (title: 11.5pt, sub: 7pt, gap: 1.6mm, inset: (x: 3mm, y: 2.6mm), outer: 2.4mm, band-y: 1.5mm, eye: 4.6pt, stamp: 4.3pt,
             numeral: 30pt, after: 2.6mm, foot-y: 1.6mm, foot-txt: 4.4pt, pill: (x: 2mm, y: 0.9mm), pill-txt: 4.1pt),
-  compact: (title: 10pt, sub: 6.3pt, gap: 1.1mm, inset: (x: 2.4mm, y: 1.8mm), outer: 1.8mm, band-y: 1mm, eye: 4.1pt, stamp: 3.8pt,
-            numeral: 24pt, after: 1.8mm, foot-y: 1.05mm, foot-txt: 3.9pt, pill: (x: 1.6mm, y: 0.6mm), pill-txt: 3.7pt),
+  compact: (title: 10pt, sub: 6.3pt, gap: 1.1mm, inset: (x: 3mm, y: 2.6mm), outer: 2mm, band-y: 1mm, eye: 4.1pt, stamp: 3.8pt,
+            numeral: 24pt, after: 2.2mm, foot-y: 1.05mm, foot-txt: 3.9pt, pill: (x: 1.6mm, y: 0.6mm), pill-txt: 3.7pt),
 )
 #let _o-title-block(dark: false, dm: _o-dims.compact) = {
   set par(spacing: 0pt, leading: 0.45em)
@@ -294,7 +294,7 @@ Primero van las **combinaciones**, a tamaño real; después, cada parte por sepa
 
 # Ronda 3: cabecera y pie compactos {.unnumbered}
 
-La cabecera y el pie conservan todo lo que tenían y pierden altura: el título baja de 11,5 a 10 pt, la bajada a 6 pt, la banda de obsidiana se afina, los márgenes internos se cierran y el sello del pie queda en una pastilla más baja. Además, la cabecera puede ir **sin fondo** (transparente), sobre la superficie del gráfico o de la tabla. Desde acá, todo el documento usa la versión compacta.
+La cabecera y el pie conservan todo lo que tenían y pierden altura: el título baja de 11,5 a 10 pt, la bajada a 6 pt, la banda de obsidiana se afina y el sello del pie queda en una pastilla más baja; la card de tinte conserva su aire interior. Además, la cabecera puede ir **sin fondo** (transparente), sobre la superficie del gráfico o de la tabla. Desde acá, todo el documento usa la versión compacta.
 
 ```{r}
 #| label: compact-charts

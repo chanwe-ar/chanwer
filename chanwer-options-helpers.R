@@ -83,10 +83,12 @@ DIMS <- list(
                  h = c(A = 46, C = 42, D = 38, Dleg = 60, dark = 44),
                  ty = c(A = 27, C = 15, D = 6, dark = 16), wrap_t = 13, wrap_s = 8, kpi_top = 20,
                  foot_h = 15, foot_txt = 4, pill_h = 8, pill_txt = 3.7),
-  compact = list(ip = 6, title = 10, gap = 1.2, sub = 6, sub_off = 9, sub_line = 7,
-                 band_h = 8.5, band_y = 4, eye = 3.9, stamp = 3.6, numeral = 24,
-                 h = c(A = 34, C = 30.5, D = 27, Dleg = 46, dark = 31.5),
-                 ty = c(A = 20.5, C = 11.5, D = 4.5, dark = 12), wrap_t = 11.2, wrap_s = 7, kpi_top = 15,
+  # Compact type, but the tinted card keeps its air: 7.5pt inside, the band
+  # 5.5pt from the card's edge, as much room under the subtitle as over the band.
+  compact = list(ip = 7.5, title = 10, gap = 1.2, sub = 6, sub_off = 9, sub_line = 7,
+                 band_h = 8.5, band_y = 5.5, eye = 3.9, stamp = 3.6, numeral = 24,
+                 h = c(A = 40.5, C = 34, D = 30, Dleg = 49, dark = 35),
+                 ty = c(A = 24, C = 11.5, D = 4.5, dark = 12), wrap_t = 11.2, wrap_s = 7, kpi_top = 17.5,
                  foot_h = 11.5, foot_txt = 3.6, pill_h = 6.5, pill_txt = 3.3)
 )
 d <- DIMS$compact
@@ -129,7 +131,11 @@ hdr_card <- function(kind, W, pad, right_w = 0, legend = FALSE, fill = "tint") {
   # surface, transparent). The dark card always has its ink.
   if (dark || fill != "none") rr(x0, pad, w, h, if (dark) INK else TINT, r = 7)
   bare <- !dark && fill == "none"
-  if (bare) { ip <- 0; d$band_y <- 0 }
+  if (bare) {
+    h <- h - 2 * d$ip - (if (kind == "A") d$band_y else 0) + 2
+    d$ty[["A"]] <- d$ty[["A"]] - d$band_y
+    ip <- 0; d$band_y <- 0
+  }
   if (dark) {  # the dot field of the report's band
     for (xx in seq(x0 + 5, x0 + w - 3, by = 7)) for (yy in seq(pad + 4, pad + h - 3, by = 7)) dot(xx, yy, .26, grDevices::adjustcolor("#64748B", alpha.f = .45))
   }
@@ -175,7 +181,9 @@ hdr_card <- function(kind, W, pad, right_w = 0, legend = FALSE, fill = "tint") {
     } else {
       top <- if (kind == "A") pad + d$kpi_top else y
       vline(leg_x, top, pad + h - ip, if (dark) "#434D5D" else COOL)
-      legend_stack(leg_x + 8, (top + pad + h - ip) / 2 - 4.5 * (length(SERIES) - 1), dark)
+      # Under the stamp when the stamp shares the column (C, dark).
+      first <- if (kind == "A") (top + pad + h - ip) / 2 - 4.5 * (length(SERIES) - 1) else ey + d$eye + 7
+      legend_stack(leg_x + 8, first, dark)
     }
   }
   pad + h
