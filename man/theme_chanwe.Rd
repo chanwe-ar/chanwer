@@ -10,7 +10,9 @@ theme_chanwe(
   base_lineheight = 1.6,
   legend_position = "bottom",
   bg_color = "paper",
-  plot_padding = 10,
+  plot_padding = 14,
+  eyebrow_style = c("band", "rule"),
+  pane = TRUE,
   plot_borders = "none",
   has_subtitle = TRUE,
   compact_title = TRUE,
@@ -40,6 +42,13 @@ or one of \code{"paper"} (default), \code{"white"}, \code{"sunken"}, \code{"slat
 \item{plot_padding}{Uniform outer margin in pts applied to all four sides of
 the plot (title, caption, and panel included). Default \code{10}.
 Pass a single number, e.g. \code{plot_padding = 18}.}
+
+\item{eyebrow_style}{\code{"band"} (default): the eyebrow on an obsidian pill
+across the header, with \code{chanwe_title(stamp = )} at its right; \code{"rule"}:
+the short orange rule before the label.}
+
+\item{pane}{Draw the plot's surface as a pane (the \code{pane} radius, the
+\code{rule} hairline). Default \code{TRUE}.}
 
 \item{plot_borders}{Controls decorative border lines on the plot frame.
 \code{"none"} (default) draws no borders. \code{"top"} adds a thin slate line above

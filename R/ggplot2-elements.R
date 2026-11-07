@@ -1,5 +1,5 @@
 #' @importFrom ggplot2 element_grob
-#' @importFrom grid makeContent heightDetails
+#' @importFrom grid makeContent heightDetails widthDetails
 
 # Internal separator for structured label encoding — unlikely in normal text
 .CW_SEP <- "\x1F"
@@ -63,6 +63,9 @@ new_element_chanwe_title <- function(
   rule_colour = "#CFD6DF",
   draw_bottom_line = FALSE,
   top_pad = 8,
+  eyebrow_style = "band",
+  band_text_colour = "#C6CDD6",
+  band_stamp_colour = "#8A94A6",
   inherit.blank = FALSE
 ) {
   structure(
@@ -84,7 +87,10 @@ new_element_chanwe_title <- function(
       ink_colour = ink_colour,
       rule_colour = rule_colour,
       draw_bottom_line = draw_bottom_line,
-      top_pad = top_pad
+      top_pad = top_pad,
+      eyebrow_style = eyebrow_style,
+      band_text_colour = band_text_colour,
+      band_stamp_colour = band_stamp_colour
     ),
     class = c("element_chanwe_title", "element_text", "element")
   )
@@ -235,9 +241,17 @@ new_element_chanwe_caption <- function(
   margin_bottom = 2,
   draw_bottom_line = FALSE,
   top_pad = 8,
-  rule_col = ink_col
+  rule_col = ink_col,
+  band = FALSE,
+  stamp_text = NULL,
+  band_text_col = "#C6CDD6",
+  band_stamp_col = "#8A94A6"
 ) {
   grid::gTree(
+    band = band,
+    stamp_text = stamp_text,
+    band_text_col = band_text_col,
+    band_stamp_col = band_stamp_col,
     title_text = title_text,
     eyebrow_text = eyebrow_text,
     draw_top = draw_top,
@@ -256,9 +270,12 @@ new_element_chanwe_caption <- function(
   t_h <- .cw_str_h(x$title_text, x$title_gp)
   has_ey <- !is.null(x$eyebrow_text) # TRUE even when eyebrow text is "" (draws rule-only line)
   ey_h <- if (has_ey) .cw_str_h(paste0(.CW_EYEBROW_RULE, toupper(x$eyebrow_text %||_% "")), x$eyebrow_gp) else 0
+  # The band (2026-11-07): the eyebrow on an obsidian pill across the header,
+  # with a stamp at its right; 10pt of ink above and below the label.
+  if (has_ey && isTRUE(x$band)) ey_h <- ey_h + 11
   top <- if (has_ey) (x$top_pad %||_% 8) else 0 # top padding above eyebrow
   bot <- (x$margin_bottom %||_% 2) # bottom padding — carries extra space when no subtitle
-  gap1 <- if (has_ey) 8 else 0 # gap: title → eyebrow
+  gap1 <- if (has_ey) (if (isTRUE(x$band)) 12 else 8) else 0 # gap: title → eyebrow
   gap2 <- if (x$draw_top && has_ey) {
     5
   } else if (x$draw_top) {
@@ -302,7 +319,31 @@ makeContent.cw_title_tree <- function(x) {
       gp = x$title_gp
     )
   )
-  if (d$has_ey) {
+  if (d$has_ey && isTRUE(x$band)) {
+    band_gp <- x$eyebrow_gp
+    ch <- grid::gList(
+      ch,
+      grid::roundrectGrob(
+        x = grid::unit(0, "npc"), y = grid::unit(ey_y, "pt"), width = grid::unit(1, "npc"),
+        height = grid::unit(d$ey_h, "pt"), just = c("left", "center"), r = grid::unit(d$ey_h / 2, "pt"),
+        gp = grid::gpar(fill = x$ink_col, col = NA)
+      ),
+      grid::circleGrob(
+        x = grid::unit(11, "pt"), y = grid::unit(ey_y, "pt"), r = grid::unit(2, "pt"),
+        gp = grid::gpar(fill = band_gp$col, col = NA)
+      ),
+      grid::textGrob(
+        toupper(x$eyebrow_text), x = grid::unit(20, "pt"), y = grid::unit(ey_y, "pt"),
+        just = c("left", "center"),
+        gp = grid::gpar(fontfamily = band_gp$fontfamily, fontsize = band_gp$fontsize, col = x$band_text_col)
+      ),
+      if (!is.null(x$stamp_text) && nzchar(x$stamp_text)) grid::textGrob(
+        toupper(x$stamp_text), x = grid::unit(1, "npc") - grid::unit(11, "pt"), y = grid::unit(ey_y, "pt"),
+        just = c("right", "center"),
+        gp = grid::gpar(fontfamily = band_gp$fontfamily, fontsize = band_gp$fontsize * 0.92, col = x$band_stamp_col)
+      )
+    )
+  } else if (d$has_ey) {
     ch <- grid::gList(
       ch,
       # The eyebrow gesture: a short orange rule, then the mono label.
@@ -702,9 +743,10 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
   ink <- element$ink_colour %||_% "#111319"
 
   parts <- strsplit(as.character(label), .CW_SEP, fixed = TRUE)[[1L]]
-  has_eyebrow <- length(parts) == 2L
+  has_eyebrow <- length(parts) >= 2L
   eyebrow_text <- if (has_eyebrow) parts[1L] else NULL
   title_text <- if (has_eyebrow) parts[2L] else parts[1L]
+  stamp_text <- if (length(parts) >= 3L) parts[3L] else NULL
 
   title_gp <- grid::gpar(
     fontfamily = element$family %||_% "Schibsted Grotesk SemiBold",
@@ -723,7 +765,11 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
                  margin_bottom = margin_bottom,
                  draw_bottom_line = isTRUE(element$draw_bottom_line),
                  top_pad = element$top_pad %||_% 8,
-                 rule_col = element$rule_colour %||_% "#CFD6DF")
+                 rule_col = element$rule_colour %||_% "#CFD6DF",
+                 band = identical(element$eyebrow_style %||_% "band", "band"),
+                 stamp_text = stamp_text,
+                 band_text_col = element$band_text_colour %||_% "#C6CDD6",
+                 band_stamp_col = element$band_stamp_colour %||_% "#8A94A6")
 }
 
 #' @method element_grob element_chanwe_subtitle
@@ -839,3 +885,63 @@ element_grob.element_chanwe_caption <- function(element, label = "", ...) {
 
 # Lightweight NULL-coalesce used only within this file
 `%||_%` <- function(a, b) if (!is.null(a)) a else b
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# The plot's surface as a pane (2026-11-07): the `pane` radius and the `rule`
+# hairline, so a chart reads like a chanwe_kbl() table or a KPI tile.
+new_element_chanwe_surface <- function(fill = "#F8FAFC", colour = "#E2E8F0", radius = 9, linewidth = 0.5) {
+  structure(
+    list(fill = fill, colour = colour, linewidth = linewidth, linetype = 1, radius = radius,
+         inherit.blank = FALSE),
+    class = c("element_chanwe_surface", "element_rect", "element")
+  )
+}
+
+#' @method element_grob element_chanwe_surface
+#' @export
+element_grob.element_chanwe_surface <- function(element, x = 0.5, y = 0.5, width = 1, height = 1, ...) {
+  grid::roundrectGrob(
+    x = x, y = y, width = width, height = height, r = grid::unit(element$radius %||_% 9, "pt"),
+    gp = grid::gpar(fill = element$fill, col = element$colour, lwd = (element$linewidth %||_% 0.5) * ggplot2::.pt)
+  )
+}
+
+# The legend's label as a pill (2026-11-07): a hairline pill around the key
+# and the label, as the series chips of the proposal. The pill reaches back
+# over the key cell, which sits `key_reach` pt to the left of the label.
+new_element_chanwe_legend_text <- function(family = "JetBrains Mono", size = 8, colour = "#475569",
+                                           pill_colour = "#E2E8F0", key_reach = 14, pad = 7) {
+  structure(
+    list(family = family, face = "plain", colour = colour, size = size, hjust = 0, vjust = 0.5,
+         angle = 0, lineheight = 1, margin = ggplot2::margin(0, pad + 8, 0, 4), debug = FALSE,
+         inherit.blank = FALSE, pill_colour = pill_colour, key_reach = key_reach, pad = pad),
+    class = c("element_chanwe_legend_text", "element_text", "element")
+  )
+}
+
+#' @method element_grob element_chanwe_legend_text
+#' @export
+element_grob.element_chanwe_legend_text <- function(element, label = "", ...) {
+  if (is.null(label) || identical(label, "")) return(grid::nullGrob())
+  gp <- grid::gpar(fontfamily = element$family, fontsize = element$size, col = element$colour)
+  txt <- grid::textGrob(label, x = grid::unit(4, "pt"), just = c("left", "center"), gp = gp)
+  pad <- element$pad %||_% 7
+  reach <- element$key_reach %||_% 14
+  pill <- grid::roundrectGrob(
+    x = grid::unit(-reach, "pt"), y = grid::unit(0.5, "npc"), just = c("left", "center"),
+    width = grid::unit(1, "grobwidth", txt) + grid::unit(reach + 4 + pad, "pt"),
+    height = grid::unit(element$size + 9, "pt"), r = grid::unit(element$size / 2 + 4.5, "pt"),
+    gp = grid::gpar(fill = NA, col = element$pill_colour, lwd = 0.5 * ggplot2::.pt)
+  )
+  g <- grid::gTree(children = grid::gList(pill, txt), cl = "cw_legend_pill")
+  attr(g, "width") <- grid::unit(1, "grobwidth", txt) + grid::unit(4 + pad, "pt")
+  g
+}
+
+#' @method widthDetails cw_legend_pill
+#' @export
+widthDetails.cw_legend_pill <- function(x) attr(x, "width")
+#' @method heightDetails cw_legend_pill
+#' @export
+heightDetails.cw_legend_pill <- function(x) grid::unit(20, "pt")

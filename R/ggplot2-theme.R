@@ -111,6 +111,11 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #' @param bg_color Background color for the plot surface. Accepts a hex string
 #'   or one of `"paper"` (default), `"white"`, `"sunken"`, `"slate"`, or
 #'   `"transparent"`.
+#' @param eyebrow_style `"band"` (default): the eyebrow on an obsidian pill
+#'   across the header, with `chanwe_title(stamp = )` at its right; `"rule"`:
+#'   the short orange rule before the label.
+#' @param pane Draw the plot's surface as a pane (the `pane` radius, the
+#'   `rule` hairline). Default `TRUE`.
 #' @param plot_padding Uniform outer margin in pts applied to all four sides of
 #'   the plot (title, caption, and panel included). Default `10`.
 #'   Pass a single number, e.g. `plot_padding = 18`.
@@ -217,7 +222,9 @@ theme_chanwe <- function(
   base_lineheight = 1.60,
   legend_position = "bottom",
   bg_color = "paper",
-  plot_padding = 10,
+  plot_padding = 14,
+  eyebrow_style = c("band", "rule"),
+  pane = TRUE,
   plot_borders = "none",
   has_subtitle = TRUE,
   compact_title = TRUE,
@@ -226,6 +233,7 @@ theme_chanwe <- function(
   grid = c("y", "x", "none")
 ) {
   caption_style <- match.arg(caption_style)
+  eyebrow_style <- match.arg(eyebrow_style)
   grid <- match.arg(grid)
   base_family <- chanwe_resolve_family(base_family, "base_family")
   chanwe_load_fonts()
@@ -295,7 +303,10 @@ theme_chanwe <- function(
     ink_colour = colors[["ink"]],
     # Header and footer rules in slate, as in the chanwe-report figure frame
     rule_colour = colors[["border-cool"]],
-    top_pad = if (compact_title) 4 else 8
+    top_pad = if (compact_title) 4 else 8,
+    eyebrow_style = eyebrow_style,
+    band_text_colour = colors[["rule-cool"]],
+    band_stamp_colour = colors[["fg-subtle"]]
   )
   if (!has_subtitle) {
     title_element$margin <- ggplot2::margin(0, 0, 25, 0)
@@ -338,7 +349,7 @@ theme_chanwe <- function(
       plot.caption = new_element_chanwe_caption(
         family = mono_family,
         mono_thin_family = mono_thin_family,
-        size = if (caption_style == "stamp") base_text_size * 0.77 else compact_size,
+        size = if (caption_style == "stamp") base_text_size * 0.77 else compact_size * 0.85,
         colour = if (caption_style == "stamp") colors[["pure-white"]] else plot_tk$`axis-text`,
         primary_colour = colors[["primary"]],
         ink_colour = colors[["ink"]],
@@ -380,7 +391,12 @@ theme_chanwe <- function(
       panel.grid.major.y = if (grid == "y") grid_line else ggplot2::element_blank(),
       panel.grid.major.x = if (grid == "x") grid_line else ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
-      plot.background = ggplot2::element_rect(fill = surface_fill, color = NA),
+      # The pane: the plot's surface with the `pane` radius and the `rule`
+      # hairline (2026-11-07), like a table or a KPI tile.
+      plot.background = if (isTRUE(pane)) new_element_chanwe_surface(
+        fill = surface_fill, colour = colors[["rule"]],
+        radius = chanwe_tokens$radii$pane * 0.75, linewidth = 0.5
+      ) else ggplot2::element_rect(fill = surface_fill, color = NA),
       panel.background = ggplot2::element_rect(
         fill = surface_fill,
         color = NA
@@ -413,16 +429,13 @@ theme_chanwe <- function(
         face = "plain",
         size = compact_size
       ),
-      legend.text = ggplot2::element_text(
-        family = mono_family,
-        color = colors[["fg-muted"]],
-        size = compact_size,
-        margin = ggplot2::margin(l = 4 * px)
+      # Each legend entry is a pill: the key and the label inside a hairline
+      # (new_element_chanwe_legend_text), the entries 10px apart.
+      legend.text = new_element_chanwe_legend_text(
+        family = mono_family, size = compact_size * 0.9, colour = colors[["fg-muted"]],
+        pill_colour = colors[["rule"]], key_reach = 8 * px + 6, pad = 7
       ),
-      legend.background = ggplot2::element_rect(
-        fill = surface_fill,
-        color = NA
-      ),
+      legend.background = ggplot2::element_blank(),
       legend.key = ggplot2::element_rect(
         fill = NA,
         color = NA
@@ -431,9 +444,9 @@ theme_chanwe <- function(
         fill = NA,
         color = NA
       ),
-      legend.key.width = grid::unit(16 * px, "pt"),
+      legend.key.width = grid::unit(8 * px, "pt"),
       legend.key.height = grid::unit(8 * px, "pt"),
-      legend.key.spacing.x = grid::unit(12 * px, "pt"),
+      legend.key.spacing.x = grid::unit(20 * px, "pt"),
       legend.key.spacing.y = grid::unit(4 * px, "pt"),
       panel.spacing = grid::unit(1.0, "lines"),
       plot.subtitle = subtitle_element,
@@ -479,11 +492,12 @@ theme_chanwe <- function(
 #'   ggplot2::geom_point() +
 #'   ggplot2::labs(title = chanwe_title("Fleet overview", eyebrow = "TLDR;")) +
 #'   theme_chanwe()
-chanwe_title <- function(text, eyebrow = NULL) {
-  if (is.null(eyebrow)) {
+chanwe_title <- function(text, eyebrow = NULL, stamp = NULL) {
+  if (is.null(eyebrow) && is.null(stamp)) {
     return(text)
   }
-  paste(eyebrow, text, sep = .CW_SEP)
+  if (is.null(stamp)) return(paste(eyebrow, text, sep = .CW_SEP))
+  paste(eyebrow %||_% "", text, stamp, sep = .CW_SEP)
 }
 
 #' Chanwe KPI Panel Encoder
