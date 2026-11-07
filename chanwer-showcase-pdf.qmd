@@ -26,10 +26,10 @@ chanwe:
   volume: "MENDOZA · ARGENTINA"
   chapter: "Design System"
   section: "R Package"
-  topic: "chanwer v3.0"
+  topic: "chanwer v3.1"
   rail-eyebrow: "VISUAL REFERENCE"
-  hero-image: "_extensions/chanwe-report/assets/bg_mountains.jpg"
-  hero-img-position: 10
+  # The research cover's photograph: the snow ridge, as on the reMarkable cover.
+  publication-art: "_extensions/chanwe-report/assets/cover-snow-ridge.jpg"
   cover: true
   toc: true
   toc-eyebrow: "Document map"
@@ -47,7 +47,7 @@ chanwe:
     - author
     - status
   meta-rows:
-    - { label: "Package",  value: "chanwer v3.0",     sub: "R design system" }
+    - { label: "Package",  value: "chanwer v3.1",     sub: "R design system" }
     - { label: "Format",   value: "chanwe-report-typst", sub: "Quarto extension" }
     - { label: "Author",   value: "Chanwe",            sub: "Alejandro Abraham" }
   back-cover: true
