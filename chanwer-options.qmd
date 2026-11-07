@@ -41,11 +41,300 @@ knitr::opts_chunk$set(dev = "ragg_png", dev.args = list(bg = "transparent"),
 source("chanwer-options-helpers.R")
 ```
 
+```{=typst}
+// ── data ─────────────────────────────────────────────────────────────
+#let _o-rows = (
+  (name: "Norte",  q1: "412,1", q2: "438,0", d: 6.3,  share: 34.3, status: "ok",    spark: (380, 392, 401, 398, 412, 420, 431, 438)),
+  (name: "Centro", q1: "388,4", q2: "371,2", d: -4.4, share: 29.1, status: "alert", spark: (402, 399, 394, 390, 388, 381, 376, 371)),
+  (name: "Oeste",  q1: "251,9", q2: "266,3", d: 5.7,  share: 20.9, status: "ok",    spark: (238, 241, 246, 251, 252, 258, 262, 266)),
+  (name: "Sur",    q1: "188,1", q2: "201,5", d: 7.1,  share: 15.8, status: "risk",  spark: (190, 186, 189, 188, 192, 195, 199, 201)),
+)
+#let _o-subs = ((name: "Interior", q1: "800,5", q2: "809,2", d: 1.1), (name: "Costa", q1: "440,0", q2: "467,8", d: 6.3))
+#let _o-tot = (name: "Total", q1: "1.240,5", q2: "1.277,0", d: 2.9)
+#let _o-stamp = "CHW · FIN-03 · 2026"
+#let _o-emph = _t.at("emphasis", default: _t.fg-muted)
+
+#let _o-mono(s, size: 5pt, fill: _t.fg-muted, weight: _t.weight-regular, tracking: 0.12em) = text(
+  font: _t.font-mono, size: size, weight: weight, tracking: tracking, fill: fill, upper(s))
+#let _o-pct(v, acct: false) = if acct and v < 0 { "(" + str(calc.abs(v)).replace(".", ",") + ")" } else {
+  (if v > 0 { "+" } else if v < 0 { "−" } else { "" }) + str(calc.abs(v)).replace(".", ",") + "\u{00A0}%" }
+#let _o-col(v) = if v > 0 { _t.kpi-green } else if v < 0 { _t.kpi-red } else { _t.fg-muted }
+
+// ── the header card: the same three as the charts, and the dark one ────
+// Regular (round 2) and compact (round 3, the default) header and footer.
+#let _o-dims = (
+  regular: (title: 11.5pt, sub: 7pt, gap: 1.6mm, inset: (x: 3mm, y: 2.6mm), outer: 2.4mm, band-y: 1.5mm, eye: 4.6pt, stamp: 4.3pt,
+            numeral: 30pt, after: 2.6mm, foot-y: 1.6mm, foot-txt: 4.4pt, pill: (x: 2mm, y: 0.9mm), pill-txt: 4.1pt),
+  compact: (title: 10pt, sub: 6.3pt, gap: 1.1mm, inset: (x: 2.4mm, y: 1.8mm), outer: 1.8mm, band-y: 1mm, eye: 4.1pt, stamp: 3.8pt,
+            numeral: 24pt, after: 1.8mm, foot-y: 1.05mm, foot-txt: 3.9pt, pill: (x: 1.6mm, y: 0.6mm), pill-txt: 3.7pt),
+)
+#let _o-title-block(dark: false, dm: _o-dims.compact) = {
+  set par(spacing: 0pt, leading: 0.45em)
+  text(font: _t.font-display, size: dm.title, weight: _t.weight-display, tracking: -0.04em,
+       fill: if dark { _t.rule-cool } else { _t.fg }, "Ingresos por región")
+  v(dm.gap)
+  text(font: _t.font-sans, size: dm.sub, weight: _t.weight-body,
+       fill: if dark { _t.fg-subtle } else { _t.fg-muted }, "Primer y segundo trimestre de 2026, en miles de dólares")
+}
+#let _o-head(kind, dm: _o-dims.compact, fill: "tint") = {
+  // `fill: "none"` leaves the header transparent, on the table's own surface.
+  let bare = fill == "none" and kind != "dark"
+  let card(body) = if bare { block(width: 100%, inset: (x: 1mm, top: 0.4mm, bottom: 0.6mm), body) }
+    else { block(width: 100%, fill: _t.tint, radius: 2.4mm, inset: dm.inset, clip: true, body) }
+  let tb = _o-title-block(dm: dm)
+  let eye(fill: _t.fg) = { box(baseline: -0.2pt, cw-dot(_t.primary, size: 2.8pt)); h(1.3mm); _o-mono("Finanzas · Cierre", size: dm.eye, fill: fill) }
+  let stamp = _o-mono(_o-stamp, size: dm.stamp, fill: _t.fg-subtle)
+  pad(x: dm.outer, top: dm.outer, if kind == "A" {
+    card({
+      block(width: 100%, fill: _t.ink, radius: _t.radius-pill, inset: (x: 2.4mm, y: dm.band-y),
+        grid(columns: (1fr, auto), align: (left + horizon, right + horizon), eye(fill: _t.rule-cool), stamp))
+      v(dm.after)
+      pad(x: if bare { 0mm } else { 0.6mm }, tb)
+    })
+  } else if kind == "C" {
+    card(grid(columns: (auto, 1fr, auto), column-gutter: 2.6mm, align: (left + top, left + top, right + top),
+      text(font: _t.font-serif-display, style: "italic", size: dm.numeral, fill: _t.primary, top-edge: "cap-height", bottom-edge: "baseline", "07"),
+      { eye(); v(dm.after * 0.8); tb },
+      stamp))
+  } else if kind == "D" {
+    card(grid(columns: (1fr, auto), column-gutter: 3mm, align: (left + horizon, right + horizon),
+      tb,
+      block(stroke: (left: 0.5pt + _t.rule-cool), inset: (left: 3mm, y: 0.4mm), {
+        set par(spacing: 0pt)
+        align(right, eye()); v(dm.after * 0.8); align(right, stamp)
+      })))
+  } else if kind == "dark" {
+    block(width: 100%, fill: _t.ink, radius: 2.4mm, clip: true, {
+      place(top + left, rect(width: 100%, height: 100%, fill: cw-dot-field(step: 2.6mm, dot: 0.28pt, transparency: 62%), stroke: none))
+      block(width: 100%, inset: dm.inset, {
+        grid(columns: (1fr, auto), align: (left + horizon, right + horizon), eye(fill: _t.primary), stamp)
+        v(dm.after)
+        _o-title-block(dark: true, dm: dm)
+      })
+    })
+  })
+}
+
+// ── value cells ──────────────────────────────────────────────────────────
+#let _o-delta(v, kind, size, acct: false, on-ink: false) = {
+  let c = _o-col(v)
+  if kind == "pill" {
+    box(fill: c.transparentize(if on-ink { 70% } else { 88% }), radius: _t.radius-pill, inset: (x: 1.6mm, y: 0.8mm),
+      text(font: _t.font-mono, size: size - 0.4pt, weight: _t.weight-medium, fill: if on-ink { _t.rule-cool } else { c }, _o-pct(v, acct: acct)))
+  } else if kind == "arrow" {
+    text(font: _t.font-mono, size: size, weight: _t.weight-medium, fill: c, (if v > 0 { "↑ " } else if v < 0 { "↓ " } else { "" }) + _o-pct(v, acct: acct))
+  } else if kind == "bar" {
+    let half = 4.6mm
+    let w = calc.min(calc.abs(v) / 8, 1) * half
+    box(width: 2 * half, height: 2.4mm, baseline: 0.5mm, {
+      place(left + horizon, dx: half - 0.25pt, line(angle: 90deg, length: 3.2mm, stroke: 0.5pt + _t.rule-cool))
+      if v > 0 { place(left + horizon, dx: half, rect(width: w, height: 1.8mm, fill: c, radius: 0.7pt)) }
+      else { place(left + horizon, dx: half - w, rect(width: w, height: 1.8mm, fill: c, radius: 0.7pt)) }
+    })
+    h(1.2mm)
+    box(text(font: _t.font-mono, size: size - 0.6pt, fill: if on-ink { _t.rule-cool } else { c }, _o-pct(v, acct: acct)))
+  }
+}
+#let _o-spark(vals) = {
+  let lo = calc.min(..vals); let hi = calc.max(..vals)
+  let w = 13mm; let hh = 3.4mm
+  let pts = vals.enumerate().map(((i, v)) => (w * i / (vals.len() - 1), hh * (1 - (v - lo) / (hi - lo))))
+  box(width: w, height: hh, baseline: 0.6mm, {
+    for i in range(pts.len() - 1) {
+      let (x1, y1) = pts.at(i); let (x2, y2) = pts.at(i + 1)
+      place(top + left, dx: x1, dy: y1, line(end: (x2 - x1, y2 - y1), stroke: (paint: _t.fg-muted, thickness: 0.6pt, cap: "round")))
+    }
+    let (xl, yl) = pts.last()
+    place(top + left, dx: xl - 1pt, dy: yl - 1pt, circle(radius: 1pt, fill: _t.primary, stroke: none))
+  })
+}
+#let _o-share(s, top: false) = {
+  box(width: 13mm, height: 2mm, baseline: 0.3mm, {
+    place(left + horizon, rect(width: 100%, height: 1.6mm, fill: _t.tint, radius: 0.8mm))
+    place(left + horizon, rect(width: s / 40 * 100%, height: 1.6mm, fill: if top { _t.primary } else { _t.fg-muted }, radius: 0.8mm))
+  })
+  h(1.4mm)
+  text(font: _t.font-mono, size: 5.6pt, fill: _t.fg-muted, str(s).replace(".", ",") + " %")
+}
+#let _o-status(s) = {
+  let (c, l) = if s == "ok" { (_t.kpi-green, "En meta") } else if s == "alert" { (_t.chart-orange, "Alerta") } else { (_t.kpi-red, "Riesgo") }
+  box(baseline: -0.2pt, cw-dot(c, size: 3.4pt)); h(1.2mm); text(font: _t.font-sans, size: 6.4pt, weight: _t.weight-medium, fill: _t.fg, l)
+}
+
+// ── the table ────────────────────────────────────────────────────────────
+#let otable(hdr: "A", rows: "hair", vals: "pill", foot: "A", frame: "simple",
+            density: "regular", cells: "mono", total: "ink", special: none, compact: true, hfill: "tint") = {
+  let dm = if compact { _o-dims.compact } else { _o-dims.regular }
+  let dims = (regular: (y: 2mm, n: 6.8pt, l: 5pt), compact: (y: 1.25mm, n: 6.3pt, l: 4.6pt), dense: (y: 0.75mm, n: 5.9pt, l: 4.4pt)).at(density)
+  let ix = if density == "dense" { 2.6mm } else { 3.4mm }
+  let iy = dims.y
+  let ns = dims.n
+  let acct = cells == "acct"
+  let num(s, weight: _t.weight-thin, fill: _t.fg) = if cells == "sans" {
+    text(font: _t.font-sans, size: ns + 0.3pt, weight: if weight == _t.weight-thin { _t.weight-body } else { _t.weight-display }, fill: fill, features: ("tnum", "lnum"), s)
+  } else { text(font: _t.font-mono, size: ns, weight: weight, fill: fill, s) }
+  let focus-col = cells == "focus"
+  let label(n, i) = _o-mono(n, size: dims.l, fill: if focus-col and i == 2 { _t.fg } else { _t.fg-muted },
+                                weight: if focus-col and i == 2 { _t.weight-medium } else { _t.weight-regular })
+  let extra = if special == "spark" { ("8 trimestres",) } else if special == "share" { ("Participación",) }
+              else if special == "rank" { ("Puesto",) } else if special == "status" { ("Estado",) } else { () }
+  let names = ("Región", "Q1", "Q2", "Var. QoQ") + extra
+  let ncol = names.len()
+  let col-fill(i, base) = if focus-col and i == 2 and base != _t.ink { _t.primary.transparentize(93%) } else { base }
+  let out = ()
+  for (i, n) in names.enumerate() {
+    let content = if focus-col and i == 2 { box(baseline: -0.2pt, cw-dot(_t.primary, size: 2.6pt)) + h(1.2mm) + label(n, i) } else { label(n, i) }
+    out.push(grid.cell(fill: col-fill(i, _t.tint), inset: (x: ix, y: iy + 0.3mm), align: (if i == 0 { left } else { right }) + horizon, content))
+  }
+  out.push(grid.hline(stroke: 0.5pt + _t.rule))
+  let row(r, kind: "row", f: none) = {
+    let on-ink = kind == "total" and total == "band"
+    let ink-fg = if on-ink { _t.rule-cool } else { _t.fg }
+    let w = if kind == "row" { _t.weight-thin } else { _t.weight-medium }
+    let nf = if kind == "sub" { _t.fg-muted } else { ink-fg }
+    let name = text(font: _t.font-sans, size: ns + 0.2pt, weight: if kind == "row" { _t.weight-medium } else { _t.weight-display },
+                    style: if kind == "sub" { "italic" } else { "normal" }, fill: nf, r.name)
+    let first = if rows == "leaders" and kind == "row" {
+      box(width: 100%, { name; h(1.4mm); box(width: 1fr, repeat(text(size: 5.6pt, fill: _t.rule-cool, "·  "))) })
+    } else { name }
+    let cs = ()
+    cs.push(grid.cell(fill: f, inset: (x: ix, y: iy), align: left + horizon, first))
+    cs.push(grid.cell(fill: col-fill(1, f), inset: (x: ix, y: iy), align: right + horizon, num(r.q1, weight: w, fill: nf)))
+    cs.push(grid.cell(fill: col-fill(2, f), inset: (x: ix, y: iy), align: right + horizon,
+      num(r.q2, weight: if focus-col and kind == "row" { _t.weight-medium } else { w }, fill: nf)))
+    cs.push(grid.cell(fill: f, inset: (x: ix, y: iy), align: right + horizon, _o-delta(r.d, vals, ns, acct: acct, on-ink: on-ink)))
+    if ncol == 5 {
+      let sp = if kind != "row" { [] } else if special == "spark" { _o-spark(r.spark) }
+        else if special == "share" { _o-share(r.share, top: r.name == "Norte") }
+        else if special == "rank" {
+          text(font: _t.font-serif-display, style: "italic", size: ns + 3pt, fill: if r.name == "Norte" { _t.primary } else { _t.fg-muted },
+               str(_o-rows.position(x => x.name == r.name) + 1))
+        } else if special == "status" { _o-status(r.status) }
+      cs.push(grid.cell(fill: f, inset: (x: ix, y: iy), align: right + horizon, sp))
+    }
+    cs
+  }
+  for (j, r) in _o-rows.enumerate() {
+    out += row(r)
+    let is-last = j == _o-rows.len() - 1
+    if total == "sub" and (j == 1 or j == 3) {
+      out.push(grid.hline(stroke: 0.5pt + _t.rule-cool))
+      out += row(_o-subs.at(if j == 1 { 0 } else { 1 }), kind: "sub")
+      if j == 1 { out.push(grid.hline(stroke: 0.5pt + _t.rule)) }
+    } else if rows == "hair" and density != "dense" and not is-last {
+      out.push(grid.hline(stroke: 0.5pt + _t.rule))
+    }
+  }
+  if total == "ink" {
+    out.push(grid.hline(stroke: 0.75pt + _t.ink))
+    out += row(_o-tot, kind: "total")
+  } else if total == "sub" {
+    out.push(grid.hline(stroke: (paint: _t.ink, thickness: 0.75pt)))
+    out += row(_o-tot, kind: "total")
+    out.push(grid.hline(stroke: 0.75pt + _t.ink))
+  } else if total == "tint" {
+    out.push(grid.hline(stroke: 0.5pt + _t.rule))
+    out += row(_o-tot, kind: "total", f: _t.tint)
+  } else if total == "band" {
+    out += row(_o-tot, kind: "total", f: _t.ink)
+  }
+  let src = { _o-mono("Fuente", size: dm.foot-txt, fill: _t.fg-subtle); h(1.6mm); _o-mono("Cierre contable · simulado", size: dm.foot-txt) }
+  let foot-block = if foot == "A" {
+    block(width: 100%, stroke: (top: 0.5pt + _t.rule), inset: (x: ix, y: dm.foot-y),
+      grid(columns: (1fr, auto), align: (left + horizon, right + horizon), src,
+        box(fill: _t.white, radius: _t.radius-pill, inset: dm.pill, _o-mono(_o-stamp, size: dm.pill-txt))))
+  } else {
+    let strip = block(width: 100%, fill: _t.tint, inset: (x: ix, y: dm.foot-y + 0.4mm), radius: if frame == "none" { 2mm } else { 0pt },
+      grid(columns: (1fr, auto), align: (left + horizon, right + horizon), src, _o-mono(_o-stamp, size: dm.pill-txt)))
+    if frame == "none" { pad(top: 1.4mm, strip) } else { strip }
+  }
+  let widths = (1.35fr, 1fr, 1fr, if vals == "bar" { 1.6fr } else { 1.15fr }) + (if ncol == 5 { (if special == "share" { 1.9fr } else { 1.3fr },) } else { () })
+  let body = {
+    set block(spacing: 0pt)
+    set par(spacing: 0pt, leading: 0.45em)
+    _o-head(hdr, dm: dm, fill: hfill)
+    v(if compact { 1.8mm } else { 2.4mm })
+    grid(columns: widths, ..out)
+    foot-block
+  }
+  let card = block(width: 100%, radius: _t.radius-pane, clip: true, breakable: false,
+    stroke: if frame == "simple" { 0.5pt + _t.rule } else { none },
+    fill: if frame == "none" { none } else { _t.pane }, body)
+  if frame == "shadow" {
+    layout(size => {
+      let m = measure(card, width: size.width)
+      block(width: 100%, height: m.height + 3pt, breakable: false, {
+        for i in range(6) {
+          place(top + left, dx: 0.2pt * (6 - i), dy: 0.6pt * (6 - i),
+            rect(width: m.width - 0.4pt * (6 - i), height: m.height, radius: _t.radius-pane + 1pt * (6 - i),
+                 fill: _t.ink.transparentize(100% - 1.1% * (i + 1)), stroke: none))
+        }
+        place(top + left, card)
+      })
+    })
+  } else { card }
+}
+
+#let _o-sheet(options, cols: 2) = grid(columns: range(cols).map(_ => 1fr), column-gutter: 5mm, row-gutter: 6mm,
+  ..options.map(o => block(breakable: false, {
+    set par(spacing: 0pt)
+    box(baseline: -0.2pt, cw-dot(if o.at(2, default: false) { _t.ink } else { _t.primary }, size: 4pt))
+    h(1.6mm)
+    text(font: _t.font-mono, size: 6pt, weight: _t.weight-medium, tracking: 0.04em, fill: _t.fg, o.at(0))
+    v(2mm)
+    o.at(1)
+  })))
+```
+
 # Qué cambió {.unnumbered}
 
 Esta ronda arma lo elegido. En gráficos: cabecera **A** por defecto, con **C** y **D** como variantes, las tres como *card* compacta y con el título en Schibsted y la bajada en Satoshi; KPI **A**, **B** y **C**; cuerpo **A** con la opción *main* (la serie principal se marca al final con su halo y su valor) y **B**; leyenda **A** más plana y **C**; pie **A** y **B** más planos; y el marco exterior en tres variantes: simple, con sombra y sin marco. Las tablas toman la misma cabecera, el mismo pie y el mismo marco, y suman láminas nuevas: densidad, estilo de celdas, totales y columnas especiales.
 
 Primero van las **combinaciones**, a tamaño real; después, cada parte por separado. El punto negro marca la opción por defecto.
+
+# Ronda 3: cabecera y pie compactos {.unnumbered}
+
+La cabecera y el pie conservan todo lo que tenían y pierden altura: el título baja de 11,5 a 10 pt, la bajada a 6 pt, la banda de obsidiana se afina, los márgenes internos se cierran y el sello del pie queda en una pastilla más baja. Además, la cabecera puede ir **sin fondo** (transparente), sobre la superficie del gráfico o de la tabla. Desde acá, todo el documento usa la versión compacta.
+
+```{r}
+#| label: compact-charts
+sheet(list(
+  list(name = "Antes · A regular", args = list(header = "A", compact = FALSE)),
+  list(name = "Compacta · A", default = TRUE, args = list(header = "A")),
+  list(name = "Compacta · A sin fondo", args = list(header = "A", hfill = "none")),
+  list(name = "Compacta · C sin fondo, leyenda C", args = list(header = "C", hfill = "none", legend = "C"))
+))
+```
+
+```{r}
+#| label: compact-charts-2
+sheet(list(
+  list(name = "Compacta · D", args = list(header = "D", foot = "B")),
+  list(name = "Compacta · D sin fondo", args = list(header = "D", hfill = "none", foot = "B")),
+  list(name = "Compacta · C con KPI", args = list(header = "C", kpi = "A")),
+  list(name = "Compacta · card de obsidiana", args = list(header = "dark"))
+))
+```
+
+{{< pagebreak >}}
+
+```{=typst}
+#_o-sheet((
+  ("Antes · A regular", otable(hdr: "A", compact: false)),
+  ("Compacta · A", otable(hdr: "A"), true),
+  ("Compacta · A sin fondo", otable(hdr: "A", hfill: "none")),
+  ("Compacta · D sin fondo, pie B", otable(hdr: "D", hfill: "none", foot: "B")),
+))
+```
+
+**Lectura de diseño (impeccable + taste).** La versión compacta gana en las dos lecturas: tres tamaños hacen todo el trabajo (el rótulo en mono, el título, la bajada) y el dato recupera la altura que la cabecera se llevaba.
+
+- **Una card adentro de otra es una card de más.** Es la regla más dura de impeccable: con el marco simple o con sombra, la cabecera con fondo de tinte es una card dentro de una card. Sin fondo, la banda de obsidiana queda como el único elemento oscuro y la jerarquía se lee sola: banda, título, dato. La recomendación es **cabecera sin fondo cuando el gráfico o la tabla tienen marco**, y **cabecera con tinte cuando no hay marco** (ahí la card es la que cierra la pieza).
+- **Una línea o un tono, no los dos.** Taste pide separar superficies por un paso de tono y no por un filete. El marco simple ya es un filete; el pie B (franja de tinte) es un paso de tono. Las combinaciones más limpias usan uno solo: marco simple con pie A, o sombra con pie B.
+- **Lo que se conserva a propósito.** Taste prohíbe los rótulos en mono, los filetes finos y los eyebrows; acá son la marca (el rótulo en mono, el punto, el sello) y se quedan. Lo que sí se aplica es su criterio de escala: menos tamaños, más contraste entre ellos.
+- **Para revisar a tamaño real.** A medio ancho, la banda y el sello del pie quedan en 3,6 a 3,9 pt; en un gráfico a ancho completo son el doble. No conviene bajar más.
+
+{{< pagebreak >}}
 
 # Gráficos
 
@@ -171,242 +460,6 @@ sheet(list(
 
 # Tablas
 
-```{=typst}
-// ── data ─────────────────────────────────────────────────────────────
-#let _o-rows = (
-  (name: "Norte",  q1: "412,1", q2: "438,0", d: 6.3,  share: 34.3, status: "ok",    spark: (380, 392, 401, 398, 412, 420, 431, 438)),
-  (name: "Centro", q1: "388,4", q2: "371,2", d: -4.4, share: 29.1, status: "alert", spark: (402, 399, 394, 390, 388, 381, 376, 371)),
-  (name: "Oeste",  q1: "251,9", q2: "266,3", d: 5.7,  share: 20.9, status: "ok",    spark: (238, 241, 246, 251, 252, 258, 262, 266)),
-  (name: "Sur",    q1: "188,1", q2: "201,5", d: 7.1,  share: 15.8, status: "risk",  spark: (190, 186, 189, 188, 192, 195, 199, 201)),
-)
-#let _o-subs = ((name: "Interior", q1: "800,5", q2: "809,2", d: 1.1), (name: "Costa", q1: "440,0", q2: "467,8", d: 6.3))
-#let _o-tot = (name: "Total", q1: "1.240,5", q2: "1.277,0", d: 2.9)
-#let _o-stamp = "CHW · FIN-03 · 2026"
-#let _o-emph = _t.at("emphasis", default: _t.fg-muted)
-
-#let _o-mono(s, size: 5pt, fill: _t.fg-muted, weight: _t.weight-regular, tracking: 0.12em) = text(
-  font: _t.font-mono, size: size, weight: weight, tracking: tracking, fill: fill, upper(s))
-#let _o-pct(v, acct: false) = if acct and v < 0 { "(" + str(calc.abs(v)).replace(".", ",") + ")" } else {
-  (if v > 0 { "+" } else if v < 0 { "−" } else { "" }) + str(calc.abs(v)).replace(".", ",") + "\u{00A0}%" }
-#let _o-col(v) = if v > 0 { _t.kpi-green } else if v < 0 { _t.kpi-red } else { _t.fg-muted }
-
-// ── the header card: the same three as the charts, and the dark one ────
-#let _o-title-block(dark: false) = {
-  set par(spacing: 0pt, leading: 0.45em)
-  text(font: _t.font-display, size: 11.5pt, weight: _t.weight-display, tracking: -0.04em,
-       fill: if dark { _t.rule-cool } else { _t.fg }, "Ingresos por región")
-  v(1.6mm)
-  text(font: _t.font-sans, size: 7pt, weight: _t.weight-body,
-       fill: if dark { _t.fg-subtle } else { _t.fg-muted }, "Primer y segundo trimestre de 2026, en miles de dólares")
-}
-#let _o-head(kind) = pad(x: 2.4mm, top: 2.4mm, {
-  let card(fill, body) = block(width: 100%, fill: fill, radius: 2.8mm, inset: (x: 3mm, y: 2.6mm), clip: true, body)
-  if kind == "A" {
-    card(_t.tint, {
-      block(width: 100%, fill: _t.ink, radius: _t.radius-pill, inset: (x: 2.6mm, y: 1.5mm),
-        grid(columns: (1fr, auto), align: (left + horizon, right + horizon),
-          { box(baseline: -0.2pt, cw-dot(_t.primary, size: 3.2pt)); h(1.6mm); _o-mono("Finanzas · Cierre", size: 4.6pt, fill: _t.rule-cool) },
-          _o-mono(_o-stamp, size: 4.3pt, fill: _t.fg-subtle)))
-      v(2.6mm)
-      pad(x: 0.6mm, _o-title-block())
-    })
-  } else if kind == "C" {
-    card(_t.tint, grid(columns: (auto, 1fr, auto), column-gutter: 3mm, align: (left + top, left + top, right + top),
-      text(font: _t.font-serif-display, style: "italic", size: 30pt, fill: _t.primary, top-edge: "cap-height", bottom-edge: "baseline", "07"),
-      { box(baseline: -0.2pt, cw-dot(_t.primary, size: 3pt)); h(1.4mm); _o-mono("Finanzas · Cierre", size: 4.6pt, fill: _t.fg); v(2.2mm); _o-title-block() },
-      _o-mono(_o-stamp, size: 4.3pt, fill: _t.fg-subtle)))
-  } else if kind == "D" {
-    card(_t.tint, grid(columns: (1fr, auto), column-gutter: 3mm, align: (left + horizon, right + horizon),
-      _o-title-block(),
-      block(stroke: (left: 0.5pt + _t.rule-cool), inset: (left: 3mm, y: 0.6mm), {
-        set par(spacing: 0pt)
-        align(right, { box(baseline: -0.2pt, cw-dot(_t.primary, size: 3pt)); h(1.4mm); _o-mono("Finanzas · Cierre", size: 4.6pt, fill: _t.fg) })
-        v(2.2mm)
-        align(right, _o-mono(_o-stamp, size: 4.3pt, fill: _t.fg-subtle))
-      })))
-  } else if kind == "dark" {
-    block(width: 100%, fill: _t.ink, radius: 2.8mm, clip: true, {
-      place(top + left, rect(width: 100%, height: 100%, fill: cw-dot-field(step: 2.6mm, dot: 0.28pt, transparency: 62%), stroke: none))
-      block(width: 100%, inset: (x: 3mm, y: 2.6mm), {
-        grid(columns: (1fr, auto), align: (left + horizon, right + horizon),
-          { box(baseline: -0.2pt, cw-dot(_t.primary, size: 3.2pt)); h(1.6mm); _o-mono("Finanzas · Cierre", size: 4.6pt, fill: _t.primary) },
-          _o-mono(_o-stamp, size: 4.3pt, fill: _t.fg-subtle))
-        v(2.8mm)
-        _o-title-block(dark: true)
-      })
-    })
-  }
-})
-
-// ── value cells ──────────────────────────────────────────────────────────
-#let _o-delta(v, kind, size, acct: false, on-ink: false) = {
-  let c = _o-col(v)
-  if kind == "pill" {
-    box(fill: c.transparentize(if on-ink { 70% } else { 88% }), radius: _t.radius-pill, inset: (x: 1.6mm, y: 0.8mm),
-      text(font: _t.font-mono, size: size - 0.4pt, weight: _t.weight-medium, fill: if on-ink { _t.rule-cool } else { c }, _o-pct(v, acct: acct)))
-  } else if kind == "arrow" {
-    text(font: _t.font-mono, size: size, weight: _t.weight-medium, fill: c, (if v > 0 { "↑ " } else if v < 0 { "↓ " } else { "" }) + _o-pct(v, acct: acct))
-  } else if kind == "bar" {
-    let half = 4.6mm
-    let w = calc.min(calc.abs(v) / 8, 1) * half
-    box(width: 2 * half, height: 2.4mm, baseline: 0.5mm, {
-      place(left + horizon, dx: half - 0.25pt, line(angle: 90deg, length: 3.2mm, stroke: 0.5pt + _t.rule-cool))
-      if v > 0 { place(left + horizon, dx: half, rect(width: w, height: 1.8mm, fill: c, radius: 0.7pt)) }
-      else { place(left + horizon, dx: half - w, rect(width: w, height: 1.8mm, fill: c, radius: 0.7pt)) }
-    })
-    h(1.2mm)
-    box(text(font: _t.font-mono, size: size - 0.6pt, fill: if on-ink { _t.rule-cool } else { c }, _o-pct(v, acct: acct)))
-  }
-}
-#let _o-spark(vals) = {
-  let lo = calc.min(..vals); let hi = calc.max(..vals)
-  let w = 13mm; let hh = 3.4mm
-  let pts = vals.enumerate().map(((i, v)) => (w * i / (vals.len() - 1), hh * (1 - (v - lo) / (hi - lo))))
-  box(width: w, height: hh, baseline: 0.6mm, {
-    for i in range(pts.len() - 1) {
-      let (x1, y1) = pts.at(i); let (x2, y2) = pts.at(i + 1)
-      place(top + left, dx: x1, dy: y1, line(end: (x2 - x1, y2 - y1), stroke: (paint: _t.fg-muted, thickness: 0.6pt, cap: "round")))
-    }
-    let (xl, yl) = pts.last()
-    place(top + left, dx: xl - 1pt, dy: yl - 1pt, circle(radius: 1pt, fill: _t.primary, stroke: none))
-  })
-}
-#let _o-share(s, top: false) = {
-  box(width: 13mm, height: 2mm, baseline: 0.3mm, {
-    place(left + horizon, rect(width: 100%, height: 1.6mm, fill: _t.tint, radius: 0.8mm))
-    place(left + horizon, rect(width: s / 40 * 100%, height: 1.6mm, fill: if top { _t.primary } else { _t.fg-muted }, radius: 0.8mm))
-  })
-  h(1.4mm)
-  text(font: _t.font-mono, size: 5.6pt, fill: _t.fg-muted, str(s).replace(".", ",") + " %")
-}
-#let _o-status(s) = {
-  let (c, l) = if s == "ok" { (_t.kpi-green, "En meta") } else if s == "alert" { (_t.chart-orange, "Alerta") } else { (_t.kpi-red, "Riesgo") }
-  box(baseline: -0.2pt, cw-dot(c, size: 3.4pt)); h(1.2mm); text(font: _t.font-sans, size: 6.4pt, weight: _t.weight-medium, fill: _t.fg, l)
-}
-
-// ── the table ────────────────────────────────────────────────────────────
-#let otable(hdr: "A", rows: "hair", vals: "pill", foot: "A", frame: "simple",
-            density: "regular", cells: "mono", total: "ink", special: none) = {
-  let dims = (regular: (y: 2mm, n: 6.8pt, l: 5pt), compact: (y: 1.25mm, n: 6.3pt, l: 4.6pt), dense: (y: 0.75mm, n: 5.9pt, l: 4.4pt)).at(density)
-  let ix = if density == "dense" { 2.6mm } else { 3.4mm }
-  let iy = dims.y
-  let ns = dims.n
-  let acct = cells == "acct"
-  let num(s, weight: _t.weight-thin, fill: _t.fg) = if cells == "sans" {
-    text(font: _t.font-sans, size: ns + 0.3pt, weight: if weight == _t.weight-thin { _t.weight-body } else { _t.weight-display }, fill: fill, features: ("tnum", "lnum"), s)
-  } else { text(font: _t.font-mono, size: ns, weight: weight, fill: fill, s) }
-  let focus-col = cells == "focus"
-  let label(n, i) = _o-mono(n, size: dims.l, fill: if focus-col and i == 2 { _t.fg } else { _t.fg-muted },
-                                weight: if focus-col and i == 2 { _t.weight-medium } else { _t.weight-regular })
-  let extra = if special == "spark" { ("8 trimestres",) } else if special == "share" { ("Participación",) }
-              else if special == "rank" { ("Puesto",) } else if special == "status" { ("Estado",) } else { () }
-  let names = ("Región", "Q1", "Q2", "Var. QoQ") + extra
-  let ncol = names.len()
-  let col-fill(i, base) = if focus-col and i == 2 and base != _t.ink { _t.primary.transparentize(93%) } else { base }
-  let out = ()
-  for (i, n) in names.enumerate() {
-    let content = if focus-col and i == 2 { box(baseline: -0.2pt, cw-dot(_t.primary, size: 2.6pt)) + h(1.2mm) + label(n, i) } else { label(n, i) }
-    out.push(grid.cell(fill: col-fill(i, _t.tint), inset: (x: ix, y: iy + 0.3mm), align: (if i == 0 { left } else { right }) + horizon, content))
-  }
-  out.push(grid.hline(stroke: 0.5pt + _t.rule))
-  let row(r, kind: "row", f: none) = {
-    let on-ink = kind == "total" and total == "band"
-    let ink-fg = if on-ink { _t.rule-cool } else { _t.fg }
-    let w = if kind == "row" { _t.weight-thin } else { _t.weight-medium }
-    let nf = if kind == "sub" { _t.fg-muted } else { ink-fg }
-    let name = text(font: _t.font-sans, size: ns + 0.2pt, weight: if kind == "row" { _t.weight-medium } else { _t.weight-display },
-                    style: if kind == "sub" { "italic" } else { "normal" }, fill: nf, r.name)
-    let first = if rows == "leaders" and kind == "row" {
-      box(width: 100%, { name; h(1.4mm); box(width: 1fr, repeat(text(size: 5.6pt, fill: _t.rule-cool, "·  "))) })
-    } else { name }
-    let cs = ()
-    cs.push(grid.cell(fill: f, inset: (x: ix, y: iy), align: left + horizon, first))
-    cs.push(grid.cell(fill: col-fill(1, f), inset: (x: ix, y: iy), align: right + horizon, num(r.q1, weight: w, fill: nf)))
-    cs.push(grid.cell(fill: col-fill(2, f), inset: (x: ix, y: iy), align: right + horizon,
-      num(r.q2, weight: if focus-col and kind == "row" { _t.weight-medium } else { w }, fill: nf)))
-    cs.push(grid.cell(fill: f, inset: (x: ix, y: iy), align: right + horizon, _o-delta(r.d, vals, ns, acct: acct, on-ink: on-ink)))
-    if ncol == 5 {
-      let sp = if kind != "row" { [] } else if special == "spark" { _o-spark(r.spark) }
-        else if special == "share" { _o-share(r.share, top: r.name == "Norte") }
-        else if special == "rank" {
-          text(font: _t.font-serif-display, style: "italic", size: ns + 3pt, fill: if r.name == "Norte" { _t.primary } else { _t.fg-muted },
-               str(_o-rows.position(x => x.name == r.name) + 1))
-        } else if special == "status" { _o-status(r.status) }
-      cs.push(grid.cell(fill: f, inset: (x: ix, y: iy), align: right + horizon, sp))
-    }
-    cs
-  }
-  for (j, r) in _o-rows.enumerate() {
-    out += row(r)
-    let is-last = j == _o-rows.len() - 1
-    if total == "sub" and (j == 1 or j == 3) {
-      out.push(grid.hline(stroke: 0.5pt + _t.rule-cool))
-      out += row(_o-subs.at(if j == 1 { 0 } else { 1 }), kind: "sub")
-      if j == 1 { out.push(grid.hline(stroke: 0.5pt + _t.rule)) }
-    } else if rows == "hair" and density != "dense" and not is-last {
-      out.push(grid.hline(stroke: 0.5pt + _t.rule))
-    }
-  }
-  if total == "ink" {
-    out.push(grid.hline(stroke: 0.75pt + _t.ink))
-    out += row(_o-tot, kind: "total")
-  } else if total == "sub" {
-    out.push(grid.hline(stroke: (paint: _t.ink, thickness: 0.75pt)))
-    out += row(_o-tot, kind: "total")
-    out.push(grid.hline(stroke: 0.75pt + _t.ink))
-  } else if total == "tint" {
-    out.push(grid.hline(stroke: 0.5pt + _t.rule))
-    out += row(_o-tot, kind: "total", f: _t.tint)
-  } else if total == "band" {
-    out += row(_o-tot, kind: "total", f: _t.ink)
-  }
-  let src = { _o-mono("Fuente", size: 4.4pt, fill: _t.fg-subtle); h(2mm); _o-mono("Cierre contable · simulado", size: 4.4pt) }
-  let foot-block = if foot == "A" {
-    block(width: 100%, stroke: (top: 0.5pt + _t.rule), inset: (x: ix, y: 1.6mm),
-      grid(columns: (1fr, auto), align: (left + horizon, right + horizon), src,
-        box(fill: _t.white, radius: _t.radius-pill, inset: (x: 2mm, y: 0.9mm), _o-mono(_o-stamp, size: 4.1pt))))
-  } else {
-    let strip = block(width: 100%, fill: _t.tint, inset: (x: ix, y: 2mm), radius: if frame == "none" { 2.4mm } else { 0pt },
-      grid(columns: (1fr, auto), align: (left + horizon, right + horizon), src, _o-mono(_o-stamp, size: 4.1pt)))
-    if frame == "none" { pad(top: 1.4mm, strip) } else { strip }
-  }
-  let widths = (1.35fr, 1fr, 1fr, if vals == "bar" { 1.6fr } else { 1.15fr }) + (if ncol == 5 { (if special == "share" { 1.9fr } else { 1.3fr },) } else { () })
-  let body = {
-    set block(spacing: 0pt)
-    set par(spacing: 0pt, leading: 0.45em)
-    _o-head(hdr)
-    v(2.4mm)
-    grid(columns: widths, ..out)
-    foot-block
-  }
-  let card = block(width: 100%, radius: _t.radius-pane, clip: true, breakable: false,
-    stroke: if frame == "simple" { 0.5pt + _t.rule } else { none },
-    fill: if frame == "none" { none } else { _t.pane }, body)
-  if frame == "shadow" {
-    layout(size => {
-      let m = measure(card, width: size.width)
-      block(width: 100%, height: m.height + 3pt, breakable: false, {
-        for i in range(6) {
-          place(top + left, dx: 0.2pt * (6 - i), dy: 0.6pt * (6 - i),
-            rect(width: m.width - 0.4pt * (6 - i), height: m.height, radius: _t.radius-pane + 1pt * (6 - i),
-                 fill: _t.ink.transparentize(100% - 1.1% * (i + 1)), stroke: none))
-        }
-        place(top + left, card)
-      })
-    })
-  } else { card }
-}
-
-#let _o-sheet(options, cols: 2) = grid(columns: range(cols).map(_ => 1fr), column-gutter: 5mm, row-gutter: 6mm,
-  ..options.map(o => block(breakable: false, {
-    set par(spacing: 0pt)
-    box(baseline: -0.2pt, cw-dot(if o.at(2, default: false) { _t.ink } else { _t.primary }, size: 4pt))
-    h(1.6mm)
-    text(font: _t.font-mono, size: 6pt, weight: _t.weight-medium, tracking: 0.04em, fill: _t.fg, o.at(0))
-    v(2mm)
-    o.at(1)
-  })))
-```
 
 ## Combinaciones
 
