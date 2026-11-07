@@ -74,24 +74,25 @@ SUBTITLE <- "Brutas y netas, en miles de millones de dólares"
 EYEBROW <- "BCRA · Sector externo"
 STAMP <- "CHW · RM-07 · 2026"
 
-# ── the title block: Schibsted at the display weight over the brand's editorial
-# italic (Cormorant Garamond in `emphasis`), as the report's ledes. Wraps to
-# two lines beside a KPI pane. Returns the subtitle's y.
+# ── the title block: Schibsted at the display weight over the subtitle in
+# Satoshi (fg-muted). Wraps to two lines beside a KPI pane. Returns the
+# subtitle's y.
+SUB_SIZE <- 6.6
 title_block <- function(x, y, wrap_w = Inf, on_dark = FALSE, size = 11.5) {
   tcol <- if (on_dark) COOL else INK
-  scol <- if (on_dark) SU else EMPH
+  scol <- if (on_dark) SU else MU
   if (tw(TITLE, F_DISP, size) > wrap_w) {
     txt("Reservas", x, y, F_DISP, size, tcol)
     txt("internacionales", x, y + size + 1.5, F_DISP, size, tcol)
     y <- y + size + 1.5
   }
   else txt(TITLE, x, y, F_DISP, size, tcol)
-  if (tw(SUBTITLE, F_ITAL, 8.2, "italic") > wrap_w) {
-    txt("Brutas y netas, en miles", x, y + 11, F_ITAL, 8.2, scol, face = "italic")
-    txt("de millones de dólares", x, y + 20, F_ITAL, 8.2, scol, face = "italic")
-    return(y + 20)
+  if (tw(SUBTITLE, F_SANS, SUB_SIZE) > wrap_w) {
+    txt("Brutas y netas, en miles", x, y + 11, F_SANS, SUB_SIZE, scol)
+    txt("de millones de dólares", x, y + 19, F_SANS, SUB_SIZE, scol)
+    return(y + 19)
   }
-  txt(SUBTITLE, x, y + 11, F_ITAL, 8.2, scol, face = "italic")
+  txt(SUBTITLE, x, y + 11, F_SANS, SUB_SIZE, scol)
   y + 11
 }
 
@@ -100,13 +101,25 @@ title_block <- function(x, y, wrap_w = Inf, on_dark = FALSE, size = 11.5) {
 hdr_card <- function(kind, W, pad, right_w = 0, legend = FALSE) {
   x0 <- pad; w <- W - 2 * pad; ip <- 8
   dark <- kind == "dark"
-  h <- switch(kind, A = 46, C = 42, D = 38, dark = 44)
-  if (right_w > 0) h <- h + 22
+  h <- switch(kind, A = 46, C = 42, D = if (legend) 60 else 38, dark = 44)
+  # The width the title block gets, before drawing, so the card grows with it.
+  avail <- w - 2 * ip - (if (right_w > 0) right_w + 8 else 0)
+  if (legend && kind != "D") avail <- min(avail, w * 0.75 - 2 * ip)
+  avail <- avail - switch(kind, C = 32, D = 84, 0)
+  if (tw(TITLE, F_DISP, 11.5) > avail) h <- h + 13
+  if (tw(SUBTITLE, F_SANS, SUB_SIZE) > avail) h <- h + 8
   rr(x0, pad, w, h, if (dark) INK else TINT, r = 8)
   if (dark) {  # the dot field of the report's band
-    for (xx in seq(x0 + 5, x0 + w - 3, by = 7)) for (yy in seq(pad + 4, pad + h - 3, by = 7)) dot(xx, yy, .32, "#64748B")
+    for (xx in seq(x0 + 5, x0 + w - 3, by = 7)) for (yy in seq(pad + 4, pad + h - 3, by = 7)) dot(xx, yy, .26, grDevices::adjustcolor("#64748B", alpha.f = .45))
   }
   inner_w <- w - 2 * ip - (if (right_w > 0) right_w + 8 else 0)
+  # With the legend in the header, the card splits 75 / 25: the title block in
+  # the first column, the series stacked in the second, after a hairline.
+  leg_x <- NULL
+  if (legend && kind != "D") {
+    leg_x <- x0 + w * 0.75
+    inner_w <- min(inner_w, leg_x - x0 - 2 * ip)
+  }
   y <- pad + ip
   if (kind == "A") {
     rr(x0 + 5, pad + 5, w - 10, 11, INK)
@@ -132,7 +145,16 @@ hdr_card <- function(kind, W, pad, right_w = 0, legend = FALSE) {
     mono(STAMP, -(x0 + ip), y + 3, 4, SU, c("right", "center"))
     end <- title_block(x0 + ip, y + 16, inner_w, on_dark = TRUE)
   }
-  if (legend) legend_header(W - pad - ip, end, dark)
+  if (legend) {
+    if (kind == "D") {
+      # D already has a right column: the series go under its stamp.
+      legend_stack(W - pad - ip - 76, y + 27, dark)
+    } else {
+      top <- if (kind == "A") pad + 21 else y
+      vline(leg_x, top, pad + h - 6, if (dark) "#434D5D" else COOL)
+      legend_stack(leg_x + 8, (top + pad + h - 6) / 2 - 5.5 * (length(SERIES) - 1), dark)
+    }
+  }
   pad + h
 }
 
@@ -179,6 +201,13 @@ legend_pill <- function(W, y, keys) {
   for (i in seq_along(labs_)) {
     dot(x + 1.8, y, 1.8, keys[[i]]); txt(labs_[i], x + 5.5, y, F_MONO, 4.1, MU)
     x <- x + ws[i] + 18
+  }
+}
+legend_stack <- function(x, y, dark = FALSE, keys = SERIES) {
+  for (i in seq_along(keys)) {
+    dot(x + 1.8, y, 1.8, keys[[i]])
+    txt(toupper(names(keys)[i]), x + 6, y, F_MONO, 4.2, if (dark) COOL else MU)
+    y <- y + 11
   }
 }
 legend_header <- function(xr, y, dark = FALSE, keys = SERIES) {
@@ -244,7 +273,8 @@ body_plot <- function(body = "A", type = "line") {
                          hjust = 0, nudge_x = 12, family = F_MONO, size = 1.45)
     }
     p <- p + scale_colour_manual(values = SERIES) +
-      scale_x_date(date_labels = "%b %y", date_breaks = "6 months", expand = expansion(mult = c(.01, .17))) +
+      scale_x_date(date_labels = "%b %y", breaks = seq(as.Date("2024-06-01"), as.Date("2025-12-01"), by = "6 months"),
+                   expand = expansion(mult = c(.01, if (body == "B") .26 else .17))) +
       scale_y_continuous(limits = c(22, 42), breaks = if (body == "B") c(22, 42) else c(25, 30, 35, 40),
                          expand = expansion(0)) +
       labs(x = NULL, y = NULL) + base_theme(if (body == "B") "none" else "y")
