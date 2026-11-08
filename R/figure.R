@@ -13,16 +13,16 @@
        NEUTRAL = sg[["neutral"]], INKFG = cw[["ink-fg"]] %||_% "#64748B", RULEINK = cw[["rule-ink"]] %||_% "#434D5D")
 }
 .cwf_fonts <- function() {
-  list(DISP = "Schibsted Grotesk SemiBold", MONO = "JetBrains Mono", SANS = "Satoshi",
+  list(DISP = "Schibsted Grotesk SemiBold", MONO = "JetBrains Mono", SANS = "Satoshi", LIGHT = "Satoshi Light",
        SERIF = "Instrument Serif", ITAL = "Cormorant Garamond")
 }
 # Compact dimensions in pt, for a figure drawn about 255pt wide and shown at
 # full text width (the size the options document was judged at). `scale`
 # multiplies them for figures drawn at their real size.
 .cwf_dims <- function(scale = 1) {
-  d <- list(ip = 7.5, title = 10, gap = 1.2, sub = 6, sub_line = 7, band_h = 8.5, band_y = 5.5,
-            eye = 3.9, stamp = 3.6, numeral = 24, foot_h = 11.5, foot_txt = 3.6, pill_h = 6.5,
-            pill_txt = 3.3, pad = 8, radius = 9, kpi_h = 43, pill = 3.9)
+  d <- list(ip = 7.5, title = 8, gap = 1.2, sub = 4.6, sub_line = 5.6, band_h = 8.5, band_y = 5.5,
+            eye = 3.9, stamp = 3.6, numeral = 24, foot_h = 11, foot_txt = 4.6, pill_h = 7,
+            pill_txt = 4.6, pad = 8, radius = 9, kpi_h = 34, pill = 3.9)
   lapply(d, function(v) v * scale)
 }
 
@@ -51,6 +51,9 @@
 }
 .cwf_dot <- function(x, y, r, col) grid::grid.circle(x = .cwf_X(x), y = .cwf_Y(y), r = .cwf_u(r), gp = grid::gpar(fill = col, col = NA))
 .cwf_mono <- function(lbl, x, y, size, col, just = c("left", "center")) .cwf_txt(toupper(lbl), x, y, .cwf_fonts()$MONO, size, col, just)
+# The footer is set at the subtitle's size, sentence case, in Satoshi Light so it
+# reads quieter than the subtitle above it.
+.cwf_sans <- function(lbl, x, y, size, col, just = c("left", "center")) .cwf_txt(lbl, x, y, .cwf_fonts()$LIGHT, size, col, just)
 .cwf_wrap <- function(text, fam, size, width) {
   words <- strsplit(text, " ")[[1]]
   lines <- character(0); cur <- ""
@@ -98,18 +101,19 @@
   F <- .cwf_fonts()
   w <- .cwf_pills_w(k, d) + 14
   .cwf_rr(x0, top, w, h, fill, r = 6)
-  .cwf_mono(k$unit_line, x0 + 7, top + 8.5, 3.7, C$MU)
-  .cwf_txt(k$value, x0 + 7, top + 20.5, F$DISP, 13, C$INK)
-  .cwf_pills(k, x0 + 7, top + h - 9, d, C)
+  .cwf_mono(k$unit_line, x0 + 7, top + 8, 3.7, C$MU)
+  .cwf_txt(k$value, x0 + 7, top + 17.5, F$DISP, 7, C$INK)
+  .cwf_pills(k, x0 + 7, top + h - 8.5, d, C)
 }
 .cwf_kpi_row <- function(k, x0, top, w, d, C, fill) {
   F <- .cwf_fonts()
-  h <- 18
-  .cwf_rr(x0, top, w, h, fill, r = 6)
-  .cwf_txt(k$value, x0 + 7, top + h / 2, F$DISP, 11.5, C$INK)
-  x <- x0 + 7 + .cwf_tw(k$value, F$DISP, 11.5) + 5
-  .cwf_mono(k$unit_line, x, top + h / 2 + .5, 3.7, C$MU)
-  .cwf_pills(k, x0 + w - 7 - .cwf_pills_w(k, d), top + h / 2, d, C)
+  # No pane of its own: the value starts on the title's left edge, and the
+  # value, its unit and the pills share one centre line.
+  h <- 14
+  .cwf_txt(k$value, x0, top + h / 2, F$DISP, 7, C$INK)
+  x <- x0 + .cwf_tw(k$value, F$DISP, 7) + 4
+  .cwf_mono(k$unit_line, x, top + h / 2, 3.7, C$MU)
+  .cwf_pills(k, x0 + w - .cwf_pills_w(k, d), top + h / 2, d, C)
 }
 
 # ── the header card: one composition rule for every kind ────────────────────
@@ -161,8 +165,8 @@
   left_h <- (if (has_eye) slot + 1.5 else 0) + length(t_lines) * line_t + (if (length(s_lines)) 1.5 + length(s_lines) * line_s else 0)
   band <- kind == "A"
   bo <- if (bare) 0 else d$band_y
-  band_block <- if (band) bo + d$band_h + (if (bare) 7 else 6.5) else 0
-  row_h <- if (kpi_row) 18 + 6 else 0
+  band_block <- if (band) bo + d$band_h + (if (bare) 4.5 else 4) else 0
+  row_h <- if (kpi_row) 14 + 5 else 0
   content_h <- max(left_h, right_h) + row_h
   h <- band_block + (if (band) 0 else ip) + content_h + ip + (if (bare) 1 else 0)
   if (!bare) .cwf_rr(x0, pad, w, h, if (dark) C$INK else C$TINT, r = 7)
@@ -215,23 +219,23 @@
       y <- y + it$h; prev <- it$type
     }
   }
-  if (kpi_row) .cwf_kpi_row(k, x0 + ip, top + content_h - 18, w - 2 * ip, d, C, if (bare) C$TINT else C$PAPER)
+  if (kpi_row) .cwf_kpi_row(k, x0 + ip, top + content_h - 14, w - 2 * ip, d, C, if (bare) C$TINT else C$PAPER)
   pad + h
 }
 
 .cwf_kpi_strip <- function(k, pad, y, d, C) {
   F <- .cwf_fonts()
-  .cwf_txt(k$value, pad + 2, y + 7, F$DISP, 15, C$INK)
-  x <- pad + 2 + .cwf_tw(k$value, F$DISP, 15) + 5
-  .cwf_mono(k$unit_line, x, y + 9, 3.9, C$MU)
-  .cwf_pills(k, x + .cwf_tw(toupper(k$unit_line), F$MONO, 3.9) + 8, y + 8, d, C)
-  y + 17
+  .cwf_txt(k$value, pad, y + 5, F$DISP, 7, C$INK)
+  x <- pad + .cwf_tw(k$value, F$DISP, 7) + 4
+  .cwf_mono(k$unit_line, x, y + 5, 3.9, C$MU)
+  .cwf_pills(k, x + .cwf_tw(toupper(k$unit_line), F$MONO, 3.9) + 8, y + 5, d, C)
+  y + 11
 }
 .cwf_kpi_rail <- function(k, x, y, h, d, C) {
   F <- .cwf_fonts()
-  .cwf_txt(k$value, x, y + 11, F$DISP, 16, C$INK)
-  .cwf_mono(k$unit_line, x, y + 23, 3.7, C$MU)
-  .cwf_pills(k, x, y + 35, d, C, stack = TRUE)
+  .cwf_txt(k$value, x, y + 6, F$DISP, 7, C$INK)
+  .cwf_mono(k$unit_line, x, y + 14, 3.7, C$MU)
+  .cwf_pills(k, x, y + 25, d, C, stack = TRUE)
   .cwf_vline(x + 56, y + 2, y + h - 2, C$RULE)
 }
 .cwf_legend_pill <- function(keys, W, y, C) {
@@ -251,16 +255,16 @@
   fh <- d$foot_h; y0 <- H - fh; yc <- y0 + fh / 2
   src <- function(y) {
     if (is.null(s$source)) return(invisible())
-    .cwf_mono(s$source_label, pad, y, d$foot_txt, C$SU)
-    .cwf_mono(s$source, pad + .cwf_tw(toupper(s$source_label), .cwf_fonts()$MONO, d$foot_txt) + 5, y, d$foot_txt, C$MU)
+    .cwf_sans(s$source_label, pad, y, d$foot_txt, C$SU)
+    .cwf_sans(s$source, pad + .cwf_tw(s$source_label, .cwf_fonts()$LIGHT, d$foot_txt) + 3, y, d$foot_txt, C$MU)
   }
   if (s$footer == "rule") {
     .cwf_hline(pad, -pad, y0, C$RULE)
     src(yc)
     if (!is.null(s$id)) {
-      w <- .cwf_tw(toupper(s$id), .cwf_fonts()$MONO, d$pill_txt) + 7
+      w <- .cwf_tw(s$id, .cwf_fonts()$LIGHT, d$pill_txt) + 8
       .cwf_rr(W - pad - w, yc - d$pill_h / 2, w, d$pill_h, C$WHITE)
-      .cwf_mono(s$id, W - pad - w + 3.5, yc, d$pill_txt, C$MU)
+      .cwf_sans(s$id, W - pad - w + 4, yc, d$pill_txt, C$MU)
     }
   } else {
     if (s$frame == "none") {
@@ -271,7 +275,7 @@
                       just = c("left", "top"), gp = grid::gpar(fill = C$TINT, col = NA))
     }
     src(yc)
-    if (!is.null(s$id)) .cwf_mono(s$id, -(pad + (if (s$frame == "none") 6 else 0)), yc, d$pill_txt, C$MU, c("right", "center"))
+    if (!is.null(s$id)) .cwf_sans(s$id, -(pad + (if (s$frame == "none") 6 else 0)), yc, d$pill_txt, C$MU, c("right", "center"))
   }
 }
 
@@ -316,7 +320,7 @@
   pill_legend <- s$legend == "pill" && length(s$keys) > 0
   bottom <- H - d$foot_h - (if (pill_legend) 14 else 4)
   x0 <- pad
-  if (!is.null(s$kpi) && s$kpi_position == "rail") { .cwf_kpi_rail(s$kpi, pad + 2, y, bottom - y, d, C); x0 <- pad + 62 }
+  if (!is.null(s$kpi) && s$kpi_position == "rail") { .cwf_kpi_rail(s$kpi, pad, y, bottom - y, d, C); x0 <- pad + 60 }
   grid::pushViewport(grid::viewport(x = .cwf_u(x0), y = .cwf_Y(y), width = .cwf_u(W - x0 - pad),
                                     height = .cwf_u(bottom - y), just = c("left", "top")))
   grid::grid.draw(ggplot2::ggplotGrob(.cwf_body(s$plot)))
@@ -344,18 +348,18 @@
   if (!is.null(s$eyebrow)) { .cwf_dot(x + 1.3, y + 2, 1.3, C$P); .cwf_mono(s$eyebrow, x + 5.5, y + 2, d$eye, C$INK) }
   if (!is.null(s$tag)) .cwf_mono(s$tag, -pad, y + 2, d$stamp, C$MU, c("right", "center"))
   yy <- y + 9
-  for (l in .cwf_wrap(s$title, F$DISP, 11, W - x - pad)) { .cwf_txt(l, x, yy + 6, F$DISP, 11, C$INK); yy <- yy + 12.5 }
-  if (!is.null(s$subtitle)) for (l in .cwf_wrap(s$subtitle, F$SANS, 6.2, W - x - pad)) { .cwf_txt(l, x, yy + 4.5, F$SANS, 6.2, C$MU); yy <- yy + 8.6 }
+  for (l in .cwf_wrap(s$title, F$DISP, 8.8, W - x - pad)) { .cwf_txt(l, x, yy + 5, F$DISP, 8.8, C$INK); yy <- yy + 10 }
+  if (!is.null(s$subtitle)) for (l in .cwf_wrap(s$subtitle, F$SANS, 4.8, W - x - pad)) { .cwf_txt(l, x, yy + 3.6, F$SANS, 4.8, C$MU); yy <- yy + 6.8 }
   k <- s$kpi
   if (!is.null(k)) {
     yy <- yy + 4
-    .cwf_txt(k$value, x, yy + 6, F$DISP, 13, C$INK)
-    xx <- x + .cwf_tw(k$value, F$DISP, 13) + 5
-    .cwf_mono(k$unit_line, xx, yy + 7, 3.7, C$MU); xx <- xx + .cwf_tw(toupper(k$unit_line), F$MONO, 3.7) + 10
+    .cwf_txt(k$value, x, yy + 4, F$DISP, 7, C$INK)
+    xx <- x + .cwf_tw(k$value, F$DISP, 7) + 4
+    .cwf_mono(k$unit_line, xx, yy + 4, 3.7, C$MU); xx <- xx + .cwf_tw(toupper(k$unit_line), F$MONO, 3.7) + 10
     for (m in k$metrics) {
-      lbl <- toupper(.cwf_change_lbl(m)); .cwf_mono(lbl, xx, yy + 7, 4, .cwf_change_col(m, C)); xx <- xx + .cwf_tw(lbl, F$MONO, 4) + 9
+      lbl <- toupper(.cwf_change_lbl(m)); .cwf_mono(lbl, xx, yy + 4, 4, .cwf_change_col(m, C)); xx <- xx + .cwf_tw(lbl, F$MONO, 4) + 9
     }
-    yy <- yy + 13
+    yy <- yy + 9
   }
   y <- yy + 6
   fh <- 13; bottom <- H - fh - 4
@@ -366,10 +370,10 @@
   y0 <- H - fh
   .cwf_hline(pad, -pad, y0, C$RULE, .5)
   if (!is.null(s$source)) {
-    .cwf_mono(s$source_label, pad, y0 + fh / 2, 3.7, C$SU)
-    .cwf_mono(s$source, pad + .cwf_tw(toupper(s$source_label), F$MONO, 3.7) + 5, y0 + fh / 2, 3.7, C$MU)
+    .cwf_sans(s$source_label, pad, y0 + fh / 2, 4.8, C$SU)
+    .cwf_sans(s$source, pad + .cwf_tw(s$source_label, F$LIGHT, 4.8) + 3, y0 + fh / 2, 4.8, C$MU)
   }
-  if (!is.null(s$id)) .cwf_mono(s$id, -pad, y0 + fh / 2, 3.6, C$SU, c("right", "center"))
+  if (!is.null(s$id)) .cwf_sans(s$id, -pad, y0 + fh / 2, 4.8, C$MU, c("right", "center"))
 }
 
 #' Chanwe Figure Frame

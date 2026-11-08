@@ -33,10 +33,10 @@
 #' @param eyebrow_size Typst size string for the eyebrow. Default \code{"4pt"}.
 #' @param subtitle_size Typst size string for the subtitle. Default \code{"8pt"};
 #'   \code{NULL} for the density-based default (\code{"10pt"} / \code{"9pt"}).
-#' @param body_size Typst size string for data cell text. Default \code{"7pt"};
+#' @param body_size Typst size string for data cell text. Default \code{"6.3pt"};
 #'   \code{NULL} for the density-based default (\code{"10pt"} / \code{"7pt"}).
 #' @param header_size Typst size string for column label text. Default
-#'   \code{"5.5pt"}; \code{NULL} for the density-based default
+#'   \code{"5pt"}; \code{NULL} for the density-based default
 #'   (\code{"8pt"} / \code{"7pt"}).
 #' @param note_size Typst size string for the footer note. Default
 #'   \code{"5.5pt"}; \code{NULL} for the density-based default
@@ -144,8 +144,8 @@ chanwe_kbl <- function(
   title_size = '13pt',
   eyebrow_size = '4pt',
   subtitle_size = '8pt',
-  body_size = '7pt',
-  header_size = '5.5pt',
+  body_size = '6.3pt',
+  header_size = '5pt',
   note_size = '5.5pt',
   col_label_top = 0,
   footer_top = 0,
@@ -374,7 +374,7 @@ chanwe_kbl <- function(
   rule_color <- if (isTRUE(pane)) typst_rgb(hairline) else typst_rgb(tokens[["border-cool"]])
   # The total row opens with an ink rule: the only rule in the table that is
   # not a hairline (2026-11-07).
-  total_rule_color <- "_t.ink"
+  total_rule_color <- "_t.fg-muted"
   row_divider_color <- hairline
 
   # code builder
@@ -462,7 +462,7 @@ chanwe_kbl <- function(
     }
 
     if (header_rule && is.null(header)) {
-      p("      table.hline(stroke: 0.5pt + ", rule_color, "),")
+      p("      table.hline(stroke: 0.4pt + ", rule_color, "),")
     }
 
     for (i in seq_len(n)) {
@@ -493,14 +493,14 @@ chanwe_kbl <- function(
     p("    ),")
   }
 
-  p("    table.hline(stroke: 0.5pt + ", rule_color, "),")
+  p("    table.hline(stroke: 0.4pt + ", rule_color, "),")
 
   nr <- nrow(data)
   total_start <- if (n_total > 0) nr - n_total + 1L else nr + 1L
   for (i in seq_len(nr)) {
     is_total <- i >= total_start
     if (is_total && i == total_start) {
-      p("    table.hline(stroke: 0.75pt + ", total_rule_color, "),")
+      p("    table.hline(stroke: 0.5pt + ", total_rule_color, "),")
     }
     for (j in seq_len(n)) {
       val <- esc(fmt_data[[j]][i])
@@ -564,14 +564,14 @@ chanwe_kbl <- function(
       p("    table.cell(align: ", col_aligns[j], cell_fill, ")[", inner, "],")
     }
     if (i < nr && !is_total) {
-      p('    table.hline(stroke: 0.4pt + rgb("', row_divider_color, '")),')
+      p('    table.hline(stroke: 0.3pt + rgb("', row_divider_color, '")),')
     }
   }
 
   # One closing rule, then the footer: the source line as a quiet mono label
   # (or the 2.x stamp with caption_style = "stamp").
   if (!isTRUE(pane) || !is.null(caption)) {
-    p("    table.hline(stroke: 0.5pt + ", rule_color, "),")
+    p("    table.hline(stroke: 0.4pt + ", rule_color, "),")
   }
 
   if (!is.null(caption)) {
@@ -623,11 +623,11 @@ chanwe_kbl <- function(
   pad_fill <- if (!is.null(fill_val) && !isTRUE(pane)) paste0(", fill: ", fill_val) else ""
 
   # v2 pane (brand-v2 Q1 B): the table sits in a block with the 16px
-  # surface radius (on the document's px scale: body_size / type.body pt per
-  # px), a hairline and no shadow; clip keeps the tint header in the corners.
+  # surface radius (on the document's px scale, read at the 7pt reference
+  # cell size so the corners match the figure frame whatever the cell size),
+  # a hairline and no shadow; clip keeps the tint header in the corners.
   if (isTRUE(pane)) {
-    body_num <- suppressWarnings(as.numeric(sub("pt$", "", body_pt)))
-    pt_per_px <- if (is.na(body_num)) 0.75 else body_num / chanwe_tokens$type$body
+    pt_per_px <- 7 / chanwe_tokens$type$body
     radius_pt <- round(chanwe_tokens$radii$surface * pt_per_px, 2)
     L <- c(
       paste0(
@@ -760,8 +760,8 @@ chanwe_col_signed <- function(
   dark <- kind == "dark"; bare <- fill == "none" && !dark
   tcol <- if (dark) "_t.rule-cool" else "_t.fg"; scol <- if (dark) "_t.fg-subtle" else "_t.fg-muted"
   tb <- paste0(
-    '#block(spacing: 0pt)[#text(font: _t.font-display, size: 11pt, weight: _t.weight-display, tracking: -0.04em, fill: ', tcol, ')[', esc(title), ']]',
-    if (!is.null(subtitle)) paste0('#block(above: 1.6mm, spacing: 0pt)[#text(font: _t.font-sans, size: 7pt, fill: ', scol, ')[', esc(subtitle), ']]') else ""
+    '#block(spacing: 0pt)[#text(font: _t.font-display, size: 9.5pt, weight: _t.weight-display, tracking: -0.04em, fill: ', tcol, ')[', esc(title), ']]',
+    if (!is.null(subtitle)) paste0('#block(above: 1.4mm, spacing: 0pt)[#text(font: _t.font-sans, size: 6pt, fill: ', scol, ')[', esc(subtitle), ']]') else ""
   )
   eye <- function(col) if (is.null(eyebrow)) "" else paste0('#box(baseline: -0.2pt, cw-dot(_t.primary, size: 3pt))#h(1.4mm)', .kbl_mono(eyebrow, "5pt", col, esc))
   tg <- function(col) if (is.null(tag)) "" else .kbl_mono(tag, "4.8pt", col, esc)
@@ -779,12 +779,14 @@ chanwe_col_signed <- function(
   c(paste0('#pad(x: 2.4mm, top: 2.4mm, block(width: 100%, fill: ', box_fill, ', radius: 2.6mm, inset: ', inset, ')[#set par(spacing: 0pt, leading: 0.5em);', inner, '])'))
 }
 .kbl_footer <- function(kind, source, source_label, id, frame, fonts, esc) {
-  src <- if (is.null(source)) "[]" else paste0('[', .kbl_mono(source_label, "4.6pt", "_t.fg-subtle", esc), '#h(2mm)', .kbl_mono(source, "4.6pt", "_t.fg-muted", esc), ']')
+  # Set at the subtitle's size, sentence case, light: quieter than the subtitle.
+  foot <- function(x, fill) paste0('#text(font: _t.font-sans, size: 6pt, weight: _t.weight-body, fill: ', fill, ')[', esc(x), ']')
+  src <- if (is.null(source)) "[]" else paste0('[', foot(source_label, "_t.fg-subtle"), '#h(1.2mm)', foot(source, "_t.fg-muted"), ']')
   if (kind == "rule") {
-    idc <- if (is.null(id)) "[]" else paste0('box(fill: _t.white, radius: 99pt, inset: (x: 1.8mm, y: 0.7mm))[', .kbl_mono(id, "4.3pt", "_t.fg-muted", esc), ']')
+    idc <- if (is.null(id)) "[]" else paste0('box(fill: _t.white, radius: 99pt, inset: (x: 1.8mm, y: 0.7mm))[', foot(id, "_t.fg-muted"), ']')
     paste0('#block(width: 100%, stroke: (top: 0.5pt + _t.rule), inset: (x: 3.4mm, y: 1.4mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), ', src, ', ', idc, '))')
   } else {
-    idc <- if (is.null(id)) "[]" else paste0('[', .kbl_mono(id, "4.3pt", "_t.fg-muted", esc), ']')
+    idc <- if (is.null(id)) "[]" else paste0('[', foot(id, "_t.fg-muted"), ']')
     paste0('#', if (frame == "none") 'pad(top: 1.4mm, ' else '', 'block(width: 100%, fill: _t.tint, radius: ', if (frame == "none") "2mm" else "0pt",
            ', inset: (x: 3.4mm, y: 1.9mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), ', src, ', ', idc, '))', if (frame == "none") ')' else '')
   }

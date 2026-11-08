@@ -124,9 +124,9 @@ test_that("chanwe_kbl sets text in Satoshi and figures in JetBrains Mono", {
   expect_false(grepl("Inter", txt, fixed = TRUE))
   # subtitle and the text column read in Satoshi
   expect_match(txt, '#text(font: "Satoshi", size: 8pt, fill: _t.fg-muted', fixed = TRUE)
-  expect_match(txt, '#text(font: "Satoshi", size: 7pt, fill: _t.ink, weight: "medium")[Alpha]', fixed = TRUE)
+  expect_match(txt, '#text(font: "Satoshi", size: 6.3pt, fill: _t.ink, weight: "medium")[Alpha]', fixed = TRUE)
   # the right-aligned figures stay mono
-  expect_match(txt, '#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[1.5]', fixed = TRUE)
+  expect_match(txt, '#text(font: "JetBrains Mono", size: 6.3pt, fill: _t.ink, weight: "thin")[1.5]', fixed = TRUE)
 })
 
 test_that("bundled marks are the current brandbook files, not the archive", {
