@@ -6,6 +6,16 @@
   of tracked mono capitals. The editorial style follows (title 11 → 8.8, subtitle
   6.2 → 4.8, footer 4.8 light). `chanwe_kbl()` frames match: title 11 → 9.5pt,
   subtitle 7 → 6pt, footer 6pt light.
+- **KPI below the title** (Ale, 2026-11-08): the KPI figure is 7 design units in every
+  placement (pane, row, strip, rail, editorial), smaller than the 8-unit title, and
+  shares one centre line with its unit and pills. The row under the title has no pane
+  of its own and starts on the title's left edge; the rail starts there too.
+- **Title nearer the band:** the gap between header A's obsidian band and the title
+  drops from 6.5 to 4 units.
+- **Lighter tables:** `chanwe_kbl()` cells 7 → 6.3pt and column labels 5.5 → 5pt;
+  row hairlines 0.4 → 0.3pt, header and closing rules 0.5 → 0.4pt; the total rule is
+  0.5pt `fg-muted` instead of 0.75pt obsidian. The pane's radius stays on the 7pt
+  reference so table corners keep matching the figure frame.
 
 # chanwer 3.2.0
 
