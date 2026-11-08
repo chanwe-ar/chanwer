@@ -1,4 +1,4 @@
-# chanwer (development version)
+# chanwer 3.3.0
 
 - **Quieter frame type** (Ale, 2026-11-08): in `chanwe_figure()` the title is 20%
   smaller (10 → 8 design units) and the subtitle 23% smaller (6 → 4.6); the footer
