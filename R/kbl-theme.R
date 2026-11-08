@@ -87,6 +87,24 @@
 #'   at the default 7pt body), a hairline border, column labels on the slate
 #'   tint and no outer fill around it. Default \code{TRUE}; \code{FALSE} draws
 #'   the open chanwer 2.x table.
+#' @param header The figure frame's header card, as in [chanwe_figure()]:
+#'   \code{"A"} (the obsidian band with the eyebrow and the tag), \code{"C"}
+#'   (the numeral), \code{"D"} (two columns), \code{"dark"}. \code{NULL}
+#'   (default) keeps the title rows inside the table.
+#' @param header_fill \code{"tint"} or \code{"none"}.
+#' @param tag The section or series at the right of the header. The ID goes
+#'   to \code{id}, in the footer.
+#' @param numeral The table number, for \code{header = "C"}.
+#' @param footer \code{"rule"} (a hairline, the ID in a white pill) or
+#'   \code{"tint"} (a tinted strip). \code{NULL} keeps the caption row.
+#' @param source,source_label,id The footer's source, its label and the
+#'   document ID. \code{source} defaults to \code{caption}.
+#' @param frame \code{"simple"}, \code{"shadow"} or \code{"none"}; replaces
+#'   \code{pane} when set.
+#' @param total_style \code{"ink"} (an ink rule over the total), \code{"tint"}
+#'   or \code{"band"} (the total row on obsidian).
+#' @param delta_style How a \code{chanwe_col_signed()} column draws:
+#'   \code{"pill"}, \code{"arrow"} or \code{"bar"} (a bar from the centre).
 #' @param caption_style \code{"mono"} (v2 default): the source line as a
 #'   JetBrains Mono label. \code{"stamp"}: the orange stamp of chanwer 2.x.
 #'   \code{NULL} reads \code{getOption("chanwer.caption_style", "mono")}.
@@ -143,10 +161,35 @@ chanwe_kbl <- function(
   highlight_cols = NULL,
   highlight_color = NULL,
   pane = TRUE,
-  caption_style = NULL
+  caption_style = NULL,
+  header = NULL,
+  header_fill = c("tint", "none"),
+  tag = NULL,
+  numeral = NULL,
+  footer = NULL,
+  source = NULL,
+  source_label = "Fuente",
+  id = NULL,
+  frame = NULL,
+  total_style = c("ink", "tint", "band"),
+  delta_style = c("pill", "arrow", "bar")
 ) {
   chanwe_require_package("knitr")
   density <- match.arg(density)
+  header_fill <- match.arg(header_fill)
+  total_style <- match.arg(total_style)
+  delta_style <- match.arg(delta_style)
+  if (!is.null(header)) header <- match.arg(header, c("A", "C", "D", "dark"))
+  if (!is.null(footer)) footer <- match.arg(footer, c("rule", "tint"))
+  if (!is.null(frame)) frame <- match.arg(frame, c("simple", "shadow", "none"))
+  if (identical(total_style, "tint")) total_fill <- TRUE
+  # The figure frame (chanwer 3.2.0): with `header`, the title block is a card
+  # above the table, the same as chanwe_figure(); with `footer`, the source and
+  # the ID close it. The table itself keeps only its column labels and body.
+  card_title <- title; card_subtitle <- subtitle; card_eyebrow <- eyebrow
+  if (!is.null(header)) { title <- NULL; subtitle <- NULL; eyebrow <- NULL }
+  if (!is.null(footer)) { if (is.null(source)) source <- caption; caption <- NULL }
+  if (!is.null(frame)) pane <- frame == "simple"
   caption_style <- chanwe_caption_style(caption_style)
   if (is.null(top_border)) top_border <- !isTRUE(pane)
 
@@ -356,7 +399,8 @@ chanwe_kbl <- function(
     }
   }
 
-  has_hdr <- !is.null(title) || !is.null(eyebrow) || !is.null(subtitle)
+  # With the frame's header card the table still opens with its column labels.
+  has_hdr <- !is.null(title) || !is.null(eyebrow) || !is.null(subtitle) || !is.null(header)
   if (has_hdr) {
     p("    table.header(")
 
@@ -417,7 +461,7 @@ chanwe_kbl <- function(
       )
     }
 
-    if (header_rule) {
+    if (header_rule && is.null(header)) {
       p("      table.hline(stroke: 0.5pt + ", rule_color, "),")
     }
 
@@ -425,7 +469,7 @@ chanwe_kbl <- function(
       # v2 tint header: the column labels sit on the tint inside the pane
       hdr_fill <- if (!is.null(highlight_cols) && i %in% highlight_cols) {
         paste0(", fill: ", typst_rgb(highlight_color))
-      } else if (isTRUE(pane)) {
+      } else if (isTRUE(pane) || !is.null(frame)) {
         paste0(", fill: ", typst_rgb(tint))
       } else {
         ""
@@ -475,9 +519,14 @@ chanwe_kbl <- function(
       }
       # A signed column (chanwe_col_signed) renders its values as pills: the
       # sign's colour as text on the same colour at 10%, as the KPI pane does.
-      is_pill <- !is.null(color_data[[j]]) && isTRUE(attr(color_data[[j]], "chanwe_pill")) &&
+      is_signed <- !is.null(color_data[[j]]) && isTRUE(attr(color_data[[j]], "chanwe_pill")) &&
         !is.na(data[[j]][i]) && nzchar(fmt_data[[j]][i])
-      cell_fill <- if (is_total && total_fill) {
+      is_pill <- is_signed && delta_style == "pill"
+      on_band <- is_total && total_style == "band"
+      if (on_band && !is_signed) fill <- "_t.rule-cool"
+      cell_fill <- if (on_band) {
+        ", fill: _t.ink"
+      } else if (is_total && total_fill) {
         paste0(', fill: rgb("', total_fill_color, '")')
       } else if (!is.null(highlight_cols) && j %in% highlight_cols) {
         paste0(', fill: rgb("', highlight_color, '")')
@@ -490,9 +539,27 @@ chanwe_kbl <- function(
       )
       if (is_pill) {
         inner <- paste0(
-          '#box(fill: ', fill, '.transparentize(90%), radius: 99pt, inset: (x: 4pt, y: 2.2pt), baseline: 2.2pt)[',
-          inner, ']'
+          '#box(fill: ', fill, '.transparentize(', if (on_band) "70%" else "90%", '), radius: 99pt, inset: (x: 4pt, y: 2.2pt), baseline: 2.2pt)[',
+          if (on_band) sub(paste0("fill: ", fill), "fill: _t.rule-cool", inner, fixed = TRUE) else inner, ']'
         )
+      } else if (is_signed && delta_style == "arrow") {
+        v <- suppressWarnings(as.numeric(data[[j]][i]))
+        arrow <- if (isTRUE(v > 0)) "\u{2191} " else if (isTRUE(v < 0)) "\u{2193} " else ""
+        inner <- sub("[", paste0("[", arrow), inner, fixed = TRUE)
+      } else if (is_signed && delta_style == "bar") {
+        # A bar from the centre, as long as the value against the column's
+        # largest, then the figure.
+        v <- suppressWarnings(as.numeric(data[[j]][i]))
+        vmax <- max(abs(suppressWarnings(as.numeric(data[[j]]))), na.rm = TRUE)
+        frac <- if (is.finite(vmax) && vmax > 0) min(abs(v) / vmax, 1) else 0
+        half <- 5
+        bar <- paste0(
+          '#box(width: ', 2 * half, 'mm, height: 2.4mm, baseline: 0.5mm)[',
+          '#place(left + horizon, dx: ', half, 'mm - 0.25pt, line(angle: 90deg, length: 3.2mm, stroke: 0.5pt + _t.rule-cool))',
+          '#place(left + horizon, dx: ', if (v >= 0) paste0(half, "mm") else paste0(half - frac * half, "mm"),
+          ', rect(width: ', round(frac * half, 3), 'mm, height: 1.8mm, fill: ', fill, ', radius: 0.7pt))]#h(1.2mm)'
+        )
+        inner <- paste0(bar, inner)
       }
       p("    table.cell(align: ", col_aligns[j], cell_fill, ")[", inner, "],")
     }
@@ -541,6 +608,18 @@ chanwe_kbl <- function(
   p("  ]")
   p("}")
 
+  if (!is.null(header) || !is.null(footer)) {
+    # The report's paragraph spacing (2.6em) must not leak between the card's
+    # header, the table and the footer.
+    L <- c("#block(width: 100%, breakable: false)[#set block(spacing: 0pt)", "#set par(spacing: 0pt, leading: 0.55em)", L, "]")
+  }
+  if (!is.null(header) && !is.null(card_title)) {
+    L <- append(L, c(.kbl_header_card(header, header_fill, card_title, card_subtitle, card_eyebrow, tag, numeral, fonts, esc), "#v(2mm)"), after = 2)
+  }
+  if (!is.null(footer) && (!is.null(source) || !is.null(id))) {
+    L <- append(L, .kbl_footer(footer, source, source_label, id, frame %||_% "simple", fonts, esc), after = length(L) - 1)
+  }
+
   pad_fill <- if (!is.null(fill_val) && !isTRUE(pane)) paste0(", fill: ", fill_val) else ""
 
   # v2 pane (brand-v2 Q1 B): the table sits in a block with the 16px
@@ -567,6 +646,23 @@ chanwe_kbl <- function(
       L,
       "]"
     )
+  }
+
+  if (identical(frame, "shadow")) {
+    # A soft, low shadow: stacked rounded rects behind the table, measured to
+    # its size; no hairline.
+    body_num <- suppressWarnings(as.numeric(sub("pt$", "", body_pt)))
+    pt_per_px <- if (is.na(body_num)) 0.75 else body_num / chanwe_tokens$type$body
+    radius_pt <- round(chanwe_tokens$radii$surface * pt_per_px, 2)
+    L <- c(
+      "#let _cw-card = block(width: 100%, radius: ", radius_pt, "pt, clip: true, fill: _t.pane)[",
+      L, "]",
+      "#layout(size => { let m = measure(_cw-card, width: size.width); block(width: 100%, height: m.height + 3pt, breakable: false, {",
+      paste0("  for i in range(6) { place(top + left, dx: 0.2pt * (6 - i), dy: 0.6pt * (6 - i), rect(width: m.width - 0.4pt * (6 - i), height: m.height, radius: ",
+             radius_pt, "pt + 1pt * (6 - i), fill: _t.ink.transparentize(100% - 1.1% * (i + 1)), stroke: none)) }"),
+      "  place(top + left, _cw-card) }) })"
+    )
+    L[1] <- paste0(L[1], L[2], L[3]); L <- L[-(2:3)]
   }
 
   # Wrap in a block with above/below spacing so the table gets the same
@@ -650,5 +746,46 @@ chanwe_col_signed <- function(
     # chanwe_kbl() draws a signed column as pills.
     attr(out, "chanwe_pill") <- TRUE
     out
+  }
+}
+
+
+# ── the figure frame for tables (chanwer 3.2.0) ─────────────────────────────
+# The header card and the footer of chanwe_figure(), in Typst, with the
+# report's tokens (_t) and helpers (cw-dot).
+.kbl_mono <- function(x, size, fill, esc) {
+  paste0('#text(font: _t.font-mono, size: ', size, ', tracking: 0.12em, fill: ', fill, ')[#upper[', esc(x), ']]')
+}
+.kbl_header_card <- function(kind, fill, title, subtitle, eyebrow, tag, numeral, fonts, esc) {
+  dark <- kind == "dark"; bare <- fill == "none" && !dark
+  tcol <- if (dark) "_t.rule-cool" else "_t.fg"; scol <- if (dark) "_t.fg-subtle" else "_t.fg-muted"
+  tb <- paste0(
+    '#block(spacing: 0pt)[#text(font: _t.font-display, size: 11pt, weight: _t.weight-display, tracking: -0.04em, fill: ', tcol, ')[', esc(title), ']]',
+    if (!is.null(subtitle)) paste0('#block(above: 1.6mm, spacing: 0pt)[#text(font: _t.font-sans, size: 7pt, fill: ', scol, ')[', esc(subtitle), ']]') else ""
+  )
+  eye <- function(col) if (is.null(eyebrow)) "" else paste0('#box(baseline: -0.2pt, cw-dot(_t.primary, size: 3pt))#h(1.4mm)', .kbl_mono(eyebrow, "5pt", col, esc))
+  tg <- function(col) if (is.null(tag)) "" else .kbl_mono(tag, "4.8pt", col, esc)
+  inner <- switch(kind,
+    A = paste0('#block(width: 100%, fill: _t.ink, radius: 99pt, inset: (x: 2.6mm, y: 1.2mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), [', eye("_t.rule-cool"), '], [', tg("_t.fg-subtle"), ']))#v(2.4mm, weak: false)', tb),
+    C = paste0('#grid(columns: (auto, 1fr, auto), column-gutter: 3mm, align: (left + horizon, left + top, right + top), ',
+               if (!is.null(numeral)) paste0('text(font: _t.font-serif-display, style: "italic", size: 28pt, fill: _t.primary, top-edge: "cap-height", bottom-edge: "baseline")[', esc(numeral), ']') else "[]",
+               ', [', eye("_t.fg"), '#v(1.8mm, weak: false)', tb, '], [', tg("_t.fg-muted"), '])'),
+    D = paste0('#grid(columns: (1fr, auto), column-gutter: 4mm, align: (left + horizon, left + top), [', tb,
+               '], block(stroke: (left: 0.5pt + _t.rule-cool), inset: (left: 3.5mm, y: 0.4mm))[', '#block(spacing: 0pt)[', eye("_t.fg"), ']#block(above: 1.8mm, spacing: 0pt)[', tg("_t.fg-muted"), ']', '])'),
+    dark = paste0('#grid(columns: (1fr, auto), align: (left + horizon, right + horizon), [', eye("_t.primary"), '], [', tg("_t.fg-subtle"), '])#v(2.4mm, weak: false)', tb)
+  )
+  box_fill <- if (dark) "_t.ink" else if (bare) "none" else "_t.tint"
+  inset <- if (bare) "(x: 0mm, y: 0.6mm)" else "(x: 3.4mm, y: 3mm)"
+  c(paste0('#pad(x: 2.4mm, top: 2.4mm, block(width: 100%, fill: ', box_fill, ', radius: 2.6mm, inset: ', inset, ')[#set par(spacing: 0pt, leading: 0.5em);', inner, '])'))
+}
+.kbl_footer <- function(kind, source, source_label, id, frame, fonts, esc) {
+  src <- if (is.null(source)) "[]" else paste0('[', .kbl_mono(source_label, "4.6pt", "_t.fg-subtle", esc), '#h(2mm)', .kbl_mono(source, "4.6pt", "_t.fg-muted", esc), ']')
+  if (kind == "rule") {
+    idc <- if (is.null(id)) "[]" else paste0('box(fill: _t.white, radius: 99pt, inset: (x: 1.8mm, y: 0.7mm))[', .kbl_mono(id, "4.3pt", "_t.fg-muted", esc), ']')
+    paste0('#block(width: 100%, stroke: (top: 0.5pt + _t.rule), inset: (x: 3.4mm, y: 1.4mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), ', src, ', ', idc, '))')
+  } else {
+    idc <- if (is.null(id)) "[]" else paste0('[', .kbl_mono(id, "4.3pt", "_t.fg-muted", esc), ']')
+    paste0('#', if (frame == "none") 'pad(top: 1.4mm, ' else '', 'block(width: 100%, fill: _t.tint, radius: ', if (frame == "none") "2mm" else "0pt",
+           ', inset: (x: 3.4mm, y: 1.9mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), ', src, ', ', idc, '))', if (frame == "none") ')' else '')
   }
 }

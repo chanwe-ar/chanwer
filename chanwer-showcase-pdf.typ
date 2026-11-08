@@ -697,8 +697,8 @@
           image(_chanwe-assets + c.logo, height: 3.5mm, fit: "contain"),
         )
       }),
-      // Inside the margins, like the band: nothing on a v2 page bleeds by default.
-      line(length: 100%, stroke: 0.5pt + c.rule),
+      // Edge to edge: the service rule belongs to the page, not to the text block.
+      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + c.rule)),
     )
   ]
 }
@@ -710,7 +710,7 @@
     #grid(
       rows: (auto, 1fr),
       // Mismo filete que cierra el encabezado.
-      line(length: 100%, stroke: 0.5pt + c.rule),
+      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + c.rule)),
       align(horizon, {
         // Mismo tono que el encabezado: el pie es la otra mitad del mismo
         // renglón de servicio. Un solo tono para todo el renglón, el que ya
@@ -2433,20 +2433,19 @@
 ) = {
   let mc = if main-color == "ink" { _t.fg } else { _kpi-color(main-color) }
   let dir-symbol = {
-    if direction == "up" { "▲" }
-    else if direction == "down" { "▼" }
+    if direction == "up" { "↑" }
+    else if direction == "down" { "↓" }
     else if direction == "neutral" { "—" }
     else { "" }
   }
-  // Un movimiento lleva la ficha en naranja; una lectura sin cambio la lleva
-  // en slate. Naranja sigue siendo el unico acento: la direccion la dice el
-  // glifo, no un verde contra un rojo.
-  // La ficha sin movimiento va en el slate de los filetes, no en el de las
-  // superficies: sobre una hoja slate, `surface-sunken` casi no se despegaba y
-  // la ficha dejaba de leerse como ficha.
-  let moving = direction == "up" or direction == "down"
-  let chip-bg = if moving { _t.primary } else { _t.border-cool }
-  let chip-fg = if moving { _t.paper } else { _t.fg }
+  // The variation is a signed pill (option A, 2026-11-07): the sign's colour
+  // as text on the same colour at 10%, as chanwer's KPI pane and table deltas.
+  // `secondary-color` names the valence when it is not the direction's
+  // ("green" / "red"); otherwise up is green, down is red, no move is slate.
+  let valence = if secondary-color == "green" or secondary-color == "red" { secondary-color }
+    else if direction == "up" { "green" } else if direction == "down" { "red" } else { "muted" }
+  let chip-fg = _kpi-color(valence)
+  let chip-bg = chip-fg.transparentize(90%)
 
   // Alto fijo: las tres celdas miden lo mismo pase lo que pase con el largo de
   // la glosa, asi las series quedan alineadas entre columnas y nada se
@@ -2463,11 +2462,10 @@
         columns: (auto, 1fr),
         align: (left + horizon, right + horizon),
         {
-          text(font: _t.font-mono, size: 6.3pt, weight: _t.weight-bold, tracking: 0.1em,
-               fill: _t.primary, "//")
+          // The figure head's gesture: a dot and the mono label.
+          cw-dot(_t.primary, size: 4pt)
           h(1.8mm)
-          text(font: _t.font-mono, size: 6.3pt, weight: _t.weight-medium, tracking: -0.05em,
-               fill: _t.fg, upper(title))
+          cw-label(title, fill: _t.fg, size: 6pt)
         },
         if source != "" { _chip-label(source) } else { [] },
       ),
@@ -2516,8 +2514,8 @@
           column-gutter: 3mm,
           align: (left + horizon, left + horizon),
           if delta != "" {
-            box(fill: chip-bg, radius: _t.radius-pill, inset: (x: 2.6mm, y: 1.15mm),
-              text(font: _t.font-mono, size: 5.9pt, weight: _t.weight-regular, tracking: 0.08em,
+            box(fill: chip-bg, radius: _t.radius-pill, inset: (x: 2.4mm, y: 1.15mm),
+              text(font: _t.font-mono, size: 5.9pt, weight: _t.weight-medium, tracking: 0.06em,
                    fill: chip-fg,
                    if dir-symbol != "" { dir-symbol + " " + delta } else { delta }))
           } else { [] },
@@ -2558,15 +2556,18 @@
 // visiblemente mas larga que las otras dos—. Asi las tres columnas miden lo
 // mismo y la primera sigue alineada al margen del texto, como el cuerpo.
 #let kpi-grid(cols: 4, rows: auto, items) = {
-  // v2-print: every KPI is its own tile, a pane (white on paper, hairline,
-  // 16px corners, no shadow), instead of one band split by rules.
-  block(width: 100%, above: 11mm, below: 12mm, grid(
-    columns: range(cols).map(_ => 1fr),
-    rows: if rows == auto { auto } else { range(rows).map(_ => auto) },
-    column-gutter: _t.space-sm,
-    row-gutter: _t.space-sm,
-    ..items.map(it => cw-pane(inset: (x: _t.space-md, y: _kpi-pad-y), breakable: false, it)),
-  ))
+  // Option A (2026-11-07): one pane, with a hairline between the tiles. Four
+  // panes in a row was the one place the pane language got loud.
+  let n-rows = calc.ceil(items.len() / cols)
+  block(width: 100%, above: 11mm, below: 12mm,
+    cw-pane(inset: 0pt, breakable: false, grid(
+      columns: range(cols).map(_ => 1fr),
+      inset: (x: _t.space-md, y: _kpi-pad-y),
+      stroke: none,
+      ..range(1, cols).map(i => grid.vline(x: i, stroke: cw-hairline + _t.rule)),
+      ..range(1, n-rows).map(i => grid.hline(y: i, stroke: cw-hairline + _t.rule)),
+      ..items,
+    )))
 }
 
 // =============================================================
@@ -4962,13 +4963,13 @@
   title: [chanwer Showcase],
   subtitle: [Every palette, scale, header treatment, surface, chart form and native Typst table pattern in the chanwer R package --- static output for chanwe-report-typst],
   author: "Alejandro Abraham",
-  date: "2026-11-07",
+  date: "2026-11-08",
   doc-id: "CHW · DEV",
   edition: "SHOWCASE / 2026",
   volume: "MENDOZA · ARGENTINA",
   chapter: "Design System",
   section: "R Package",
-  topic: "chanwer v3.1",
+  topic: "chanwer v3.2",
   rail-eyebrow: "VISUAL REFERENCE",
   cover: true,
   toc: true,
@@ -4982,7 +4983,7 @@
   abstract-show: ("document", "edition", "author", "status"),
   abstract-takeaway: "One color system and one header grammar, mapped to every chart and table: the same tokens drive eyebrows, KPI arrows, table deltas, and this document.",
   meta-rows: (
-    ("Package", "chanwer v3.1", "R design system"),
+    ("Package", "chanwer v3.2", "R design system"),
     ("Format", "chanwe-report-typst", "Quarto extension"),
     ("Author", "Chanwe", "Alejandro Abraham"),
   ),
@@ -6288,6 +6289,72 @@ The QoQ columns above, the KPI arrows and the diverging heatmap poles
 are the exact same three hexes --- `chanwe_palette("signed")`. Change
 them once and every chart, table and report follows.
 
+]
+= The Figure Frame
+<the-figure-frame>
+`chanwe_figure()` frames any ggplot: a header card (eyebrow, title, subtitle, a tag for the section), an optional KPI, a legend and a footer with the source and the ID. `style = "editorial"` is the research alternative: a rule, a hanging numeral, direct labels and one annotation.
+
+== Card
+<card>
+#box(image("chanwer-showcase-pdf_files/figure-typst/frame-card-1.png"))
+
+== Editorial
+<editorial>
+#box(image("chanwer-showcase-pdf_files/figure-typst/frame-editorial-1.png"))
+
+== A table in the same frame
+<a-table-in-the-same-frame>
+#block(above: 2.5em, below: 2.5em)[
+#block(inset: (x: 12.5pt, y: 0pt))[
+#block(width: 100%, radius: 8pt, clip: true, stroke: 0.5pt + rgb("#E2E8F0"), fill: rgb("#F8FAFC"))[
+#block(width: 100%, breakable: false)[#set block(spacing: 0pt)
+#set par(spacing: 0pt, leading: 0.55em)
+#pad(x: 2.4mm, top: 2.4mm, block(width: 100%, fill: none, radius: 2.6mm, inset: (x: 0mm, y: 0.6mm))[#set par(spacing: 0pt, leading: 0.5em);#block(width: 100%, fill: _t.ink, radius: 99pt, inset: (x: 2.6mm, y: 1.2mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), [#box(baseline: -0.2pt, cw-dot(_t.primary, size: 3pt))#h(1.4mm)#text(font: _t.font-mono, size: 5pt, tracking: 0.12em, fill: _t.rule-cool)[#upper[Finanzas · Cierre]]], [#text(font: _t.font-mono, size: 4.8pt, tracking: 0.12em, fill: _t.fg-subtle)[#upper[Informe trimestral · 2.4]]]))#v(2.4mm, weak: false)#block(spacing: 0pt)[#text(font: _t.font-display, size: 11pt, weight: _t.weight-display, tracking: -0.04em, fill: _t.fg)[Ingresos por región]]#block(above: 1.6mm, spacing: 0pt)[#text(font: _t.font-sans, size: 7pt, fill: _t.fg-muted)[Primer y segundo trimestre de 2026, USD miles]]])
+#v(2mm)
+#{ set text(size: 10pt, fill: _t.ink, weight: "regular", tracking: 0pt, style: "normal"); set table(inset: (x: 2.5mm, y: 3.4pt), stroke: none, fill: rgb("#F8FAFC"))
+  [
+  #table(
+    columns: (1fr, 1fr, 1fr, 1fr),
+    align: (left, right, right, right,),
+    table.header(
+      table.cell(align: left, inset: (top: 4pt, bottom: 3.4pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[REGION]],
+      table.cell(align: right, inset: (top: 4pt, bottom: 3.4pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[Q1]],
+      table.cell(align: right, inset: (top: 4pt, bottom: 3.4pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[Q2]],
+      table.cell(align: right, inset: (top: 4pt, bottom: 3.4pt, x: 2.5mm), fill: rgb("#11131912"))[#text(font: "JetBrains Mono", size: 5.5pt, fill: _t.fg-muted, weight: "regular", tracking: 0.08em)[QOQ]],
+    ),
+    table.hline(stroke: 0.5pt + rgb("#E2E8F0")),
+    table.cell(align: left)[#text(font: "Satoshi", size: 7pt, fill: _t.ink, weight: "medium")[Norte]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[412,1]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[438,0]],
+    table.cell(align: right)[#box(fill: rgb("#147705").transparentize(90%), radius: 99pt, inset: (x: 4pt, y: 2.2pt), baseline: 2.2pt)[#text(font: "JetBrains Mono", size: 7pt, fill: rgb("#147705"), weight: "medium")[+6,3 %]]],
+    table.hline(stroke: 0.4pt + rgb("#E2E8F0")),
+    table.cell(align: left)[#text(font: "Satoshi", size: 7pt, fill: _t.ink, weight: "medium")[Centro]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[388,4]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[371,2]],
+    table.cell(align: right)[#box(fill: rgb("#CC1914").transparentize(90%), radius: 99pt, inset: (x: 4pt, y: 2.2pt), baseline: 2.2pt)[#text(font: "JetBrains Mono", size: 7pt, fill: rgb("#CC1914"), weight: "medium")[−4,4 %]]],
+    table.hline(stroke: 0.4pt + rgb("#E2E8F0")),
+    table.cell(align: left)[#text(font: "Satoshi", size: 7pt, fill: _t.ink, weight: "medium")[Oeste]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[251,9]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[266,3]],
+    table.cell(align: right)[#box(fill: rgb("#147705").transparentize(90%), radius: 99pt, inset: (x: 4pt, y: 2.2pt), baseline: 2.2pt)[#text(font: "JetBrains Mono", size: 7pt, fill: rgb("#147705"), weight: "medium")[+5,7 %]]],
+    table.hline(stroke: 0.4pt + rgb("#E2E8F0")),
+    table.cell(align: left)[#text(font: "Satoshi", size: 7pt, fill: _t.ink, weight: "medium")[Sur]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[188,1]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "thin")[201,5]],
+    table.cell(align: right)[#box(fill: rgb("#147705").transparentize(90%), radius: 99pt, inset: (x: 4pt, y: 2.2pt), baseline: 2.2pt)[#text(font: "JetBrains Mono", size: 7pt, fill: rgb("#147705"), weight: "medium")[+7,1 %]]],
+    table.hline(stroke: 0.4pt + rgb("#E2E8F0")),
+    table.hline(stroke: 0.75pt + _t.ink),
+    table.cell(align: left)[#text(font: "Satoshi", size: 7pt, fill: _t.ink, weight: "medium")[Total]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[1240,5]],
+    table.cell(align: right)[#text(font: "JetBrains Mono", size: 7pt, fill: _t.ink, weight: "medium")[1277,0]],
+    table.cell(align: right)[#box(fill: rgb("#147705").transparentize(90%), radius: 99pt, inset: (x: 4pt, y: 2.2pt), baseline: 2.2pt)[#text(font: "JetBrains Mono", size: 7pt, fill: rgb("#147705"), weight: "medium")[+2,9 %]]],
+  )
+  ]
+}
+#block(width: 100%, stroke: (top: 0.5pt + _t.rule), inset: (x: 3.4mm, y: 1.4mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), [#text(font: _t.font-mono, size: 4.6pt, tracking: 0.12em, fill: _t.fg-subtle)[#upper[Fuente]]#h(2mm)#text(font: _t.font-mono, size: 4.6pt, tracking: 0.12em, fill: _t.fg-muted)[#upper[Cierre contable]]], box(fill: _t.white, radius: 99pt, inset: (x: 1.8mm, y: 0.7mm))[#text(font: _t.font-mono, size: 4.3pt, tracking: 0.12em, fill: _t.fg-muted)[#upper[CHW · FIN-03 · 2026]]]))
+]
+]
+]
 ]
 
 

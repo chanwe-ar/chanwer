@@ -82,17 +82,17 @@ $chanwe-qr.typ()$
           },
           image(wm, height: 3.5mm, fit: "contain"),
         )),
-        line(length: 100%, stroke: 0.5pt + _t.border),
+        pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + _t.border)),
       )
     ],
-    // El pie es el del reporte, punto por punto: filete arriba, el
+    // El pie es el del reporte, punto por punto: filete arriba a sangre, el
     // renglón de servicio en mono al mismo tono que el encabezado, y el folio
     // real a la derecha. A la izquierda la sede y la fecha, como el doc-id y
     // la edición en el reporte. El ícono de la práctica se fue.
     footer: context block(height: 100%, width: 100%)[
       #grid(
         rows: (auto, 1fr),
-        line(length: 100%, stroke: 0.5pt + _t.border),
+        pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + _t.border)),
         align(horizon, {
           set text(font: _t.font-mono, size: 6pt, tracking: 0.14em, fill: _t.fg-muted)
           grid(

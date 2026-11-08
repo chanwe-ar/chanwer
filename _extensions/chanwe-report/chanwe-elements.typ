@@ -683,20 +683,19 @@
 ) = {
   let mc = if main-color == "ink" { _t.fg } else { _kpi-color(main-color) }
   let dir-symbol = {
-    if direction == "up" { "▲" }
-    else if direction == "down" { "▼" }
+    if direction == "up" { "↑" }
+    else if direction == "down" { "↓" }
     else if direction == "neutral" { "—" }
     else { "" }
   }
-  // Un movimiento lleva la ficha en naranja; una lectura sin cambio la lleva
-  // en slate. Naranja sigue siendo el unico acento: la direccion la dice el
-  // glifo, no un verde contra un rojo.
-  // La ficha sin movimiento va en el slate de los filetes, no en el de las
-  // superficies: sobre una hoja slate, `surface-sunken` casi no se despegaba y
-  // la ficha dejaba de leerse como ficha.
-  let moving = direction == "up" or direction == "down"
-  let chip-bg = if moving { _t.primary } else { _t.border-cool }
-  let chip-fg = if moving { _t.paper } else { _t.fg }
+  // The variation is a signed pill (option A, 2026-11-07): the sign's colour
+  // as text on the same colour at 10%, as chanwer's KPI pane and table deltas.
+  // `secondary-color` names the valence when it is not the direction's
+  // ("green" / "red"); otherwise up is green, down is red, no move is slate.
+  let valence = if secondary-color == "green" or secondary-color == "red" { secondary-color }
+    else if direction == "up" { "green" } else if direction == "down" { "red" } else { "muted" }
+  let chip-fg = _kpi-color(valence)
+  let chip-bg = chip-fg.transparentize(90%)
 
   // Alto fijo: las tres celdas miden lo mismo pase lo que pase con el largo de
   // la glosa, asi las series quedan alineadas entre columnas y nada se
@@ -713,11 +712,10 @@
         columns: (auto, 1fr),
         align: (left + horizon, right + horizon),
         {
-          text(font: _t.font-mono, size: 6.3pt, weight: _t.weight-bold, tracking: 0.1em,
-               fill: _t.primary, "//")
+          // The figure head's gesture: a dot and the mono label.
+          cw-dot(_t.primary, size: 4pt)
           h(1.8mm)
-          text(font: _t.font-mono, size: 6.3pt, weight: _t.weight-medium, tracking: -0.05em,
-               fill: _t.fg, upper(title))
+          cw-label(title, fill: _t.fg, size: 6pt)
         },
         if source != "" { _chip-label(source) } else { [] },
       ),
@@ -766,8 +764,8 @@
           column-gutter: 3mm,
           align: (left + horizon, left + horizon),
           if delta != "" {
-            box(fill: chip-bg, radius: _t.radius-pill, inset: (x: 2.6mm, y: 1.15mm),
-              text(font: _t.font-mono, size: 5.9pt, weight: _t.weight-regular, tracking: 0.08em,
+            box(fill: chip-bg, radius: _t.radius-pill, inset: (x: 2.4mm, y: 1.15mm),
+              text(font: _t.font-mono, size: 5.9pt, weight: _t.weight-medium, tracking: 0.06em,
                    fill: chip-fg,
                    if dir-symbol != "" { dir-symbol + " " + delta } else { delta }))
           } else { [] },
@@ -808,15 +806,18 @@
 // visiblemente mas larga que las otras dos—. Asi las tres columnas miden lo
 // mismo y la primera sigue alineada al margen del texto, como el cuerpo.
 #let kpi-grid(cols: 4, rows: auto, items) = {
-  // v2-print: every KPI is its own tile, a pane (white on paper, hairline,
-  // 16px corners, no shadow), instead of one band split by rules.
-  block(width: 100%, above: 11mm, below: 12mm, grid(
-    columns: range(cols).map(_ => 1fr),
-    rows: if rows == auto { auto } else { range(rows).map(_ => auto) },
-    column-gutter: _t.space-sm,
-    row-gutter: _t.space-sm,
-    ..items.map(it => cw-pane(inset: (x: _t.space-md, y: _kpi-pad-y), breakable: false, it)),
-  ))
+  // Option A (2026-11-07): one pane, with a hairline between the tiles. Four
+  // panes in a row was the one place the pane language got loud.
+  let n-rows = calc.ceil(items.len() / cols)
+  block(width: 100%, above: 11mm, below: 12mm,
+    cw-pane(inset: 0pt, breakable: false, grid(
+      columns: range(cols).map(_ => 1fr),
+      inset: (x: _t.space-md, y: _kpi-pad-y),
+      stroke: none,
+      ..range(1, cols).map(i => grid.vline(x: i, stroke: cw-hairline + _t.rule)),
+      ..range(1, n-rows).map(i => grid.hline(y: i, stroke: cw-hairline + _t.rule)),
+      ..items,
+    )))
 }
 
 // =============================================================

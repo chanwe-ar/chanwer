@@ -1,5 +1,34 @@
 # chanwer (development version)
 
+# chanwer 3.2.0
+
+## The figure frame and the editorial layer
+
+* `chanwe_figure()` draws a ggplot inside the Chanwe figure frame: a header card
+  (`header = "A"` the obsidian band, `"C"` the numeral, `"D"` two columns,
+  `"dark"`; `header_fill = "tint"` or `"none"`), an optional KPI (`kpi_position =
+  "pane"`, `"strip"` or `"rail"`), a legend (`"pill"`, `"header"`, `"none"`) and a
+  footer (`"rule"` or `"tint"`) with the source and the ID, on a `"simple"`,
+  `"shadow"` or no frame. One composition rule lays out every header: two columns,
+  the right one only when it holds something, the KPI pane moving to a row when the
+  title needs the width. The header carries a `tag` (section, series); the ID lives
+  only in the footer. `style = "editorial"` draws the review's alternative: an ink
+  rule with the orange tab, a hanging numeral, the KPI as plain type, a footer rule.
+  The frame scales with the figure's width. `chanwe_save()` writes it (or any ggplot)
+  to PNG, PDF or SVG.
+* The editorial layer, as ggplot layers: `annotate_chanwe_main()` (the main mark's
+  halo and value), `annotate_chanwe_ends()` (direct labels at the end of each
+  series), `annotate_chanwe_gap()` (the shaded, named gap between two series),
+  `annotate_chanwe_note()` (an italic note with a leader) and
+  `annotate_chanwe_reference()` (a median or average on a ranking).
+  `label_chanwe_month()` labels dates as `jun-25`.
+* `chanwe_kbl()` takes the same frame: `header`, `header_fill`, `tag`, `numeral`,
+  `footer`, `source`, `id` and `frame`; and `total_style` (`"ink"`, `"tint"`,
+  `"band"`) and `delta_style` (`"pill"`, `"arrow"`, `"bar"`) for signed columns.
+* `chanwer-options.qmd` holds the five rounds of options these came from.
+* The bundled `_extensions/` are chanwe-brand 3.4.0 (edge-to-edge running rules, the
+  KPI tiles as one pane with signed pills); the showcases were re-rendered.
+
 * The chart's frame (Ale, 2026-11-07): the eyebrow sits on an obsidian band across
   the header, with `chanwe_title(stamp = )` at its right (`eyebrow_style = "rule"`
   keeps the short rule); the plot's surface is a pane with the `pane` radius and

@@ -37,7 +37,18 @@ chanwe_kbl(
   highlight_cols = NULL,
   highlight_color = NULL,
   pane = TRUE,
-  caption_style = NULL
+  caption_style = NULL,
+  header = NULL,
+  header_fill = c("tint", "none"),
+  tag = NULL,
+  numeral = NULL,
+  footer = NULL,
+  source = NULL,
+  source_label = "Fuente",
+  id = NULL,
+  frame = NULL,
+  total_style = c("ink", "tint", "band"),
+  delta_style = c("pill", "arrow", "bar")
 )
 }
 \arguments{
@@ -155,6 +166,33 @@ the open chanwer 2.x table.}
 \item{caption_style}{\code{"mono"} (v2 default): the source line as a
 JetBrains Mono label. \code{"stamp"}: the orange stamp of chanwer 2.x.
 \code{NULL} reads \code{getOption("chanwer.caption_style", "mono")}.}
+
+\item{header}{The figure frame's header card, as in \code{\link[=chanwe_figure]{chanwe_figure()}}:
+\code{"A"} (the obsidian band with the eyebrow and the tag), \code{"C"}
+(the numeral), \code{"D"} (two columns), \code{"dark"}. \code{NULL}
+(default) keeps the title rows inside the table.}
+
+\item{header_fill}{\code{"tint"} or \code{"none"}.}
+
+\item{tag}{The section or series at the right of the header. The ID goes
+to \code{id}, in the footer.}
+
+\item{numeral}{The table number, for \code{header = "C"}.}
+
+\item{footer}{\code{"rule"} (a hairline, the ID in a white pill) or
+\code{"tint"} (a tinted strip). \code{NULL} keeps the caption row.}
+
+\item{source, source_label, id}{The footer's source, its label and the
+document ID. \code{source} defaults to \code{caption}.}
+
+\item{frame}{\code{"simple"}, \code{"shadow"} or \code{"none"}; replaces
+\code{pane} when set.}
+
+\item{total_style}{\code{"ink"} (an ink rule over the total), \code{"tint"}
+or \code{"band"} (the total row on obsidian).}
+
+\item{delta_style}{How a \code{chanwe_col_signed()} column draws:
+\code{"pill"}, \code{"arrow"} or \code{"bar"} (a bar from the centre).}
 }
 \value{
 A \code{\link[knitr]{asis_output}} containing a raw \code{{=typst}} block.

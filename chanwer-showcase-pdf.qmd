@@ -26,7 +26,7 @@ chanwe:
   volume: "MENDOZA · ARGENTINA"
   chapter: "Design System"
   section: "R Package"
-  topic: "chanwer v3.1"
+  topic: "chanwer v3.2"
   rail-eyebrow: "VISUAL REFERENCE"
   # The research cover's photograph: the snow ridge, as on the reMarkable cover.
   publication-art: "_extensions/chanwe-report/assets/cover-snow-ridge.jpg"
@@ -47,7 +47,7 @@ chanwe:
     - author
     - status
   meta-rows:
-    - { label: "Package",  value: "chanwer v3.1",     sub: "R design system" }
+    - { label: "Package",  value: "chanwer v3.2",     sub: "R design system" }
     - { label: "Format",   value: "chanwe-report-typst", sub: "Quarto extension" }
     - { label: "Author",   value: "Chanwe",            sub: "Alejandro Abraham" }
   back-cover: true
@@ -1373,3 +1373,79 @@ The QoQ columns above, the KPI arrows and the diverging heatmap poles are
 the exact same three hexes — `chanwe_palette("signed")`. Change them once
 and every chart, table and report follows.
 :::
+
+# The Figure Frame
+
+`chanwe_figure()` frames any ggplot: a header card (eyebrow, title, subtitle, a tag
+for the section), an optional KPI, a legend and a footer with the source and the
+ID. `style = "editorial"` is the research alternative: a rule, a hanging numeral,
+direct labels and one annotation.
+
+```{r}
+#| label: frame-data
+set.seed(7); nn <- 24
+reserves <- data.frame(date = rep(seq(as.Date("2024-01-01"), by = "month", length.out = nn), 2),
+  serie = factor(rep(c("Brutas", "Netas"), each = nn), c("Brutas", "Netas")),
+  value = c(28 + seq_len(nn) * .5 + 1.4 * sin(seq_len(nn) / 2.3) + runif(nn, -.5, .5),
+            24 + seq_len(nn) * .27 + cos(seq_len(nn) / 3.1) + runif(nn, -.4, .4)))
+wide <- data.frame(date = reserves$date[1:nn], gross = reserves$value[1:nn], net = reserves$value[nn + 1:nn])
+last_gross <- wide[nn, ]
+fmt1 <- function(v) formatC(v, format = "f", digits = 1, decimal.mark = ",")
+reserve_cols <- c(Brutas = chanwe_get_colors()[["primary"]], Netas = chanwe_get_colors()[["fg-muted"]])
+reserve_kpi <- chanwe_kpi(fmt1(last_gross$gross), "USD miles de M", "dic-25",
+  mtc1_num = "0,0 %", mtc1_label = "m/m", mtc1_direction = "=",
+  mtc2_num = "0,4 %", mtc2_label = "t/t", mtc3_num = "20,7 %", mtc3_label = "a/a")
+```
+
+## Card
+
+```{r}
+#| label: frame-card
+#| fig-height: 5.4
+p <- ggplot(reserves, aes(date, value, colour = serie)) +
+  geom_line(linewidth = .7, lineend = "round") +
+  annotate_chanwe_main(last_gross$date, last_gross$gross, label = fmt1(last_gross$gross)) +
+  scale_colour_manual(values = reserve_cols) +
+  scale_x_date(labels = label_chanwe_month(), expand = expansion(mult = c(.01, .14))) +
+  labs(x = NULL, y = NULL) + theme_chanwe(pane = FALSE)
+chanwe_figure(p, title = "Reservas internacionales",
+  subtitle = "Brutas y netas, USD miles de millones, ene-24 a dic-25",
+  eyebrow = "Sector externo · Reservas", tag = "Monitor macro · 3.2",
+  kpi = reserve_kpi, header_fill = "none",
+  source = "BCRA · elaboración propia", id = "CHW · RM-07 · 2026")
+```
+
+## Editorial
+
+```{r}
+#| label: frame-editorial
+#| fig-height: 5.4
+ev <- wide[wide$date == as.Date("2025-04-01"), ]
+p <- ggplot() +
+  annotate_chanwe_gap(wide, "date", "net", "gross") +
+  geom_line(data = reserves, aes(date, value, colour = serie), linewidth = .7, lineend = "round") +
+  annotate_chanwe_note(ev$date, ev$gross, "Acuerdo FMI, abr-25", dx = -70, dy = 3) +
+  annotate_chanwe_ends(reserves, "date", "value", "serie") +
+  scale_colour_manual(values = reserve_cols) +
+  scale_x_date(labels = label_chanwe_month(), expand = expansion(mult = c(.01, .24))) +
+  labs(x = NULL, y = NULL) + theme_chanwe(pane = FALSE)
+chanwe_figure(p, title = "Reservas internacionales",
+  subtitle = "Brutas y netas, USD miles de millones, ene-24 a dic-25",
+  eyebrow = "Sector externo · Reservas", tag = "Monitor macro · 3.2", numeral = "07",
+  kpi = reserve_kpi, legend = "none", style = "editorial",
+  source = "BCRA · elaboración propia", id = "CHW · RM-07 · 2026")
+```
+
+## A table in the same frame
+
+```{r}
+#| label: frame-table
+regions <- data.frame(Region = c("Norte", "Centro", "Oeste", "Sur", "Total"),
+  Q1 = c(412.1, 388.4, 251.9, 188.1, 1240.5), Q2 = c(438, 371.2, 266.3, 201.5, 1277),
+  QoQ = c(6.3, -4.4, 5.7, 7.1, 2.9))
+chanwe_kbl(regions, title = "Ingresos por región", subtitle = "Primer y segundo trimestre de 2026, USD miles",
+  eyebrow = "Finanzas · Cierre", tag = "Informe trimestral · 2.4", header = "A", header_fill = "none",
+  footer = "rule", caption = "Cierre contable", id = "CHW · FIN-03 · 2026", frame = "simple",
+  n_total = 1, col_colors = list(QoQ = chanwe_col_signed()), density = "compact",
+  fmt = list(Q1 = fmt1, Q2 = fmt1, QoQ = function(x) paste0(ifelse(x > 0, "+", "−"), fmt1(abs(x)), " %")))
+```
