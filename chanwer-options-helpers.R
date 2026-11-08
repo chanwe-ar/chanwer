@@ -87,7 +87,7 @@ set_copy <- function(type) {
   TITLE <<- COPY[[type]]$title; SUBTITLE <<- COPY[[type]]$subtitle; EYEBROW <<- COPY[[type]]$eyebrow
 }
 set_copy("line")
-PERIOD <- "Dic 2025"
+PERIOD <- "Monitor macro · 3.2"
 STAMP <- "CHW · RM-07 · 2026"
 MESES <- c("ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic")
 fmt_mes <- function(x, year = TRUE) {

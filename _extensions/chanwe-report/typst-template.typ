@@ -123,8 +123,8 @@ $chanwe-v2.typ()$
           image(_chanwe-assets + c.logo, height: 3.5mm, fit: "contain"),
         )
       }),
-      // Inside the margins, like the band: nothing on a v2 page bleeds by default.
-      line(length: 100%, stroke: 0.5pt + c.rule),
+      // Edge to edge: the service rule belongs to the page, not to the text block.
+      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + c.rule)),
     )
   ]
 }
@@ -136,7 +136,7 @@ $chanwe-v2.typ()$
     #grid(
       rows: (auto, 1fr),
       // Mismo filete que cierra el encabezado.
-      line(length: 100%, stroke: 0.5pt + c.rule),
+      pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + c.rule)),
       align(horizon, {
         // Mismo tono que el encabezado: el pie es la otra mitad del mismo
         // renglón de servicio. Un solo tono para todo el renglón, el que ya
