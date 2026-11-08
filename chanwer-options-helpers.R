@@ -33,7 +33,7 @@ res$serie <- factor(res$serie, levels = c("Brutas", "Netas"))
 SERIES <- c(Brutas = P, Netas = SLATE[1])
 last <- res[res$date == max(res$date), ]
 region <- data.frame(name = c("Brasil", "México", "Argentina", "Chile", "Colombia", "Perú"),
-                     value = c(355, 228, 39.5, 46, 59, 74))
+                     value = c(355, 228, round(last$value[last$serie == "Brutas"], 1), 46, 59, 74))
 monthly <- data.frame(date = seq(as.Date("2025-01-01"), by = "month", length.out = 12),
                       value = c(1.2, 0.8, 1.6, 2.1, 1.4, 0.9, 1.7, 2.4, 1.9, 2.6, 2.2, 3.1))
 scat <- data.frame(name = c("Arg", "Bra", "Chi", "Col", "Méx", "Per", "Uru", "Par", "Bol", "Ecu"),
@@ -69,10 +69,31 @@ pill <- function(lbl, x, y, fill, col, size = 3.9, pad = 3.6, h = 8.5, stroke = 
   w
 }
 
-TITLE <- "Reservas internacionales"
-SUBTITLE <- "Brutas y netas, en miles de millones de dólares"
-EYEBROW <- "BCRA · Sector externo"
+# Copy per chart type (round 5: each chart says what it measures, in what
+# unit and over what period). The eyebrow names the topic, not the source: the
+# source is in the footer. The header carries the period; the ID lives only in
+# the footer.
+COPY <- list(
+  line    = list(title = "Reservas internacionales", subtitle = "Brutas y netas, USD miles de millones, ene-24 a dic-25",
+                 eyebrow = "Sector externo · Reservas"),
+  bar     = list(title = "Reservas por país", subtitle = "Reservas brutas, USD miles de millones, dic-25",
+                 eyebrow = "Sector externo · Región"),
+  column  = list(title = "Acumulación mensual", subtitle = "Variación de reservas brutas, USD miles de millones, 2025",
+                 eyebrow = "Sector externo · Flujos"),
+  scatter = list(title = "Reservas e inflación", subtitle = "Reservas brutas (USD miles de millones, escala log) e inflación mensual (%), dic-25",
+                 eyebrow = "Sector externo · Región")
+)
+set_copy <- function(type) {
+  TITLE <<- COPY[[type]]$title; SUBTITLE <<- COPY[[type]]$subtitle; EYEBROW <<- COPY[[type]]$eyebrow
+}
+set_copy("line")
+PERIOD <- "Dic 2025"
 STAMP <- "CHW · RM-07 · 2026"
+MESES <- c("ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic")
+fmt_mes <- function(x, year = TRUE) {
+  m <- MESES[as.integer(format(x, "%m"))]
+  if (year) paste0(m, "-", format(x, "%y")) else m
+}
 
 # ── dimensions: regular (round 2) and compact (round 3, the default). The
 # compact header and footer keep every element and lose height: smaller type
@@ -181,7 +202,7 @@ hdr_card <- function(kind, W, pad, legend = FALSE, kpi = FALSE, fill = "tint") {
   # something else to hold; alone, it rides on the eyebrow's line.
   stamp_inline <- kind %in% c("C", "dark") && !legend && !(kpi && !kpi_row)
   if (kind == "D" || (kind %in% c("C", "dark") && !stamp_inline))
-    right <- c(right, list(list(type = "stamp", h = slot, w = tw(toupper(STAMP), F_MONO, d$stamp))))
+    right <- c(right, list(list(type = "stamp", h = slot, w = tw(toupper(PERIOD), F_MONO, d$stamp))))
   if (legend) {
     if (kind == "D") {   # D's column already holds two lines: the keys share one
       kw <- sum(vapply(names(SERIES), function(k) tw(toupper(k), F_MONO, d$eye) + 6, numeric(1))) + 9 * (length(SERIES) - 1)
@@ -218,7 +239,7 @@ hdr_card <- function(kind, W, pad, legend = FALSE, kpi = FALSE, fill = "tint") {
     by <- pad + bo; bw <- w - 2 * bo
     rr(x0 + bo, by, bw, d$band_h, INK)
     eyebrow_line(x0 + bo + 5.5, by + d$band_h / 2, P, COOL)
-    mono(STAMP, -(pad + bo + 6), by + d$band_h / 2, d$stamp, SU, c("right", "center"))
+    mono(PERIOD, -(pad + bo + 6), by + d$band_h / 2, d$stamp, SU, c("right", "center"))
   }
   top <- pad + (if (band) band_block else ip)
 
@@ -228,7 +249,7 @@ hdr_card <- function(kind, W, pad, legend = FALSE, kpi = FALSE, fill = "tint") {
   y <- top
   if (has_eye) {
     eyebrow_line(lx, y + slot / 2, P, if (dark) P else INK)
-    if (stamp_inline) mono(STAMP, -(pad + ip), y + slot / 2, d$stamp, SU, c("right", "center"))
+    if (stamp_inline) mono(PERIOD, -(pad + ip), y + slot / 2, d$stamp, MU, c("right", "center"))
     y <- y + slot + 1.5
   }
   for (l in t_lines) { txt(l, lx, y + line_t / 2, F_DISP, d$title, tcol); y <- y + line_t }
@@ -244,7 +265,7 @@ hdr_card <- function(kind, W, pad, legend = FALSE, kpi = FALSE, fill = "tint") {
     for (it in right) {
       if (!is.null(prev) && prev %in% c("eyebrow", "stamp") && it$type %in% c("key", "keys", "pane")) y <- y + gap_group
       if (it$type == "eyebrow") eyebrow_line(rx, y + it$h / 2, P, INK)
-      if (it$type == "stamp") mono(STAMP, rx, y + it$h / 2, d$stamp, SU)
+      if (it$type == "stamp") mono(PERIOD, rx, y + it$h / 2, d$stamp, MU)
       if (it$type == "key") {
         dot(rx + 1.6, y + it$h / 2, 1.6, SERIES[[it$key]])
         txt(toupper(it$key), rx + 6, y + it$h / 2, F_MONO, d$eye, if (dark) COOL else MU)
@@ -267,11 +288,21 @@ hdr_card <- function(kind, W, pad, legend = FALSE, kpi = FALSE, fill = "tint") {
 }
 
 # ── KPI: A pane inside the header card, B strip, C rail ─────────────────────
-KPI <- list(value = "39,5", unit = "USD MM · Dic 2025",
-            d = list(c("MoM", "↑ 2,1 %", "up"), c("QoQ", "↓ 0,4 %", "down"), c("YoY", "↑ 17,8 %", "up")))
+# The KPI is computed from the series it sits on, so the pane and the end of
+# the line always say the same number.
+kpi_from <- function() {
+  b <- res[res$serie == "Brutas", ]; v <- b$value; n <- length(v)
+  # A change that rounds to zero is neither up nor down: it reads in slate.
+  chg <- function(k) { x <- round((v[n] / v[n - k] - 1) * 100, 1)
+    dir <- if (x > 0) "up" else if (x < 0) "down" else "flat"
+    c(paste0(c(up = "↑ ", down = "↓ ", flat = "= ")[[dir]], formatC(abs(x), format = "f", digits = 1, decimal.mark = ","), " %"), dir) }
+  list(value = format(round(v[n], 1), decimal.mark = ","), unit = "USD miles de M · dic-25",
+       d = list(c("m/m", chg(1)), c("t/t", chg(3)), c("a/a", chg(12))))
+}
+KPI <- kpi_from()
 kpi_pills <- function(x, y, stack = FALSE) {
   for (m in KPI$d) {
-    col <- if (m[3] == "up") GREEN else RED
+    col <- switch(m[3], up = GREEN, down = RED, SLATE[1])
     w <- pill(paste(m[1], m[2]), x, y, grDevices::adjustcolor(col, alpha.f = .12), col)
     if (stack) y <- y + 11 else x <- x + w + 2.5
   }
@@ -320,7 +351,7 @@ legend_header <- function(xr, y, dark = FALSE, keys = SERIES) {
 }
 
 # ── footers, both flat: A rule and the stamp pill, B tint strip ─────────────
-footer <- function(kind, W, H, pad, frame) {
+footer <- function(kind, W, H, pad, frame, radius = 9) {
   fh <- d$foot_h
   y0 <- H - fh
   yc <- y0 + fh / 2
@@ -337,7 +368,7 @@ footer <- function(kind, W, H, pad, frame) {
       src(yc); mono(STAMP, -(pad + 6), yc, d$pill_txt, MU, c("right", "center"))
       return(invisible())
     }
-    rr(0.5, y0, W - 1, fh - .5, TINT, r = 9)
+    rr(0.5, y0, W - 1, fh - .5, TINT, r = radius)
     grid.rect(x = X(0.5), y = Y(y0), width = unit(W - 1, "pt"), height = unit(fh / 2, "pt"),
               just = c("left", "top"), gp = gpar(fill = TINT, col = NA))
     src(yc)
@@ -345,24 +376,29 @@ footer <- function(kind, W, H, pad, frame) {
   }
 }
 
-# ── the body. A: horizontal grid, and the main series carries the accent, a
-# halo on its last point and its value in an ink pill (others in slate, their
-# value in mono). B: extremes only, an ink base, each series named at its end.
+# ── the body (round 5, polished). A: horizontal grid every 5, the main series
+# with its end halo and value chip. B: the same grid, every series named at its
+# end; no ink base on an axis that does not start at zero. Months in Spanish.
 ink_label <- function(...) {
   geom_label(..., family = F_MONO, size = 1.5, fill = INK, colour = "white",
              label.r = unit(4, "pt"), label.padding = unit(2.3, "pt"))
 }
 base_theme <- function(grid = "y") {
   theme_chanwe(base_text_size = 6, pane = FALSE, legend_position = "none", grid = grid) +
-    theme(plot.margin = margin(2, 2, 0, 0), plot.background = element_rect(fill = NA, colour = NA),
-          panel.background = element_rect(fill = NA, colour = NA), axis.text = element_text(size = 4.3))
+    theme(plot.margin = margin(4, 2, 0, 0), plot.background = element_rect(fill = NA, colour = NA),
+          panel.background = element_rect(fill = NA, colour = NA), axis.text = element_text(size = 4.3),
+          axis.text.x = element_text(margin = margin(t = 3)))
 }
-num <- function(v) format(round(v, 1), decimal.mark = ",")
-body_plot <- function(body = "A", type = "line") {
+num <- function(v) formatC(v, format = "f", digits = 1, decimal.mark = ",")
+date_scale <- function(right = .17) {
+  scale_x_date(labels = fmt_mes, breaks = seq(as.Date("2024-06-01"), as.Date("2025-12-01"), by = "6 months"),
+               expand = expansion(mult = c(.01, right)))
+}
+y_scale <- function() scale_y_continuous(limits = c(24, 41), breaks = seq(25, 40, 5), expand = expansion(0))
+body_plot <- function(body = "A", type = "line", style = "polished") {
+  if (style == "editorial") return(body_editorial(type))
   if (type == "line") {
-    p <- ggplot(res, aes(date, value, colour = serie))
-    if (body == "B") p <- p + geom_hline(yintercept = 22, colour = INK, linewidth = .3)
-    p <- p + geom_line(linewidth = .45, lineend = "round")
+    p <- ggplot(res, aes(date, value, colour = serie)) + geom_line(linewidth = .45, lineend = "round")
     if (body == "A") {
       b <- last[last$serie == "Brutas", ]; o <- last[last$serie != "Brutas", ]
       p <- p + geom_point(data = b, size = 3.2, alpha = .18) + geom_point(data = b, size = 1.1) +
@@ -370,68 +406,120 @@ body_plot <- function(body = "A", type = "line") {
         geom_point(data = o, size = .8) +
         geom_text(data = o, aes(label = num(value)), hjust = -.5, family = F_MONO, size = 1.4)
     } else {
-      p <- p + geom_text(data = last, aes(label = paste0(toupper(serie), "  ", num(value))),
-                         hjust = 0, nudge_x = 12, family = F_MONO, size = 1.45)
+      p <- p + geom_point(data = last, size = .8) +
+        geom_text(data = last, aes(label = paste0(toupper(serie), "  ", num(value))),
+                  hjust = 0, nudge_x = 14, family = F_MONO, size = 1.45)
     }
-    p <- p + scale_colour_manual(values = SERIES) +
-      scale_x_date(date_labels = "%b %y", breaks = seq(as.Date("2024-06-01"), as.Date("2025-12-01"), by = "6 months"),
-                   expand = expansion(mult = c(.01, if (body == "B") .26 else .17))) +
-      scale_y_continuous(limits = c(22, 42), breaks = if (body == "B") c(22, 42) else c(25, 30, 35, 40),
-                         expand = expansion(0)) +
-      labs(x = NULL, y = NULL) + base_theme(if (body == "B") "none" else "y")
-    if (body == "B") p <- p + theme(panel.grid.major.y = element_line(colour = COOL, linewidth = .2))
-    return(p)
+    return(p + scale_colour_manual(values = SERIES) + date_scale(if (body == "B") .27 else .17) + y_scale() +
+      labs(x = NULL, y = NULL) + base_theme("y"))
   }
-  if (type == "bar") {   # a ranking: the main bar in the accent, its value in the ink pill
-    d <- region; d$main <- d$name == "Argentina"
-    d$name <- stats::reorder(d$name, d$value)
-    return(ggplot(d, aes(value, name, fill = main)) +
-      geom_chanwe_col(width = .62, orientation = "y") +
-      geom_text(data = d[!d$main, ], aes(label = num(value)), hjust = -.25, family = F_MONO, size = 1.4, colour = SLATE[1]) +
-      ink_label(data = d[d$main, ], aes(label = num(value)), hjust = -.15) +
+  if (type == "bar") {   # a ranking: every bar labelled, so no value axis and no grid
+    dd <- region; dd$main <- dd$name == "Argentina"
+    dd$name <- stats::reorder(dd$name, dd$value)
+    off <- max(dd$value) * .025
+    return(ggplot(dd, aes(value, name, fill = main)) +
+      geom_chanwe_col(width = .64, orientation = "y", radius = 1.2) +
+      geom_text(data = dd[!dd$main, ], aes(x = value + off, label = num(value)), hjust = 0, family = F_MONO, size = 1.4, colour = SLATE[1]) +
+      ink_label(data = dd[dd$main, ], aes(x = value + off, label = num(value)), hjust = 0) +
       scale_fill_manual(values = c(`TRUE` = P, `FALSE` = SLATE[3]), guide = "none") +
-      scale_x_continuous(expand = expansion(mult = c(0, .16))) + labs(x = NULL, y = NULL) +
-      base_theme("x") + theme(axis.text.y = element_text(size = 4.6, colour = INK)))
+      scale_x_continuous(expand = expansion(mult = c(0, .14))) + labs(x = NULL, y = NULL) +
+      base_theme("none") + theme(axis.text.x = element_blank(),
+                                 axis.text.y = element_text(size = 4.6, colour = INK, hjust = 1)))
   }
-  if (type == "column") {  # columns over time: the last month is the main one
-    d <- monthly; d$main <- d$date == max(d$date)
-    return(ggplot(d, aes(date, value, fill = main)) + geom_chanwe_col(width = 20) +
-      ink_label(data = d[d$main, ], aes(label = num(value)), vjust = -.4) +
+  if (type == "column") {  # columns over time: the last month is the main one; a real zero line
+    dd <- monthly; dd$main <- dd$date == max(dd$date)
+    return(ggplot(dd, aes(date, value, fill = main)) +
+      geom_hline(yintercept = 0, colour = INK, linewidth = .3) +
+      geom_chanwe_col(width = 20, radius = 1.2) +
+      ink_label(data = dd[dd$main, ], aes(label = num(value)), vjust = -.4) +
       scale_fill_manual(values = c(`TRUE` = P, `FALSE` = SLATE[3]), guide = "none") +
-      scale_x_date(date_labels = "%b", date_breaks = "2 months") +
+      scale_x_date(labels = function(x) fmt_mes(x, FALSE), breaks = seq(as.Date("2025-01-01"), by = "2 months", length.out = 6)) +
       scale_y_continuous(expand = expansion(mult = c(0, .24))) + labs(x = NULL, y = NULL) + base_theme("y"))
   }
-  if (type == "scatter") {  # the main point: accent, halo and its name in the ink pill
-    d <- scat; d$main <- d$name == "Arg"
-    return(ggplot(d, aes(x, y)) +
-      geom_point(data = d[!d$main, ], colour = SLATE[2], size = 1.4) +
-      geom_text(data = d[!d$main, ], aes(label = toupper(name)), family = F_MONO, size = 1.3, colour = SLATE[1], vjust = -1.2) +
-      geom_point(data = d[d$main, ], colour = P, size = 3.6, alpha = .18) +
-      geom_point(data = d[d$main, ], colour = P, size = 1.5) +
-      ink_label(data = d[d$main, ], aes(label = "ARGENTINA · 4,8 %"), hjust = -.12) +
-      scale_x_log10(expand = expansion(mult = c(.05, .2))) + labs(x = NULL, y = NULL) + base_theme("y"))
+  if (type == "scatter") {  # axes named; the main point labelled in open space, with a leader
+    dd <- scat; dd$main <- dd$name == "Arg"
+    m <- dd[dd$main, ]
+    return(ggplot(dd, aes(x, y)) +
+      geom_point(data = dd[!dd$main, ], colour = SLATE[2], size = 1.4) +
+      geom_text(data = dd[!dd$main, ], aes(label = toupper(name)), family = F_MONO, size = 1.3, colour = SLATE[1], vjust = -1.2) +
+      geom_point(data = m, colour = P, size = 3.6, alpha = .18) + geom_point(data = m, colour = P, size = 1.5) +
+      annotate("segment", x = m$x * 1.12, xend = m$x * 2.1, y = m$y - .12, yend = m$y - .55, colour = INK, linewidth = .2) +
+      annotate("text", x = m$x * 2.2, y = m$y - .6, label = "ARGENTINA  4,8 %", hjust = 0, family = F_MONO, size = 1.5, colour = P) +
+      annotate("text", x = 2.4, y = 6.55, label = "INFLACIÓN MENSUAL, %", hjust = 0, family = F_MONO, size = 1.25, colour = MU) +
+      scale_x_log10(expand = expansion(mult = c(.05, .08))) +
+      scale_y_continuous(limits = c(2, 6.6), expand = expansion(0)) +
+      labs(x = "RESERVAS, USD MILES DE M (ESCALA LOG)", y = NULL) + base_theme("y") +
+      theme(axis.title.x = element_text(size = 3.9, colour = MU, hjust = 0.5, margin = margin(t = 4))))
   }
+}
+
+# ── the editorial body (the independent review's direction): direct labels, no
+# legend, the gap between the series encoded, one annotation with a leader in
+# the editorial italic, and for a ranking the regional median.
+body_editorial <- function(type) {
+  if (type == "line") {
+    w <- data.frame(date = res$date[res$serie == "Brutas"], b = res$value[res$serie == "Brutas"],
+                    n = res$value[res$serie == "Netas"])
+    gap <- w$b[nrow(w)] - w$n[nrow(w)]
+    mid <- w[16, ]
+    ev <- w[w$date == as.Date("2025-04-01"), ]
+    return(ggplot() +
+      geom_ribbon(data = w, aes(date, ymin = n, ymax = b), fill = TINT) +
+      annotate("text", x = mid$date, y = (mid$b + mid$n) / 2, label = paste0("BRECHA ", num(gap)),
+               family = F_MONO, size = 1.3, colour = MU) +
+      geom_line(data = res, aes(date, value, colour = serie), linewidth = .5, lineend = "round") +
+      annotate("segment", x = ev$date, xend = ev$date - 70, y = ev$b + .3, yend = ev$b + 3.2, colour = INK, linewidth = .2) +
+      annotate("point", x = ev$date, y = ev$b, size = .9, colour = INK) +
+      annotate("text", x = ev$date - 74, y = ev$b + 3.5, label = "Acuerdo FMI, abr-25", hjust = 1,
+               family = F_ITAL, fontface = "italic", size = 2.3, colour = MU) +
+      geom_point(data = last, aes(date, value, colour = serie), size = 1.2) +
+      geom_text(data = last, aes(date, value, colour = serie, label = paste0(toupper(serie), "  ", num(value))),
+                hjust = 0, nudge_x = 16, family = F_MONO, size = 1.5) +
+      scale_colour_manual(values = SERIES) + date_scale(.27) + y_scale() + labs(x = NULL, y = NULL) + base_theme("y"))
+  }
+  if (type == "bar") {
+    dd <- region; dd$main <- dd$name == "Argentina"
+    dd$name <- stats::reorder(dd$name, dd$value)
+    med <- stats::median(dd$value); off <- max(dd$value) * .025
+    return(ggplot(dd, aes(value, name, fill = main)) +
+      geom_vline(xintercept = med, colour = COOL, linewidth = .25, linetype = "22") +
+      geom_chanwe_col(width = .64, orientation = "y", radius = 1.2) +
+      annotate("segment", x = med, xend = med, y = 6.42, yend = 6.82, colour = P, linewidth = .6) +
+      annotate("text", x = med + off * .6, y = 6.66, label = paste0("MEDIANA ", num(med)), hjust = 0, family = F_MONO, size = 1.3, colour = P) +
+      geom_text(aes(x = value + off, label = num(value), colour = main), hjust = 0, family = F_MONO, size = 1.45) +
+      scale_fill_manual(values = c(`TRUE` = P, `FALSE` = SLATE[3]), guide = "none") +
+      scale_colour_manual(values = c(`TRUE` = P, `FALSE` = SLATE[1]), guide = "none") +
+      scale_x_continuous(expand = expansion(mult = c(0, .12))) + scale_y_discrete(expand = expansion(add = c(.6, 1))) +
+      labs(x = NULL, y = NULL) + base_theme("none") +
+      theme(axis.text.x = element_blank(), axis.text.y = element_text(size = 4.6, colour = INK, hjust = 1)))
+  }
+  body_plot("A", type)
 }
 
 # ── a chart card ─────────────────────────────────────────────────────────────
 card <- function(W, H, header = "A", kpi = "none", body = "A", type = "line", legend = "A", foot = "A", frame = "simple",
-                 compact = TRUE, hfill = "tint") {
+                 compact = TRUE, hfill = "tint", style = "polished") {
+  set_copy(type)
+  if (style == "editorial") return(card_editorial(W, H, type, kpi = kpi != "none"))
   d <<- if (compact) DIMS$compact else DIMS$regular
   pad <- if (compact) 8 else 10
+  radius <- 9
   if (frame == "shadow") {   # a soft offset shadow, no hairline
+    radius <- 10
     for (i in 6:1) rr(0.5 + i * .2, 1 + i * .55, W - 1 - i * .4, H - 3, grDevices::adjustcolor(INK, alpha.f = .011 * (7 - i)), r = 10 + i)
-    rr(0.5, 0.5, W - 1, H - 3, PAPER, NA, r = 10)
+    rr(0.5, 0.5, W - 1, H - 3, PAPER, NA, r = radius)
     H <- H - 2.5
   } else if (frame == "simple") {
-    rr(0.25, 0.25, W - .5, H - .5, PAPER, RULE, r = 9)
+    rr(0.25, 0.25, W - .5, H - .5, PAPER, RULE, r = radius)
   } else {
     pad <- 1
   }
-  is_line <- type == "line"
-  keys <- if (is_line) SERIES else c(Argentina = P, Resto = SLATE[3])
+  # A legend only where colour encodes something the chart does not name: the
+  # bars, columns and scatter label their main mark directly.
+  if (type != "line") legend <- "none"
   y <- hdr_card(header, W, pad, legend = legend == "C", kpi = kpi == "A", fill = hfill)
   if (kpi == "B") y <- kpi_strip(pad, y + 4)
-  y <- y + 7
+  y <- y + 5
   bottom <- H - d$foot_h - (if (legend == "A") 14 else 4)
   x0 <- pad
   if (kpi == "C") { kpi_rail(pad + 2, y, bottom - y); x0 <- pad + 62 }
@@ -439,8 +527,51 @@ card <- function(W, H, header = "A", kpi = "none", body = "A", type = "line", le
                         height = unit(bottom - y, "pt"), just = c("left", "top")))
   grid.draw(ggplotGrob(body_plot(body, type)))
   popViewport()
-  if (legend == "A") legend_pill(W, bottom + 7, keys)
-  footer(foot, W, H, pad, frame)
+  if (legend == "A") legend_pill(W, bottom + 7, SERIES)
+  footer(foot, W, H, pad, frame, radius)
+}
+
+# ── the editorial card: no frame, no bands, no pills. An ink hairline with the
+# orange tab on top, the figure numeral hanging at the left, the eyebrow and the
+# period on one line, title and subtitle; the KPI as plain type; the footer a
+# hairline with the source and the ID.
+card_editorial <- function(W, H, type = "line", kpi = FALSE) {
+  d <<- DIMS$compact
+  pad <- 2
+  hline(pad, -pad, pad + .3, INK, .7)
+  grid.rect(x = X(pad), y = Y(pad - .9), width = unit(18, "pt"), height = unit(2.4, "pt"),
+            just = c("left", "top"), gp = gpar(fill = P, col = NA))
+  y <- pad + 10
+  nw <- tw("07", F_SERIF, 28) + 8
+  txt("07", pad - 1, y + 11, F_SERIF, 28, P)
+  x <- pad + nw
+  eyebrow_line(x, y + 2, P, INK)
+  mono(PERIOD, -pad, y + 2, d$stamp, MU, c("right", "center"))
+  yy <- y + 9
+  for (l in wrap_lines(TITLE, F_DISP, 11, W - x - pad)) { txt(l, x, yy + 6, F_DISP, 11, INK); yy <- yy + 12.5 }
+  for (l in wrap_lines(SUBTITLE, F_SANS, 6.2, W - x - pad)) { txt(l, x, yy + 4.5, F_SANS, 6.2, MU); yy <- yy + 8.6 }
+  if (kpi) {   # plain type: the value, its unit, the changes in their colour
+    yy <- yy + 4
+    txt(KPI$value, x, yy + 6, F_DISP, 13, INK)
+    xx <- x + tw(KPI$value, F_DISP, 13) + 5
+    mono(KPI$unit, xx, yy + 7, 3.7, MU); xx <- xx + tw(toupper(KPI$unit), F_MONO, 3.7) + 10
+    for (m in KPI$d) {
+      col <- switch(m[3], up = GREEN, down = RED, SLATE[1])
+      lbl <- paste(m[2], m[1]); mono(lbl, xx, yy + 7, 4, col); xx <- xx + tw(toupper(lbl), F_MONO, 4) + 9
+    }
+    yy <- yy + 13
+  }
+  y <- yy + 6
+  fh <- 13
+  bottom <- H - fh - 4
+  pushViewport(viewport(x = unit(pad, "pt"), y = Y(y), width = unit(W - 2 * pad, "pt"),
+                        height = unit(bottom - y, "pt"), just = c("left", "top")))
+  grid.draw(ggplotGrob(body_plot("A", type, style = "editorial")))
+  popViewport()
+  y0 <- H - fh
+  hline(pad, -pad, y0, RULE, .5)
+  mono("Fuente", pad, y0 + fh / 2, 3.7, SU); mono("BCRA · elaboración propia", pad + 19, y0 + fh / 2, 3.7, MU)
+  mono(STAMP, -pad, y0 + fh / 2, 3.6, SU, c("right", "center"))
 }
 
 # A sheet of cards, `ncol` per row, each under its name.

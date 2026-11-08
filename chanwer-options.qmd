@@ -83,7 +83,8 @@ source("chanwer-options-helpers.R")
     else { block(width: 100%, fill: _t.tint, radius: 2.4mm, inset: dm.inset, clip: true, body) }
   let tb = _o-title-block(dm: dm)
   let eye(fill: _t.fg) = { box(baseline: -0.2pt, cw-dot(_t.primary, size: 2.8pt)); h(1.3mm); _o-mono("Finanzas · Cierre", size: dm.eye, fill: fill) }
-  let stamp = _o-mono(_o-stamp, size: dm.stamp, fill: _t.fg-subtle)
+  // The header carries the period; the ID lives only in the footer.
+  let stamp = _o-mono("2T 2026", size: dm.stamp, fill: _t.fg-muted)
   pad(x: dm.outer, top: dm.outer, if kind == "A" {
     card({
       block(width: 100%, fill: _t.ink, radius: _t.radius-pill, inset: (x: 2.4mm, y: dm.band-y),
@@ -291,6 +292,68 @@ source("chanwer-options-helpers.R")
 Esta ronda arma lo elegido. En gráficos: cabecera **A** por defecto, con **C** y **D** como variantes, las tres como *card* compacta y con el título en Schibsted y la bajada en Satoshi; KPI **A**, **B** y **C**; cuerpo **A** con la opción *main* (la serie principal se marca al final con su halo y su valor) y **B**; leyenda **A** más plana y **C**; pie **A** y **B** más planos; y el marco exterior en tres variantes: simple, con sombra y sin marco. Las tablas toman la misma cabecera, el mismo pie y el mismo marco, y suman láminas nuevas: densidad, estilo de celdas, totales y columnas especiales.
 
 Primero van las **combinaciones**, a tamaño real; después, cada parte por separado. El punto negro marca la opción por defecto.
+
+# Ronda 5: una mirada independiente {.unnumbered}
+
+Le pedí una crítica a un revisor que no vio ninguna de las rondas anteriores, con el criterio de un escritorio de gráficos de research (The Economist, FT, una consultora grande), y con la marca como restricción fija. Su veredicto: los gráficos estaban a un 60 % del estándar de publicación. Las marcas de datos son correctas; lo que los frenaba era que **se leían como una tarjeta de dashboard pegada en un PDF**, y que había errores de contenido que una publicación no deja pasar.
+
+Separé lo que dijo en tres grupos.
+
+**1 · Errores: corregidos en todas las láminas.**
+
+- Cada gráfico dice ahora qué mide, en qué unidad y en qué período: las barras y las columnas repetían la bajada del gráfico de líneas.
+- El KPI se calcula de la serie: decía 39,5 y la línea terminaba en 39,2. Una variación que redondea a cero se lee en slate (`= 0,0 %`), no en rojo.
+- "USD MM" es ambiguo en castellano (MM son millones): ahora "USD miles de M". Los meses van en castellano (jun-24, dic-25).
+- La dispersión nombra sus dos ejes, el de abajo con su escala logarítmica, y la etiqueta de Argentina va al espacio libre con una guía, sin chocar con Chile.
+
+**2 · Pulido que respeta lo elegido: aplicado.**
+
+- El identificador aparecía dos veces. Ahora la cabecera lleva el **período** (dic 2025) y el pie el **identificador**; el rótulo nombra el tema (Sector externo · Reservas), no la fuente, que ya está en el pie.
+- El eje de B tenía dos marcas y una base de tinta que parecía el cero: ahora marca cada 5 y la base de tinta sólo aparece donde el eje empieza en cero (las columnas).
+- Las barras rotuladas no llevan eje de valores ni grilla; las cifras quedan a una distancia fija del final de cada barra, con un decimal, y los países alineados a la derecha.
+- La leyenda sólo aparece donde el color codifica algo que el gráfico no nombra: las barras, las columnas y la dispersión rotulan su marca principal.
+- Las esquinas del pie B siguen el radio de la card (antes la franja se veía recortada con la sombra).
+
+**3 · Una dirección distinta: una opción nueva, editorial.** El revisor propone sacar el marco, la banda, las pastillas y el pane, y llevar la estructura al filete y a la tipografía. No la impongo, porque contradice elecciones tuyas; la armé como estilo aparte para comparar:
+
+- un filete de tinta arriba, con la pestaña naranja de la marca, y el numeral de figura colgado a la izquierda;
+- el KPI en tipografía plana, sin pane ni pastillas;
+- los rótulos directos al final de cada serie, sin leyenda;
+- la **brecha** entre brutas y netas sombreada y rotulada, y una anotación en la cursiva editorial (Acuerdo FMI, abr-25);
+- en el ranking, la mediana regional como una marca naranja y una guía punteada;
+- el pie: un filete, la fuente y el identificador, sin pastilla.
+
+```{r}
+#| label: review-polished
+sheet(list(
+  list(name = "Pulido · línea, KPI A, cabecera A sin fondo", default = TRUE, args = list(header = "A", kpi = "A", hfill = "none")),
+  list(name = "Pulido · ranking", args = list(header = "A", type = "bar", hfill = "none")),
+  list(name = "Pulido · columnas, D, pie B, sombra", args = list(header = "D", type = "column", foot = "B", frame = "shadow")),
+  list(name = "Pulido · dispersión, C sin fondo", args = list(header = "C", type = "scatter", hfill = "none"))
+))
+```
+
+{{< pagebreak >}}
+
+```{r}
+#| label: review-editorial-line
+#| fig-width: 3.54
+#| fig-height: 2.75
+#| out-width: "100%"
+one(style = "editorial", kpi = "A")
+```
+
+```{r}
+#| label: review-editorial-bar
+#| fig-width: 3.54
+#| fig-height: 2.75
+#| out-width: "100%"
+one(style = "editorial", type = "bar")
+```
+
+**Mi lectura.** El pulido no se discute: son errores y ruido. Entre el pulido y el editorial, la diferencia es de género: el pulido es un **sistema de piezas** (cards, panes, pastillas) que funciona igual en un informe, una lámina y una pantalla; el editorial es **una página de publicación**, más sobria y con más argumento, pero depende de que alguien escriba la anotación y elija qué mostrar en la brecha. Lo que propongo es tomar del editorial lo que no rompe tus elecciones y sumarlo como opciones del paquete: la brecha sombreada, la anotación con guía y la mediana en los rankings sirven con cualquier cabecera. Y ofrecer el estilo editorial completo como `style = "editorial"` para research.
+
+{{< pagebreak >}}
 
 # Ronda 4: todas las cabeceras {.unnumbered}
 
