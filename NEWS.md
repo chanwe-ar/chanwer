@@ -1,5 +1,12 @@
 # chanwer (development version)
 
+- **Quieter frame type** (Ale, 2026-11-08): in `chanwe_figure()` the title is 20%
+  smaller (10 → 8 design units) and the subtitle 23% smaller (6 → 4.6); the footer
+  (source, ID) is set at the subtitle's size in Satoshi Light, sentence case, instead
+  of tracked mono capitals. The editorial style follows (title 11 → 8.8, subtitle
+  6.2 → 4.8, footer 4.8 light). `chanwe_kbl()` frames match: title 11 → 9.5pt,
+  subtitle 7 → 6pt, footer 6pt light.
+
 # chanwer 3.2.0
 
 ## The figure frame and the editorial layer

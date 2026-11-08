@@ -760,8 +760,8 @@ chanwe_col_signed <- function(
   dark <- kind == "dark"; bare <- fill == "none" && !dark
   tcol <- if (dark) "_t.rule-cool" else "_t.fg"; scol <- if (dark) "_t.fg-subtle" else "_t.fg-muted"
   tb <- paste0(
-    '#block(spacing: 0pt)[#text(font: _t.font-display, size: 11pt, weight: _t.weight-display, tracking: -0.04em, fill: ', tcol, ')[', esc(title), ']]',
-    if (!is.null(subtitle)) paste0('#block(above: 1.6mm, spacing: 0pt)[#text(font: _t.font-sans, size: 7pt, fill: ', scol, ')[', esc(subtitle), ']]') else ""
+    '#block(spacing: 0pt)[#text(font: _t.font-display, size: 9.5pt, weight: _t.weight-display, tracking: -0.04em, fill: ', tcol, ')[', esc(title), ']]',
+    if (!is.null(subtitle)) paste0('#block(above: 1.4mm, spacing: 0pt)[#text(font: _t.font-sans, size: 6pt, fill: ', scol, ')[', esc(subtitle), ']]') else ""
   )
   eye <- function(col) if (is.null(eyebrow)) "" else paste0('#box(baseline: -0.2pt, cw-dot(_t.primary, size: 3pt))#h(1.4mm)', .kbl_mono(eyebrow, "5pt", col, esc))
   tg <- function(col) if (is.null(tag)) "" else .kbl_mono(tag, "4.8pt", col, esc)
@@ -779,12 +779,14 @@ chanwe_col_signed <- function(
   c(paste0('#pad(x: 2.4mm, top: 2.4mm, block(width: 100%, fill: ', box_fill, ', radius: 2.6mm, inset: ', inset, ')[#set par(spacing: 0pt, leading: 0.5em);', inner, '])'))
 }
 .kbl_footer <- function(kind, source, source_label, id, frame, fonts, esc) {
-  src <- if (is.null(source)) "[]" else paste0('[', .kbl_mono(source_label, "4.6pt", "_t.fg-subtle", esc), '#h(2mm)', .kbl_mono(source, "4.6pt", "_t.fg-muted", esc), ']')
+  # Set at the subtitle's size, sentence case, light: quieter than the subtitle.
+  foot <- function(x, fill) paste0('#text(font: _t.font-sans, size: 6pt, weight: _t.weight-body, fill: ', fill, ')[', esc(x), ']')
+  src <- if (is.null(source)) "[]" else paste0('[', foot(source_label, "_t.fg-subtle"), '#h(1.2mm)', foot(source, "_t.fg-muted"), ']')
   if (kind == "rule") {
-    idc <- if (is.null(id)) "[]" else paste0('box(fill: _t.white, radius: 99pt, inset: (x: 1.8mm, y: 0.7mm))[', .kbl_mono(id, "4.3pt", "_t.fg-muted", esc), ']')
+    idc <- if (is.null(id)) "[]" else paste0('box(fill: _t.white, radius: 99pt, inset: (x: 1.8mm, y: 0.7mm))[', foot(id, "_t.fg-muted"), ']')
     paste0('#block(width: 100%, stroke: (top: 0.5pt + _t.rule), inset: (x: 3.4mm, y: 1.4mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), ', src, ', ', idc, '))')
   } else {
-    idc <- if (is.null(id)) "[]" else paste0('[', .kbl_mono(id, "4.3pt", "_t.fg-muted", esc), ']')
+    idc <- if (is.null(id)) "[]" else paste0('[', foot(id, "_t.fg-muted"), ']')
     paste0('#', if (frame == "none") 'pad(top: 1.4mm, ' else '', 'block(width: 100%, fill: _t.tint, radius: ', if (frame == "none") "2mm" else "0pt",
            ', inset: (x: 3.4mm, y: 1.9mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), ', src, ', ', idc, '))', if (frame == "none") ')' else '')
   }
