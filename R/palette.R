@@ -1,7 +1,7 @@
 # Brand color tokens -------------------------------------------------------
 
 # Every colour comes from `chanwe_tokens` (R/brand-tokens.R), which
-# chanwe-brandbook generates from brand/tokens/tokens.json and syncs here
+# chanwe-brandbook generates from brand/ui/tokens/tokens.json and syncs here
 # (`brand:sync`). Never edit that file or write a hex in this package: read a
 # token with .cw_tk(), or build a tint from one with .cw_mix() / .cw_alpha().
 # tests/testthat/test-token-drift.R fails on any string literal hex that is

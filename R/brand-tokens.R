@@ -1,4 +1,4 @@
-# Generated from brand/tokens/tokens.json by scripts/brand-tokens.mjs. Do not edit; change tokens.json and run npm run brand:tokens.
+# Generated from brand/ui/tokens/tokens.json by scripts/brand-tokens.mjs. Do not edit; change tokens.json and run npm run brand:tokens.
 # Lengths are px numbers; colours are hex strings (8 digits carry alpha). Read through chanwer's helpers.
 chanwe_tokens <- list(
   colors = list(
@@ -14,7 +14,7 @@ chanwe_tokens <- list(
     `fg` = "#111319",
     `body-fg` = "#475569",
     `fg-muted` = "#475569",
-    `fg-subtle` = "#8A94A6",
+    `fg-subtle` = "#5B6677",
     `emphasis` = "#484848",
     `paper` = "#F8FAFC",
     `callout-surface` = "#F8FAFC",
@@ -163,6 +163,13 @@ chanwe_tokens <- list(
     `line-width` = 2,
     `point-size` = 3,
     `bar-radius` = 3
+  ),
+  layout = list(
+    `shell-bar` = 56
+  ),
+  state = list(
+    `primary-hover` = "#EA3511",
+    `primary-pressed` = "#D73211"
   ),
   fonts = list(
     `display` = "Schibsted Grotesk",
