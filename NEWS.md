@@ -1,4 +1,4 @@
-# chanwer (development version)
+# chanwer 3.4.0
 
 - **Brand tokens from chanwe-brandbook 2.0.1**: `fg-subtle` is darker (#8A94A6 → #5B6677), and new
   `layout` (`shell-bar`) and `state` (`primary-hover`, `primary-pressed`) groups. The hub file moved to
