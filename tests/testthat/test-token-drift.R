@@ -23,7 +23,7 @@ test_that("R/brand-tokens.R is the generated file, untouched", {
   dir <- source_dir()
   skip_if(is.null(dir), "package sources not available")
   head <- readLines(file.path(dir, "brand-tokens.R"), n = 1L)
-  expect_match(head, "Generated from brand/tokens/tokens.json", fixed = TRUE)
+  expect_match(head, "Generated from brand/ui/tokens/tokens.json", fixed = TRUE)
 })
 
 test_that("every hex string in the source is a token", {

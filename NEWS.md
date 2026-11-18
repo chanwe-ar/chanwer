@@ -1,3 +1,9 @@
+# chanwer (development version)
+
+- **Brand tokens from chanwe-brandbook 2.0.1**: `fg-subtle` is darker (#8A94A6 → #5B6677), and new
+  `layout` (`shell-bar`) and `state` (`primary-hover`, `primary-pressed`) groups. The hub file moved to
+  `brand/ui/tokens/tokens.json`; the drift test and `R/palette.R` name the new path.
+
 # chanwer 3.3.0
 
 - **Quieter frame type** (Ale, 2026-11-08): in `chanwe_figure()` the title is 20%
