@@ -70,7 +70,7 @@ chanwe_dots <- function(data, x, y, focus = NULL, style = c("values", "range"), 
 #' @examples
 #' d <- data.frame(p = c("A", "B"), a = c(20, 30), b = c(24, 27))
 #' p <- chanwe_dumbbell(d, "p", "a", "b", labels = c("2024", "2025"))
-chanwe_dumbbell <- function(data, x, from, to, labels = c("Antes", "Después"), digits = 1,
+chanwe_dumbbell <- function(data, x, from, to, labels = c("Antes", "Despu\u00e9s"), digits = 1,
                             theme = theme_chanwe(grid = "x")) {
   d <- data
   d$.chg <- d[[to]] - d[[from]]
@@ -103,7 +103,7 @@ chanwe_dumbbell <- function(data, x, from, to, labels = c("Antes", "Después"), 
 #' @examples
 #' d <- data.frame(p = c("A", "B", "C"), a = c(10, 20, 15), b = c(18, 17, 16))
 #' p <- chanwe_slope(d, "p", "a", "b", labels = c("2020", "2025"))
-chanwe_slope <- function(data, group, from, to, labels = c("Antes", "Después"), focus = NULL, digits = 1,
+chanwe_slope <- function(data, group, from, to, labels = c("Antes", "Despu\u00e9s"), focus = NULL, digits = 1,
                          theme = theme_chanwe(grid = "none")) {
   focus <- focus %||_% as.character(data[[group]])[which.max(data[[to]] - data[[from]])]
   long <- rbind(data.frame(g = data[[group]], t = 1, v = data[[from]]), data.frame(g = data[[group]], t = 2, v = data[[to]]))
@@ -198,7 +198,7 @@ chanwe_waterfall <- function(data, step, value, end_label = "Total", style = c("
   v <- data[[value]]
   k <- c(as.character(data[[step]]), end_label)
   end <- c(cumsum(v), sum(v))
-  start <- c(0, head(cumsum(v), -1), 0)
+  start <- c(0, utils::head(cumsum(v), -1), 0)
   type <- c("total", ifelse(v[-1] > 0, "up", "down"), "total")
   d <- data.frame(i = seq_along(k), k = k, v = c(v, sum(v)), start = start, end = end, type = type)
   fills <- if (style == "signed") c(total = .cwc_slate(4), up = .cwc_pastel("kpi-green", .45), down = .cwc_pastel("kpi-red", .45))
@@ -549,7 +549,7 @@ chanwe_whole <- function(data, k, value, focus = NULL, style = c("bar", "donut",
 #' @examples
 #' d <- data.frame(t = 1:12, v = c(5:1, rep(1, 7)), s = c(rep(0, 6), 1:6 / 3))
 #' p <- chanwe_forecast(d, "t", "v", from = 6, spread = "s")
-chanwe_forecast <- function(data, x, y, from, spread, style = c("fan", "zone"), label = "Proyección",
+chanwe_forecast <- function(data, x, y, from, spread, style = c("fan", "zone"), label = "Proyecci\u00f3n",
                             theme = theme_chanwe()) {
   style <- match.arg(style)
   d <- data[order(data[[x]]), , drop = FALSE]
@@ -605,7 +605,7 @@ chanwe_forecast <- function(data, x, y, from, spread, style = c("fan", "zone"), 
 #' d <- data.frame(y = 2020:2025, v = c(700, 640, 760, 880, 870, 960))
 #' p <- chanwe_level_change(d, "y", "v")
 chanwe_level_change <- function(data, x, level, style = c("change", "panels", "strip"), level_name = "Nivel",
-                                change_name = "Variación, %", digits = 1, theme = theme_chanwe(grid = "y")) {
+                                change_name = "Variaci\u00f3n, %", digits = 1, theme = theme_chanwe(grid = "y")) {
   style <- match.arg(style)
   d <- data[order(data[[x]]), , drop = FALSE]
   d$.chg <- c(NA, diff(d[[level]]) / utils::head(d[[level]], -1) * 100)

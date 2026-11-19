@@ -10,7 +10,10 @@ chanwe_title(text, eyebrow = NULL, stamp = NULL)
 \item{text}{Main title string. Rendered in Schibsted Grotesk SemiBold by \code{\link[=theme_chanwe]{theme_chanwe()}}.}
 
 \item{eyebrow}{Optional short label above the title, e.g.
-\code{"SECTION · PROFITABILITY"}. Displayed in orange mono caps.}
+\code{"SECTION · PROFITABILITY"}. Displayed as the theme's eyebrow (the band by
+default; see \code{eyebrow_style} in \code{\link[=theme_chanwe]{theme_chanwe()}}).}
+
+\item{stamp}{Optional mono stamp on the eyebrow's line, right-aligned.}
 }
 \value{
 A character string for \code{labs(title = ...)}.

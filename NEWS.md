@@ -1,4 +1,13 @@
-# chanwer (development version)
+# chanwer 3.4.0
+
+- **Interactive builders** that mimic the paper ones on highcharter: `chanwe_hc_bars()` (`"labelled"`,
+  `"ranking"`), `chanwe_hc_lines()` (`"direct"`, `"spaghetti"`; names at the end of each line, spread when they
+  crowd), `chanwe_hc_area()` (the fading gradient and the last value in an ink pill), `chanwe_hc_scatter()`
+  (`"named"`, `"trend"`), `chanwe_hc_heatmap()` (signed, symmetric) and `chanwe_hc_stack()` (`"stacked"`,
+  `"share"`). The same focus, slate ramp, mono labels and Spanish numbers and months as on paper; the header from
+  `chanwe_highchart()`.
+- **Docs in Spanish and English** (`docs/es`, `docs/en`): `start_here.md`, `guide.md` (which builder for which
+  need, paper and interactive, and how to release) and `data-tree.md` (hub tokens → package → chart).
 
 - **The showcases and the README use the builders.** The chart forms and scale examples the catalogue
   marked failing or partly right (categorical bars with no focus, the orange area, overlapping density

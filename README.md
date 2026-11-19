@@ -32,6 +32,9 @@ devtools::install(".")
   `chanwe_multiples()`, `chanwe_bullet()`, `chanwe_whole()`,
   `chanwe_forecast()` and `chanwe_level_change()`. Each returns a ggplot, so
   `labs()` and `theme()` still apply. `chanwer-catalogue.qmd` shows every one.
+- **Interactive builders**: the same charts on highcharter, for HTML: `chanwe_hc_bars()`, `chanwe_hc_lines()`,
+  `chanwe_hc_area()`, `chanwe_hc_scatter()`, `chanwe_hc_heatmap()` and `chanwe_hc_stack()`. Header arguments
+  (`title`, `subtitle`, `eyebrow`, `caption`) go straight in. Docs: `docs/es/guide.md`, `docs/en/guide.md`.
 - `chanwe_palette()` — exact named color tokens and grouped palettes
   (core brand, `p13`/`p14`/`p15` ramps, `mb` main-brand scale, semantic,
   and the editorial 8-color chart palette).

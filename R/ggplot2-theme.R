@@ -482,7 +482,9 @@ theme_chanwe <- function(
 #'
 #' @param text Main title string. Rendered in Schibsted Grotesk SemiBold by [theme_chanwe()].
 #' @param eyebrow Optional short label above the title, e.g.
-#'   `"SECTION · PROFITABILITY"`. Displayed in orange mono caps.
+#'   `"SECTION · PROFITABILITY"`. Displayed as the theme's eyebrow (the band by
+#'   default; see `eyebrow_style` in [theme_chanwe()]).
+#' @param stamp Optional mono stamp on the eyebrow's line, right-aligned.
 #'
 #' @return A character string for `labs(title = ...)`.
 #' @export

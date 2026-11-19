@@ -72,7 +72,7 @@
   if (is.null(kpi)) return(NULL)
   k <- if (is.list(kpi)) kpi else .cw_parse_kpi(kpi)
   if (is.null(k)) return(NULL)
-  k$unit_line <- paste(Filter(nzchar, c(k$unit, k$date)), collapse = " · ")
+  k$unit_line <- paste(Filter(nzchar, c(k$unit, k$date)), collapse = " \u00b7 ")
   k
 }
 .cwf_change_col <- function(m, C) {
@@ -80,7 +80,7 @@
   if (v > 0) C$GREEN else if (v < 0) C$RED else C$NEUTRAL
 }
 .cwf_change_lbl <- function(m) {
-  arrow <- if (m$dir > 0) "↑ " else if (m$dir < 0) "↓ " else "= "
+  arrow <- if (m$dir > 0) "\u2191 " else if (m$dir < 0) "\u2193 " else "= "
   paste(m$label, paste0(arrow, m$value))
 }
 .cwf_pills_w <- function(k, d) {
