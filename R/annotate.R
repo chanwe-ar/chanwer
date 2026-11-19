@@ -65,8 +65,11 @@ annotate_chanwe_ends <- function(data, x, y, group, values = TRUE, nudge = NULL,
   if (is.null(nudge)) nudge <- if (inherits(data[[x]], "Date")) 14 else diff(range(data[[x]])) * .02
   list(
     ggplot2::geom_point(data = ends, ggplot2::aes(.data[[x]], .data[[y]], colour = .data[[group]]), inherit.aes = FALSE, size = 1.2),
-    ggplot2::geom_text(data = ends, ggplot2::aes(.data[[x]], .data[[y]], colour = .data[[group]], label = .data$.label),
-                       inherit.aes = FALSE, hjust = 0, nudge_x = nudge, family = "JetBrains Mono", size = size)
+    # The names are visible but quiet (Ale, 2026-11-19): slate mono, never the
+    # series colour; the dot at the end carries the colour to its line.
+    ggplot2::geom_text(data = ends, ggplot2::aes(.data[[x]], .data[[y]], label = .data$.label),
+                       inherit.aes = FALSE, hjust = 0, nudge_x = nudge, family = "JetBrains Mono", size = size,
+                       colour = chanwe_get_colors()[["fg-muted"]])
   )
 }
 

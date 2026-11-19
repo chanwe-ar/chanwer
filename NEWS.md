@@ -5,6 +5,14 @@
   `"lollipop"`), `chanwe_lines()` (`"direct"` labels by default, `"spaghetti"`), `chanwe_area()` (the
   line over a gradient that fades to the axis), `chanwe_heatmap()` (today's tiles, `labels = TRUE` for
   the values) and `chanwe_density()` (`"gradient"` outlines by default, `"outline"`).
+- **The chart catalogue** (Ale's picks, round 7): `chanwe_dots()` (`"values"`, `"range"`),
+  `chanwe_dumbbell()`, `chanwe_slope()`, `chanwe_scatter()` (`"named"`, `"trend"`, `"bubble"`),
+  `chanwe_waterfall()` (`"signed"` in pastel green and red, `"totals"`), `chanwe_stack()` (`"stacked"`,
+  `"share"`, `"grouped"`), `chanwe_histogram()` (`"median"`, `"split"`), `chanwe_spread()` (`"box"`,
+  `"violin"`), `chanwe_bump()`, `chanwe_multiples()`, `chanwe_bullet()` and `chanwe_whole()` (`"bar"`,
+  `"donut"`, `"waffle"`, `"treemap"`, a squarified layout with no dependency).
+- Names and axis labels are visible but quiet (Ale, 2026-11-19): the end labels of
+  `annotate_chanwe_ends()` and every builder's names are slate mono, never the series colour.
 - `theme_chanwe(eyebrow_style = "dot")`: the brand eyebrow, an orange dot and the label in slate, no
   band. The band stays the default.
 - Text on the obsidian band is white (chanwe-brand 3.8.0), not `rule-cool`.

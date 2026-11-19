@@ -255,8 +255,8 @@ chanwe_density <- function(data, x, group = NULL, focus = NULL, style = c("gradi
   }
   if (length(lv) > 1) {
     peaks <- do.call(rbind, lapply(lv, function(g) { s <- dens[dens$g == g, ]; s[which.max(s$y), ] }))
-    p <- p + ggplot2::geom_text(data = peaks, ggplot2::aes(.data$x, .data$y, label = toupper(.data$g), colour = .data$g),
-                                vjust = -.8, family = "JetBrains Mono", size = 2.3, show.legend = FALSE)
+    p <- p + ggplot2::geom_text(data = peaks, ggplot2::aes(.data$x, .data$y, label = toupper(.data$g)),
+                                vjust = -.8, family = "JetBrains Mono", size = 2.3, colour = .cwc_col("fg-muted"))
   }
   p + ggplot2::scale_y_continuous(expand = ggplot2::expansion(c(0, .12))) + theme + ggplot2::labs(x = NULL, y = NULL)
 }
