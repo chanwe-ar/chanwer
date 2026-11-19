@@ -24,6 +24,13 @@
 - `theme_chanwe(eyebrow_style = "dot")`: the brand eyebrow, an orange dot and the label in slate, no
   band. The band stays the default.
 - Text on the obsidian band is white (chanwe-brand 3.8.0), not `rule-cool`.
+- **Aligned with chanwe-brand 3.8.0:** the figure and table frames' numeral is Schibsted Grotesk (it was
+  Instrument Serif); the eyebrow label is slate (`fg-muted` on paper, `rule-cool` on obsidian) instead of
+  orange or ink, and text on the dark header is white; `chanwe_reporting_css()` draws callouts as v2 panes
+  (hairline, pane radius, a dot in the role colour before a mono label; no tinted title row, no coloured
+  border) and code blocks on `ink-light` without the orange side bar; the radii are v2 (16 and 12px).
+- **Brand tokens synced from chanwe-brandbook**: `favorite`, and the `callout`, `eyebrow`, `code`,
+  `syntax` and `dots` groups.
 - **Brand tokens from chanwe-brandbook 2.0.1**: `fg-subtle` is darker (#8A94A6 → #5B6677), and new
   `layout` (`shell-bar`) and `state` (`primary-hover`, `primary-pressed`) groups. The hub file moved to
   `brand/ui/tokens/tokens.json`; the drift test and `R/palette.R` name the new path.

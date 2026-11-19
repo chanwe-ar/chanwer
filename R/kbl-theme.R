@@ -758,7 +758,8 @@ chanwe_col_signed <- function(
 }
 .kbl_header_card <- function(kind, fill, title, subtitle, eyebrow, tag, numeral, fonts, esc) {
   dark <- kind == "dark"; bare <- fill == "none" && !dark
-  tcol <- if (dark) "_t.rule-cool" else "_t.fg"; scol <- if (dark) "_t.fg-subtle" else "_t.fg-muted"
+  # Text on obsidian is white (chanwe-brand 3.8.0); the eyebrow label is slate.
+  tcol <- if (dark) "_t.white" else "_t.fg"; scol <- if (dark) "_t.rule-cool" else "_t.fg-muted"
   tb <- paste0(
     '#block(spacing: 0pt)[#text(font: _t.font-display, size: 9.5pt, weight: _t.weight-display, tracking: -0.04em, fill: ', tcol, ')[', esc(title), ']]',
     if (!is.null(subtitle)) paste0('#block(above: 1.4mm, spacing: 0pt)[#text(font: _t.font-sans, size: 6pt, fill: ', scol, ')[', esc(subtitle), ']]') else ""
@@ -768,11 +769,11 @@ chanwe_col_signed <- function(
   inner <- switch(kind,
     A = paste0('#block(width: 100%, fill: _t.ink, radius: 99pt, inset: (x: 2.6mm, y: 1.2mm), grid(columns: (1fr, auto), align: (left + horizon, right + horizon), [', eye("_t.rule-cool"), '], [', tg("_t.fg-subtle"), ']))#v(2.4mm, weak: false)', tb),
     C = paste0('#grid(columns: (auto, 1fr, auto), column-gutter: 3mm, align: (left + horizon, left + top, right + top), ',
-               if (!is.null(numeral)) paste0('text(font: _t.font-serif-display, style: "italic", size: 28pt, fill: _t.primary, top-edge: "cap-height", bottom-edge: "baseline")[', esc(numeral), ']') else "[]",
-               ', [', eye("_t.fg"), '#v(1.8mm, weak: false)', tb, '], [', tg("_t.fg-muted"), '])'),
+               if (!is.null(numeral)) paste0('text(font: _t.font-display, weight: _t.weight-display, size: 26pt, tracking: -0.03em, number-type: "lining", fill: _t.primary, top-edge: "cap-height", bottom-edge: "baseline")[', esc(numeral), ']') else "[]",
+               ', [', eye("_t.fg-muted"), '#v(1.8mm, weak: false)', tb, '], [', tg("_t.fg-muted"), '])'),
     D = paste0('#grid(columns: (1fr, auto), column-gutter: 4mm, align: (left + horizon, left + top), [', tb,
-               '], block(stroke: (left: 0.5pt + _t.rule-cool), inset: (left: 3.5mm, y: 0.4mm))[', '#block(spacing: 0pt)[', eye("_t.fg"), ']#block(above: 1.8mm, spacing: 0pt)[', tg("_t.fg-muted"), ']', '])'),
-    dark = paste0('#grid(columns: (1fr, auto), align: (left + horizon, right + horizon), [', eye("_t.primary"), '], [', tg("_t.fg-subtle"), '])#v(2.4mm, weak: false)', tb)
+               '], block(stroke: (left: 0.5pt + _t.rule-cool), inset: (left: 3.5mm, y: 0.4mm))[', '#block(spacing: 0pt)[', eye("_t.fg-muted"), ']#block(above: 1.8mm, spacing: 0pt)[', tg("_t.fg-muted"), ']', '])'),
+    dark = paste0('#grid(columns: (1fr, auto), align: (left + horizon, right + horizon), [', eye("_t.rule-cool"), '], [', tg("_t.fg-subtle"), '])#v(2.4mm, weak: false)', tb)
   )
   box_fill <- if (dark) "_t.ink" else if (bare) "none" else "_t.tint"
   inset <- if (bare) "(x: 0mm, y: 0.6mm)" else "(x: 3.4mm, y: 3mm)"
