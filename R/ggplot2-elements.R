@@ -66,6 +66,7 @@ new_element_chanwe_title <- function(
   eyebrow_style = "band",
   band_text_colour = "#C6CDD6",
   band_stamp_colour = "#8A94A6",
+  dot_label_colour = "#475569",
   inherit.blank = FALSE
 ) {
   structure(
@@ -90,7 +91,8 @@ new_element_chanwe_title <- function(
       top_pad = top_pad,
       eyebrow_style = eyebrow_style,
       band_text_colour = band_text_colour,
-      band_stamp_colour = band_stamp_colour
+      band_stamp_colour = band_stamp_colour,
+      dot_label_colour = dot_label_colour
     ),
     class = c("element_chanwe_title", "element_text", "element")
   )
@@ -243,12 +245,16 @@ new_element_chanwe_caption <- function(
   top_pad = 8,
   rule_col = ink_col,
   band = FALSE,
+  dot = FALSE,
+  dot_label_col = "#475569",
   stamp_text = NULL,
   band_text_col = "#C6CDD6",
   band_stamp_col = "#8A94A6"
 ) {
   grid::gTree(
     band = band,
+    dot = dot,
+    dot_label_col = dot_label_col,
     stamp_text = stamp_text,
     band_text_col = band_text_col,
     band_stamp_col = band_stamp_col,
@@ -346,6 +352,20 @@ makeContent.cw_title_tree <- function(x) {
         toupper(x$stamp_text), x = grid::unit(1, "npc") - grid::unit(11, "pt"), y = grid::unit(ey_y, "pt"),
         just = c("right", "center"),
         gp = grid::gpar(fontfamily = band_gp$fontfamily, fontsize = band_gp$fontsize * 0.92, col = x$band_stamp_col)
+      )
+    )
+  } else if (d$has_ey && isTRUE(x$dot)) {
+    # The brand eyebrow (2026-11-18): an orange dot and the label in slate.
+    ch <- grid::gList(
+      ch,
+      grid::circleGrob(
+        x = grid::unit(1.8, "pt"), y = grid::unit(ey_y, "pt"), r = grid::unit(1.8, "pt"),
+        gp = grid::gpar(fill = x$eyebrow_gp$col, col = NA)
+      ),
+      grid::textGrob(
+        toupper(x$eyebrow_text), x = grid::unit(7.5, "pt"), y = grid::unit(ey_y, "pt"),
+        just = c("left", "center"),
+        gp = grid::gpar(fontfamily = x$eyebrow_gp$fontfamily, fontsize = x$eyebrow_gp$fontsize, col = x$dot_label_col)
       )
     )
   } else if (d$has_ey) {
@@ -791,6 +811,8 @@ element_grob.element_chanwe_title <- function(element, label = "", ...) {
                  top_pad = element$top_pad %||_% 8,
                  rule_col = element$rule_colour %||_% "#CFD6DF",
                  band = identical(element$eyebrow_style %||_% "band", "band"),
+                 dot = identical(element$eyebrow_style, "dot"),
+                 dot_label_col = element$dot_label_colour %||_% "#475569",
                  stamp_text = stamp_text,
                  band_text_col = element$band_text_colour %||_% "#C6CDD6",
                  band_stamp_col = element$band_stamp_colour %||_% "#8A94A6")

@@ -1,5 +1,13 @@
 # chanwer (development version)
 
+- **Chart builders** (Ale's picks, round 6, 2026-11-19), each with its look decided once and
+  `style =` for the alternatives he kept: `chanwe_bars()` (`"labelled"` by default, `"ranking"`,
+  `"lollipop"`), `chanwe_lines()` (`"direct"` labels by default, `"spaghetti"`), `chanwe_area()` (the
+  line over a gradient that fades to the axis), `chanwe_heatmap()` (today's tiles, `labels = TRUE` for
+  the values) and `chanwe_density()` (`"gradient"` outlines by default, `"outline"`).
+- `theme_chanwe(eyebrow_style = "dot")`: the brand eyebrow, an orange dot and the label in slate, no
+  band. The band stays the default.
+- Text on the obsidian band is white (chanwe-brand 3.8.0), not `rule-cool`.
 - **Brand tokens from chanwe-brandbook 2.0.1**: `fg-subtle` is darker (#8A94A6 → #5B6677), and new
   `layout` (`shell-bar`) and `state` (`primary-hover`, `primary-pressed`) groups. The hub file moved to
   `brand/ui/tokens/tokens.json`; the drift test and `R/palette.R` name the new path.
