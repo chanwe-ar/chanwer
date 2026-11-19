@@ -30,7 +30,7 @@ $if(propuesta.page-bg)$
 $endif$
   scope: (
 $for(propuesta.scope)$
-    (n: "$it.n$", title: "$it.title$", desc: "$it.desc$", optional: $if(it.optional)$true$else$$if(it.optiona)$true$else$false$endif$$endif$),
+    (n: "$it.n$", title: "$it.title$", desc: "$it.desc$", optional: $if(it.optional)$true$else$false$endif$),
 $endfor$
   ),
   fees: (

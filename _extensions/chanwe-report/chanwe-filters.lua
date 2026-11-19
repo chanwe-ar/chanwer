@@ -5,17 +5,21 @@ local function attr(el, key, default)
   return el.attributes[key] or default or ""
 end
 
+-- The divider's v2 variants (2026-11-18): `variant` (numeral | series |
+-- series-dark) and `icon` (a Fundido icon name) pass through when given.
+local function divider_extra(el)
+  local out = ""
+  local v = el.attributes["variant"]
+  if v and v ~= "" then out = out .. string.format(',\n  variant: "%s"', v) end
+  local ic = el.attributes["icon"]
+  if ic and ic ~= "" then out = out .. string.format(',\n  icon: "%s"', ic) end
+  return out
+end
+
 local function escape_typst_str(s)
   return s:gsub('"', '\\"')
 end
 
-local function slot_attr(el, primary, alias)
-  local value = attr(el, primary, "")
-  if value == "" and alias ~= nil then
-    value = attr(el, alias, "")
-  end
-  return value
-end
 
 local function markdown_to_typst(value)
   local parsed = pandoc.read(value, "markdown")
@@ -92,6 +96,7 @@ local function Div(el)
       escape_typst_str(title),
       escape_typst_str(blurb)
     )
+    div_raw = div_raw:gsub(",\n%)$", divider_extra(el) .. ",\n)")
     return {
       pandoc.RawBlock("typst", meta_raw),
       pandoc.RawBlock("typst", div_raw),
@@ -123,6 +128,7 @@ local function Div(el)
       escape_typst_str(title),
       escape_typst_str(blurb)
     )
+    div_raw = div_raw:gsub(",\n%)$", divider_extra(el) .. ",\n)")
     return {
       pandoc.RawBlock("typst", meta_raw),
       pandoc.RawBlock("typst", div_raw),
@@ -140,6 +146,10 @@ local function Div(el)
     local inner   = inline_body_to_typst(el.content)
 
     local call = string.format('#page-great-quote(\n  color: "%s"', color)
+    local qstyle = attr(el, "style", "")
+    if qstyle ~= "" then
+      call = call .. string.format(',\n  style: "%s"', escape_typst_str(qstyle))
+    end
     if eyebrow ~= "" then
       call = call .. string.format(',\n  eyebrow: "%s"', escape_typst_str(eyebrow))
     end
@@ -165,6 +175,10 @@ local function Div(el)
     local inner   = inline_body_to_typst(el.content)
 
     local call = string.format('#inset-great-quote(\n  color: "%s"', color)
+    local qstyle = attr(el, "style", "")
+    if qstyle ~= "" then
+      call = call .. string.format(',\n  style: "%s"', escape_typst_str(qstyle))
+    end
     if eyebrow ~= "" then
       call = call .. string.format(',\n  eyebrow: "%s"', escape_typst_str(eyebrow))
     end
@@ -184,10 +198,10 @@ local function Div(el)
   --      bottom-left="..." bottom-right="..."}
   -- -------------------------------------------------------
   if el.classes:includes("chanwe-figure-frame") then
-    local top_left = slot_attr(el, "top-left", "footer-left")
-    local top_right = slot_attr(el, "top-right", "footer-right")
-    local bottom_left = slot_attr(el, "bottom-left", "alt-footer-left")
-    local bottom_right = slot_attr(el, "bottom-right", "alt-footer-right")
+    local top_left = attr(el, "top-left", "")
+    local top_right = attr(el, "top-right", "")
+    local bottom_left = attr(el, "bottom-left", "")
+    local bottom_right = attr(el, "bottom-right", "")
     local body_blocks, identifier = unwrap_figure_blocks(el.content)
     local inner = pandoc.write(pandoc.Pandoc(body_blocks), "typst")
 
@@ -389,6 +403,10 @@ local function Div(el)
     if row_h ~= "" then
       rh_arg = string.format(', row-height: %smm', escape_typst_str(row_h))
     end
+    local numeral = attr(el, "numeral", "")
+    if numeral ~= "" then
+      rh_arg = rh_arg .. string.format(', numeral: "%s"', escape_typst_str(numeral))
+    end
     local call = string.format('#great-findings-grid(color: "%s"%s, (\n', escape_typst_str(color), rh_arg)
     call = call .. table.concat(parts, ",\n")
     call = call .. ",\n))"
@@ -408,12 +426,13 @@ local function Div(el)
     local topic  = attr(el, "topic",  "")
     local tlabel = attr(el, "topic-label", "Tema")
     local call = string.format(
-      '#great-findings(\n  number: "%s",\n  title: "%s",\n  topic: "%s",\n  topic-label: "%s",\n  color: "%s",\n)[\n%s\n]',
+      '#great-findings(\n  number: "%s",\n  title: "%s",\n  topic: "%s",\n  topic-label: "%s",\n  color: "%s",\n  numeral: %s,\n)[\n%s\n]',
       escape_typst_str(number),
       escape_typst_str(title),
       escape_typst_str(topic),
       escape_typst_str(tlabel),
       escape_typst_str(color),
+      (attr(el, "numeral", "") ~= "" and ('"' .. escape_typst_str(attr(el, "numeral", "")) .. '"') or "auto"),
       inner
     )
     return pandoc.RawBlock("typst", call)
@@ -451,6 +470,7 @@ local function Div(el)
     local title    = attr(el, "title",    "")
     local takeaway = attr(el, "takeaway", "")
     local color    = attr(el, "color",    "")
+    local style    = attr(el, "style",    "")
     local inner    = pandoc.write(pandoc.Pandoc(pandoc.Blocks(el.content)), "typst")
 
     -- build custom meta array if any left-label-N attrs are set
@@ -480,6 +500,9 @@ local function Div(el)
     end
     if color ~= "" then
       call = call .. string.format('  color: "%s",\n', escape_typst_str(color))
+    end
+    if style ~= "" then
+      call = call .. string.format('  style: "%s",\n', escape_typst_str(style))
     end
     if #meta_entries > 0 then
       call = call .. "  meta: (" .. table.concat(meta_entries, ", ") .. ",),\n"

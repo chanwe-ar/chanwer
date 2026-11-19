@@ -94,7 +94,7 @@
     },
     {
       "internal_name": "fg-subtle",
-      "code": "#8A94A6",
+      "code": "#5B6677",
       "aliases": [
 
       ]
@@ -501,6 +501,13 @@
     {
       "internal_name": "pane",
       "code": "#FFFFFF",
+      "aliases": [
+
+      ]
+    },
+    {
+      "internal_name": "favorite",
+      "code": "#FFCC00",
       "aliases": [
 
       ]

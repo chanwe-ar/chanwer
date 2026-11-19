@@ -12,7 +12,7 @@
 //   chanwe-photo-cover-page  the book's cover, and `chanwe.cover-variant: photo`
 //
 // White type is for the photograph only; on plain obsidian text stays
-// `rule-cool` (CLAUDE.md, "Text on obsidian"). No colour or weight is written.
+// white (CLAUDE.md, "Text on obsidian", 2026-11-19). No colour or weight is written.
 // =================================================================
 
 #let _site-art = _chanwe-assets + "bg_mountains.jpg"
@@ -48,7 +48,7 @@
   cw-band(inset: (x: 10mm, y: 10mm), grid(columns: (58mm, 1fr), column-gutter: 8mm, align: (left + horizon, left + top),
     stack(dir: ttb, spacing: 5mm,
       if figure != none {
-        text(font: _t.font-display, size: 62pt, weight: _t.weight-bold, tracking: -0.05em, fill: _t.rule-cool,
+        text(font: _t.font-display, size: 62pt, weight: _t.weight-bold, tracking: -0.05em, fill: _t.white,
           top-edge: "cap-height", bottom-edge: "baseline", figure)
       },
       if label != none { cw-label(label, fill: _t.fg-subtle) },
@@ -58,10 +58,10 @@
       set block(spacing: 0pt)
       if kicker != none { block(below: 3mm, cw-label(kicker, fill: _t.fg-subtle)) }
       if title != none {
-        block(below: 3mm, text(font: _t.font-display, size: 16pt, weight: _t.weight-display, tracking: -0.04em, fill: _t.rule-cool, hyphenate: false, title))
+        block(below: 3mm, text(font: _t.font-display, size: 16pt, weight: _t.weight-display, tracking: -0.04em, fill: _t.white, hyphenate: false, title))
       }
-      set text(size: 9.5pt, weight: _t.weight-body, fill: _t.rule-cool)
-      show strong: set text(fill: _t.rule-cool)
+      set text(size: 9.5pt, weight: _t.weight-body, fill: _t.white)
+      show strong: set text(fill: _t.white)
       body
     })))
 
@@ -110,8 +110,17 @@
 
 // The real wordmark with the photograph inside it, never a font: a generated
 // vector asset (scripts/build-giant-word.rb), shared with the HTML format.
-#let chanwe-giant-word(caption: none) = block(above: 10mm, below: 8mm, breakable: false, width: 100%, {
-  image(_chanwe-assets + "chanwe-giant-word.svg", width: 100%)
+// `variant: "plain"` (2026-11-18): the obsidian wordmark on the faint dot
+// field, no photograph and no Aspa.
+#let chanwe-giant-word(caption: none, variant: "photo") = block(above: 10mm, below: 8mm, breakable: false, width: 100%, {
+  if variant == "plain" {
+    layout(size => block(width: 100%, height: size.width * 365 / 1710 + 16mm, spacing: 0pt, {
+      place(top + left, cw-dot-gradient())
+      pad(y: 8mm, image(_chanwe-assets + "Logo_Negro.svg", width: 100%))
+    }))
+  } else {
+    image(_chanwe-assets + "chanwe-giant-word.svg", width: 100%)
+  }
   if caption != none {
     v(6mm)
     align(center, cw-label(caption))

@@ -3,14 +3,14 @@
 This pool is used by `chanwe-report` and the other Chanwe Typst formats
 (memo, propuesta, reMarkable, LinkedIn, Instagram). It carries the brand trio
 decided on 2026-10-01 plus the two editorial serifs the brand guide keeps for
-documents. Source of truth: chanwe-brandbook `brand/fonts/print/`.
+documents. Source of truth: chanwe-brandbook `brand/ui/fonts/print/`.
 
 | Family | Role | Cuts | From the brandbook |
 |---|---|---|---|
 | Satoshi | Body and UI | 300, 400, 500, 600, 700, 900; italic at 400 and 700 | yes, identical files |
 | Schibsted Grotesk | Display and headings | 400, 500, 600, 700, 800; upright only | yes, identical files |
 | JetBrains Mono | Eyebrows, labels, metadata, code | 100–800, upright and italic | Regular, Medium and Bold identical; the other 13 cuts are the official JetBrains release, which the brandbook does not carry yet |
-| Cormorant Garamond | Editorial italics and numerals only | italic at 300, 400, 500, 600, 700; static instances of the brandbook's variable italic | yes, identical files (brandbook `brand/fonts/print/cormorant-garamond/`) |
+| Cormorant Garamond | Editorial italics and numerals only | italic at 300, 400, 500, 600, 700; static instances of the brandbook's variable italic | yes, identical files (brandbook `brand/ui/fonts/print/cormorant-garamond/`) |
 | Instrument Serif | Display numerals only | 400, upright and italic | yes, identical files |
 
 Typst does not render the weight axis of a variable font (it warns "variable

@@ -102,7 +102,7 @@ color:
     fg: "#111319"
     body-fg: "#475569"
     fg-muted: "#475569"
-    fg-subtle: "#8A94A6"
+    fg-subtle: "#5B6677"
     emphasis: "#484848"
     paper: "#F8FAFC"
     callout-surface: "#F8FAFC"
@@ -161,6 +161,7 @@ color:
     violet-soft: "#EFE7FD"
     canvas: "#E9EEF4"
     pane: "#FFFFFF"
+    favorite: "#FFCC00"
     tint: "#64748B21"
     tint-strong: "#64748B36"
     # <<< generated:palette
@@ -184,7 +185,7 @@ typography:
   # El trío de la marca (CLAUDE.md del ecosistema, 2026-10-01): Satoshi para
   # el texto, Schibsted Grotesk para títulos y display, JetBrains Mono para
   # eyebrows, rótulos y metadatos. Los archivos son los del brandbook
-  # (chanwe-brandbook `brand/fonts/`: `web/` para HTML, `print/` para Typst).
+  # (chanwe-brandbook `brand/ui/fonts/`: `web/` para HTML, `print/` para Typst).
   # Inter quedó retirada: no se declara ni se embebe. Las dos serif son las que
   # la guía de marca deja para itálicas y números editoriales en documentos.
   #

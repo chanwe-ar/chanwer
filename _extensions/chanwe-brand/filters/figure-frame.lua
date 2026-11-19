@@ -1,9 +1,5 @@
-local function slot(el, primary, alias)
-  local value = el.attributes[primary]
-  if (value == nil or value == "") and alias ~= nil then
-    value = el.attributes[alias]
-  end
-  return value or ""
+local function slot(el, name)
+  return el.attributes[name] or ""
 end
 
 local function markdown_inlines(value)
@@ -44,10 +40,6 @@ local component_attributes = {
   ["top-right"] = true,
   ["bottom-left"] = true,
   ["bottom-right"] = true,
-  ["footer-left"] = true,
-  ["footer-right"] = true,
-  ["alt-footer-left"] = true,
-  ["alt-footer-right"] = true,
 }
 
 function Div(el)
@@ -59,10 +51,10 @@ function Div(el)
     return el.content
   end
 
-  local top_left = slot(el, "top-left", "footer-left")
-  local top_right = slot(el, "top-right", "footer-right")
-  local bottom_left = slot(el, "bottom-left", "alt-footer-left")
-  local bottom_right = slot(el, "bottom-right", "alt-footer-right")
+  local top_left = slot(el, "top-left")
+  local top_right = slot(el, "top-right")
+  local bottom_left = slot(el, "bottom-left")
+  local bottom_right = slot(el, "bottom-right")
 
   local frame_blocks = pandoc.Blocks({})
 

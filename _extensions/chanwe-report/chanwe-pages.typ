@@ -49,10 +49,11 @@
 
 // Recuento del documento para la losa del índice: secciones (las portadillas
 // de `chanwe-chapter-divider`), capítulos (los H1) y páginas. Se cuenta solo,
-// nadie lo escribe en el YAML. Va sobre obsidiana: el rótulo en `ink-subtle`
-// (#646464, el gris hundido sobre tinta) y el número en `rule-cool`, que es
-// la regla para texto sobre tinta.
-#let _chanwe-agenda-counts() = context {
+// nadie lo escribe en el YAML. Va sobre obsidiana: el rótulo en `fg-subtle`
+// (el slate de los rótulos sobre tinta; hasta 2026-11-13 `ink-subtle`, un gris
+// neutro que tiraba a marrón) y el número en blanco, que es la regla para
+// texto sobre tinta (2026-11-19).
+#let _chanwe-agenda-counts(on-ink: true) = context {
   let rows = (
     ("Secciones", query(<chanwe-part>).len()),
     ("Capítulos", query(heading.where(level: 1)).len()),
@@ -69,9 +70,9 @@
     align: (left + horizon, right + horizon),
     ..rows.map(((label, n)) => (
       text(font: _t.font-mono, size: 8.05pt, weight: _t.weight-regular, tracking: 0.18em,
-           fill: _t.ink-subtle, upper(label)),
+           fill: if on-ink { _t.fg-subtle } else { _t.fg-muted }, upper(label)),
       text(font: _t.font-mono, size: 8.05pt, weight: _t.weight-body, tracking: 0.18em,
-           fill: _t.rule-cool, _pad2(n)),
+           fill: if on-ink { _t.white } else { _t.fg }, _pad2(n)),
     )).flatten(),
   )
 }
@@ -134,8 +135,8 @@
       column-gutter: 4mm,
       align: (left + bottom, left + bottom, right + bottom),
       text(
-        font: _t.font-serif, style: "italic", weight: _t.weight-body,
-        size: 28pt, tracking: -0.025em, fill: _t.primary,
+        font: _t.font-display, weight: _t.weight-display,
+        size: 22pt, tracking: -0.03em, number-type: "lining", fill: _t.primary,
         numeral,
       ),
       text(
@@ -160,6 +161,93 @@
   ]
 }
 
+// The timeline agenda (Ale's pick "inline", 2026-11-19; `chanwe: agenda-style:
+// timeline`): under the band head, the document as a line. Page numbers on the
+// left of one hairline rail, a ring per chapter with its sections in one muted
+// line, and each part as a stop of its own on the same rail: a larger orange
+// dot and its number (1, 2, 3) in orange before its name, nothing stacked above.
+#let _chanwe-agenda-timeline() = context {
+  let h1s = query(heading.where(level: 1)).filter(h => h.outlined)
+  if h1s.len() == 0 { return }
+  let parts = query(<chanwe-part>)
+  let pg(loc) = counter(page).at(loc).first()
+  let rows = ()
+  let seen-parts = ()
+  let n = 0
+  for (i, h) in h1s.enumerate() {
+    let hp = pg(h.location())
+    // a part opens before the first chapter that follows its divider
+    let before = parts.filter(p => pg(p.location()) <= hp)
+    if before.len() > 0 {
+      let part = before.last()
+      if part.value.number not in seen-parts {
+        seen-parts.push(part.value.number)
+        // parts count 1, 2, 3 here, not in roman numerals (Ale, 2026-11-19)
+        rows.push((kind: "part", num: str(seen-parts.len()), title: part.value.title,
+                   page: pg(part.location()) + 1, loc: part.location()))
+      }
+    }
+    let numbered = h.numbering != none
+    if numbered { n += 1 }
+    let next = if i + 1 < h1s.len() { h1s.at(i + 1).location() } else { none }
+    let subs = query(heading.where(level: 2).after(h.location(), inclusive: false))
+      .filter(x => x.outlined and (next == none or x.location().position().page < next.position().page
+        or (x.location().position().page == next.position().page and x.location().position().y < next.position().y)))
+    rows.push((kind: "chapter", num: if numbered { _pad2(n) } else { none }, title: h.body,
+               page: hp, loc: h.location(), subs: subs.map(x => x.body)))
+  }
+  // The rail is the left edge of every row's text cell: with no row gutter the
+  // edges meet, one hairline from the first stop to the last. The stops sit on
+  // it. (The rows are not links: the report underlines every link in orange.)
+  let rail = 0.6pt + _t.rule-cool
+  let pad = 7mm
+  let last = rows.len() - 1
+  grid(
+    columns: (12mm, 1fr),
+    column-gutter: 4mm,
+    row-gutter: 0pt,
+    ..rows.enumerate().map(((i, r)) => {
+      let part = r.kind == "part"
+      // more air above every new part (Ale, 2026-11-19)
+      let lift = if part and i > 0 { 10mm } else { 0mm }
+      let page-cell = block(inset: (top: lift + (if part { 2.4mm } else { 0.9mm })), width: 100%,
+        align(right, text(font: _t.font-mono, size: 7.5pt, tracking: 0.12em, weight: _t.weight-regular,
+          fill: _t.fg-muted, _pad2(r.page))))
+      let dot = if part {
+        circle(radius: 2.4mm, fill: _t.primary, stroke: none)
+      } else {
+        circle(radius: 1.25mm, fill: _t.paper, stroke: 0.9pt + _t.ink)
+      }
+      let r-dot = if part { 2.4mm } else { 1.25mm }
+      let body = block(width: 100%, stroke: (left: rail), inset: (left: pad, top: lift, bottom: if i == last { 0mm } else if part { 5mm } else { 6mm }), {
+        place(top + left, dx: -pad - r-dot, dy: if part { 0.9mm } else { 0.75mm }, dot)
+        // the body's 2.6em paragraph spacing would push the sections away
+        set par(spacing: 0pt)
+        if part {
+          text(font: _t.font-display, size: 21pt, weight: _t.weight-display, tracking: -0.04em,
+               number-type: "lining", fill: _t.primary, r.num)
+          h(3.5mm)
+          text(font: _t.font-display, size: 21pt, weight: _t.weight-display, tracking: -0.04em, fill: _t.fg, r.title)
+        } else {
+          if r.num != none {
+            text(font: _t.font-display, size: 13.5pt, weight: _t.weight-display, number-width: "tabular",
+                 fill: _t.fg-muted, r.num)
+            h(2.6mm)
+          }
+          text(font: _t.font-display, size: 13.5pt, weight: _t.weight-display, tracking: -0.025em, fill: _t.fg, r.title)
+          if r.subs.len() > 0 {
+            v(2.2mm)
+            set par(leading: 0.55em)
+            text(font: _t.font-sans, size: 9pt, weight: _t.weight-body, fill: _t.fg-muted,
+                 r.subs.join([ #h(0.25em)·#h(0.25em) ]))
+          }
+        }
+      })
+      (page-cell, body)
+    }).flatten(),
+  )
+}
+
 #let chanwe-agenda(
   eyebrow: "Document map",
   title: "Agenda",
@@ -167,36 +255,35 @@
   groups: none,
   parts: none,
 ) = {
-  // El encabezado del índice repite la losa del H1: obsidiana de orilla a
-  // orilla, pegada al filete del encabezado y con la misma trama de puntos.
-  v(-4.5mm)
-  context move(dx: -18mm, block(
-    width: page.width,
-    fill: _t.ink,
-    inset: (left: 18mm, right: 18mm, top: 14mm, bottom: 16mm),
-    clip: true,
-  )[
-    #place(top + left, dx: -18mm, dy: -14mm,
-      _chanwe-dot-field(width: page.width, height: 140mm, ramp: (88%, 58%)))
-    #chanwe-section-eyebrow(eyebrow)
-    #v(7.5mm)
+  // The agenda's head (v2, 2026-11-18), `chanwe: agenda-style:`. `band`
+  // (default): the obsidian band of the H1, floating inside the margins with
+  // its 24px corners (until then it bled edge to edge, which v2 rules out).
+  // `paper`: no band, the title at display size on the page. `timeline`: the
+  // band head, and the list as a line (`_chanwe-agenda-timeline`).
+  let head(on-ink) = {
+    chanwe-section-eyebrow(eyebrow, fill: if on-ink { _t.white } else { _t.fg-muted })
+    v(7.5mm)
     // El titular a la izquierda y el recuento del documento a la derecha,
-    // alineados por la base: la losa cuenta de qué está hecho el documento
-    // sin que haya que escribirlo a mano.
-    #grid(
+    // alineados por la base.
+    grid(
       columns: (1fr, auto),
       align: (left + bottom, right + bottom),
       block(spacing: 0pt)[
         #text(
           font: _t.font-display, size: 72.8pt, weight: _t.weight-display,
-          tracking: -0.05em, fill: _t.rule-cool, title,
-        )
-        #box(width: 13pt, height: 13pt, baseline: 0pt,
-          circle(fill: _t.primary, stroke: none))
+          tracking: -0.05em, fill: if on-ink { _t.white } else { _t.fg }, title,
+        )#_chanwe-title-dot(72.8pt)
       ],
-      block(spacing: 0pt, _chanwe-agenda-counts()),
+      block(spacing: 0pt, _chanwe-agenda-counts(on-ink: on-ink)),
     )
-  ])
+  }
+  context if cw-style("agenda-style", "band") == "paper" {
+    v(10mm)
+    head(false)
+  } else {
+    v(-2mm)
+    cw-band(inset: (left: 12mm, right: 12mm, top: 12mm, bottom: 13mm), head(true))
+  }
   v(12mm)
 
   if lede != none {
@@ -210,7 +297,9 @@
 
   v(14mm)
 
-  if groups != none {
+  context if groups == none and parts == none and cw-style("agenda-style", "band") == "timeline" {
+    _chanwe-agenda-timeline()
+  } else if groups != none {
     // --- manual groups mode ---
     for g in groups { chanwe-toc-group(..g) }
   } else if parts != none {
@@ -221,7 +310,7 @@
         columns: (16mm, 1fr, 20mm),
         column-gutter: 5mm,
         align: (right + top, left + top, right + top),
-        text(font: _t.font-serif-display, style: "italic", weight: _t.weight-body, size: 24pt, fill: _t.primary, num),
+        text(font: _t.font-display, weight: _t.weight-display, size: 20pt, tracking: -0.03em, number-type: "lining", fill: _t.primary, num),
         {
           text(font: _t.font-display, size: 13pt, weight: _t.weight-display, tracking: -0.05em, fill: _t.fg, ptitle)
           linebreak()
@@ -317,8 +406,8 @@
                 columns: (_toc-indent, auto, 1fr, auto),
                 column-gutter: (0mm, 6mm, 6mm),
                 align: (left + bottom, left + bottom, left + bottom, right + bottom),
-                text(font: _t.font-serif-display, style: "italic", weight: _t.weight-body,
-                     size: 42pt, fill: _t.primary, cur-part.number),
+                text(font: _t.font-display, weight: _t.weight-display, tracking: -0.03em,
+                     number-type: "lining", size: 32pt, fill: _t.primary, cur-part.number),
                 {
                   // Misma familia y tracking que el H1 del índice, un paso más
                   // liviano (700 -> 600) y con más cuerpo: la sección pesa por
@@ -375,8 +464,8 @@
               column-gutter: 0mm,
               align: (left + bottom, left + bottom, right + bottom),
               if numbered {
-                text(font: _t.font-serif-display, style: "italic", weight: _t.weight-body,
-                     size: 22pt, fill: _t.primary, _pad2(n))
+                text(font: _t.font-display, weight: _t.weight-display, tracking: -0.03em,
+                     number-type: "lining", number-width: "tabular", size: 17pt, fill: _t.primary, _pad2(n))
               } else {
                 box(width: 22pt * 1.5, height: 0.5pt + 22pt * 0.03, fill: _t.primary, baseline: -5pt)
               },
@@ -487,20 +576,10 @@
   dark: false,           // true → inverted text colors for dark backgrounds
   accent: _t.primary,    // the one accent: white on a primary page
   on-primary: false,
-  // original verbose style kept for backward compat
-  page-eyebrow: "01 · Abstract",
-  page-title: "A reference, not a document.",
-  side-rows: (),
-  abstract-heading: "Abstract",
-  lead: none,
-  paragraphs: (),
-  // captures optional trailing content block [...]
-  ..args,
+  body,
 ) = {
-  let body = if args.pos().len() > 0 { args.pos().at(0) } else { none }
-  // resolve aliases
-  let resolved-eyebrow = if eyebrow != none { eyebrow } else { page-eyebrow }
-  let resolved-title   = if title   != none { title   } else { page-title   }
+  // Without an eyebrow or a title the page draws none: a sample text must
+  // never print in a real document (it used to fall back to one).
   let resolved-rows    = if meta    != none {
     // El tercer campo de la tupla es un subtitulo opcional. Solo se concatena
     // si el valor es texto: los keywords llegan como lista y pasan enteros.
@@ -510,7 +589,7 @@
         val + "\n" + rest.at(0)
       } else { val },
     ))
-  } else { side-rows }
+  } else { () }
 
   // color scheme shortcuts
   let title-color  = if dark { _t.white                     } else { _t.fg }
@@ -524,111 +603,57 @@
   let under-rule   = if on-primary { _t.white.transparentize(60%) } else if dark { _t.rule-ink } else { _t.border }
 
   v(10mm)
-  chanwe-eyebrow(resolved-eyebrow, with-rule: true, color: accent)
-  v(7.5mm)
-  block[
-    #text(
-      font: _t.font-display, size: 56pt, weight: _t.weight-display,
-      tracking: -0.05em, fill: title-color, resolved-title,
-    )
-    #box(width: 10pt, height: 10pt, baseline: 0pt,
-      circle(fill: accent, stroke: none))
-  ]
-  v(13mm)
+  if eyebrow != none {
+    chanwe-eyebrow(eyebrow, dot: accent, fill: if dark { _t.white } else { _t.fg-muted })
+    v(7.5mm)
+  }
+  if title != none {
+    block[
+      #text(
+        font: _t.font-display, size: 56pt, weight: _t.weight-display,
+        tracking: -0.05em, fill: title-color, title,
+      )
+      #box(width: 10pt, height: 10pt, baseline: 0pt,
+        circle(fill: accent, stroke: none))
+    ]
+    v(13mm)
+  }
   // Mismo truco de sangrado que el encabezado: el margen lateral es 18mm, asi
   // que el filete se corre -18mm y mide 100% + 36mm para llegar a los bordes.
   block(spacing: 0pt,
     pad(x: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + under-rule)))
   v(14mm)
 
-  // --- simple body layout when called with eyebrow/title/meta/body ---
-  if body != none {
-    grid(
-      columns: (60mm, 1fr),
-      column-gutter: 14mm,
-      align: (left + top, left + top),
-      // side rail: meta rows
-      block(
-        stroke: (right: 0.5pt + rail-stroke),
-        inset: (right: 10mm),
-        width: 100%,
-      )[
-        #stack(
-          dir: ttb, spacing: 9mm,
-          ..resolved-rows.map(r => chanwe-side-row(..r, dark: dark, accent: accent))
-        )
-      ],
-      // body block
-      block[
-        #set par(leading: 0.65em, justify: true)
-        #set text(font: _t.font-sans, size: 10pt, weight: _t.weight-regular, fill: body-color)
-        #show emph: it => if dark { text(font: _t.font-serif, style: "italic", weight: _t.weight-body, size: 1.25em, fill: body-color, it.body) } else { it }
-        #if takeaway != none {
-          let s = str(takeaway)
-          let parts = s.split(" ")
-          let first-word = parts.at(0)
-          let rest = if parts.len() > 1 { " " + parts.slice(1).join(" ") } else { "" }
-          block(below: 6mm)[
-            #text(font: _t.font-serif, size: 32pt, weight: _t.weight-body, style: "italic", fill: accent, first-word)#text(weight: _t.weight-bold, fill: takwy-color, rest)
-          ]
-        }
-        #body
-      ],
-    )
-    return
-  }
-
-  // --- original verbose layout ---
   grid(
     columns: (60mm, 1fr),
     column-gutter: 14mm,
     align: (left + top, left + top),
-    // ---- side rail ----
+    // side rail: meta rows
     block(
-      stroke: (right: 0.5pt + _t.border),
+      stroke: (right: 0.5pt + rail-stroke),
       inset: (right: 10mm),
       width: 100%,
     )[
       #stack(
-        dir: ttb, spacing: 6mm,
-        ..side-rows.map(r => chanwe-side-row(..r))
+        dir: ttb, spacing: 9mm,
+        ..resolved-rows.map(r => chanwe-side-row(..r, dark: dark, accent: accent))
       )
     ],
-    // ---- body with real drop-cap ----
+    // body block
     block[
-      // h2 abstract heading
-      #block(below: 4mm)[
-        #text(font: _t.font-display, size: 28pt, weight: _t.weight-display,
-              tracking: -0.05em, fill: _t.fg, abstract-heading)
-      ]
-
-      // Lead paragraph with manual drop-cap
-      #if lead != none {
-        let first = lead.at(0)
-        let rest  = lead.slice(1)
-        block(below: 4mm)[
-          #place(top + left, dx: 0pt, dy: 8pt)[
-            #text(
-              font: _t.font-display, size: 56pt, weight: _t.weight-display,
-              tracking: -0.05em, fill: _t.fg, first,
-            )
-          ]
-          #pad(left: 24mm)[
-            #set par(leading: 0.62em, justify: true, first-line-indent: 0pt)
-            #set text(font: _t.font-sans, size: 12pt, weight: _t.weight-body, fill: _t.fg)
-            #text(weight: _t.weight-body, fill: _t.fg,
-                  rest.slice(0, calc.min(rest.len(), 60)))
-            #rest.slice(calc.min(rest.len(), 60))
-          ]
+      #set par(leading: 0.65em, justify: true)
+      #set text(font: _t.font-sans, size: 10pt, weight: _t.weight-regular, fill: body-color)
+      #show emph: it => if dark { text(font: _t.font-serif, style: "italic", weight: _t.weight-body, size: 1.25em, fill: body-color, it.body) } else { it }
+      #if takeaway != none {
+        let s = str(takeaway)
+        let parts = s.split(" ")
+        let first-word = parts.at(0)
+        let rest = if parts.len() > 1 { " " + parts.slice(1).join(" ") } else { "" }
+        block(below: 6mm)[
+          #text(font: _t.font-serif, size: 32pt, weight: _t.weight-body, style: "italic", fill: accent, first-word)#text(weight: _t.weight-bold, fill: takwy-color, rest)
         ]
       }
-
-      // remaining paragraphs (no drop cap)
-      #set par(leading: 0.62em, justify: true)
-      #set text(font: _t.font-sans, size: 12pt, weight: _t.weight-body, fill: _t.fg)
-      #for p in paragraphs {
-        block(below: 4mm, p)
-      }
+      #body
     ],
   )
 }
@@ -638,17 +663,85 @@
 // callable inline from ::: {.chanwe-executive-summary ...} divs.
 // Pulls meta-rows from doc state automatically.
 // =============================================================
+// The `brief` executive summary (Ale's pick, 2026-11-19; `chanwe: exec-style:
+// brief` or `style="brief"` on the Div): the details as a ledger column (label
+// over value, hairlines, no pills), and beside it a smaller title, the takeaway
+// as a quote with an orange rule, then the body. A task list in the body reads
+// as the recommendations.
+#let _chanwe-exec-brief(eyebrow: none, title: none, takeaway: none, meta: (), dark: false, body) = {
+  let fg    = if dark { _t.white } else { _t.fg }
+  let soft  = if dark { _t.white.transparentize(15%) } else { _t.fg-muted }
+  let label = if dark { _t.fg-subtle } else { _t.fg-muted }
+  let hair  = if dark { _t.rule-ink } else { _t.rule }
+  let rows = meta.map(((lbl, val, ..rest)) => (lbl, val, if rest.len() > 0 { rest.at(0) } else { none }))
+  v(10mm)
+  grid(
+    columns: (44mm, 1fr),
+    column-gutter: 12mm,
+    // the ledger column
+    {
+      if eyebrow != none { chanwe-eyebrow(eyebrow, fill: label); v(8mm) }
+      for (lbl, val, sub) in rows {
+        block(width: 100%, spacing: 0pt, stroke: (top: 0.5pt + hair), inset: (top: 3.2mm, bottom: 6mm), {
+          text(font: _t.font-mono, size: 6.6pt, weight: _t.weight-medium, tracking: 0.16em, fill: label, upper(lbl))
+          v(1.8mm)
+          set par(leading: 0.5em, spacing: 0.4em)
+          text(font: _t.font-sans, size: 9.5pt, weight: _t.weight-regular, fill: fg, if type(val) == str { val } else { val.join(", ") })
+          if sub != none and sub != "" { linebreak(); text(font: _t.font-sans, size: 9.5pt, weight: _t.weight-body, fill: soft, sub) }
+        })
+      }
+    },
+    // the message column
+    {
+      if title != none {
+        block(spacing: 0pt, {
+          set text(top-edge: "cap-height", bottom-edge: "baseline")
+          set par(leading: 0.42em, spacing: 0pt)
+          [#text(font: _t.font-display, size: 34pt, weight: _t.weight-display, tracking: -0.045em, fill: fg, title)#_chanwe-title-dot(34pt)]
+        })
+        v(9mm)
+      }
+      if takeaway != none and takeaway != "" {
+        block(spacing: 0pt, stroke: (left: 1.2pt + _t.primary), inset: (left: 5mm, y: 1mm),
+          text(font: _t.font-serif, style: "italic", size: 19pt, weight: _t.weight-body, fill: soft, takeaway))
+        v(8mm)
+      }
+      set par(leading: 0.68em, spacing: 1.1em, justify: false)
+      set text(font: _t.font-sans, size: 10.5pt, weight: _t.weight-body, fill: soft)
+      body
+    },
+  )
+}
+
 #let chanwe-exec-summary-page(
   eyebrow: "Executive Summary",
   title: none,
   takeaway: none,
   color: none,
   meta: none,
+  style: auto,
   body,
-) = {
+) = context {
+  let style = if style == auto { cw-style("exec-style", "page") } else { style }
+  if style == "brief" {
+    let dark = color == "dark" or color == "primary"
+    pagebreak(weak: true)
+    let inv = _chanwe-inverse-of(if dark { "dark" } else { color })
+    set page(fill: if dark { _t.ink } else if color == "light" or color == "slate" { _t.surface-slate } else { _t.paper },
+             header: chanwe-header-auto(inverse: inv), footer: chanwe-footer-auto(inverse: inv))
+    _chanwe-exec-brief(eyebrow: eyebrow, title: title, takeaway: takeaway,
+      meta: if meta != none { meta } else { _chanwe-doc.get().meta-rows }, dark: dark, body)
+    pagebreak(weak: true)
+    return
+  }
+
+  // `primary` is the obsidian page with the orange Aspa as its signal: orange
+  // marks, it does not fill (2026-11-18).
+  let signal = color == "primary"
+  let color = if signal { "dark" } else { color }
   // Sin color, la página va sobre surface-slate, como la del abstract, que
   // es la misma página con otro nombre.
-  let bg = if color == "light" or color == "slate" or color == "beige" { _t.surface-slate }
+  let bg = if color == "light" or color == "slate" { _t.surface-slate }
       else if color == "dark"   { _t.ink          }
       else if color == "primary" { _t.primary     }
       else if color == "white"  { _t.white           }
@@ -660,6 +753,7 @@
     // Sobre obsidiana o naranja el encabezado y el pie se invierten.
     let inv = _chanwe-inverse-of(color)
     set page(fill: bg, header: chanwe-header-auto(inverse: inv), footer: chanwe-footer-auto(inverse: inv))
+    if signal { place(top + right, dy: 2mm, cw-icon("Aspa", fill: _t.primary, width: 10mm)) }
     context {
       let doc = _chanwe-doc.get()
       chanwe-abstract(
@@ -715,9 +809,10 @@
   content:          [],
   divider:          false,
 ) = {
-  let bg = if color == "light" or color == "slate" or color == "beige" { _t.surface-slate }
+  // `primary` is the obsidian half: the status bar and the chips are the signal.
+  let color = if color == "primary" { "dark" } else { color }
+  let bg = if color == "light" or color == "slate" { _t.surface-slate }
       else if color == "dark"   { _t.ink         }
-      else if color == "primary" { _t.primary    }
       else if color == "white"  { _t.white          }
       else                      { _t.paper       }
   // Sobre obsidiana y sobre naranja el texto se invierte; sobre naranja el
@@ -876,7 +971,7 @@
     inset: (x: 18mm, top: 10mm, bottom: 10mm),
     clip: true,
   )[
-    #chanwe-eyebrow(eyebrow, with-rule: true, color: accent)
+    #chanwe-eyebrow(eyebrow, dot: accent, fill: if dark { _t.white } else { _t.fg-muted })
     // `above: 0pt` en el bloque del titular: sin eso el espaciado de párrafo
     // del cuerpo (2.6em) se sumaba a los 6mm y el rótulo quedaba a 15mm.
     #v(5mm)
@@ -1013,8 +1108,7 @@
 // CHAPTER SEPARATOR (full-page divider)
 // =============================================================
 // HTML .chapter-cover layout:
-//   - paper background
-//   - the series contour art across the upper half
+//   - slate background (`surface-slate`), no art
 //   - .cc-top   : mark left, doc id right (mono micro-type, white/60)
 //   - .cc-mid   : eyebrow + cc-num-row (giant 02 + title block)
 //   - .cc-bottom: meta items + page number
@@ -1028,20 +1122,37 @@
   top-right-mark: none,
   meta: none,
   page-counter: none,
+  // v2 (2026-11-18): `numeral` (the default: the slate page and its giant
+  // numeral, now in Schibsted), `series` (slate, one Fundido icon bleeding off
+  // the right edge, as the publication series art does) and `series-dark`
+  // (the same on obsidian, a small orange icon as the signal). The document
+  // default is `chanwe: divider-variant:`; `icon` names the Fundido icon
+  // (by default one per divider, in a fixed cycle).
+  variant: auto,
+  icon: auto,
 ) = {
   _chanwe-cur-part.update(_ => (number: number, title: title, eyebrow: eyebrow))
+  counter("cw-divider").step()
 
-  // Mismo papel que una pagina de cuerpo (`page-bg`, que es `callout-surface`):
-  // la portadilla se separa por su composicion, no por un tono distinto.
+  // The whole divider page is the slate `surface-slate`, two steps under the
+  // body's paper, so the part reads as a pause on its own tone (Ale,
+  // 2026-11-13). From 3.0.2 until then the upper half carried the series
+  // contour art (`01-radar-macro.svg`) on body paper; it is gone.
+  context {
+  let variant = if variant == auto { cw-style("divider-variant", "numeral") } else { variant }
+  let dark = variant == "series-dark"
+  let icon = if icon == auto {
+    cw-icon-names.at(calc.rem(counter("cw-divider").get().first() + 2, cw-icon-names.len()))
+  } else { icon }
   set page(
-    paper: _chanwe-paper, margin: 0pt, fill: _t.callout-surface,
+    paper: _chanwe-paper, margin: 0pt, fill: if dark { _t.ink } else { _t.surface-slate },
     header: none, footer: none,
-    // The upper half carries the series art —the contour field of the
-    // brandbook's `documents/series`, in its report cut: lines only, no
-    // ground— run off the top right corner. Until 3.0.2 it was a grey radial
-    // halo, which printed as an empty half page.
-    background: place(top + right, dx: 52mm, dy: -24mm,
-      image(_chanwe-assets + "01-radar-macro.svg", width: 252mm)),
+    background: if variant != "numeral" {
+      place(top + left, cw-dot-gradient())
+      place(top + right, dx: 52mm, dy: -18mm,
+        cw-icon(icon, fill: if dark { _t.ink-light } else { _t.ink }, width: 172mm))
+      if dark { place(top + left, dx: 18mm, dy: 18mm, cw-icon(icon, fill: _t.primary, width: 18mm)) }
+    } else { none },
   )
   set text(fill: _t.fg)
   // The divider is called from the document body, so it would inherit the
@@ -1049,7 +1160,42 @@
   // title then broke over three lines with stretched spacing.
   set par(justify: false)
 
-  context {
+  if variant != "numeral" {
+    let doc = _chanwe-doc.get()
+    let pages = if page-counter != none { page-counter } else {
+      str(counter(page).get().first()) + " / " + str(counter(page).final().first())
+    }
+    let fg = if dark { _t.paper } else { _t.fg }
+    let soft = if dark { _t.white } else { _t.fg-muted }
+    let quiet = if dark { _t.fg-subtle } else { _t.fg-muted }
+    block(width: 100%, height: 100%, inset: (x: 18mm, top: 18mm, bottom: 18mm))[
+      #set block(spacing: 0pt)
+      #set par(spacing: 0pt)
+      #v(1fr)
+      #block(width: 112mm)[
+        #chanwe-eyebrow(upper(_chanwe-clean-str(number)) + "  ·  " + upper(_chanwe-clean-str(eyebrow)), fill: if dark { _t.white } else { _t.fg-muted }, size: 8pt)
+        #v(7mm)
+        #set par(leading: 0.18em)
+        #text(font: _t.font-display, weight: _t.weight-display, size: 51.75pt, tracking: -0.05em, fill: fg, title)#_chanwe-title-dot(51.75pt)
+        #v(8mm)
+        #set par(leading: 0.65em)
+        #text(font: _t.font-sans, size: 13pt, weight: _t.weight-thin, fill: soft, blurb)
+      ]
+      #v(30mm)
+      #move(dx: -18mm, line(length: 100% + 36mm, stroke: 0.5pt + if dark { _t.rule-ink } else { _t.border }))
+      #v(3mm)
+      #grid(
+        columns: (1fr, auto),
+        align: (left + horizon, right + horizon),
+        {
+          set text(font: _t.font-mono, size: 8pt, tracking: 0.18em, fill: quiet)
+          upper(_chanwe-clean-str(doc.doc-id))
+          if doc.edition != "" { h(14mm); upper(_chanwe-clean-str(doc.edition)) }
+        },
+        text(font: _t.font-mono, size: 8pt, tracking: 0.18em, fill: quiet, upper(pages)),
+      )
+    ]
+  } else {
     let doc = _chanwe-doc.get()
     let _left  = if top-left-mark != none { top-left-mark } else { doc.doc-id }
     let _right = if top-right-mark != none { top-right-mark } else { doc.edition }
@@ -1098,9 +1244,10 @@
       column-gutter: 26mm,
       align: (left + top, left + top),
       // Numeral gigante, alineado por arriba con el bloque de título.
+      // v2: Schibsted, the figures' face (it was Cormorant italic at 220pt).
       text(
-        font: _t.font-serif, style: "italic", weight: _t.weight-body,
-        size: 220pt, tracking: -0.05em,
+        font: _t.font-display, weight: _t.weight-display,
+        size: 150pt, tracking: -0.04em, number-type: "lining",
         fill: _t.primary,
         number,
       ),
@@ -1149,6 +1296,7 @@
            fill: _t.fg-muted, upper(_pages)),
     )
   ]
+  }
   }
 }
 

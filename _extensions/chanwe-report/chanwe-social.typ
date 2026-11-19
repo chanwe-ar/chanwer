@@ -12,9 +12,10 @@
 //   - a masthead: ink pill + orange subject run + counter, over a hairline
 //   - a foot band: hairline, `// CHANWE / <series>` pill, and the wordmark,
 //     a "Deslizá →" cue or a mono label
-// and between them one of the bodies: cover (the photo hero), point, quote,
-// stat, idea, checklist, contact, and the data plates kpi, table, news, event
-// and chart. `social-post` draws any of them from a dictionary, which is what
+// and between them one of the bodies: cover (the photo hero), editorial-cover
+// (the magazine-like headline + optional art), point, quote, stat, idea,
+// checklist, contact, and the data plates kpi, table, news, event and chart.
+// `social-post` draws any of them from a dictionary, which is what
 // scripts/render-social.rb feeds it from a YAML file.
 //
 // Geometry is measured on a 1080 px wide canvas, so every length is
@@ -205,6 +206,16 @@
     }))
   })
 
+// Artwork as artwork: no veil, dots or text over it. Editorial covers use this
+// band for a supplied illustration or photograph while the title remains on
+// the page surface. Keeping the art separate makes one layout work for a
+// collage, a diagram exported as an image or a licensed photograph.
+#let _social-image-band(path, width, height, fit: "cover") = block(
+  width: width, height: height, radius: _t.radius-band, clip: true,
+  fill: _t.tint, stroke: 1.5 * _su + _t.rule,
+  image(path, width: 100%, height: 100%, fit: fit),
+)
+
 // ── social-page — one slide: surface, chrome, body ──────────────
 // theme:  "paper" | "ink" | "orange"
 // pill / subject / index:  the masthead (index: "02 / 07"; none hides it)
@@ -324,6 +335,61 @@
   }
 })
 
+// editorial-cover — the publication system's clean cover: category eyebrow,
+// direct headline, optional italic deck and an illustration/photo band. It
+// translates the editorial mockups into the current Chanwe tokens and type.
+// `art: none` gives the typography-only version. A relative art path in a YAML
+// post is resolved beside that YAML by scripts/render-social.rb.
+#let social-editorial-cover(
+  title:       [Título de la publicación],
+  accent:      none,
+  lede:        none,
+  kicker:      "Empresas / Estrategia",
+  art:         none,
+  art-fit:     "cover",
+  art-height:  none,
+  art-caption: none,
+  theme:       "paper",
+  index:       none,
+  pill:        "Chanwe // Perspectiva",
+  subject:     "Perspectiva",
+  series:      "Chanwe / Perspectiva",
+  cue:         "swipe",
+) = {
+  let th = _social-theme(theme)
+  let accent-color = if theme == "orange" { th.title } else { _t.primary }
+  let kicker-color = if theme == "orange" { th.title } else { _t.primary }
+  social-page(theme: theme, pill: pill, subject: subject, index: index,
+    series: series, cue: cue, content-top: 164, {
+    context {
+      let band-height = if art-height != none { art-height }
+        else if page.height > 30cm { 760 }
+        else if page.height > 24cm { 500 }
+        else { 350 }
+      v(1fr)
+      social-kicker(kicker, color: kicker-color)
+      v(32 * _su)
+      _social-fit((92, 82, 72, 64, 56, 50), _social-w, if art == none { 560 * _su } else { 360 * _su }, s =>
+        _social-display(s, th.title,
+          if accent == none { title } else { [#title #text(fill: accent-color, accent)] },
+          weight: _t.weight-display, tracking: -0.04em, leading: 0.26em))
+      if lede != none {
+        v(24 * _su)
+        block(width: 880 * _su, _social-lede(36, th.body, lede))
+      }
+      if art != none {
+        v(36 * _su)
+        _social-image-band(art, _social-w, band-height * _su, fit: art-fit)
+        if art-caption != none {
+          v(16 * _su)
+          _social-mono(17, th.label, art-caption, tracking: 0.12em)
+        }
+      }
+      v(1fr)
+    }
+  })
+}
+
 // point — a numbered idea: serif numeral, eyebrow, headline, body, and an
 // optional sunken aside ("Qué mirar: …") at the foot.
 #let social-point(
@@ -421,11 +487,15 @@
   block(width: 100%, fill: _t.tint, radius: 16 * _su,
     inset: (x: 48 * _su, top: 44 * _su, bottom: 40 * _su), {
       set par(leading: 0pt, spacing: 0pt)
-      text(font: _t.font-display, weight: _t.weight-bold, fill: _t.fg, size: 280 * _su,
-        tracking: -0.05em, top-edge: "cap-height", bottom-edge: "descender", value)
-      h(8 * _su)
-      text(font: _t.font-display, weight: _t.weight-bold, fill: _t.primary, size: 140 * _su,
-        top-edge: "cap-height", bottom-edge: "baseline", unit)
+      _social-fit-line((280, 240, 210, 180, 160, 140), 820 * _su, s => {
+        text(font: _t.font-display, weight: _t.weight-bold, fill: _t.fg, size: s * _su,
+          tracking: -0.05em, top-edge: "cap-height", bottom-edge: "descender", value)
+        if unit != "" {
+          h(8 * _su)
+          text(font: _t.font-display, weight: _t.weight-bold, fill: _t.primary, size: s * 0.5 * _su,
+            top-edge: "cap-height", bottom-edge: "baseline", unit)
+        }
+      })
       v(28 * _su)
       if source != none { _social-mono(20, _t.body-fg, source, tracking: 0.18em) }
     })
@@ -478,6 +548,49 @@
   line(length: 100%, stroke: 1.5 * _su + _t.rule)
   v(1fr)
 })
+
+// cycle — four short stages around a native circular cue. The diagram stays
+// as text and vectors so its labels remain editable, searchable and sharp in
+// every social ratio; artwork generation is deliberately not used for it.
+#let social-cycle(
+  label:   "Cómo trabajamos",
+  title:   [Una estrategia que aprende.],
+  items:   ("Brújula", "Hipótesis", "Evidencia", "Redefinición"),
+  pill:    "Chanwe // Método",
+  ..chrome,
+) = {
+  if items.len() != 4 { panic("social-cycle needs exactly four items") }
+  let node(body) = box(
+    width: 340 * _su,
+    radius: _t.radius-pill,
+    stroke: 1.5 * _su + _t.rule-ink,
+    fill: _t.ink.transparentize(18%),
+    inset: (x: 28 * _su, y: 22 * _su),
+    align(center, _social-body(28, _t.rule-cool, body, weight: _t.weight-regular)),
+  )
+  social-page(theme: "ink", dots: "full", pill: pill, check: true, ..chrome, {
+    v(1fr)
+    social-chapter(label, color: _t.primary, ink: _t.fg-subtle)
+    v(34 * _su)
+    _social-fit((86, 76, 68, 60), _social-w, 260 * _su, s =>
+      _social-display(s, _t.rule-cool, title, tracking: -0.04em, leading: 0.26em))
+    v(64 * _su)
+    align(center, node(items.at(0)))
+    v(22 * _su)
+    grid(
+      columns: (1fr, 210 * _su, 1fr),
+      column-gutter: 18 * _su,
+      align: (left + horizon, center + horizon, right + horizon),
+      node(items.at(3)),
+      text(font: _t.font-display, size: 176 * _su, weight: _t.weight-regular,
+        fill: _t.primary, top-edge: "bounds", bottom-edge: "bounds", "↻"),
+      node(items.at(1)),
+    )
+    v(22 * _su)
+    align(center, node(items.at(2)))
+    v(1fr)
+  })
+}
 
 // contact — the closing slide on obsidian: wordmark, headline, lede, a
 // contact ledger and the framed QR.
@@ -776,14 +889,139 @@
   v(1fr)
 })
 
+// ── v2 pieces (2026-11-17): theme covers, series art, contact QR ──
+// Full-bleed plates with no masthead or foot band: the Fundido pattern icons
+// carry them. Every element is an argument, so a YAML post sets all of it.
+// The files under assets/v2/ are copies of the brand hub (chanwe-brandbook
+// `brand/assets/patrones`, `brand/applications/documentos`, `brand/media/fotografia`).
+#let _social-v2 = _social-assets + "v2/"
+#let _social-icons = ("Aspa", "Nudo", "Paso", "Mas", "Codo", "Reloj", "Onda", "Traslado", "Damero", "Escala", "Rombo", "Cruz")
+#let _social-icon(name, tone) = {
+  if name not in _social-icons { panic("Unknown icon «" + name + "». Use: " + _social-icons.join(", ") + ".") }
+  _social-v2 + "iconos/Icono_" + name + "_" + tone + ".svg"
+}
+#let _social-photos = (alps: "v2/alps-blue-hour.jpg", ridge: "cover-snow-ridge.jpg")
+#let _social-photo(photo) = if photo in _social-photos { _social-assets + _social-photos.at(photo) } else { photo }
+// The dot field fading out towards the lower right, on any surface.
+#let _social-dots-fade(bg, strength) = {
+  place(top + left, _social-dots(100%, 100%, strength))
+  place(top + left, rect(width: 100%, height: 100%, stroke: none,
+    fill: gradient.linear(angle: 55deg, (bg.transparentize(100%), 0%), (bg, 62%), (bg, 100%))))
+}
+#let _social-v2-surface(style, tone) = if style == "orange" {
+  (bg: _t.primary, fg: _t.white, label: _t.white, icon: "Blanco", logo: "Logo_Papel.svg")
+} else if style == "photo" {
+  (bg: _t.ink, fg: _t.white, label: _t.white, icon: "Papel", logo: "Logo_Papel.svg")
+} else if tone == "paper" {
+  (bg: _t.paper, fg: _t.fg, label: _t.fg-muted, icon: "Obsidiana", logo: "Logo_Negro.svg")
+} else {
+  (bg: _t.ink, fg: _t.rule-cool, label: _t.ink-fg, icon: "Papel", logo: "Logo_Papel.svg")
+}
+
+// theme — one pattern icon and one word. Three styles:
+//   style: "icon"    the icon on obsidian or paper (`tone: ink | paper`), dot field
+//          "photo"   the photograph behind, a smaller icon
+//          "orange"  full orange, the icon oversized and cropped, the title in the centre
+// title / show-title, icon (a pattern icon name), label (mono, top left; none hides it),
+// logo (the wordmark at the foot), dots, photo ("alps" | "ridge" | a path, or `art:`),
+// icon-size / title-size (canvas px; none follows the canvas height), icon-shift (orange: x offset, % of width),
+// veil (photo: how much obsidian covers it at the top, 0 to 100).
+// On a story the icon sits in the centred disc Instagram shows for a highlight.
+#let social-theme(
+  title: "Tema", show-title: true, icon: "Aspa", style: "icon", tone: "ink",
+  label: none, logo: true, dots: true, photo: "alps", art: none,
+  icon-size: none, title-size: none, icon-shift: 16, veil: 55, ..rest,
+) = {
+  if style not in ("icon", "photo", "orange") { panic("theme: style is icon, photo or orange.") }
+  let s = _social-v2-surface(style, tone)
+  page(fill: s.bg, numbering: none, context {
+    let hp = page.height / _su
+    let safe = if page.height > 30cm { 170 } else { 0 }
+    let k = calc.min(1, hp / 1500)
+    let isz = if icon-size != none { icon-size } else if style == "orange" { calc.max(hp, 1080) * 0.8 } else if style == "photo" { 300 * k } else { 400 * k }
+    let tsz = if title-size != none { title-size } else if style == "orange" { 118 * k } else { 104 * k }
+    if style == "photo" {
+      place(top + left, image(_social-photo(if art != none { art } else { photo }), width: 100%, height: 100%, fit: "cover"))
+      place(top + left, rect(width: 100%, height: 100%, stroke: none, fill: gradient.linear(angle: 90deg,
+        (_t.ink.transparentize(100% - veil * 1%), 0%), (_t.ink.transparentize(100% - veil * 0.7%), 40%), (_t.ink.transparentize(8%), 100%))))
+    }
+    if dots and style == "icon" { _social-dots-fade(s.bg, if tone == "paper" { 34% } else { 46% }) }
+    let word = if show-title { _social-display(tsz, s.fg, title, weight: _t.weight-medium) }
+    if style == "orange" {
+      place(center + horizon, dx: icon-shift * 1%, dy: -3%, image(_social-icon(icon, "Velo"), width: isz * _su))
+      place(center + horizon, block(width: _social-w, align(center, word)))
+    } else {
+      place(center + horizon, image(_social-icon(icon, s.icon), width: isz * _su))
+      place(center + horizon, dy: (isz / 2 + 70 * k) * _su + tsz * _su / 2, block(width: _social-w, align(center, word)))
+    }
+    if label != none {
+      place(top + left, dx: 84 * _su, dy: (96 * k + safe) * _su, _social-mono(22 * calc.max(k, 0.8), s.label, label))
+    }
+    if logo {
+      place(bottom + center, dy: -(110 * k + safe) * _su, image(_social-assets + s.logo, width: 230 * calc.max(k, 0.7) * _su))
+    }
+  })
+}
+
+// series — the art of a publication series: one oversized icon bleeding off
+// the edge. icon, tone (ink | paper), dots, scale (1 = the brand's cut),
+// shift-x / shift-y (% of the canvas), label and title (optional, lower left).
+#let social-series(
+  icon: "Onda", tone: "ink", dots: true, scale: 1.0, shift-x: 0, shift-y: 0,
+  label: none, title: none, ..rest,
+) = {
+  let s = _social-v2-surface("icon", tone)
+  page(fill: s.bg, numbering: none, context {
+    let hp = page.height / _su
+    if dots { _social-dots-fade(s.bg, if tone == "paper" { 34% } else { 46% }) }
+    // The brand's cut on the 27:20 art canvas; on taller canvases the width rules.
+    let side = calc.min(page.height * 1.1, page.width * 0.82) * scale
+    place(top + right, dx: side * 0.24 + shift-x * 1%, dy: -side * 0.16 + shift-y * 1%,
+      image(_social-icon(icon, s.icon), width: side))
+    if label != none or title != none {
+      place(bottom + left, dx: _social-m, dy: -64 * _su, stack(spacing: 18 * _su,
+        if label != none { _social-mono(20, s.label, label) },
+        if title != none { _social-display(calc.min(72, hp * 0.07), s.fg, title, weight: _t.weight-medium) }))
+    }
+  })
+}
+
+// qr — the contact code as a piece. variant: "paper" | "ink" | "orange";
+// title (above), label (mono, above the title), caption (mono, under the code),
+// logo, dots, size (canvas px), qr (a path replaces the brand's code).
+#let social-qr(
+  variant: "paper", title: none, label: none, caption: "chanwe.ar",
+  logo: true, dots: true, size: 520, qr: none, ..rest,
+) = {
+  let files = (paper: "contact-qr-papel.svg", ink: "contact-qr-obsidiana.svg", orange: "contact-qr-naranja.svg")
+  if variant not in files { panic("qr: variant is paper, ink or orange.") }
+  let s = if variant == "orange" { _social-v2-surface("orange", none) } else { _social-v2-surface("icon", variant) }
+  page(fill: s.bg, numbering: none, context {
+    let hp = page.height / _su
+    let safe = if page.height > 30cm { 170 } else { 0 }
+    let k = calc.min(1, hp / 1500)
+    if dots and variant != "orange" { _social-dots-fade(s.bg, if variant == "paper" { 34% } else { 46% }) }
+    place(center + horizon, stack(spacing: 44 * k * _su,
+      if label != none { align(center, _social-mono(22, s.label, label)) },
+      if title != none { block(width: _social-w, align(center, _social-display(84 * k, s.fg, title, weight: _t.weight-medium))) },
+      align(center, image(if qr != none and qr != "contact" { qr } else { _social-v2 + files.at(variant) }, width: size * k * _su)),
+      if caption != none { align(center, _social-mono(24, s.label, caption)) }))
+    if logo {
+      place(bottom + center, dy: -(110 * k + safe) * _su, image(_social-assets + s.logo, width: 230 * calc.max(k, 0.7) * _su))
+    }
+  })
+}
+
 // ── social-post — a post from data ───────────────────────────────
 // `data` is a dictionary: one plate (`plate: kpi`, plus its fields), or a
 // carousel (`plates:` a list of them, with fields shared at the top). Keys
 // match each plate's arguments. scripts/render-social.rb passes a YAML file.
 #let _social-plates = (
-  cover: social-cover, point: social-point, quote: social-quote, stat: social-stat,
-  idea: social-idea, checklist: social-checklist, contact: social-contact,
+  cover: social-cover, editorial-cover: social-editorial-cover,
+  point: social-point, quote: social-quote, stat: social-stat,
+  idea: social-idea, checklist: social-checklist, cycle: social-cycle, contact: social-contact,
   kpi: social-kpi, table: social-table, news: social-news, event: social-event, chart: social-chart,
+  theme: social-theme, series: social-series, qr: social-qr,
 )
 #let social-post(data) = {
   let shared = data

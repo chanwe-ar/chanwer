@@ -126,25 +126,31 @@ $chanwe-qr.typ()$
   // and QR above, the client, the project and the terms below, all in one
   // floating block. Until 3.0.x it was type on paper over a grey panel, and
   // the first thing a client saw was a white page. Text on obsidian is
-  // `rule-cool`, labels `fg-subtle` (CLAUDE.md, "Text on obsidian"); the `show`
+  // white, labels `fg-subtle` (CLAUDE.md, "Text on obsidian", 2026-11-19); the `show`
   // resets the 0pt paragraph spacing the page set, which `block` cannot.
   cw-band(inset: (x: 9mm, top: 9mm, bottom: 8mm))[
+    // The Aspa as art, in `ink-light`, cut by the band's right edge (Ale,
+    // 2026-11-18). It is a symbol here, never beside the wordmark.
+    #place(right + top, dx: 9mm + 26mm, dy: -9mm - 14mm,
+      image(bytes(read(_p-assets + "v2/iconos/Icono_Aspa_Color.svg").replace("#FD3810", _t.ink-light.to-hex())),
+            format: "svg", width: 92mm))
     #grid(
       columns: (1fr,) + if show-qr { (auto,) } else { () },
       column-gutter: 8mm,
       align: (left + bottom, right + bottom),
       {
         grid(
-          columns: (8mm, auto),
-          column-gutter: 4mm,
+          columns: (auto, auto),
+          column-gutter: 2.6mm,
           align: (center + horizon, left + horizon),
-          rect(width: 100%, height: 0.75pt, fill: _t.primary, stroke: none),
-          text(font: _t.font-mono, size: 8pt, weight: _t.weight-medium, tracking: 0.28em, fill: _t.primary, upper(_p-clean(eyebrow))),
+          // The eyebrow, unified with the kit (2026-11-18): an orange dot, the label in white on ink.
+          circle(radius: 2.1pt, fill: _t.primary, stroke: none),
+          text(font: _t.font-mono, size: 8pt, weight: _t.weight-medium, tracking: 0.2em, fill: _t.white, upper(_p-clean(eyebrow))),
         )
         v(5.5mm)
         {
           set par(leading: 0.72em, spacing: 0pt)
-          [#text(font: _t.font-display, size: 45pt, weight: _t.weight-display, tracking: -0.05em, fill: _t.rule-cool, _p-clean(title))#linebreak()#text(font: _t.font-display, size: 45pt, weight: _t.weight-display, tracking: -0.05em, fill: _t.rule-cool, _p-clean(title-em).slice(0, -1))#box(width: 10.6pt, height: 10.6pt, baseline: 1.8pt, circle(fill: _t.primary, stroke: none))]
+          [#text(font: _t.font-display, size: 45pt, weight: _t.weight-display, tracking: -0.05em, fill: _t.white, _p-clean(title))#linebreak()#text(font: _t.font-display, size: 45pt, weight: _t.weight-display, tracking: -0.05em, fill: _t.white, _p-clean(title-em).slice(0, -1))#box(width: 10.6pt, height: 10.6pt, baseline: 1.8pt, circle(fill: _t.primary, stroke: none))]
         }
       },
       ..if show-qr {
@@ -163,7 +169,7 @@ $chanwe-qr.typ()$
       pad(top: 5pt,
         text(font: _t.font-mono, size: 7.4pt, weight: _t.weight-medium, tracking: 0.26em, fill: _t.fg-subtle, upper("Para"))
       ),
-      text(font: _t.font-display, size: 16.8pt, weight: _t.weight-display, tracking: -0.05em, fill: _t.rule-cool, _p-clean(to)),
+      text(font: _t.font-display, size: 16.8pt, weight: _t.weight-display, tracking: -0.05em, fill: _t.white, _p-clean(to)),
       pad(top: 3pt,
         text(font: _t.font-mono, size: 7.4pt, weight: _t.weight-medium, tracking: 0.26em, fill: _t.fg-subtle, upper("Proyecto"))
       ),
@@ -171,12 +177,12 @@ $chanwe-qr.typ()$
         set par(leading: 0.5em, spacing: 0pt)
         text(font: _t.font-serif, size: 18.6pt, weight: _t.weight-body, style: "italic", tracking: -0.025em, fill: _t.primary, _p-clean(proyecto))
         v(2.8mm)
-        text(font: _t.font-sans, size: 8.7pt, weight: _t.weight-regular, fill: _t.rule-cool, _p-clean(proyecto-desc))
+        text(font: _t.font-sans, size: 8.7pt, weight: _t.weight-regular, fill: _t.white, _p-clean(proyecto-desc))
       },
     )
     #if panel-lede != [] and panel-lede != none {
       v(5mm)
-      set text(font: _t.font-sans, size: 9pt, weight: _t.weight-regular, fill: _t.rule-cool)
+      set text(font: _t.font-sans, size: 9pt, weight: _t.weight-regular, fill: _t.white)
       set par(leading: 0.42em, spacing: 0.6em)
       panel-lede
     }
@@ -187,7 +193,7 @@ $chanwe-qr.typ()$
       set text(font: _t.font-mono, size: 6.2pt, weight: _t.weight-regular, tracking: 0.1em)
       stack(dir: ltr, spacing: 8mm,
         ..terms.map(t =>
-          [#text(fill: _t.fg-subtle, upper(_p-clean(t.label)))#h(3pt)·#h(3pt)#text(fill: _t.rule-cool, _p-clean(t.value))]
+          [#text(fill: _t.fg-subtle, upper(_p-clean(t.label)))#h(3pt)·#h(3pt)#text(fill: _t.white, _p-clean(t.value))]
         )
       )
     }
@@ -214,9 +220,10 @@ $chanwe-qr.typ()$
             align: (right + horizon, left + top),
             pad(top: 8pt, bottom: 8pt,
               stack(dir: ttb, spacing: 0.8mm,
-                text(font: _t.font-serif, size: 15pt, weight: _t.weight-body, style: "italic", fill: number-fill, _p-clean(item.n)),
+                // v2: the phase numeral in Schibsted, as the report's (2026-11-18).
+                text(font: _t.font-display, size: 14pt, weight: _t.weight-display, tracking: -0.02em, fill: number-fill, _p-clean(item.n)),
                 ..if is-optional { (
-                  text(font: _t.font-serif, size: 5.4pt, weight: _t.weight-body, style: "italic", fill: number-fill, "(next)"),
+                  text(font: _t.font-mono, size: 4.8pt, weight: _t.weight-medium, tracking: 0.14em, fill: number-fill, "NEXT"),
                 ) } else { () },
               )
             ),
@@ -256,9 +263,11 @@ $chanwe-qr.typ()$
             column-gutter: 3mm,
             align: (left + horizon, left + bottom),
             box(inset: (x: 2.5mm, y: 1.3mm), radius: _t.radius-pill,
-              fill: if hl { _t.primary } else { _t.tint-strong },
+              // The highlighted phase's chip is obsidian: orange is a signal,
+              // not a fill (2026-11-18).
+              fill: if hl { _t.ink } else { _t.tint-strong },
               text(font: _t.font-mono, size: 5.2pt, weight: _t.weight-medium, tracking: 0.18em,
-                fill: if hl { _t.white } else { _t.ink },
+                fill: if hl { _t.paper } else { _t.ink },
                 upper(_p-clean(fee.kind)))
             ),
             stack(dir: ttb, spacing: 3.25pt,

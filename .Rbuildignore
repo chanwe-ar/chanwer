@@ -34,3 +34,6 @@
 ^CLAUDE\.md$
 ^\.env\.example$
 ^chanwer-options.*$
+^catalogue$
+^chanwer-catalogue\.(qmd|pdf|typ)$
+^chanwer-catalogue_files$

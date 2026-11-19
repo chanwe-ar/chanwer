@@ -11,6 +11,14 @@
   `"share"`, `"grouped"`), `chanwe_histogram()` (`"median"`, `"split"`), `chanwe_spread()` (`"box"`,
   `"violin"`), `chanwe_bump()`, `chanwe_multiples()`, `chanwe_bullet()` and `chanwe_whole()` (`"bar"`,
   `"donut"`, `"waffle"`, `"treemap"`, a squarified layout with no dependency).
+- `chanwe_forecast()` (`"fan"`, nested pastel bands, by default; `"zone"`, the projection period shaded with
+  its range as a band) and `chanwe_level_change()` (`"change"` lollipops by default, `"panels"`, `"strip"`;
+  never a second axis) (Ale, round 8).
+- `chanwer-catalogue.qmd` / `.pdf`: every builder in every style, and the 85 plots of the showcases, the
+  README, `inst/examples` and the chanwe-brand examples checked against the grammar (14 comply, 48 partly,
+  13 fail, 10 are palette swatches), with the builder that replaces each.
+- The bundled `_extensions/` are chanwe-brand 3.8.0 (white text on obsidian, the research cover's ledger,
+  the timeline agenda).
 - Names and axis labels are visible but quiet (Ale, 2026-11-19): the end labels of
   `annotate_chanwe_ends()` and every builder's names are slate mono, never the series colour.
 - `theme_chanwe(eyebrow_style = "dot")`: the brand eyebrow, an orange dot and the label in slate, no

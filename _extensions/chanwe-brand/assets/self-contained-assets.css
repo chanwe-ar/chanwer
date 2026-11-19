@@ -57,3 +57,17 @@
   --cw-art-mountains: url("bg_mountains.jpg");
   --cw-art-wordmark: url("chanwe-giant-word.svg");
 }
+
+/* v2 (2026-11-18): the Fundido icons, the horizontal lockups and the
+   blue-hour photograph the cover variants and the rule read. Only the
+   url()s live here, so they resolve relative to assets/ and are embedded;
+   chanwe-brand-rules.scss composes them. The icons are drawn as masks, so
+   their own fill never shows: the colour is the rule's. */
+:root {
+  --cw-icon-aspa: url("v2/Icono_Aspa_Color.svg");
+  --cw-icon-mas: url("v2/Icono_Mas_Obsidiana.svg");
+  --cw-wordmark-paper: url("Logo_Papel.svg");
+  --cw-qr-paper: url("v2/contact-qr-papel.svg");
+  --cw-art-blue-hour: url("v2/alps-blue-hour.jpg");
+  --cw-wordmark-ink: url("Logo_Negro.svg");
+}

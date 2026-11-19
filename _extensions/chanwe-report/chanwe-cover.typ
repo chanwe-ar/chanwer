@@ -1,8 +1,8 @@
 // =============================================================
 // chanwe-cover.typ — portadas de Chanwe Report
 // =============================================================
-// Dos portadas: la research (por defecto) y la "hero" del viejo
-// chanwe-report, al final del archivo.
+// La portada research (por defecto) y, al final del archivo, las v2
+// (`paper`, `photo-obsidian`, `series`). La "hero" se retiro el 2026-11-18.
 //
 // La research sigue la geometría de reports-covers.pdf:
 //   532 px editorial field | 34 px legal gutter | 250 px black rail
@@ -40,36 +40,6 @@
     ..widths.map(w => rect(width: w, height: 100%, fill: _t.fg-muted, stroke: none)),
   ))
 }
-
-#let _publication-meta-row(label, value, sub: none) = block(
-  width: 100%,
-  height: 7.673mm,
-  stroke: (top: 0.5pt + _publication-rule),
-)[
-  #align(horizon, grid(
-    columns: (32mm, 1fr),
-    align: (left + horizon, left + horizon),
-    text(
-      font: _t.font-mono,
-      size: 6.6pt,
-      weight: _t.weight-medium,
-      tracking: 0.15em,
-      fill: _publication-muted,
-      upper(_chanwe-clean-str(label)),
-    ),
-    block(spacing: 0pt)[
-      #set par(leading: 0.78em)
-      // Toda la losa de datos en JetBrains Mono: rótulo, valor y bajada.
-      #text(font: _t.font-mono, size: 9pt, weight: _t.weight-regular, fill: _publication-ink, _chanwe-clean-str(value))
-      #if sub != none and sub != "" {
-        h(4pt)
-        text(fill: _publication-muted, sym.dot.c)
-        h(4pt)
-        text(font: _t.font-mono, size: 6pt, tracking: 0.05em, fill: _publication-muted, upper(_chanwe-clean-str(sub)))
-      }
-    ],
-  ))
-]
 
 // Campo de puntos de contratapa: trama pareja sobre obsidiana y un foco donde
 // los mismos puntos se encienden. El foco se dibuja punto por punto — un
@@ -134,21 +104,15 @@
   subtitle: none,
   doc-id: "SERIES-A #0934",
   edition: "Edition 01 / 2026",
-  volume: "PÚBLICO",
-  rail-eyebrow: "SEC.01",
   hero-image: none,
-  hero-img-position: none,
   wordmark: none,
-  stamp: ("est.", "mdz", "2026"),
   hero-caption-1: "32°53'24.8\"S  68°50'45.6\"W",
   hero-caption-2: "ELEV: 6967M // CERRO ACONCAGUA",
   hero-caption-3: "CORDILLERA PRINCIPAL · MENDOZA, AR",
-  hero-date: "",
   meta-rows: (),
   date: "",
   show-date-strip: false,
   cover-edge: none,
-  cover-edge-color: none,
   publication-period: none,
   // Lo que dice la pastilla del masthead.
   badge: "CW- MACRO LAB",
@@ -171,8 +135,9 @@
   let edition-label = if publication-edition != none { publication-edition } else { edition }
   let copyright = if cover-edge != none { cover-edge } else { publication-copyright }
   let rail-wordmark = if wordmark == none {
-    // Gris frío sobre la obsidiana: el blanco puro pesaba demasiado.
-    _chanwe-assets + "Logo_Gris.svg"
+    // The Papel cut on the obsidian rail, with the rail's white text
+    // (2026-11-19; it was the cool grey `Logo_Gris`).
+    _chanwe-assets + "Logo_Papel.svg"
   } else {
     _chanwe-clean-path(wordmark)
   }
@@ -238,7 +203,8 @@
           block(
           width: 100%,
           height: 26.6mm,
-          inset: (left: pad, right: pad, top: 7.6mm, bottom: 7.6mm),
+          // The masthead's top is the rail's top (rail-gap), 2026-11-19.
+          inset: (left: pad, right: pad, top: rail-gap, bottom: 26.6mm - rail-gap - 11.4mm),
         )[
           #grid(
             columns: (1fr, auto),
@@ -262,10 +228,10 @@
                   fill: _publication-ink,
                   radius: _t.radius-pill,
                   inset: (x: 3.06mm, y: 1.44mm),
-                  // Texto sobre tinta en rule-cool, no en blanco.
+                  // Texto sobre tinta en blanco (Ale, 2026-11-19).
                   text(
                     font: _t.font-mono, size: 6.5pt, weight: _t.weight-regular,
-                    tracking: 0.18em, fill: _t.rule-cool, upper(edition-label),
+                    tracking: 0.18em, fill: _t.white, upper(edition-label),
                   ),
                 ))
             ],
@@ -297,60 +263,50 @@
           // 80% to 45% of paper: bleeding behind a heavy veil it read as a
           // white page.
           block(width: 100%, height: 100%, inset: (x: pad, bottom: 8mm))[
+            // No border round the photograph (Ale, 2026-11-19): the light veil
+            // keeps its edge.
             #block(width: 100%, height: 100%, clip: true, radius: _t.radius-band)[
               // 190% deja 45% de sobrante por lado; el corrimiento no puede
               // pasar de eso sin destapar el papel por abajo.
               #place(center + horizon, dy: -39%,
                      image(art, width: 190%, height: 190%, fit: "cover"))
               // Typst no expone opacidad sobre imágenes: el velo es el papel
-              // encima, a esa opacidad.
+              // encima, a esa opacidad. 15% since 2026-11-19 (it was 45%): under
+              // the heavier veil the photograph's snow melted into the page and
+              // its edges read as rough.
               #place(top + left, rect(width: 100%, height: 100%, stroke: none,
-                                      fill: _publication-paper.transparentize(55%)))
+                                      fill: _publication-paper.transparentize(85%)))
             ]
           ],
 
           // ── Losa: ledger de datos y, debajo, el titular con su línea
           // bermellón. De alto automático: crece con el titular.
-          block(width: 100%, inset: (left: pad, right: pad, top: 0mm, bottom: 7.5mm))[
+          block(width: 100%, inset: (left: pad, right: pad, top: 0mm, bottom: 10.5mm))[
           #if meta-rows.len() > 0 {
-            // Los filetes van de orilla a orilla del campo —de la hoja al
-            // riel negro—, así que el bloque sale del margen y lo devuelve
-            // como inset para que el texto no se mueva.
-            move(dx: -pad, block(
-              width: field-w,
+            // The hairline runs from the content margin to the rail, like the
+            // photograph and the text above it (2026-11-19: it started at the
+            // paper's edge, the one line on the cover that did).
+            move(dx: 0pt, block(
+              width: field-w - pad,
               stroke: (bottom: 0.5pt + _publication-rule),
-              inset: (left: pad, right: pad, top: 0mm, bottom: 8.4mm),
+              inset: (left: 0pt, right: pad, top: 0mm, bottom: 8.4mm),
               spacing: 0pt,
             )[
+              // The ledger (Ale's pick, 2026-11-19): up to three columns, label
+              // over value, as on the v2 covers.
               #grid(
-                columns: (34.6mm, 1fr),
-                row-gutter: 3.4mm,
-                column-gutter: 0pt,
-                align: (left + horizon, left + horizon),
-                ..meta-rows.map(((label, value, sub)) => (
-                  text(
-                    font: _t.font-mono, size: 6.6pt, weight: _t.weight-regular,
-                    tracking: 0.18em, fill: _publication-muted,
-                    upper(_chanwe-clean-str(label)),
-                  ),
-                  {
-                    // Mismo tono que la bajada del titular, un escalón más
-                    // fino y 10% más chico; en JetBrains Mono como el resto
-                    // de la losa de datos.
-                    text(font: _t.font-mono, size: 7.3pt, weight: _t.weight-body,
-                         fill: _t.fg-muted, _chanwe-clean-str(value))
-                    if sub != none and sub != "" {
-                      h(2.4mm)
-                      box(baseline: -0.6pt, circle(radius: 0.75pt, fill: _publication-rule, stroke: none))
-                      h(2.4mm)
-                      text(font: _t.font-mono, size: 5.2pt, tracking: 0.05em,
-                           fill: _publication-muted, upper(_chanwe-clean-str(sub)))
-                    }
-                  },
-                )).flatten()
+                columns: range(calc.min(3, meta-rows.len())).map(_ => 1fr),
+                column-gutter: 6mm,
+                ..meta-rows.slice(0, calc.min(3, meta-rows.len())).map(((label, value, sub)) => block({
+                  text(font: _t.font-mono, size: 6.4pt, weight: _t.weight-medium, tracking: 0.18em,
+                       fill: _publication-muted, upper(_chanwe-clean-str(label)))
+                  v(2.2mm)
+                  text(font: _t.font-sans, size: 10pt, weight: _t.weight-regular, fill: _t.fg, _chanwe-clean-str(value))
+                  if sub != none and sub != "" { linebreak(); text(font: _t.font-sans, size: 8.5pt, fill: _t.fg-muted, _chanwe-clean-str(sub)) }
+                })),
               )
             ])
-            v(14mm)
+            v(11mm)
           }
 
           // El titular y su bajada, sin filete al costado desde 2026-11-07. El texto
@@ -374,7 +330,7 @@
               #block(width: 100%, spacing: 0pt)[
                 #set par(leading: 0.62em, spacing: 0pt)
                 #text(
-                  font: _t.font-sans, size: 12.6pt, weight: _t.weight-thin,
+                  font: _t.font-serif, size: 15pt, weight: _t.weight-body,
                   style: "italic", fill: _t.fg-muted, subtitle,
                 )
               ]
@@ -387,9 +343,10 @@
           width: 100%,
           height: foot-h + rail-gap,
           fill: _publication-paper,
-          stroke: (top: 0.5pt + _publication-rule),
           inset: (left: pad, right: 11.112mm, bottom: rail-gap),
         )[
+          // The foot hairline starts at the margin too and meets the rail's.
+          #place(top + left, dy: 0pt, line(length: field-w - pad, stroke: 0.5pt + _publication-rule))
           #align(horizon, grid(
             columns: (1fr, auto),
             align: (left + horizon, right + horizon),
@@ -436,8 +393,9 @@
           )
         ]
 
-        // ── Legal rotado, pegado al borde izquierdo.
-        #place(center + horizon, dx: -19mm,
+        // ── Legal rotado, a mitad de camino entre el borde del riel y el
+        // wordmark (2026-11-19: iba pegado al borde).
+        #place(center + horizon, dx: -14.5mm,
           rotate(-90deg, origin: center + horizon,
             box(width: 175mm)[
               #set align(center)
@@ -465,10 +423,10 @@
           )[
             #align(center + horizon, {
               set text(font: _t.font-mono, size: 5.6pt, weight: _t.weight-regular, tracking: 0.16em)
-              // En rule-cool, la regla de la marca para texto sobre tinta.
-              text(fill: _t.rule-cool, upper(rail-location-1))
+              // En blanco, la regla de la marca para texto sobre tinta (2026-11-19).
+              text(fill: _t.white, upper(rail-location-1))
               text(fill: _t.primary, " / ")
-              text(fill: _t.rule-cool, upper(rail-location-2))
+              text(fill: _t.white, upper(rail-location-2))
             })
           ])
       ]],
@@ -512,22 +470,17 @@
   place-label: "MENDOZA · ARGENTINA",
   qr-art: none,
 ) = {
-  // Sobre la obsidiana el wordmark va en slate, no en blanco puro.
-  let wl = if wordmark-light != none { _chanwe-clean-path(wordmark-light) } else { _chanwe-assets + "Logo_Gris.svg" }
+  // On obsidian the wordmark is the Papel cut, with the white text (2026-11-19).
+  let wl = if wordmark-light != none { _chanwe-clean-path(wordmark-light) } else { _chanwe-assets + "Logo_Papel.svg" }
   let qr = if qr-art != none { _chanwe-clean-path(qr-art) } else { _chanwe-assets + "contact-qr.svg" }
 
   _chanwe-blank-interstitial()
 
   set page(
     paper: _chanwe-paper, margin: 0pt, header: none, footer: none, fill: _t.ink,
-    // v2: the series contour art (the hub's dark cut, its ground is `ink`) runs
-    // off the top right corner, with the dot field over it. Until 3.1 the upper
-    // two thirds of the back cover were empty.
-    background: {
-      place(top + right, dx: 62mm, dy: 2mm,
-        image(_chanwe-assets + "01-radar-macro-dark.svg", width: 262mm))
-      _chanwe-dot-field()
-    },
+    // Obsidian with the dot field only (Ale, 2026-11-13). From 3.1 until then
+    // the series contour art (`01-radar-macro-dark.svg`) ran off the top right.
+    background: _chanwe-dot-field(),
     foreground: if cover-edge != none {
       place(right + top, dx: -3mm, dy: 14mm,
         rotate(-90deg, origin: right + horizon,
@@ -561,14 +514,16 @@
           },
           block(spacing: 0pt)[
             // La fila del medio manda: más clara y un punto más grande. Las
-            // otras dos se corren atrás, como en la referencia.
+            // otras dos se corren atrás, como en la referencia, en `fg-subtle`,
+            // el slate de los rótulos del pie (hasta 2026-11-13 `ink-subtle`,
+            // un gris neutro que sobre la obsidiana tiraba a marrón).
             #set align(right)
             #set text(font: _t.font-mono, weight: _t.weight-body, tracking: 0.16em)
-            #text(size: 5.9pt, fill: _t.ink-subtle, upper(caption-1))
+            #text(size: 5.9pt, fill: _t.fg-subtle, upper(caption-1))
             #v(0.9mm)
-            #text(size: 5.9pt, weight: _t.weight-regular, fill: _t.rule-cool, upper(caption-2))
+            #text(size: 5.9pt, weight: _t.weight-regular, fill: _t.white, upper(caption-2))
             #v(0.9mm)
-            #text(size: 5.9pt, fill: _t.ink-subtle, upper(caption-3))
+            #text(size: 5.9pt, fill: _t.fg-subtle, upper(caption-3))
           ],
         )
           #v(11mm)
@@ -588,7 +543,7 @@
           block(spacing: 0pt)[
             #set par(leading: 0.8em, justify: false)
             #text(font: _t.font-serif-display, style: "italic", size: 43.4pt,
-                  weight: _t.weight-regular, tracking: -0.02em, fill: _t.rule-cool, tagline-1)
+                  weight: _t.weight-regular, tracking: -0.02em, fill: _t.white, tagline-1)
             #linebreak()
             #text(font: _t.font-serif-display, style: "italic", size: 43.4pt,
                   weight: _t.weight-regular, tracking: -0.02em, fill: _t.primary, tagline-2)
@@ -605,11 +560,12 @@
           ),
         )
         #v(11mm)
-        // v2: the document's details are a pane at the foot: on obsidian a pane
-        // is one step up (`ink-light`) with the `rule-ink` hairline. Labels on
-        // ink read `fg-subtle` (6:1); `ink-subtle` was too faint at 6pt.
+        // v2: the document's details sit in a frame at the foot: the `rule-ink`
+        // hairline only, no fill, so the obsidian and its dot field show through
+        // (Ale, 2026-11-13; until then an `ink-light` pane). Labels on ink read
+        // `fg-subtle` (6:1); `ink-subtle` was too faint at 6pt.
         #block(
-          width: 100%, fill: _t.ink-light, radius: _t.radius-surface,
+          width: 100%, fill: none, radius: _t.radius-surface,
           stroke: cw-hairline + _t.rule-ink,
           inset: (x: 7mm, top: 6mm, bottom: 6mm),
         )[
@@ -625,7 +581,7 @@
                         fill: _t.fg-subtle, upper(_chanwe-clean-str(label)))
                   #v(3mm)
                   #text(font: _t.font-mono, size: 6.4pt, weight: _t.weight-regular, tracking: 0.12em,
-                        fill: _t.rule-cool, upper(_chanwe-clean-str(value)))
+                        fill: _t.white, upper(_chanwe-clean-str(value)))
                   #if sub != none and sub != "" {
                     v(3mm)
                     text(font: _t.font-mono, size: 6pt, weight: _t.weight-body, tracking: 0.12em,
@@ -659,286 +615,237 @@
   ]
 }
 
-// =================================================================
-// VARIANTE DE PORTADA: "hero"
-// La portada que traia chanwe-report antes de la fusion: panel hero a la
-// derecha, riel rotado y losa de wordmark al pie, con `dark` para pasar esa
-// losa a tinta. Se conserva entera como variante; la portada research de
-// arriba (`chanwe-cover-page`) es la que manda por defecto.
-// `chanwe-texture` solo la usa esta portada.
-// =================================================================
-
-#let chanwe-texture(w, h, mode: "paper", radials: true) = {
-  let on-ink = mode == "ink"
-  let base = if on-ink { _t.ink } else { _t.paper }
-  let stroke-ink = if on-ink { _t.white } else { _t.ink }
-  // trama opacities: paper .036 / .022 — ink .05 / .03
-  let (a147, a57) = if on-ink { (95%, 97%) } else { (96.4%, 97.8%) }
-  let u = w / 1080                    // one story-px at this width
-  // One trama = a tiling whose single hairline runs corner-to-corner, so
-  // adjacent tiles continue it seamlessly. (Repeated hard-stop gradients
-  // get resampled into smooth ramps by PDF shading — real vector lines
-  // stay hairlines at any zoom.) `ang` is the line direction on the page;
-  // `step` is the perpendicular spacing in story-px.
-  let trama(ang, step, alpha) = {
-    let s = step * u
-    let px = s / calc.abs(calc.sin(ang))
-    let py = s / calc.abs(calc.cos(ang))
-    let downhill = calc.cos(ang) * calc.sin(ang) < 0
-    tiling(size: (px, py), place(top + left, line(
-      start: if downhill { (px, 0pt) } else { (0pt, 0pt) },
-      end: if downhill { (0pt, py) } else { (px, py) },
-      stroke: (paint: stroke-ink.transparentize(alpha), thickness: u, cap: "butt"),
-    )))
-  }
-  let light = gradient.radial(
-    (_t.white.transparentize(if on-ink { 90% } else { 10% }), 0%),
-    (_t.white.transparentize(100%), 58%),
-    (_t.white.transparentize(100%), 100%),
-    center: (82%, 8%), radius: 95%,
-  )
-  let shadow-ink = if on-ink { _t.black } else { _t.ink }
-  let shadow = gradient.radial(
-    (shadow-ink.transparentize(if on-ink { 45% } else { 95% }), 0%),
-    (shadow-ink.transparentize(100%), 60%),
-    (shadow-ink.transparentize(100%), 100%),
-    center: (12%, 96%), radius: 80%,
-  )
-  box(width: w, height: h, clip: true, {
-    place(top + left, rect(width: w, height: h, fill: base))
-    // the 15-step trama runs along 57° (its CSS gradient axis is 147°),
-    // the 26-step counter-trama runs perpendicular to it
-    place(top + left, rect(width: w, height: h, fill: trama(147deg, 26, a57)))
-    place(top + left, rect(width: w, height: h, fill: trama(57deg, 15, a147)))
-    if radials {
-      place(top + left, rect(width: w, height: h, fill: shadow))
-      place(top + left, rect(width: w, height: h, fill: light))
-    }
-  })
-}
-
-
-#let chanwe-hero-cover-page(
-  title: "Untitled",
-  subtitle: none,
-  doc-id: "CHW · DOC · 2026 · 01",
-  edition: "Edition 01 / 2026",
-  volume: "Vol. II",
-  rail-eyebrow: "Quarto · Style Guide",
-  hero-image: none,
-  hero-img-position: none,  // 1–10 (left→right); none = fit:cover (centered)
-  wordmark: none, // defaults to wordmark-only logo below
-  stamp: ("est.", "mdz", "2026"),
-  hero-caption-1: "S 32°53′ · W 68°50′",
-  hero-caption-2: "Cordón del Plata · ARG",
-  hero-date: "17 · 04 · 2026",
-  meta-rows: (),
-  date: "",
-  show-date-strip: false,
-  cover-edge: none,
-  cover-edge-color: none,
-  dark: false,  // dark wordmark slab: the bottom band goes ink with the white wordmark
-) = {
-  let hero-image = if hero-image == none {
-    _chanwe-assets + "hero-img.svg"
-  } else {
-    _chanwe-clean-path(hero-image)
-  }
-  let _edge-color = if cover-edge-color != none { cover-edge-color } else { _t.primary }
-  let wordmark = if wordmark == none {
-    // Sobre la losa de obsidiana el logo va en `Papel`, no en `Blanco`.
-    _chanwe-assets + (if dark { "Logo_Papel.svg" } else { "Logo_Negro.svg" })
-  } else {
-    _chanwe-clean-path(wordmark)
-  }
-  let _slab-bg = if dark { _t.ink } else { _t.paper }
-  set page(
-    paper: _chanwe-paper, margin: 0pt, header: none, footer: none, fill: _t.paper,
-    background: place(top + left, chanwe-texture(210mm, 297mm)),
-    foreground: {
-      place(top + left, dx: 50mm, dy: -50mm,
-        circle(radius: 110mm,
-          fill: gradient.radial(_t.primary.transparentize(78%), _t.black.transparentize(100%)),
-          stroke: none,
-        )
-      )
-      if cover-edge != none {
-        place(right + top, dx: -3mm, dy: 14mm,
-          rotate(-90deg, origin: right + horizon,
-            text(font: _t.font-mono, size: 7pt, weight: _t.weight-thin, tracking: 0.5em,
-                 fill: _edge-color, upper(_chanwe-clean-str(cover-edge)))
-          )
-        )
-      }
-    },
-  )
-  set block(spacing: 0pt)
-
-  // ---- 1. TOP METADATA BAR (10mm) ---------------------------
-  // Transparent over the page texture; the doc id sits in the
-  // story-covers accent tab (solid FD3810, white mono caps).
-  block(
-    width: 100%, height: 10mm,
-    fill: none,
-    stroke: (bottom: 0.5pt + _t.ink),
-    inset: (x: 16mm, y: 0pt),
-  )[
-    #set align(horizon)
-    #grid(
-      columns: (1fr, 1fr),
-      align: (left + horizon, right + horizon),
-      // doc id (left) — accent tab
-      box(
-        fill: _t.primary,
-        inset: (x: 7pt, y: 3.5pt),
-        text(font: _t.font-mono, size: 6.5pt, weight: _t.weight-medium, tracking: 0.16em,
-             fill: _t.white, upper(_chanwe-clean-str(doc-id))),
-      ),
-      // edition · volume (right)
-      {
-        set text(font: _t.font-mono, size: 7pt, tracking: 0.16em)
-        upper[#text(weight: _t.weight-display, fill: _t.fg, _chanwe-clean-str(edition))]
-        h(16pt)
-        upper[#text(fill: _t.fg-muted, _chanwe-clean-str(volume))]
-      },
-    )
-  ]
-
-  // ---- 2. HERO REGION (237mm) -------------------------------
-  block(width: 100%, height: 237mm, breakable: false)[
-    #grid(
-      columns: (136.5mm, 73.5mm),
-      rows: (237mm,),
-      column-gutter: 0pt,
-
-      // ---------- LEFT RAIL ----------
-      block(
-        width: 100%, height: 237mm,
-        fill: none,
-        stroke: (right: 1pt + _t.ink),
-        inset: (left: 16mm, right: 9mm, top: 14mm, bottom: 12mm),
-      )[
-        // eyebrow with rule
-        #chanwe-eyebrow(rail-eyebrow, with-rule: true)
-
-        #v(8mm)
-
-        // big display title — emph parts keep title type, only turning orange
-        #set par(leading: 0.8em, justify: false)
-        #show emph: it => text(fill: _t.primary, it.body)
-        #block[
-          #text(
-            font: _t.font-display, size: 36pt, weight: _t.weight-display,
-            tracking: -0.05em, fill: _t.fg,
-            title,
-          )#box(baseline: -2pt, {
-            // no glue between title and box: the terminal dot must never
-            // wrap to its own line, so the 3pt gap lives inside the box
-            h(3pt)
-            circle(radius: 4pt, fill: _t.primary, stroke: none)
-          })
-        ]
-
-        #if subtitle != none {
-          v(8mm)
-          set par(leading: 0.55em)
-          set text(font: _t.font-serif, size: 14pt, weight: _t.weight-body, style: "italic", fill: _t.emphasis)
-          subtitle
-        }
-
-        #v(1fr)
-        #line(length: 100%, stroke: 0.5pt + _t.border)
-        #v(6mm)
-
-        // stack of label / value / sub rows
-        #stack(
-          spacing: 9mm,
-          ..meta-rows.map(((label, value, sub)) => chanwe-meta-row(label, value, sub: sub))
-        )
-      ],
-
-      // ---------- RIGHT HERO PANEL ----------
-      box(
-        width: 100%, height: 237mm,
-        fill: _t.ink,
-        clip: true,
-      )[
-        // hero image fills the panel
-        #if hero-img-position == none {
-          place(top + left,
-            image(hero-image, width: 100%, height: 237mm, fit: "cover"))
-        } else {
-          // An image with only `height:` set resolves its width to the
-          // available 73.5mm and center-crops (fit: "cover"), so the pan
-          // must draw at the true scaled width: measure the natural size
-          // in context, scale to 237mm tall, then shift by the excess.
-          place(top + left,
-            context {
-              let pos-frac = calc.clamp((hero-img-position - 1) / 9, 0, 1)
-              let nat = measure(image(hero-image))
-              let w = 237mm * (nat.width / nat.height)
-              let excess = calc.max(w - 73.5mm, 0pt)
-              move(dx: -pos-frac * excess,
-                image(hero-image, width: w, height: 237mm))
-            }
-          )
-        }
-
-
-        // Bottom-right caption (geographic coords)
-        #place(bottom + right, dx: -16mm, dy: -16mm)[
-          #box(
-            inset: (x: 8pt, y: 4pt),
-            fill: _t.white.transparentize(50%),
-            stroke: 0.5pt + _t.ink.transparentize(90%),
-          )[
-            #set align(right)
-            #set par(leading: 0.4em)
-            #text(
-              font: _t.font-mono, size: 6.5pt, weight: _t.weight-medium, tracking: 0.20em,
-              fill: _t.ink.transparentize(35%),
-              [
-                #upper(hero-caption-1) \
-                #upper(hero-caption-2)
-              ],
-            )
-          ]
-        ]
-      ],
-    )
-  ]
-
-  // ---- 3. BOTTOM SLAB (50mm) - huge wordmark ----------------
-  // Paper slab is transparent so the page texture runs through it as one
-  // sheet; the dark slab keeps its own ink texture (tramas only — the
-  // radials are composition-level and don't belong on a 50mm strip).
-  block(
-    width: 100%, height: 50mm,
-    fill: if dark { _t.ink } else { none },
-    stroke: (top: 0.5pt + _t.ink),
-    inset: (x: 14mm, top: 0mm, bottom: 0mm),
-  )[
-    #if dark {
-      place(top + left, dx: -14mm,
-        chanwe-texture(210mm, 50mm, mode: "ink", radials: false))
-    }
-    #set align(center + horizon)
-    #align(center + horizon, image(wordmark, height: 45mm, fit: "contain"))
-  ]
-
-  // ---- BLANK INTERSTITIAL PAGE ------------------------------
-  set page(paper: _chanwe-paper, margin: 0pt, header: none, footer: none, fill: _t.paper,
-    background: place(top + left, chanwe-texture(210mm, 297mm)), foreground: none)
-  set block(spacing: 0pt)
-
-
-  // full-height spacer keeps the page a full blank sheet
-  block(width: 100%, height: 297mm)[]
-}
-
 // =============================================================
 // BACK COVER — full-bleed black page
 // =============================================================
 // Campo de puntos de contratapa: trama pareja sobre obsidiana y un foco donde
 // los mismos puntos se encienden. El foco se dibuja punto por punto — un
 // tiling no se puede enmascarar con un degradado.
+
+// =============================================================
+// v2 COVERS (2026-11-18) — `chanwe.cover-variant` and
+// `chanwe.back-cover-variant`. Today's research cover and back cover stay the
+// default; these are the hub's v2 document covers
+// (brand/applications/documentos/covers/cover-*-a4) with the document's text
+// on them. Every one carries the super subtle dot field.
+// =============================================================
+
+// The ledger of the v2 covers: up to three meta rows, label over value.
+#let _v2-ledger(rows, label-fill, value-fill, rule) = if rows.len() > 0 {
+  let rows = rows.slice(0, calc.min(3, rows.len()))
+  block(width: 100%, spacing: 0pt, stroke: (top: 0.5pt + rule), inset: (top: 5mm), grid(
+    columns: range(rows.len()).map(_ => 1fr),
+    column-gutter: 6mm,
+    row-gutter: 2.4mm,
+    ..rows.map(((l, ..)) => cw-label(_chanwe-clean-str(l), fill: label-fill, size: 6pt)),
+    ..rows.map(((_, val, ..)) => text(font: _t.font-sans, size: 9pt, weight: _t.weight-regular, fill: value-fill, _chanwe-clean-str(val))),
+  ))
+}
+
+#let _v2-title(title, subtitle, fill, soft, size: 52pt) = {
+  set par(leading: 0.16em, justify: false)
+  text(font: _t.font-display, size: size, weight: _t.weight-display, tracking: -0.045em, fill: fill, title)
+  _chanwe-title-dot(size)
+  if subtitle != none {
+    v(5mm)
+    set par(leading: 0.42em)
+    block(width: 85%, text(font: _t.font-serif, style: "italic", size: 19pt, weight: _t.weight-body, fill: soft, subtitle))
+  }
+}
+
+#let _v2-foot(mark-cut, label, rule, quiet, qr: none) = block(width: 100%, spacing: 0pt,
+  stroke: (top: 0.5pt + rule), inset: (top: 6mm), grid(
+    columns: (auto, 1fr, auto),
+    column-gutter: 6mm,
+    align: (left + horizon, right + horizon, right + horizon),
+    cw-wordmark(cut: mark-cut, height: 6.6mm),
+    cw-label(label, fill: quiet, size: 6.2pt),
+    if qr != none { image(qr, width: 17mm) },
+  ))
+
+// `paper`: the hub's paper cover. The Aspa large at the top left, the title
+// block low, the wordmark at the foot.
+#let chanwe-cover-paper(title: none, subtitle: none, eyebrow: none, top-lines: (), meta-rows: (), place-label: "") = page(
+  paper: _chanwe-paper, margin: 18mm, header: none, footer: none, numbering: none, fill: _t.paper,
+  background: cw-dot-gradient(),
+  {
+    set block(spacing: 0pt)
+    place(top + left, cw-icon("Aspa", fill: _t.primary, width: 46mm))
+    place(top + right, align(right, {
+      set par(leading: 0.9em)
+      for l in top-lines { cw-label(l, size: 6.2pt); linebreak() }
+    }))
+    place(bottom + left, block(width: 100%, {
+      if eyebrow != none { chanwe-eyebrow(eyebrow, size: 7.5pt); v(6mm) }
+      _v2-title(title, subtitle, _t.fg, _t.fg-muted)
+      v(11mm)
+      _v2-ledger(meta-rows, _t.fg-muted, _t.fg, _t.rule)
+      v(22mm)
+      _v2-foot("Negro", place-label, _t.rule, _t.fg-muted)
+    }))
+  },
+)
+
+// `photo-obsidian`: the hub's photo cover. The photograph on the top half,
+// the title on obsidian below it.
+#let chanwe-cover-photo-obsidian(title: none, subtitle: none, eyebrow: none, image-path: none, edition: "", meta-rows: ()) = page(
+  paper: _chanwe-paper, margin: 0pt, header: none, footer: none, numbering: none, fill: _t.ink,
+  background: cw-dot-gradient(),
+  {
+    set block(spacing: 0pt)
+    context {
+      let src = if image-path != none { image-path } else { cw-style("assets", "") + "v2/alps-blue-hour.jpg" }
+      // The photograph melts into the obsidian (Ale, 2026-11-18: the hard
+      // edge read as a cut). A light veil at the top, clear through the
+      // middle, then an eased fade that reaches full ink before the box ends,
+      // so no edge is left where the photo stops.
+      place(top + left, box(width: 100%, height: 62%, clip: true, {
+        image(src, width: 100%, height: 100%, fit: "cover")
+        place(top + left, rect(width: 100%, height: 100%, stroke: none, fill: gradient.linear(
+          (_t.ink.transparentize(70%), 0%),
+          (_t.ink.transparentize(100%), 22%),
+          (_t.ink.transparentize(100%), 38%),
+          (_t.ink.transparentize(82%), 55%),
+          (_t.ink.transparentize(50%), 70%),
+          (_t.ink.transparentize(18%), 84%),
+          (_t.ink, 96%),
+          (_t.ink, 100%),
+          angle: 90deg)))
+      }))
+    }
+    place(bottom + left, block(width: 100%, inset: (x: 18mm, bottom: 18mm), {
+      if eyebrow != none { chanwe-eyebrow(eyebrow, fill: _t.white, size: 7.5pt); v(6mm) }
+      _v2-title(title, subtitle, _t.white, _t.white)
+      v(10mm)
+      _v2-ledger(meta-rows, _t.fg-subtle, _t.white, _t.rule-ink)
+      v(18mm)
+      _v2-foot("Papel", edition, _t.rule-ink, _t.fg-subtle)
+    }))
+  },
+)
+
+// `series`: today's research layout with v2 parts. The field is the series'
+// Fundido icon on slate (no photograph); the rail carries the QR and the
+// wordmark, upright, instead of the turned one.
+#let chanwe-cover-series(title: none, subtitle: none, series: "", place-label: "", icon: "Onda") = page(
+  paper: _chanwe-paper, margin: 10mm, header: none, footer: none, numbering: none, fill: _t.paper,
+  background: cw-dot-gradient(),
+  {
+    set block(spacing: 0pt)
+    grid(
+      columns: (1fr, 46mm),
+      column-gutter: 6mm,
+      // the field and the title
+      grid(
+        rows: (64%, 1fr),
+        block(width: 100%, height: 100%, radius: _t.radius-band, clip: true, fill: _t.surface-slate, {
+          place(top + left, cw-dot-gradient())
+          place(top + right, dx: 58mm, dy: 26mm, cw-icon(icon, fill: _t.ink, width: 200mm))
+        }),
+        block(width: 100%, height: 100%, inset: (x: 4mm, bottom: 2mm), align(bottom + left, {
+          _v2-title(title, subtitle, _t.fg, _t.fg-muted, size: 40pt)
+          v(7mm)
+          box(fill: _t.primary, radius: _t.radius-pill, inset: (x: 3mm, y: 1.8mm),
+            text(font: _t.font-mono, size: 6.4pt, weight: _t.weight-medium, tracking: 0.14em, fill: _t.white, "// " + upper(series)))
+        })),
+      ),
+      // the rail
+      block(width: 100%, height: 100%, radius: _t.radius-band, clip: true, fill: _t.ink, inset: (x: 7mm, y: 8mm), {
+        place(top + left, dx: -7mm, dy: -8mm, block(width: 46mm, height: 297mm, cw-dot-gradient(from: (1.0, 0.0))))
+        grid(
+          rows: (auto, 1fr, auto, auto),
+          row-gutter: 6mm,
+          context image(cw-style("assets", "") + "v2/contact-qr-papel.svg", width: 100%),
+          [],
+          align(center, cw-wordmark(cut: "Papel", width: 28mm)),
+          align(center, cw-label(place-label, fill: _t.fg-subtle, size: 5.6pt)),
+        )
+      }),
+    )
+  },
+)
+
+// ---- back covers -------------------------------------------------------
+#let _v2-contact(cols, place-label) = {
+  let cols = if cols.len() > 0 { cols.slice(0, calc.min(2, cols.len())).map(((lab, val, ..)) => (lab, val)) }
+    else { (("Contacto", "hola@chanwe.ar"), ("Sede", place-label)) }
+  cols
+}
+#let _v2-tagline(t1, t2, display: false, fill: _t.white, accent: _t.primary) = {
+  set par(leading: 0.2em)
+  if display {
+    text(font: _t.font-display, size: 34pt, weight: _t.weight-display, tracking: -0.04em, fill: fill, t1)
+    linebreak()
+    text(font: _t.font-display, size: 34pt, weight: _t.weight-display, tracking: -0.04em, fill: accent, t2)
+  } else {
+    text(font: _t.font-serif, style: "italic", size: 38pt, weight: _t.weight-body, tracking: -0.02em, fill: fill, t1)
+    linebreak()
+    text(font: _t.font-serif, style: "italic", size: 38pt, weight: _t.weight-body, tracking: -0.02em, fill: accent, t2)
+  }
+}
+#let _v2-frame(cols, qr, stroke, label-fill, value-fill) = block(width: 100%, radius: _t.radius-pane,
+  stroke: 0.6pt + stroke, inset: 6mm, grid(
+    columns: (1fr, 1fr, auto),
+    column-gutter: 6mm,
+    align: (left + bottom, left + bottom, right + bottom),
+    ..cols.map(((lab, val)) => block({
+      cw-label(_chanwe-clean-str(lab), fill: label-fill, size: 5.8pt)
+      v(2mm)
+      text(font: _t.font-sans, size: 9pt, fill: value-fill, _chanwe-clean-str(val))
+    })),
+    ..range(2 - cols.len()).map(_ => []),
+    box(stroke: 0.8pt + _t.white, radius: 1.6mm, clip: true, image(qr, width: 24mm)),
+  ))
+
+// `aspa`: obsidian; the Aspa in `ink-light` bleeds off the corner, as the
+// series art does; the wordmark top left; the tagline and the contact frame.
+#let chanwe-back-cover-aspa(tagline-1: "", tagline-2: "", back-cols: (), place-label: "") = page(
+  paper: _chanwe-paper, margin: 18mm, header: none, footer: none, numbering: none, fill: _t.ink,
+  background: {
+    place(top + left, cw-dot-gradient())
+    place(bottom + right, dx: 50mm, dy: 42mm, cw-icon("Aspa", fill: _t.ink-light, width: 196mm))
+  },
+  context {
+    set block(spacing: 0pt)
+    let a = cw-style("assets", "")
+    place(top + left, cw-wordmark(cut: "Papel", height: 7.4mm))
+    place(bottom + left, block(width: 100%, {
+      _v2-tagline(tagline-1, tagline-2)
+      v(16mm)
+      _v2-frame(_v2-contact(back-cols, place-label), a + "v2/contact-qr-papel.svg", _t.rule-ink, _t.fg-subtle, _t.white)
+    }))
+  },
+)
+
+// `orange`: the brand orange as the ground of an identity piece (orange may
+// be the background of identity tiles, CLAUDE.md): the Papel wordmark, tagline and
+// frame, the orange contact code.
+#let chanwe-back-cover-orange(tagline-1: "", tagline-2: "", back-cols: (), place-label: "") = page(
+  paper: _chanwe-paper, margin: 18mm, header: none, footer: none, numbering: none, fill: _t.primary,
+  background: cw-dot-gradient(color: _t.white),
+  context {
+    set block(spacing: 0pt)
+    let a = cw-style("assets", "")
+    place(top + left, cw-wordmark(cut: "Papel", height: 7.4mm))
+    place(bottom + left, block(width: 100%, {
+      _v2-tagline(tagline-1, tagline-2, display: true, fill: _t.white, accent: _t.white)
+      v(16mm)
+      _v2-frame(_v2-contact(back-cols, place-label), a + "v2/contact-qr-naranja.svg",
+        _t.white.transparentize(45%), _t.white.transparentize(20%), _t.white)
+    }))
+  },
+)
+
+// `mark`: the mirror of the hub's obsidian cover. The orange Aspa top left;
+// at the foot the wordmark, the address and a small code. No tagline.
+#let chanwe-back-cover-mark(place-label: "") = page(
+  paper: _chanwe-paper, margin: 18mm, header: none, footer: none, numbering: none, fill: _t.ink,
+  background: cw-dot-gradient(),
+  context {
+    set block(spacing: 0pt)
+    let a = cw-style("assets", "")
+    place(top + left, cw-icon("Aspa", fill: _t.primary, width: 46mm))
+    place(bottom + left, _v2-foot("Papel", "chanwe.ar  ·  " + place-label, _t.rule-ink, _t.fg-subtle,
+      qr: a + "v2/contact-qr-obsidiana.svg"))
+  },
+)

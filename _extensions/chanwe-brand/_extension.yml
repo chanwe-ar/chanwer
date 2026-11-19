@@ -16,6 +16,7 @@ contributes:
     html:
       filters:
         - filters/title-metadata-pills.lua
+        - filters/document-options.lua
         - filters/chapter-cover.lua
         - filters/great-quote.lua
         - filters/figure-frame.lua

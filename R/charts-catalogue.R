@@ -523,3 +523,119 @@ chanwe_whole <- function(data, k, value, focus = NULL, style = c("bar", "donut",
                        colour = txt(d[[k]]), family = "Schibsted Grotesk", fontface = "bold", size = 4.2) +
     ggplot2::scale_fill_manual(values = cols) + ggplot2::coord_equal(expand = FALSE) + theme + blank + ggplot2::labs(x = NULL, y = NULL)
 }
+
+#' Forecast
+#'
+#' History and a projection with its uncertainty. `style = "fan"` (default):
+#' the history in ink and the projection in orange inside nested pastel bands,
+#' named at the end; `"zone"`: the projection period on the slate tint, marked,
+#' the line continuing dotted over a shaded range.
+#'
+#' @param data A data frame with one row per period.
+#' @param x,y Column names (strings).
+#' @param from The first projected `x` (rows from it on are the projection).
+#' @param spread Column name of the half-width of the 90 % range in the
+#'   projection (the bands at 50 % and 75 % are its 0.33 and 0.66).
+#' @param style `"fan"` or `"zone"`.
+#' @param label The zone's label.
+#' @param theme The theme.
+#' @return A ggplot.
+#' @export
+#' @examples
+#' d <- data.frame(t = 1:12, v = c(5:1, rep(1, 7)), s = c(rep(0, 6), 1:6 / 3))
+#' p <- chanwe_forecast(d, "t", "v", from = 6, spread = "s")
+chanwe_forecast <- function(data, x, y, from, spread, style = c("fan", "zone"), label = "Proyección",
+                            theme = theme_chanwe()) {
+  style <- match.arg(style)
+  d <- data[order(data[[x]]), , drop = FALSE]
+  hist <- d[d[[x]] <= from, , drop = FALSE]
+  fut <- d[d[[x]] >= from, , drop = FALSE]
+  P <- .cwc_col("primary"); INK <- .cwc_col("ink")
+  p <- ggplot2::ggplot(d, ggplot2::aes(.data[[x]], .data[[y]]))
+  if (style == "fan") {
+    bands <- do.call(rbind, lapply(c(1, .66, .33), function(m) data.frame(x = fut[[x]], lo = fut[[y]] - fut[[spread]] * m,
+                                                                          hi = fut[[y]] + fut[[spread]] * m, m = m)))
+    alpha <- c(`1` = .08, `0.66` = .16, `0.33` = .28)
+    for (m in c(1, .66, .33)) {
+      b <- bands[bands$m == m, ]
+      p <- p + ggplot2::geom_ribbon(data = b, ggplot2::aes(x = .data$x, ymin = .data$lo, ymax = .data$hi), inherit.aes = FALSE,
+                                    fill = grDevices::adjustcolor(P, alpha[[as.character(m)]]))
+    }
+    last <- fut[nrow(fut), ]
+    p <- p + ggplot2::geom_line(data = hist, colour = INK, linewidth = .65) + ggplot2::geom_line(data = fut, colour = P, linewidth = .7) +
+      .cwc_label(data = data.frame(x = last[[x]], y = c(last[[y]] + last[[spread]], last[[y]] + last[[spread]] * .33), l = c("90 %", "50 %")),
+                 ggplot2::aes(.data$x, .data$y, label = .data$l), hjust = -.2, inherit.aes = FALSE)
+  } else {
+    # The range is a shaded band, not dotted lines (Ale, 2026-11-19).
+    p <- p + ggplot2::annotate("rect", xmin = from, xmax = max(d[[x]]), ymin = -Inf, ymax = Inf, fill = .cwc_col("surface-slate")) +
+      ggplot2::geom_ribbon(data = fut, ggplot2::aes(ymin = .data[[y]] - .data[[spread]], ymax = .data[[y]] + .data[[spread]]),
+                           fill = grDevices::adjustcolor(.cwc_slate(4), .35)) +
+      ggplot2::annotate("text", x = from, y = Inf, vjust = 1.8, hjust = -.08, label = toupper(label), family = .cwc_mono, size = 2.1,
+                        colour = .cwc_quiet()) +
+      ggplot2::geom_line(data = hist, colour = P, linewidth = .7) +
+      ggplot2::geom_line(data = fut, colour = P, linewidth = .7, linetype = "22")
+  }
+  xs <- if (inherits(d[[x]], "Date")) ggplot2::scale_x_date(labels = label_chanwe_month(), expand = ggplot2::expansion(c(.01, .1)))
+        else ggplot2::scale_x_continuous(expand = ggplot2::expansion(c(.01, .1)))
+  p + xs + ggplot2::coord_cartesian(clip = "off") + theme + ggplot2::labs(x = NULL, y = NULL)
+}
+
+#' Level and Change
+#'
+#' A level per period and its change, never on a second axis. `style =
+#' "change"` (default): the change as green and red lollipops from zero, the
+#' level printed on each; `"panels"`: the level as an orange line on top and the
+#' change as pastel bars underneath; `"strip"`: the level as slate bars (the
+#' latest in orange) and the change as a row of signed figures under the axis.
+#'
+#' @param data A data frame with one row per period.
+#' @param x,level Column names (strings); the change is computed (percent).
+#' @param style `"change"`, `"panels"` or `"strip"`.
+#' @param level_name,change_name The two measures' names, for the panels.
+#' @param digits Decimals of the change.
+#' @param theme The theme.
+#' @return A ggplot.
+#' @export
+#' @examples
+#' d <- data.frame(y = 2020:2025, v = c(700, 640, 760, 880, 870, 960))
+#' p <- chanwe_level_change(d, "y", "v")
+chanwe_level_change <- function(data, x, level, style = c("change", "panels", "strip"), level_name = "Nivel",
+                                change_name = "Variación, %", digits = 1, theme = theme_chanwe(grid = "y")) {
+  style <- match.arg(style)
+  d <- data[order(data[[x]]), , drop = FALSE]
+  d$.chg <- c(NA, diff(d[[level]]) / utils::head(d[[level]], -1) * 100)
+  d$.x <- factor(d[[x]])
+  G <- .cwc_col("kpi-green"); R <- .cwc_col("kpi-red"); W <- .cwc_col("pure-white")
+  if (style == "change") {
+    c1 <- d[!is.na(d$.chg), ]
+    return(ggplot2::ggplot(c1, ggplot2::aes(.data$.x, .data$.chg)) +
+      ggplot2::geom_hline(yintercept = 0, colour = .cwc_col("rule"), linewidth = .4) +
+      ggplot2::geom_segment(ggplot2::aes(xend = .data$.x, y = 0, yend = .data$.chg, colour = .data$.chg > 0), linewidth = .6, show.legend = FALSE) +
+      ggplot2::geom_point(ggplot2::aes(colour = .data$.chg > 0), size = 2.6, show.legend = FALSE) +
+      ggplot2::geom_text(ggplot2::aes(y = .data$.chg, label = .cwa_num(.data[[level]], 0), vjust = ifelse(.data$.chg > 0, -1.1, 2)),
+                         family = .cwc_mono, size = 2.1, colour = .cwc_quiet()) +
+      ggplot2::scale_colour_manual(values = c(`TRUE` = G, `FALSE` = R)) +
+      ggplot2::scale_y_continuous(expand = ggplot2::expansion(.15)) + theme + ggplot2::labs(x = NULL, y = NULL))
+  }
+  if (style == "panels") {
+    two <- rbind(data.frame(x = d$.x, v = d[[level]], panel = level_name, kind = "lvl"),
+                 data.frame(x = d$.x, v = d$.chg, panel = change_name, kind = ifelse(is.na(d$.chg), "na", ifelse(d$.chg > 0, "up", "down"))))
+    two$panel <- factor(two$panel, c(level_name, change_name))
+    return(ggplot2::ggplot(two, ggplot2::aes(.data$x, .data$v)) +
+      ggplot2::geom_line(data = two[two$kind == "lvl", ], ggplot2::aes(group = 1), colour = .cwc_col("primary"), linewidth = .7) +
+      ggplot2::geom_point(data = two[two$kind == "lvl", ], colour = .cwc_col("primary"), size = 1.4) +
+      ggplot2::geom_col(data = two[two$kind %in% c("up", "down"), ], ggplot2::aes(fill = .data$kind), width = .55, show.legend = FALSE) +
+      ggplot2::scale_fill_manual(values = c(up = .cwc_pastel("kpi-green", .35), down = .cwc_pastel("kpi-red", .35))) +
+      ggplot2::facet_grid(rows = ggplot2::vars(.data$panel), scales = "free_y", switch = "y") + theme +
+      ggplot2::theme(strip.text.y.left = ggplot2::element_text(family = .cwc_mono, size = 5.5, colour = .cwc_quiet(), angle = 0, hjust = 1),
+                     strip.placement = "outside") + ggplot2::labs(x = NULL, y = NULL))
+  }
+  off <- -max(d[[level]], na.rm = TRUE) * .08
+  ggplot2::ggplot(d, ggplot2::aes(.data$.x, .data[[level]])) +
+    geom_chanwe_col(ggplot2::aes(fill = .data$.x == utils::tail(levels(d$.x), 1)), width = .58, show.legend = FALSE) +
+    ggplot2::scale_fill_manual(values = c(`TRUE` = .cwc_col("primary"), `FALSE` = .cwc_slate(4))) +
+    ggplot2::geom_text(ggplot2::aes(y = off, label = ifelse(is.na(.data$.chg), "", .cwc_signed(.data$.chg, digits)),
+                                    colour = !is.na(.data$.chg) & .data$.chg > 0), family = .cwc_mono, size = 2.2, show.legend = FALSE) +
+    ggplot2::scale_colour_manual(values = c(`TRUE` = G, `FALSE` = R)) +
+    ggplot2::coord_cartesian(clip = "off") + theme + ggplot2::labs(x = NULL, y = NULL)
+}
