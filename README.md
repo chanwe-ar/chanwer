@@ -22,6 +22,16 @@ devtools::install(".")
 
 ## What is included
 
+- **Chart builders**: one call for each form of the Chanwe chart catalogue,
+  with the orange focus, slate context, quiet mono labels and values already
+  placed: `chanwe_bars()` (labelled, ranking, lollipop), `chanwe_lines()`
+  (direct, spaghetti), `chanwe_area()`, `chanwe_heatmap()`,
+  `chanwe_density()`, `chanwe_dots()`, `chanwe_dumbbell()`, `chanwe_slope()`,
+  `chanwe_scatter()`, `chanwe_waterfall()`, `chanwe_stack()`,
+  `chanwe_histogram()`, `chanwe_spread()`, `chanwe_bump()`,
+  `chanwe_multiples()`, `chanwe_bullet()`, `chanwe_whole()`,
+  `chanwe_forecast()` and `chanwe_level_change()`. Each returns a ggplot, so
+  `labs()` and `theme()` still apply. `chanwer-catalogue.qmd` shows every one.
 - `chanwe_palette()` — exact named color tokens and grouped palettes
   (core brand, `p13`/`p14`/`p15` ramps, `mb` main-brand scale, semantic,
   and the editorial 8-color chart palette).
@@ -55,19 +65,23 @@ devtools::install(".")
 ```r
 library(chanwer)
 library(ggplot2)
+chanwe_load_fonts()
 
-chanwe_palette("chart")
+regions <- data.frame(
+  region = c("Cuyo", "Pampeana", "NOA", "NEA", "Patagonia"),
+  usd = c(412.1, 388.4, 251.9, 188.1, 166.0)
+)
 
-ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-  geom_point(size = 3) +
-  scale_color_chanwe_d() +
+chanwe_bars(regions, "region", "usd", focus = "Cuyo") +
   labs(
-    title = chanwe_title("Fuel economy vs weight"),
-    subtitle = "ChanWe scatter",
-    caption = chanwe_caption("Source: mtcars")
-  ) +
-  theme_chanwe()
+    title = chanwe_title("Cuyo leads sales for the first time", eyebrow = "Ventas"),
+    subtitle = "Sales by region, USD millions, 2025",
+    caption = chanwe_caption("Fuente · ledger")
+  )
 ```
+
+The title states the claim, the subtitle what is measured, in what unit and
+over what period, and the eyebrow the topic.
 
 ## CHANWE v2 (3.0.0)
 
@@ -81,17 +95,24 @@ never write a hex in the package (the drift test fails).
 goes on the slate ramp. Use the categorical palette only when no series is
 the focus.
 
+The builders apply the rule for you. By hand, the same rule is a focus scale
+(`regions` is the data frame from the Quick Start):
+
 ```r
-ggplot(sales, aes(region, usd, fill = region)) +
+ggplot(regions, aes(region, usd, fill = region)) +
   geom_chanwe_col(width = 0.6) +          # 3px rounded ends, pill legend keys
   scale_fill_chanwe_focus("Cuyo") +       # Cuyo orange, the rest slate
-  labs(title = "Sales by region", caption = chanwe_caption("Source: ledger")) +
+  labs(title = "Sales by region", caption = chanwe_caption("Fuente · ledger")) +
   theme_chanwe(legend_position = "none")
 
-ggplot(peers, aes(year, value, colour = country)) +
-  geom_line(key_glyph = draw_key_chanwe_pill) +
-  scale_color_chanwe_focus("Argentina") +
-  theme_chanwe()
+peers <- data.frame(
+  year = rep(2019:2025, 3),
+  country = rep(c("Argentina", "Brasil", "Chile"), each = 7),
+  value = c(100, 98, 88, 97, 102, 99, 104, 100, 97, 93, 98, 101, 104, 107, 100, 101, 95, 104, 106, 108, 110)
+)
+chanwe_lines(peers, "year", "value", "country", focus = "Argentina") +
+  labs(title = chanwe_title("Argentina recovers last", eyebrow = "Actividad"),
+       subtitle = "Activity index, 2019 = 100, annual")
 ```
 
 Horizontal bars take `theme_chanwe(grid = "x")`. The caption is a mono
@@ -100,22 +121,25 @@ label; `caption_style = "stamp"` (or `options(chanwer.caption_style =
 
 ## ggplot2 Pattern
 
-This is the canonical pattern for ChanWe charts.
+When no builder fits, this is the canonical pattern for a ChanWe chart drawn
+by hand: one focus, the rest slate, the claim in the title.
 
 ```r
 library(chanwer)
 library(ggplot2)
 
-ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-  geom_point(size = 3, alpha = 0.9) +
-  scale_color_chanwe_d() +
+fleet <- transform(mtcars, cyl = factor(cyl))
+
+ggplot(fleet, aes(wt, mpg, color = cyl)) +
+  geom_point(size = 2.4) +
+  scale_color_chanwe_focus("4") +
   labs(
-    title = chanwe_title("Fuel economy vs weight", eyebrow = "SECTION - FLEET"),
-    subtitle = "Editorial scatter",
+    title = chanwe_title("Four-cylinder cars are the lightest and go furthest", eyebrow = "Flota"),
+    subtitle = "Miles per gallon against weight (1000 lbs), by cylinders",
     x = "Weight",
     y = "MPG",
     color = "Cylinders",
-    caption = chanwe_caption("Source: Motor Trend, 1974")
+    caption = chanwe_caption("Fuente · Motor Trend, 1974")
   ) +
   theme_chanwe(bg_color = "slate")
 ```
@@ -127,8 +151,10 @@ The main decisions:
   (`#EBF0F6`), `"transparent"`, or any hex string. The grid is
   `plot.grid` (ink-fg at 25%) on every surface. The older `"metallic"`, `"white-ivory"` and `"gray"`
   still resolve (to paper, paper and slate).
-- `chanwe_title(text, eyebrow = "...")` adds the orange mono-caps
-  eyebrow line above the title. Plain titles need no helper.
+- `chanwe_title(text, eyebrow = "...")` adds the eyebrow above the title:
+  the obsidian band with an orange dot by default, or the orange dot and a
+  slate mono label with `theme_chanwe(eyebrow_style = "dot")`. Plain titles
+  need no helper.
 - `has_subtitle = FALSE` tightens the header when there is no subtitle.
 - `compact_title` / `header_line` / `plot_borders` fine-tune the header
   spacing, separator rule, and decorative frame lines.
@@ -176,8 +202,10 @@ scale_fill_chanwe_c(palette = "teal")
 # available: orange (default), blue, indigo, teal, green, amber, red,
 # purple (all from the series hues), mustard, ink
 
-# Diverging polarity — red (negative) → neutral → green (positive)
-m <- max(abs(df$delta))
+# Diverging polarity — red (negative) → neutral → green (positive);
+# symmetric limits put zero on the neutral midpoint
+deltas <- c(-3.2, 0.4, 5.1)
+m <- max(abs(deltas))
 scale_fill_chanwe_div(limits = c(-m, m))
 ```
 
@@ -275,8 +303,9 @@ Useful arguments:
   for smaller-is-better metrics, and NA → neutral):
 
   ```r
+  regions <- data.frame(region = c("Cuyo", "Pampeana", "NOA"), delta = c(6.3, -4.4, 0.02))
   chanwe_kbl(
-    df,
+    regions,
     fmt = list(delta = function(x) sprintf("%+.1f%%", x)),
     col_colors = list(delta = chanwe_col_signed())
   )

@@ -35,8 +35,8 @@ the accent, a halo and its value in an ink pill (or plain orange text with
 of a ranking, on the main point of a scatter.
 }
 \examples{
-last <- tail(economics, 1)
-ggplot2::ggplot(economics, ggplot2::aes(date, unemploy)) +
+last <- tail(ggplot2::economics, 1)
+p <- ggplot2::ggplot(ggplot2::economics, ggplot2::aes(date, unemploy)) +
   ggplot2::geom_line() +
   annotate_chanwe_main(last$date, last$unemploy, label = format(last$unemploy, big.mark = "."))
 }

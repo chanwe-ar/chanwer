@@ -407,14 +407,15 @@ chanwe_kbl <- function(
     if (!is.null(title) || !is.null(eyebrow)) {
       inner <- ""
       if (!is.null(eyebrow)) {
-        # chanwe-eyebrow with-rule: true renders "---- TEXT" matching template style
+        # The report's one eyebrow: an orange dot and a slate mono label (the
+        # document's `eyebrow-style` picks the rule variant when it asks for it).
         inner <- paste0(
           "#v(",
           top_v,
           ", weak: false)",
-          '#chanwe-eyebrow(with-rule: true, size: ',
+          '#chanwe-eyebrow(size: ',
           eyebrow_pt,
-          ', color: rgb("', tokens[["primary"]], '"))[',
+          ')[',
           esc(eyebrow),
           ']',
           "#v(-6pt, weak: false)"

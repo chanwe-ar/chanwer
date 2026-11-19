@@ -1,5 +1,17 @@
 # chanwer (development version)
 
+- **The showcases and the README use the builders.** The chart forms and scale examples the catalogue
+  marked failing or partly right (categorical bars with no focus, the orange area, overlapping density
+  fills, unlabelled ordinal and diverging bars, a line coloured by a third variable) are rewritten with
+  `chanwe_stack()`, `chanwe_lines()`, `chanwe_area()`, `chanwe_density()`, `chanwe_dots()`,
+  `chanwe_bars()` and `chanwe_multiples()`, with titles that state the claim. The README's examples
+  define their data and run as written (its second example used an undefined `sales`).
+- **Fix: `chanwe_kbl()` headers compile again** with chanwe-brand 3.8.0, whose `chanwe-eyebrow` no
+  longer takes `with-rule`; the table eyebrow is now the report's own (orange dot, slate label).
+- **`annotate_chanwe_ends()` spreads crowded labels** (`gap =`, 6 % of the y range): two series that end
+  close no longer print their names on top of each other.
+- Fix: the `annotate_chanwe_main()` example runs without ggplot2 attached.
+
 - **Chart builders** (Ale's picks, round 6, 2026-11-19), each with its look decided once and
   `style =` for the alternatives he kept: `chanwe_bars()` (`"labelled"` by default, `"ranking"`,
   `"lollipop"`), `chanwe_lines()` (`"direct"` labels by default, `"spaghetti"`), `chanwe_area()` (the
