@@ -129,6 +129,8 @@ changes do not reach anyone. Never move, delete or re-upload a published tag or 
 - Record every change at the top of `NEWS.md` under `# chanwer (development version)`.
 - To release, on an up-to-date `main`: rename that heading to `# chanwer X.Y.Z`, set `Version: X.Y.Z`, merge that,
   then run `scripts/release.sh X.Y.Z`. It tags `vX.Y.Z` and publishes a GitHub release with `chanwer-vX.Y.Z.zip`
-  (the package source with `.Rbuildignore` applied; `remotes::install_local()` installs it) and the notes.
+  (the package source with `.Rbuildignore` applied; `remotes::install_local()` installs it),
+  `chanwer-catalogue-vX.Y.Z.zip` (`scripts/export-catalogue.R`: the manifest and images chanwe-brandbook's
+  «Visualizaciones de papel» pulls; a new builder or style needs its entry there) and the notes.
 - Never move or delete a published tag or release; fix forward with a new version.
 - Then raise the pin in chanwe-desktop-app `components.lock.json`; the next desktop release carries it.

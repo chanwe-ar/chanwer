@@ -63,4 +63,5 @@ There are six: `chanwe_hc_bars()`, `chanwe_hc_lines()`, `chanwe_hc_area()`, `cha
 2. `devtools::document()`, `devtools::test()`, `devtools::check()` with no errors.
 3. A line in `NEWS.md` under `# chanwer (development version)`.
 4. To release: on `main`, rename that heading to `# chanwer X.Y.Z`, set `Version: X.Y.Z` in `DESCRIPTION`, merge,
-   and run `scripts/release.sh X.Y.Z`. Then raise the pin in chanwe-desktop-app (`components.lock.json`).
+   and run `scripts/release.sh X.Y.Z`. The release also carries `chanwer-catalogue-vX.Y.Z.zip` (the catalogue for
+   the brand library, from `scripts/export-catalogue.R`). Then raise the pin in chanwe-desktop-app (`components.lock.json`).

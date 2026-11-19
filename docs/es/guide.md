@@ -64,5 +64,6 @@ da el encabezado y el marco. En Python, los mismos seis viven en el paquete `rad
 2. `devtools::document()`, `devtools::test()`, `devtools::check()` sin errores.
 3. Una línea en `NEWS.md` bajo `# chanwer (development version)`.
 4. Para publicar: en `main`, renombrar ese encabezado a `# chanwer X.Y.Z`, poner `Version: X.Y.Z` en
-   `DESCRIPTION`, mergear y correr `scripts/release.sh X.Y.Z`. Después, subir el pin en chanwe-desktop-app
+   `DESCRIPTION`, mergear y correr `scripts/release.sh X.Y.Z`. El release lleva también
+   `chanwer-catalogue-vX.Y.Z.zip` (el catálogo para la biblioteca de marca, de `scripts/export-catalogue.R`). Después, subir el pin en chanwe-desktop-app
    (`components.lock.json`).
