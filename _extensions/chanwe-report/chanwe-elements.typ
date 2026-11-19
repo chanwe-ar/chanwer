@@ -70,30 +70,38 @@
   let type-label = if eyebrow != none { upper(eyebrow) } else { auto-label }
   let display-title = if title != none { title } else { type-label }
 
-  // v2-print (brand-v2 Q1 B): the callout is a pane — white on paper, the
-  // 1px hairline, 16px corners, no shadow. The kind is a dot in its role
-  // colour before the mono label, on the slate tint of the title row; no
-  // side bar, no coloured fill. `clip` trims the tint row to the corners.
+  // v2-print (brand-v2 §7): the callout is a pane — white on paper, the
+  // 1px hairline, 16px corners, no shadow. Its first line is the kind: a dot
+  // in its role colour and the mono label; then the title, then the body. No
+  // tinted title row (the last 1.x trace, dropped 2026-11-18), no side bar.
+  // The title row shows only a real title: Quarto's native callouts send
+  // their default title ("Note", "Tip"...), which the label already says.
+  let _plain(x) = if type(x) == str { x } else if type(x) == content and x.has("text") { x.text } else { none }
+  let pt = if title != none { _plain(title) } else { none }
+  let show-title = title != none and (pt == none or (lower(pt) != lower(auto-label) and pt != type-label))
+  // Radius `pane` 12px on paper and screen alike (unified with the kit, 2026-11-18).
   cw-pane(
     fill: _t.pane,
-    inset: 0pt,
+    radius: _t.radius-pane,
+    inset: (x: _t.space-lg, y: _t.space-md),
     above: 10mm,
     below: 10mm,
     breakable: false,
-    clip: true,
   )[
-    #block(fill: _t.tint, inset: (x: _t.space-lg, y: _t.space-sm), width: 100%, spacing: 0pt)[
-      #grid(
-        columns: (auto, 1fr),
-        column-gutter: _t.space-xs,
-        align: left + horizon,
-        cw-dot(accent, size: 5.5pt, baseline: 0pt),
-        // A service line, not a heading: JetBrains Mono, the label weight.
-        cw-label(display-title, fill: _t.ink, size: 7.5pt, tracking: 0.12em),
-      )
-    ]
-    #block(spacing: 0pt)[#line(length: 100%, stroke: cw-hairline + _t.rule)]
-    #block(inset: (x: _t.space-lg, y: _t.space-md), width: 100%, spacing: 0pt)[
+    #set block(spacing: 0pt)
+    #grid(
+      columns: (auto, 1fr),
+      column-gutter: _t.space-xs,
+      align: left + horizon,
+      cw-dot(accent, size: 5.5pt, baseline: 0pt),
+      cw-label(type-label, fill: _t.fg-muted, size: 7pt, tracking: 0.14em),
+    )
+    #if show-title {
+      v(2.4mm)
+      text(font: _t.font-display, size: 11pt, weight: _t.weight-display, tracking: -0.02em, fill: _t.fg, title)
+    }
+    #v(2mm)
+    #block[
       #set block(spacing: 0.85em)
       #set text(fill: _t.fg-muted, size: 9.5pt)
       #content
@@ -119,20 +127,33 @@
 // `gap` is the air above and below: two inserts in a row no longer touch
 // (edge to edge they read as one striped band; floating, as a collision).
 // An insert never splits across two pages (it did not when it was a `move`).
-#let _cw-insert(color, bg, inset, gap: 8mm, body) = if color == "dark" {
-  cw-band(inset: inset, above: gap, below: gap, breakable: false, body)
+// Orange is a signal, not a fill (decided 2026-11-18): `primary` is the
+// obsidian band with one orange Aspa in its top right corner, where the
+// insert's padding leaves room for it.
+#let _cw-signal-mark(inset) = {
+  let _get(k, d) = if type(inset) == dictionary { inset.at(k, default: d) } else { inset }
+  let r = _get("right", _get("x", 12mm))
+  let t = _get("top", _get("y", 12mm))
+  place(top + right, dx: r - 4mm, dy: if t > 6mm { -t + 4mm } else { 4mm },
+    cw-icon("Aspa", fill: _t.primary, width: 7mm))
+}
+#let _cw-insert(color, bg, inset, gap: 8mm, body) = if color == "dark" or color == "primary" {
+  cw-band(inset: inset, above: gap, below: gap, breakable: false, {
+    if color == "primary" { _cw-signal-mark(inset) }
+    body
+  })
 } else {
   block(
     width: 100%, fill: bg, radius: _t.radius-band, inset: inset, above: gap, below: gap,
-    breakable: false,
+    breakable: false, clip: true,
     stroke: if bg == _t.white { cw-hairline + _t.rule } else { none },
     body,
   )
 }
 
 // `light` va sobre surface-slate (#EBF0F6), el mismo slate del abstract y
-// de los paneles de código; `slate` y `beige` siguen valiendo como alias.
-#let _gq-scheme(color, inset: false) = if color == "light" or color == "slate" or color == "beige" {
+// de los paneles de código; `slate` vale igual.
+#let _gq-scheme(color, inset: false) = if color == "light" or color == "slate" {
   (
     bg:     _t.surface-slate,
     eyebrow: _t.primary,
@@ -141,136 +162,128 @@
     attr:   _t.fg,
     source: _t.fg-muted,
     line:   _t.primary,
+    rule:   _t.rule-cool,
+    art:    _t.pane,
+    label:  _t.fg-muted,
   )
-} else if color == "primary" {
+} else if color == "white" {
   (
-    // El naranja de marca, también en los insertos: el tono oscurecido que
-    // usaban (primary-dark) se leía como otro naranja.
-    bg:     _t.primary,
-    eyebrow: _t.white,
-    quote:  _t.white,
-    emph:   _t.white,
-    attr:   _t.white,
-    source: _t.white.transparentize(30%),
-    line:   _t.white,
+    bg:     _t.white,
+    eyebrow: _t.primary,
+    quote:  _t.fg,
+    emph:   _t.primary,
+    attr:   _t.fg,
+    source: _t.fg-muted,
+    line:   _t.primary,
+    rule:   _t.rule,
+    art:    _t.surface-slate,
+    label:  _t.fg-muted,
   )
 } else {
+  // `dark`, and `primary`, which is the same band with the orange as a signal.
   (
     bg:     _t.ink,
     eyebrow: _t.primary,
-    // Texto sobre obsidiana en rule-cool, no en blanco: la regla de la marca
-    // para tipo sobre tinta.
-    quote:  _t.rule-cool,
+    // Texto sobre obsidiana en blanco (Ale, 2026-11-19).
+    quote:  _t.white,
     emph:   _t.primary,
-    attr:   _t.rule-cool,
-    source: _t.rule-cool,
+    attr:   _t.white,
+    source: _t.fg-subtle,
     line:   _t.primary,
+    rule:   _t.rule-ink,
+    art:    _t.ink-light,
+    label:  _t.white,
   )
 }
 
-#let page-great-quote(caption: none, source: none, color: "dark", eyebrow: "Verbatim", body) = {
+// The quote's text in one of the three styles (`quote-style`, or the Div's
+// `style`): `serif` (Cormorant italic, the default), `display` (Schibsted 600,
+// as the v2 band sets display type) and `serif-art` (the serif, with a
+// Fundido icon bleeding off the corner).
+#let _gq-text(style, size, fill, body) = if style == "display" {
+  text(font: _t.font-display, size: size * 0.86, weight: _t.weight-display, tracking: -0.035em,
+       fill: fill)[\u{201C}#body\u{201D}]
+} else {
+  text(font: _t.font-serif, size: size, style: "italic", weight: _t.weight-body,
+       tracking: -0.025em, fill: fill)[\u{201C}#body\u{201D}]
+}
+
+// The signature, the v2 way (2026-11-18): a hairline across the measure, then
+// a dot and the name, and the source as a mono label under it. No pill, no
+// short orange rule: the dot is the one orange.
+#let _gq-attribution(caption, source, s, big: false) = {
+  set block(spacing: 0pt)
+  set par(spacing: 0pt)
+  line(length: 100%, stroke: 0.5pt + s.rule)
+  if caption != none or source != none {
+    v(if big { 6mm } else { 4mm })
+    let dot = if big { 6pt } else { 4.6pt }
+    let gap = if big { 3mm } else { 2.2mm }
+    grid(
+      columns: (auto, 1fr),
+      column-gutter: gap,
+      row-gutter: if big { 3mm } else { 2mm },
+      align: (left + horizon, left + horizon),
+      cw-dot(_t.primary, size: dot, baseline: 0pt),
+      if caption != none {
+        text(font: _t.font-sans, size: if big { 15pt } else { 9.6pt }, weight: _t.weight-medium,
+             tracking: -0.01em, fill: s.attr, caption)
+      } else { cw-label(source, fill: s.source, size: if big { 7pt } else { 6pt }) },
+      [],
+      if caption != none and source != none { cw-label(source, fill: s.source, size: if big { 7pt } else { 6pt }) },
+    )
+  }
+}
+
+#let page-great-quote(caption: none, source: none, color: "dark", eyebrow: "Verbatim", style: auto, body) = context {
+  let style = if style == auto { cw-style("quote-style", "serif") } else { style }
   let s = _gq-scheme(color)
   set page(paper: _chanwe-paper, margin: 0pt, header: none, footer: none, fill: s.bg)
-  block(
-    width: 100%, height: 100%,
-    inset: (x: 22mm, top: 40mm, bottom: 30mm),
-    fill: s.bg,
-  )[
-    #show emph: it => text(fill: s.emph, style: "italic", it.body)
-    #chanwe-eyebrow(eyebrow, color: s.eyebrow, with-rule: true, size: 12pt)
-    // Misma estructura que el inserto —5mm y la cita dentro de un bloque— para
-    // que el aire entre rótulo y cita sea el mismo. Suelta en el flujo, la
-    // cita a 28pt resolvía el espaciado de párrafo del cuerpo (2.6em) contra
-    // sus propios 28pt y caía 26mm más abajo que en el inserto.
-    #v(5mm)
-    #set par(leading: 0.32em)
-    // The quote takes the page: the largest of these sizes that keeps it
-    // within 150mm of height, so a short line is set at 64pt and a long
-    // paragraph falls back to the 32.2pt it always had. Until 3.0.2 every
-    // quote was 32.2pt, and a one-line quote left the page empty.
-    #layout(size => {
-      let q(sz) = block(width: 100%, text(
-        font: _t.font-serif, size: sz, style: "italic", weight: _t.weight-body,
-        tracking: -0.025em, fill: s.quote,
-      )[\u{201C}#body\u{201D}])
-      let fit = (64pt, 56pt, 48pt, 40pt).find(sz => measure(q(sz), width: size.width).height <= 150mm)
-      q(if fit == none { 32.2pt } else { fit })
-    })
-    #v(1fr)
-    // El filete cierra siempre, con o sin firma. La firma pesa —tres veces
-    // el cuerpo que tenía— y la fuente va en la ficha de marco, en blanco
-    // sobre naranja y en el slate de obsidiana sobre tinta. Sin aire de
-    // párrafo adentro: a 22pt el 2.6em del cuerpo metía dos centímetros
-    // entre cada objeto.
-    #set block(spacing: 0pt)
-    #set par(spacing: 0pt)
-    #line(length: 30%, stroke: 1pt + s.line)
-    #if caption != none {
-      v(6mm)
-      // La firma en la familia de cuerpo, no en la de display: acompaña a la
-      // cita en vez de titularla.
-      text(font: _t.font-sans, size: 20.25pt, weight: _t.weight-body, tracking: -0.02em, fill: s.attr, caption)
+  block(width: 100%, height: 100%, fill: s.bg, clip: true)[
+    #if style == "serif-art" {
+      place(bottom + right, dx: 46mm, dy: 40mm, cw-icon("Onda", fill: s.art, width: 190mm))
     }
-    #if source != none {
-      let chip-tone = if color == "primary" { _t.white }
-        else if color == "light" or color == "slate" or color == "beige" { none }
-        else { _t.rule-cool }
-      v(4.5mm)
-      _chip-label(source, tone: chip-tone, size: 7.3pt, inset: (x: 2.5mm, y: 2mm))
+    #if color == "primary" {
+      place(top + right, dx: -22mm, dy: 22mm, cw-icon("Aspa", fill: _t.primary, width: 14mm))
     }
+    #if color == "dark" or color == "primary" { place(top + left, cw-dot-gradient()) }
+    #block(width: 100%, height: 100%, inset: (x: 22mm, top: 40mm, bottom: 30mm))[
+      #show emph: it => text(fill: s.emph, style: "italic", it.body)
+      #chanwe-eyebrow(eyebrow, fill: s.label, size: 12pt)
+      // Misma estructura que el inserto —5mm y la cita dentro de un bloque— para
+      // que el aire entre rótulo y cita sea el mismo.
+      #v(5mm)
+      #set par(leading: 0.32em)
+      // The quote takes the page: the largest of these sizes that keeps it
+      // within 150mm of height, so a short line is set at 64pt and a long
+      // paragraph falls back to 32.2pt.
+      #layout(size => {
+        let q(sz) = block(width: 100%, _gq-text(style, sz, s.quote, body))
+        let fit = (64pt, 56pt, 48pt, 40pt).find(sz => measure(q(sz), width: size.width).height <= 150mm)
+        q(if fit == none { 32.2pt } else { fit })
+      })
+      #v(1fr)
+      #_gq-attribution(caption, source, s, big: true)
+    ]
   ]
 }
 
-#let inset-great-quote(caption: none, source: none, color: "dark", eyebrow: "Verbatim", body) = {
+#let inset-great-quote(caption: none, source: none, color: "dark", eyebrow: "Verbatim", style: auto, body) = context {
+  let style = if style == auto { cw-style("quote-style", "serif") } else { style }
   let s = _gq-scheme(color, inset: true)
-  // La firma y el filete van en slate sobre papel; sobre obsidiana el slate no
-  // se lee, así que ahí vuelven al blanco del esquema y al filete de tinta.
-  let on-dark = color == "dark" or color == "primary"
-  let on-primary = color == "primary"
-  let attr-fill = if on-dark { s.attr } else { _t.fg-muted }
-  // Sobre naranja, filete y ficha en blanco y el filete más fino: el slate de
-  // obsidiana se leía como una raya negra sobre el naranja.
-  let rule-fill = if on-primary { _t.white } else if on-dark { _t.rule-cool } else { _t.border-cool }
-  let rule-w    = if on-primary { 0.2pt } else { 0.3pt }
-  let chip-tone = if on-primary { _t.white } else if on-dark { _t.rule-cool } else { none }
   _cw-insert(color, s.bg, (x: 12mm, top: 12mm, bottom: 12mm))[
+      #if style == "serif-art" {
+        place(bottom + right, dx: 12mm + 22mm, dy: 12mm + 24mm, cw-icon("Onda", fill: s.art, width: 92mm))
+      }
       #show emph: it => text(fill: s.emph, style: "italic", it.body)
       #set par(leading: 0.32em)
-      #chanwe-eyebrow(eyebrow, color: s.eyebrow, with-rule: true)
+      #chanwe-eyebrow(eyebrow, fill: s.label)
       #v(5mm)
       // La cita no usa los 166mm del bloque: a 122mm rompe en dos renglones
       // parejos y deja aire a la derecha, que es lo que la separa de un párrafo.
-      #block(width: 122mm)[
-        #text(
-          font: _t.font-serif, size: 28pt, style: "italic", weight: _t.weight-body,
-          tracking: -0.05em, fill: s.quote,
-        )[\u{201C}#body\u{201D}]
-      ]
-      // El filete cierra siempre, con o sin firma: pertenece al bloque, no a
-      // la atribución. Mucho aire arriba y poco abajo, así se lee como el
-      // renglón que abre la firma. Los `v` van sin aire de bloque alrededor
-      // —adentro del inserto el cuerpo trae 2.6em de espaciado de párrafo,
-      // que se sumaba a cada uno.
-      #set block(spacing: 0pt)
-      #set par(spacing: 0pt)
-      #v(16mm)
-      #line(length: 100%, stroke: rule-w + rule-fill)
-      #if caption != none or source != none {
-        v(3.5mm)
-        // La ficha de fuente abre la firma y va al eje del texto: una grilla
-        // con `horizon` en vez de la corrección de base medida a mano.
-        grid(
-          columns: (auto, auto),
-          column-gutter: 3mm,
-          align: (left + horizon, left + horizon),
-          if source != none {
-            _chip-label(source, tone: chip-tone, size: 7.15pt, inset: (x: 2mm, y: 1.8mm))
-          } else { [] },
-          if caption != none {
-            text(font: _t.font-display, size: 9.6pt, weight: _t.weight-display, tracking: -0.05em, fill: attr-fill, caption)
-          } else { [] },
-        )
-      }
+      #block(width: 122mm, _gq-text(style, 28pt, s.quote, body))
+      #v(14mm)
+      #_gq-attribution(caption, source, s)
     ]
 }
 
@@ -300,7 +313,7 @@
       block(below: 8mm)[
         // Un 20% por debajo del rótulo estándar (8.5pt): acompaña al titular
         // de 14pt en vez de competir con él.
-        #chanwe-eyebrow(eyebrow, color: s.eyebrow, with-rule: true, size: 6.8pt)
+        #chanwe-eyebrow(eyebrow, fill: s.label, size: 6.8pt)
       ]
     }
     #if title != "" {
@@ -340,11 +353,10 @@
     // pasa a `rule-ink`, que es el que se dibuja sobre oscuro.
     #if source != none or source-label != none {
       // The foot of a figure: quiet mono over a hairline, in the tone of the surface.
-      let on-primary = color == "primary"
-      let foot-tone = if on-primary { _t.white } else if on-dark { s.source } else { _t.fg-muted }
+      let foot-tone = if on-dark { s.source } else { _t.fg-muted }
       v(2.6mm)
       line(length: 100%, stroke: 0.5pt
-        + (if on-primary { _t.white.transparentize(60%) } else if on-dark { _t.rule-ink } else { _t.rule }))
+        + (if on-dark { _t.rule-ink } else { _t.rule }))
       v(1.8mm)
       grid(
         columns: (auto, 1fr),
@@ -385,17 +397,16 @@
   body,
 ) = {
   // Cuatro variantes: white (hoja), light (panel editorial), dark (obsidiana,
-  // texto en rule-cool) y primary (naranja, texto en blanco).
-  let s = if color == "dark" {
-    (bg: _t.ink, eyebrow: _t.primary, title: _t.rule-cool, rule: _t.primary, body: _t.rule-cool)
-  } else if color == "primary" {
-    (bg: _t.primary, eyebrow: _t.white, title: _t.white, rule: _t.white, body: _t.white)
-  } else if color == "light" or color == "slate" or color == "beige" {
+  // texto en blanco) y primary (la banda de obsidiana con el naranja como
+  // señal: el Aspa en la esquina, 2026-11-18).
+  let s = if color == "dark" or color == "primary" {
+    (bg: _t.ink, eyebrow: _t.primary, title: _t.white, rule: _t.primary, body: _t.white)
+  } else if color == "light" or color == "slate" {
     (bg: _t.surface-slate, eyebrow: _t.primary, title: _t.ink, rule: _t.primary, body: _t.body-fg)
   } else {
     (bg: _t.white, eyebrow: _t.primary, title: _t.ink, rule: _t.primary, body: _t.body-fg)
   }
-  let borders = not ("white", "light", "slate", "beige", "dark", "primary").contains(color)
+  let borders = not ("white", "light", "slate", "dark", "primary").contains(color)
   _cw-insert(color, s.bg, (x: 12mm, top: 0pt, bottom: 0pt))[
       #if borders { line(length: 100%, stroke: 0.5pt + _t.ink) }
       #block(width: 100%, inset: (top: 12mm, bottom: 14mm))[
@@ -444,15 +455,13 @@
 #let _gf-pad-y   = 5mm
 
 // La paleta de la lista por variante: `white` es la hoja con filetes, `light`
-// el panel editorial, `dark` obsidiana con el texto en rule-cool y `primary`
-// naranja con todo en blanco, incluidos el numeral y el filete.
-#let _gf-scheme(color) = if color == "dark" {
-  (bg: _t.ink, numeral: _t.primary, title: _t.rule-cool, body: _t.rule-cool,
-   accent: _t.primary, rule: _t.rule-ink, label: _t.rule-cool.transparentize(35%), chip: _t.rule-cool)
-} else if color == "primary" {
-  (bg: _t.primary, numeral: _t.white, title: _t.white, body: _t.white.transparentize(12%),
-   accent: _t.white, rule: _t.white.transparentize(60%), label: _t.white.transparentize(30%), chip: _t.white)
-} else if color == "light" or color == "slate" or color == "beige" {
+// el panel editorial y `dark` obsidiana con el texto en blanco. `primary`
+// es obsidiana también: el naranja queda como señal (el numeral), no de fondo
+// (2026-11-18).
+#let _gf-scheme(color) = if color == "dark" or color == "primary" {
+  (bg: _t.ink, numeral: _t.primary, title: _t.white, body: _t.white,
+   accent: _t.primary, rule: _t.rule-ink, label: _t.white.transparentize(35%), chip: _t.white)
+} else if color == "light" or color == "slate" {
   (bg: _t.surface-slate, numeral: _t.primary, title: _t.ink, body: _t.fg-muted,
    accent: _t.primary, rule: _t.rule, label: _t.fg-muted, chip: none)
 } else {
@@ -462,7 +471,11 @@
 
 // `height` fija el alto de la fila: la celda del texto —y con ella el filete
 // naranja, que es su borde izquierdo— se estira hasta ahí. `auto` mide sola.
-#let _great-findings-row(number: "01", title: "", topic: "", topic-label: "Tema", height: auto, scheme: _gf-scheme("white"), body) = {
+#let _great-findings-row(number: "01", title: "", topic: "", topic-label: "Tema", height: auto, scheme: _gf-scheme("white"), numeral: auto, body) = context {
+  // The numeral (2026-11-18): Schibsted 600, tabular. `orange` (the default)
+  // or `slate`; the Div's `numeral` or the document's `findings-numeral`.
+  let numeral = if numeral == auto { cw-style("findings-numeral", "orange") } else { numeral }
+  let num-fill = if numeral == "slate" { if scheme.bg == _t.ink { _t.fg-subtle } else { _t.fg-muted } } else { scheme.numeral }
   let s = scheme
   grid(
     columns: _gf-columns,
@@ -476,9 +489,9 @@
     // caer casi hasta la base que pide el reparto—. El inset de arriba es lo
     // que falta: medido, no elegido, y hay que volver a medirlo si cambia el
     // cuerpo del numeral o el del título.
-    grid.cell(inset: (top: 0.67mm), text(
-      font: _t.font-serif-display, size: 27.5pt, weight: _t.weight-regular, style: "italic",
-      fill: s.numeral, number,
+    grid.cell(inset: (top: 0.2mm), text(
+      font: _t.font-display, size: 22pt, weight: _t.weight-display, tracking: -0.03em,
+      number-type: "lining", number-width: "tabular", fill: num-fill, number,
     )),
 
     // v2 (Ale, 2026-10-30, opción C): sin filete lateral; el hallazgo es un panel
@@ -513,7 +526,7 @@
 // entre ítems —mismo grosor, mismo tono—, así que la lista se lee como un
 // pentagrama parejo y no como una banda con bordes pesados. `color` mantiene
 // las variantes en panel para los documentos que ya las usan.
-#let _gf-panes(color) = color in ("white", "light", "slate", "beige")
+#let _gf-panes(color) = color in ("white", "light", "slate")
 #let _gf-frame(color, body) = {
   let s = _gf-scheme(color)
   if _gf-panes(color) {
@@ -528,8 +541,8 @@
   }
 }
 
-#let great-findings(number: "01", title: "", topic: "", topic-label: "Tema", color: "white", body) = {
-  let row = _great-findings-row(number: number, title: title, topic: topic, topic-label: topic-label, scheme: _gf-scheme(color), body)
+#let great-findings(number: "01", title: "", topic: "", topic-label: "Tema", color: "white", numeral: auto, body) = {
+  let row = _great-findings-row(number: number, title: title, topic: topic, topic-label: topic-label, scheme: _gf-scheme(color), numeral: numeral, body)
   _gf-frame(color, if _gf-panes(color) {
     cw-pane(inset: (x: 6mm, y: _gf-pad-y), spacing: 0pt, row)
   } else {
@@ -538,9 +551,9 @@
 }
 
 // item used inside a great-findings-grid (the frame is the wrapper's job)
-#let great-findings-item(number: "01", title: "", topic: "", topic-label: "Tema", height: auto, scheme: _gf-scheme("white"), body) = {
+#let great-findings-item(number: "01", title: "", topic: "", topic-label: "Tema", height: auto, scheme: _gf-scheme("white"), numeral: auto, body) = {
   block(width: 100%, inset: (y: _gf-pad-y), spacing: 0pt)[
-    #_great-findings-row(number: number, title: title, topic: topic, topic-label: topic-label, height: height, scheme: scheme, body)
+    #_great-findings-row(number: number, title: title, topic: topic, topic-label: topic-label, height: height, scheme: scheme, numeral: numeral, body)
   ]
 }
 
@@ -548,31 +561,23 @@
 // `line` suelta cobra el espaciado de bloque del cuerpo a cada lado, y eso era
 // lo que abría el hueco muerto entre un hallazgo y el siguiente.
 #let _gf-rule(s) = block(spacing: 0pt, line(length: 100%, stroke: 0.3pt + s.rule))
-#let great-findings-rule = _gf-rule(_gf-scheme("white"))
 
 // wrapper that frames the list and separates items with a hairline
 // La lista recibe los ítems como lista de contenidos, no como un cuerpo
 // suelto, para poder medirlos: todas las filas miden lo mismo —la más alta
 // manda—, así una lista de tres hallazgos no cambia de ritmo porque uno lleve
 // dos renglones más. `row-height` pone un piso en milímetros por si hace
-// falta emparejar dos listas distintas. Un cuerpo de contenido suelto (la
-// forma vieja) sigue valiendo: es una lista de un solo ítem.
-#let great-findings-grid(color: "white", row-height: none, items) = {
-  let items = if type(items) == array { items } else { (items,) }
+// falta emparejar dos listas distintas.
+#let great-findings-grid(color: "white", row-height: none, numeral: auto, items) = {
   // Un ítem es un diccionario (number, title, topic, topic-label, body): así
   // se puede dibujar dos veces, una para medirlo y otra a la altura pareja,
-  // y el filete naranja acompaña esa altura. Un contenido suelto (la forma
-  // vieja) se envuelve en un bloque de alto fijo, sin estirar el filete.
+  // y el filete naranja acompaña esa altura.
   let s = _gf-scheme(color)
-  let render(it, h) = if type(it) == dictionary {
-    great-findings-item(
-      number: it.at("number", default: "01"), title: it.at("title", default: ""),
-      topic: it.at("topic", default: ""), topic-label: it.at("topic-label", default: "Tema"),
-      height: h, scheme: s, it.at("body", default: []),
-    )
-  } else if h == auto { it } else {
-    block(width: 100%, height: h + 2 * _gf-pad-y, spacing: 0pt, breakable: false, it)
-  }
+  let render(it, h) = great-findings-item(
+    number: it.at("number", default: "01"), title: it.at("title", default: ""),
+    topic: it.at("topic", default: ""), topic-label: it.at("topic-label", default: "Tema"),
+    height: h, scheme: s, numeral: numeral, it.at("body", default: []),
+  )
   _gf-frame(color, layout(size => {
     let floor = if row-height != none { row-height } else { 0pt }
     let w = if _gf-panes(color) { size.width - 12mm } else { size.width }
@@ -612,7 +617,6 @@
 // la altura exacta de la banda: la ficha no las puede medir sola.
 #let _kpi-card-h = 44mm
 #let _kpi-pad-y  = 6.5mm
-#let _kpi-gutter = 14mm
 // Alto fijo de la fila ficha+glosa: entran dos renglones de glosa y la ficha
 // queda centrada contra ellos sin moverse de columna a columna.
 #let _kpi-chip-row-h = 7mm
@@ -824,7 +828,7 @@
 // ZONE HIGHLIGHT — a floating background colour zone (v2: 24px corners)
 // =============================================================
 // color: "light" (por defecto) | "white" | "dark" | "primary"
-// ("slate"/"beige" valen por light, "orange" por primary y "metallic", que
+// ("slate" vale por light, "orange" por primary y "metallic", que
 // era la hoja misma, ahora cae en light).
 // `margin` es el aire adentro del panel, arriba y abajo del texto: a 2mm el
 // cuerpo tocaba el borde de la banda. Se mide contra el ancho de la columna,
@@ -833,18 +837,18 @@
   // La zona `light` va un paso más abajo que los demás paneles light
   // (surface-slate en vez del beige): corre dentro del cuerpo y sobre la
   // hoja necesita un poco más de contraste para leerse como banda.
-  let bg = if color == "light" or color == "slate" or color == "beige" or color == "metallic" { _t.surface-slate }
-    else if color == "dark"              { _t.ink         }
-    else if color == "primary" or color == "orange" { _t.primary }
+  let bg = if color == "light" or color == "slate" or color == "metallic" { _t.surface-slate }
+    // `primary` is obsidian with the orange Aspa as its signal (2026-11-18).
+    else if color == "dark" or color == "primary" or color == "orange" { _t.ink }
     else if color.starts-with("#")       { rgb(color)     }
     else                                 { _t.white          }
   let on-dark = color == "dark" or color == "primary" or color == "orange"
-  // Sobre obsidiana el texto va en rule-cool, como en todo el formato; sobre
+  // Sobre obsidiana el texto va en blanco, como en todo el formato; sobre
   // naranja, en blanco.
-  let on-color = if color == "dark" { _t.rule-cool } else { _t.white }
+  let on-color = _t.white
 
   if above != none { v(above) }
-  _cw-insert(color, bg, (x: 10mm, top: margin, bottom: margin), gap: 0pt)[
+  _cw-insert(if color == "orange" { "primary" } else { color }, bg, (x: 10mm, top: margin, bottom: margin), gap: 0pt)[
       // Un `set` adentro de un `if` no llega a ninguna parte: el bloque del
       // `if` termina en esa misma línea y la regla muere con él. La forma que
       // sí aplica es `set ... if`. Y `strong` necesita su propia regla porque

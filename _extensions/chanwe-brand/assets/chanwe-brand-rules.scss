@@ -691,15 +691,6 @@
   display: none;
 }
 
-.quarto-title-banner .quarto-title .chanwe-title-logo-legacy {
-  display: block;
-  width: min(180px, 50vw);
-  height: 38px;
-  max-height: 38px;
-  background: url("_extensions/chanwe-brand/assets/Logo_Negro.svg") left center / contain no-repeat;
-  margin: clamp(0.45rem, 1vw, 0.85rem) 0 0;
-}
-
 .quarto-title-banner .chanwe-title-logo + .quarto-categories.chanwe-top-pills {
   margin-top: clamp(1.4rem, 2.6vw, 2.2rem);
 }
@@ -806,6 +797,250 @@
   }
 }
 
+/* ── Cover variants (v2, 2026-11-18) ─────────────────────────────
+   `chanwe: cover-variant:` in the front matter, the print formats' names;
+   filters/document-options.lua turns it into `data-cw-cover` on <html>
+   and title-banner-layout.html builds the pieces (the eyebrow, the lockup
+   foot). Without it the banner above is the default.
+
+   - `paper`: paper with a very faint dot field, the orange Aspa large at
+     the top left, the title block low and to the left (orange eyebrow,
+     Schibsted 600 title with its dot, Cormorant lede), the metadata
+     ledger, and at the foot the `Principal` lockup over a `rule` hairline
+     with the place in mono at the right.
+   - `photo-obsidian`: obsidian with the same faint dots, the blue-hour
+     photograph across the top half fading into the ink, the title in
+     `paper`, the lede in `rule-cool`, and the `PrincipalOscuro` lockup.
+
+   Both drop the rail, the veiled art and the series pill: the masthead's
+   first pill (the topic) becomes the eyebrow, the rest stay as a mono
+   column at the top right. */
+:root[data-cw-cover] .quarto-title-banner {
+  --cw-cover-pad: clamp(1.5rem, 5vw, 4.5rem);
+  --cw-cover-mark: clamp(4.25rem, 8vw, 7rem);
+  --cw-cover-field-dot: #{rgba($brand-ink-fg, 0.2)};
+  min-height: clamp(26rem, 46vw, 40rem);
+  /* The dots fade (Ale, 2026-11-18: "more subtle, with a gradient feel"):
+     strongest at the bottom right, gone toward the top left, under a veil
+     of the ground itself. */
+  background:
+    radial-gradient(140% 140% at 100% 100%, transparent 0%, var(--cw-color-paper) 72%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle at center, var(--cw-cover-field-dot) 0.7px, transparent 0.85px) 0 0 / 14.4px 14.4px,
+    var(--cw-color-paper) !important;
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner {
+  --cw-cover-field-dot: #{rgba($brand-ink-fg, 0.32)};
+  --cw-cover-photo-h: clamp(13rem, 26vw, 22rem);
+  border-color: var(--cw-color-ink);
+  background:
+    radial-gradient(140% 140% at 100% 100%, transparent 0%, var(--cw-color-ink) 72%) 0 0 / 100% 100% no-repeat,
+    radial-gradient(circle at center, var(--cw-cover-field-dot) 0.7px, transparent 0.85px) 0 0 / 14.4px 14.4px,
+    var(--cw-color-ink) !important;
+  color: var(--cw-color-paper) !important;
+}
+
+:root[data-cw-cover] .quarto-title-banner .chanwe-cover-rail,
+:root[data-cw-cover] .quarto-title-banner .chanwe-cover-series,
+:root[data-cw-cover] .quarto-title-banner .chanwe-cover-stamp {
+  display: none;
+}
+
+/* paper: the Aspa, large, at the top left. */
+:root[data-cw-cover="paper"] .quarto-title-banner::before {
+  left: var(--cw-cover-pad);
+  top: var(--cw-cover-pad);
+  width: var(--cw-cover-mark);
+  height: var(--cw-cover-mark);
+  background: var(--cw-color-primary);
+  -webkit-mask: var(--cw-icon-aspa) center / contain no-repeat;
+  mask: var(--cw-icon-aspa) center / contain no-repeat;
+}
+:root[data-cw-cover="paper"] .quarto-title-banner::after {
+  content: none;
+}
+
+/* photo-obsidian: no corner rule; the photograph is the top half and
+   fades into the ink where the title starts. */
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner::before {
+  content: none;
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner::after {
+  right: 0;
+  bottom: auto;
+  width: 100%;
+  height: var(--cw-cover-photo-h);
+  background:
+    linear-gradient(180deg, #{rgba($brand-ink, 0.3)} 0%, #{rgba($brand-ink, 0)} 22%, #{rgba($brand-ink, 0)} 38%, #{rgba($brand-ink, 0.18)} 55%, #{rgba($brand-ink, 0.5)} 70%, #{rgba($brand-ink, 0.82)} 84%, var(--cw-color-ink) 96%),
+    var(--cw-art-blue-hour) center 42% / cover no-repeat;
+  filter: none;
+}
+
+:root[data-cw-cover] .quarto-title-banner .quarto-title {
+  min-height: clamp(26rem, 46vw, 40rem);
+  justify-content: flex-end;
+  padding: calc(var(--cw-cover-pad) * 2 + var(--cw-cover-mark)) var(--cw-cover-pad) clamp(1rem, 2vw, 1.6rem);
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .quarto-title {
+  padding-top: calc(var(--cw-cover-photo-h) - 2.5rem);
+}
+
+/* The masthead: a mono column at the top right, without its rule. The
+   first pill is the eyebrow now. */
+:root[data-cw-cover] .quarto-title-banner .quarto-categories.chanwe-top-pills {
+  position: absolute;
+  top: var(--cw-cover-pad);
+  right: var(--cw-cover-pad);
+  max-width: 50%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+:root[data-cw-cover] .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category:nth-child(1) {
+  display: none;
+}
+:root[data-cw-cover] .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category {
+  margin: 0;
+  text-align: right;
+  color: var(--cw-color-fg-muted) !important;
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .quarto-categories.chanwe-top-pills .quarto-category {
+  color: var(--cw-color-paper) !important;
+}
+
+/* The eyebrow (unified with the kit, 2026-11-18): an orange dot and the
+   mono label in slate (`rule-cool` on obsidian). */
+:root[data-cw-cover] .quarto-title-banner .chanwe-cover-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: clamp(0.9rem, 1.6vw, 1.3rem);
+  font-family: var(--cw-font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--cw-color-fg-muted);
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .chanwe-cover-eyebrow {
+  color: var(--cw-color-rule-cool);
+}
+:root[data-cw-cover] .quarto-title-banner .chanwe-cover-eyebrow::before {
+  content: "";
+  flex: none;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--cw-color-primary);
+}
+
+:root[data-cw-cover] .quarto-title-banner .quarto-title .title {
+  max-width: min(62rem, 72vw);
+  font-size: clamp(2.6rem, 5.6vw, 5rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+:root[data-cw-cover] .quarto-title-banner .subtitle {
+  max-width: min(44rem, 60vw);
+  color: var(--cw-color-fg-muted) !important;
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .quarto-title .title {
+  color: var(--cw-color-paper) !important;
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .subtitle {
+  color: var(--cw-color-rule-cool) !important;
+}
+
+/* The ledger keeps its place over the foot, on the `rule` hairline. */
+:root[data-cw-cover] .quarto-title-banner .quarto-title .chanwe-cover-bottom {
+  margin-top: clamp(1.6rem, 3vw, 2.4rem);
+}
+:root[data-cw-cover] .quarto-title-banner .quarto-title .chanwe-banner-bottom {
+  border-top-color: var(--cw-color-rule);
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .quarto-title .chanwe-banner-bottom {
+  border-top-color: var(--cw-color-rule-ink);
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-block .quarto-title-meta-heading {
+  color: var(--cw-color-ink-fg);
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-block .quarto-title-meta-contents,
+:root[data-cw-cover="photo-obsidian"] .quarto-title-block .quarto-title-meta-contents a {
+  color: var(--cw-color-rule-cool) !important;
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .quarto-title .chanwe-keyword-pills .quarto-category {
+  background: #{rgba($brand-rule-cool, 0.1)} !important;
+  border-color: var(--cw-color-rule-ink) !important;
+  color: var(--cw-color-rule-cool) !important;
+}
+
+/* The foot: the lockup over the `rule` hairline, the place at the right. */
+:root[data-cw-cover] .quarto-title-banner .quarto-title .chanwe-cover-foot {
+  height: auto;
+  margin-top: clamp(1.4rem, 2.6vw, 2rem);
+  padding-top: clamp(1rem, 1.8vw, 1.4rem);
+  border-top: 1px solid var(--cw-color-rule);
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .quarto-title .chanwe-cover-foot {
+  border-top-color: var(--cw-color-rule-ink);
+}
+:root[data-cw-cover] .quarto-title-banner .chanwe-cover-lockup {
+  display: block;
+  height: clamp(1.5rem, 2.3vw, 2.1rem);
+  /* The wordmark alone: the logo never goes with the Aspa (D-0009, 2026-11-18). */
+  aspect-ratio: 1710 / 365;
+  background: var(--cw-wordmark-ink) left center / contain no-repeat;
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .chanwe-cover-lockup {
+  background-image: var(--cw-wordmark-paper);
+}
+:root[data-cw-cover] .quarto-title-banner .chanwe-cover-place {
+  font-family: var(--cw-font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cw-color-fg-muted);
+}
+:root[data-cw-cover="photo-obsidian"] .quarto-title-banner .chanwe-cover-place {
+  color: var(--cw-color-ink-fg);
+}
+
+@media (max-width: 980px) {
+  :root[data-cw-cover] .quarto-title-banner {
+    --cw-cover-pad: 1.35rem;
+    --cw-cover-mark: 3.6rem;
+    min-height: 0;
+  }
+  :root[data-cw-cover="photo-obsidian"] .quarto-title-banner {
+    --cw-cover-photo-h: 14rem;
+  }
+  :root[data-cw-cover="photo-obsidian"] .quarto-title-banner::after {
+    width: 100%;
+  }
+  :root[data-cw-cover] .quarto-title-banner .quarto-title {
+    min-height: 0;
+    padding: calc(var(--cw-cover-pad) * 2 + var(--cw-cover-mark)) var(--cw-cover-pad) 1.2rem;
+  }
+  :root[data-cw-cover="photo-obsidian"] .quarto-title-banner .quarto-title {
+    padding-top: calc(var(--cw-cover-photo-h) - 2rem);
+  }
+  :root[data-cw-cover] .quarto-title-banner .quarto-title .title {
+    max-width: 100%;
+    font-size: clamp(2.3rem, 11vw, 3.4rem);
+  }
+  :root[data-cw-cover] .quarto-title-banner .subtitle {
+    max-width: 100%;
+  }
+  :root[data-cw-cover] .quarto-title-banner .quarto-categories.chanwe-top-pills {
+    flex-wrap: nowrap;
+    max-width: 55%;
+  }
+}
+
 /* Content links: ink text, brand orange on the underline (colour on a solid
    mark, not on 3.3:1 body text). Affordance is visible at rest. */
 main.content a:not(.nav-link, .anchorjs-link, .code-copy-button, .quarto-category, .footnote-ref, .footnote-back),
@@ -845,30 +1080,64 @@ mark, .mark {
   border-radius: var(--cw-radius-hair);
 }
 
-/* Inline code (v2): a chip on the slate tint, row radius. */
+/* Inline code (unified with the kit, 2026-11-18): orange mono, no pill. */
 :not(pre) > code:not(.sourceCode),
 p code:not(.sourceCode),
 li code:not(.sourceCode),
 td code:not(.sourceCode) {
-  background: var(--cw-color-tint);
-  color: var(--cw-color-neutral-700);
-  border-radius: var(--cw-radius-row);
+  background: transparent;
+  color: var(--cw-color-primary);
+  border-radius: 0;
   font-family: var(--cw-font-mono);
-  font-size: 0.85em;
-  padding: 0.08rem 0.32rem;
+  font-size: 0.88em;
+  padding: 0;
 }
 
-/* Callouts (v2): a pane — white, the `rule` hairline all round, 16px,
-   the rest shadow on screen. No coloured side bar and no coloured fill:
-   the role colour is one dot before the mono label, the only colour the
-   callout carries (brand-v2.md §6, Q1 B). The default style's title bar
-   is the slate tint, which groups inside the pane; `appearance="simple"`
-   keeps the title on the pane. */
+/* Horizontal rule (v2, 2026-11-18): a full-width `rule` hairline broken in
+   the middle by the small Fundido "Más" in `rule-cool`, drawn as a mask so
+   the icon takes the token. It replaced the short orange line. Where the
+   icon is not embedded (the web book) the break holds a `rule-cool` dot. */
+main.content hr {
+  --cw-hr-mark: 0.9rem;
+  --cw-hr-gap: 0.8rem;
+  position: relative;
+  height: var(--cw-hr-mark);
+  margin: 2.6rem 0;
+  border: 0;
+  opacity: 1;
+  color: inherit;
+  background:
+    linear-gradient(var(--cw-color-rule), var(--cw-color-rule)) left center / calc(50% - var(--cw-hr-mark) / 2 - var(--cw-hr-gap)) 1px no-repeat,
+    linear-gradient(var(--cw-color-rule), var(--cw-color-rule)) right center / calc(50% - var(--cw-hr-mark) / 2 - var(--cw-hr-gap)) 1px no-repeat;
+}
+main.content hr::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--cw-hr-mark);
+  height: var(--cw-hr-mark);
+  transform: translateX(-50%);
+  background: var(--cw-color-rule-cool);
+  -webkit-mask: var(--cw-icon-mas, radial-gradient(circle, currentColor 0 22%, transparent 24%)) center / contain no-repeat;
+  mask: var(--cw-icon-mas, radial-gradient(circle, currentColor 0 22%, transparent 24%)) center / contain no-repeat;
+}
+
+/* Callouts (v2, the owner's pick A of 2026-11-18): a pane — white, the
+   `rule` hairline all round, 16px, the rest shadow on screen. No tinted
+   title bar, no coloured side bar, no coloured fill. The first line is the
+   kind: one dot in the role colour and the mono uppercase label
+   (`.cw-callout-kind`, written by title-banner-layout.html from the
+   callout's type and the document's `lang`); then the title in Schibsted
+   600, then the body. A title that only repeats the kind ("## Nota" in a
+   note) is dropped, so the label is not said twice. The three appearances
+   share this geometry. */
 .callout {
   --cw-callout-accent: var(--cw-color-ink);
   background-color: var(--cw-color-pane) !important;
   border: var(--cw-pane-border) !important;
-  border-radius: var(--cw-radius-surface);
+  /* `pane` 12px on screen and paper alike (unified with the kit, 2026-11-18). */
+  border-radius: var(--cw-radius-pane);
   box-shadow: var(--cw-shadow-rest);
   overflow: hidden;
 }
@@ -882,8 +1151,7 @@ td code:not(.sourceCode) {
 .callout.callout-alert { --cw-callout-accent: var(--cw-color-callout-caution); }
 
 /* Quarto le pone `padding: .4em .7em` al card del estilo simple: el aire
-   lo ponen la cabecera y el cuerpo, igual que en el default; las dos
-   apariencias comparten geometria y se diferencian solo en la barra. */
+   lo ponen la cabecera y el cuerpo, igual que en el default. */
 .callout.callout-style-simple {
   padding: 0 !important;
 }
@@ -892,34 +1160,46 @@ td code:not(.sourceCode) {
   margin-bottom: 0 !important;
 }
 
-.callout > .callout-header {
+.callout > .callout-header,
+.callout.callout-style-default > .callout-header {
   /* Quarto le pone `opacity: 85%` / `75%` a la cabecera: ningun color
      saldria como se declaro. La marca no tiene colores al 85%. */
   opacity: 1 !important;
   background: transparent !important;
   border-bottom: 0 !important;
-  padding: 0.7rem 1.25rem 0.6rem !important;
-}
-
-/* The title bar groups inside the pane with the tint, closed by the
-   hairline: never a grey fill. Only in the default style. */
-.callout.callout-style-default > .callout-header {
-  background: var(--cw-color-tint) !important;
-  border-bottom: var(--cw-pane-border) !important;
   border-radius: 0;
+  align-items: flex-start;
+  padding: 1rem 1.25rem 0 !important;
+}
+/* Closed, the header is the whole pane: it takes the body's foot air. */
+.callout > .callout-header.collapsed {
+  padding-bottom: 1rem !important;
 }
 .callout .callout-title-container {
+  display: block;
+  font-family: var(--cw-font-display);
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-transform: none;
+  color: var(--cw-color-fg);
+}
+/* The kind: the role colour as one 8px dot, then the mono label. */
+.callout .cw-callout-kind {
   display: flex;
   align-items: center;
+  margin-bottom: 0.55rem;
   font-family: var(--cw-font-mono);
   font-size: var(--cw-text-caption);
   font-weight: 500;
   letter-spacing: 0.14em;
+  line-height: 1.2;
   text-transform: uppercase;
-  color: var(--cw-color-ink);
+  color: var(--cw-color-body-fg);
 }
-/* The role colour: one dot, 8px, before the label. */
-.callout .callout-title-container::before {
+.callout .cw-callout-kind::before,
+.callout .callout-title-container:not(:has(.cw-callout-kind))::before {
   content: "";
   display: inline-block;
   flex: none;
@@ -928,6 +1208,16 @@ td code:not(.sourceCode) {
   margin: 0 10px 0 1px;
   border-radius: var(--cw-radius-pill);
   background: var(--cw-callout-accent);
+}
+/* Without the script (the web book) the dot leads the title itself. */
+.callout .callout-title-container:not(:has(.cw-callout-kind))::before {
+  vertical-align: 0.12em;
+}
+.callout .callout-title-container.cw-callout-title-dup .cw-callout-kind {
+  margin-bottom: 0;
+}
+.callout .cw-callout-title-dup .cw-callout-title {
+  display: none;
 }
 .callout .callout-icon-container {
   display: none !important;
@@ -945,7 +1235,14 @@ td code:not(.sourceCode) {
   padding: 0 !important;
 }
 .callout .callout-body-container {
-  padding: 0.6rem 1.25rem 1.05rem !important;
+  padding: 0.5rem 1.25rem 1.05rem !important;
+}
+/* Untitled: the kind opens the body. */
+.callout:not(.callout-titled) .callout-body-container {
+  padding-top: 1rem !important;
+}
+.callout .callout-body-container > :last-child {
+  margin-bottom: 0;
 }
 /* El parrafo tambien en `body-fg`: sin esta regla Bootstrap le pone el
    color de cuerpo del tema y el texto del callout salia en `fg`. */
@@ -1062,14 +1359,14 @@ main.content .chanwe-pill {
   white-space: nowrap;
 }
 
-/* Label = the banner eyebrow (22pt rule + mono caps, brand orange), not a pill:
+/* Label = the eyebrow (an orange dot + mono caps in slate), not a pill:
    the values are the content of the row, the label should not out-shout them. */
 main.content .chanwe-pill-label {
   padding: 0;
   margin-right: 0.3rem;
   border: 0;
   background: transparent;
-  color: var(--cw-color-primary);
+  color: var(--cw-color-fg-muted);
   font-family: var(--cw-font-mono);
   font-size: 0.6rem;
   font-weight: 500;
@@ -1077,12 +1374,27 @@ main.content .chanwe-pill-label {
   text-transform: uppercase;
 }
 
+/* `chanwe: eyebrow-style: rule` (opt-in for documents): the orange rule and
+   the orange label, the eyebrow of before. */
+:root[data-cw-eyebrows="rule"] .quarto-title-banner .chanwe-cover-eyebrow,
+:root[data-cw-eyebrows="rule"] main.content .chanwe-pill-label {
+  color: var(--cw-color-primary) !important;
+}
+:root[data-cw-eyebrows="rule"] .quarto-title-banner .chanwe-cover-eyebrow::before,
+:root[data-cw-eyebrows="rule"] main.content .chanwe-pill-label::before {
+  width: 22pt !important;
+  height: 0.75pt !important;
+  border-radius: 0 !important;
+}
+
+/* The eyebrow, unified with the kit (2026-11-18): an orange dot, no rule. */
 main.content .chanwe-pill-label::before {
   content: "";
   display: inline-block;
   flex: none;
-  width: 22pt;
-  height: 0.75pt;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
   margin-right: 0.45rem;
   background: var(--cw-color-primary);
 }
@@ -1120,38 +1432,61 @@ main.content dl {
   margin-bottom: 1.3rem;
 }
 
-/* Listas de tareas. La casilla es el mismo dibujo que `_task-box()`
-   en `chanwe-report/chanwe-lists.typ`, el componente compartido: a
-   canto vivo, del cuerpo de una versal chica, con el filete en
-   bermellon; vacia para lo pendiente y llena con la tilde blanca
-   para lo hecho. Antes salia la casilla nativa del sistema, que en
-   cada navegador se pinta de su propio azul.
+/* Listas de tareas (v2, 2026-11-18). Two styles, chosen document-wide
+   with `chanwe: task-style:` (an attribute on <html>, from
+   filters/document-options.lua):
 
-   La tilde va como SVG embebido porque un `background-image` no
-   puede leer una custom property. El `%23FFFFFF` de adentro es el
-   unico color escrito a mano en el bloque: es `pure-white`, que por
-   definicion no puede cambiar de valor.
+   - `round` (default): pending is a circle drawn with the control
+     hairline (`rule-cool`); done is an orange disc with a white tick.
+   - `square`: a soft square in an obsidian hairline, filled obsidian when
+     done, the same white tick.
 
-   El selector es descendiente y no `> li > input`: Pandoc envuelve
-   cada casilla en un `<label>`, asi que el input es nieto del `li`,
-   no hijo. */
+   La tilde va como SVG embebido porque un `background-image` no puede
+   leer una custom property. El `%23FFFFFF` de adentro es el unico color
+   escrito a mano en el bloque: es `pure-white`, que por definicion no
+   puede cambiar de valor.
+
+   El selector es descendiente y no `> li > input`: Pandoc envuelve cada
+   casilla en un `<label>`, asi que el input es nieto del `li`. */
 main.content ul.task-list input[type="checkbox"] {
+  --cw-task-size: 1.08em;
   appearance: none;
   -webkit-appearance: none;
-  width: 0.72em;
-  height: 0.72em;
-  margin: 0 0.72em 0.16em -1.05em;
-  border: 1px solid var(--cw-color-primary);
-  border-radius: 0;
+  flex: none;
+  width: var(--cw-task-size);
+  height: var(--cw-task-size);
+  margin: 0 0.62em 0.2em -1.55em;
+  /* Square by default (unified with the kit, 2026-11-18): a hairline
+     square, filled obsidian with a white tick when done. */
+  border: 1.5px solid var(--cw-color-fg-muted);
+  border-radius: 0.24em;
   background: transparent;
   vertical-align: middle;
 }
 
 main.content ul.task-list input[type="checkbox"]:checked {
-  background-color: var(--cw-color-primary);
-  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7.2 7.2'><path d='M1.6 3.7 L3 5.2 L5.7 2' fill='none' stroke='%23FFFFFF' stroke-width='.9' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  border-color: var(--cw-color-ink);
+  background-color: var(--cw-color-ink);
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4.6 8.3 L7 10.6 L11.4 5.8' fill='none' stroke='%23FFFFFF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   background-size: 100% 100%;
   background-repeat: no-repeat;
+}
+/* A done item is struck through in `fg-subtle`. */
+main.content ul.task-list li:has(input[type="checkbox"]:checked) {
+  color: var(--cw-color-fg-subtle);
+  text-decoration: line-through;
+  text-decoration-color: var(--cw-color-fg-subtle);
+}
+
+/* `chanwe: task-style: round`: a circle in the control hairline, an orange
+   disc when done. */
+:root[data-cw-tasks="round"] main.content ul.task-list input[type="checkbox"] {
+  border-color: var(--cw-color-rule-cool);
+  border-radius: var(--cw-radius-pill);
+}
+:root[data-cw-tasks="round"] main.content ul.task-list input[type="checkbox"]:checked {
+  border-color: var(--cw-color-primary);
+  background-color: var(--cw-color-primary);
 }
 
 /* Listas de definicion. El termino lleva un filete corto debajo —corto
@@ -1246,19 +1581,18 @@ main.content h2.chanwe-area-heading {
   overflow: hidden;
 }
 
-/* El numeral va en la italica de Instrument Serif, como el numeral de
-   la agenda del deck. La familia trae UN solo peso —400—, asi que el
-   700 con que venia no se podia sostener: un peso mayor se resolvia
-   igual en Regular. */
+/* The band's numeral (v2, 2026-11-18): Schibsted Grotesk 600 in orange,
+   the heading's own size, lining figures. It was Instrument Serif italic
+   at 1.68em. */
 main.content h2.chanwe-area-heading .header-section-number {
   color: var(--cw-color-primary) !important;
-  font-family: var(--cw-font-serif-display);
-  font-size: 1.68em;
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1;
+  font-family: var(--cw-font-display);
+  font-size: 1em;
+  font-style: normal;
+  font-weight: 600;
+  line-height: inherit;
   margin-right: 0.5rem;
-  vertical-align: 0;
+  vertical-align: baseline;
 }
 
 main.content h4,
@@ -1327,10 +1661,8 @@ main.content h6 .header-section-number {
   color: var(--cw-color-primary) !important;
   display: inline-block;
   margin-right: 0.34em;
-  /* Cormorant Garamond sets old-style figures by default: the 3, 4, 5, 7 and
-     9 hang below the baseline, so a section numeral sat lower than its title
-     and the chapter's "3" crossed the rule under the H1. Lining figures stand
-     on the baseline, like the Instrument Serif numerals of the report. */
+  /* Lining figures stand on the baseline (the old Cormorant numerals hung
+     below it); H5 and H6 keep their mono. */
   font-variant-numeric: lining-nums;
 }
 
@@ -1344,58 +1676,24 @@ main.content :is(h1, h2, h3, h4, h5, h6)[data-number*="."]:not(.chanwe-area-head
   color: var(--cw-color-fg-muted) !important;
 }
 
-main.content h1 .header-section-number {
-  font-family: var(--cw-font-serif);
-  /* 50% sobre los 2.1em originales. El `line-height` baja en la misma
-     proporcion (0.72 → 0.48) para que la caja de linea no cambie:
-     2.1 × 0.72 = 3.15 × 0.48. La numeral crece, el interlineado del
-     encabezado se queda donde estaba. */
-  font-size: 3.15em;
-  font-style: italic;
-  font-weight: 300;
-  line-height: 0.48;
-  /* Baseline-align so the title text sits at the bottom of the numeral,
-     matching the Typst H1 grid (bottom/baseline alignment). */
+/* Section numerals (v2, 2026-11-18): Schibsted Grotesk, the heading's own
+   size, tabular lining figures, standing on the baseline. The chapter's
+   numeral (H1, or any top-level one) is 600 in orange; the sub-levels
+   ("3.1", "3.1.2") are 500 in `fg-muted`, set by the `data-number` rule
+   above. Until 3.6 they were Cormorant Garamond italic, 1.12em to 3.15em. */
+main.content :is(h1, h2, h3, h4) .header-section-number {
+  font-family: var(--cw-font-display);
+  font-size: 1em;
+  font-style: normal;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
+  line-height: inherit;
   vertical-align: baseline;
 }
 
-/* Los cuatro primeros niveles llevan la numeral en la itálica
-   editorial —la misma Cormorant Garamond de los numerales del indice
-   del reporte—, no en la mono: la mono es para metadatos y rotulos,
-   no para un numero que encabeza. Cada nivel la pide un poco mas
-   chica en relacion a su propio cuerpo, asi que la escala baja de
-   2.1em a 1.12em y el salto entre niveles se nota dos veces: por el
-   tamaño del encabezado y por el de la numeral. */
-main.content h2 .header-section-number {
-  font-family: var(--cw-font-serif);
-  /* Tambien 50% mas, con el mismo canje de `line-height`:
-     1.62 × 0.72 = 2.43 × 0.48. */
-  font-size: 2.43em;
-  font-style: italic;
-  font-weight: 300;
-  line-height: 0.48;
-  letter-spacing: 0;
-  vertical-align: baseline;
-}
-
-main.content h3 .header-section-number {
-  font-family: var(--cw-font-serif);
-  font-size: 1.34em;
-  font-style: italic;
-  font-weight: 300;
-  line-height: 0.76;
-  letter-spacing: 0;
-  vertical-align: baseline;
-}
-
-main.content h4 .header-section-number {
-  font-family: var(--cw-font-serif);
-  font-size: 1.12em;
-  font-style: italic;
-  font-weight: 300;
-  line-height: 0.8;
-  letter-spacing: 0;
-  vertical-align: baseline;
+main.content :is(h1, h2, h3, h4)[data-number*="."]:not(.chanwe-area-heading) .header-section-number {
+  font-weight: 500;
 }
 
 main.content h5,
@@ -1622,6 +1920,49 @@ nav[role="doc-toc"] .nav-link.active {
   font-weight: 600;
 }
 
+/* toc-style: glass (Ale's pick, 2026-11-19): a stronger glass, a thin
+   reading-progress bar under the title, chapter numerals in slate with only the
+   current chapter's in orange, and «back to top» at the foot. The bar and the
+   link are added by title-banner-layout.html. */
+:root[data-cw-toc="glass"] nav[role="doc-toc"] {
+  background: #{rgba($brand-pane, 0.85)};
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+}
+:root[data-cw-toc="glass"] nav[role="doc-toc"] .header-section-number {
+  color: var(--cw-color-fg-muted) !important;
+}
+:root[data-cw-toc="glass"] nav[role="doc-toc"] > ul > li:has(.nav-link.active) > .nav-link .header-section-number {
+  color: var(--cw-color-primary) !important;
+}
+:root[data-cw-toc="glass"] nav[role="doc-toc"] .nav-link.active {
+  background: var(--cw-color-tint);
+}
+.chanwe-toc-progress {
+  height: 3px;
+  margin: 0 0.34rem 0.7rem;
+  border-radius: var(--cw-radius-pill);
+  background: var(--cw-color-rule);
+  overflow: hidden;
+}
+.chanwe-toc-progress > i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--cw-color-primary);
+  border-radius: inherit;
+}
+.chanwe-toc-top {
+  display: inline-block;
+  margin: 0.6rem 0.34rem 0;
+  font-size: 0.74rem;
+  color: var(--cw-color-fg-muted);
+  text-decoration: none;
+}
+.chanwe-toc-top:hover {
+  color: var(--cw-color-ink);
+}
+
 /* Code-copy button answers the press */
 .code-copy-button {
   transition: transform 100ms var(--cw-ease), opacity 120ms var(--cw-ease);
@@ -1668,6 +2009,64 @@ pre > code,
 pre.sourceCode > code,
 div.sourceCode pre > code {
   padding: 0 !important;
+}
+
+/* Source code (v2, the owner's pick of 2026-11-18): a dark panel on the
+   lighter obsidian (`ink-light`), the dense 12px corners, no hairline and
+   no shadow. The language rides on top as a mono label in `fg-subtle`
+   (`data-cw-lang`, set by title-banner-layout.html). Output blocks and
+   inline code stay on paper: the output is a pane, inline code the slate
+   pill. */
+div.sourceCode pre.sourceCode,
+pre.sourceCode {
+  background-color: var(--cw-color-ink-light) !important;
+  border: 0 !important;
+  border-radius: var(--cw-radius-pane) !important;
+  box-shadow: none;
+  color: var(--cw-color-rule-cool);
+  padding: 1.05rem 1.3rem 1.1rem !important;
+}
+pre.sourceCode[data-cw-lang]::before {
+  content: attr(data-cw-lang);
+  display: block;
+  margin-bottom: 0.7rem;
+  font-family: var(--cw-font-mono);
+  font-size: var(--cw-text-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--cw-color-fg-subtle);
+}
+/* The copy button sits on ink: its glyph in `rule-cool`, its plate gone. */
+div.sourceCode .code-copy-button {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--cw-color-rule-cool) !important;
+  opacity: 0.7;
+}
+div.sourceCode .code-copy-button > .bi::before {
+  filter: invert(1);
+}
+div.sourceCode .code-copy-button:hover {
+  opacity: 1;
+}
+div.sourceCode pre.sourceCode > code,
+div.sourceCode code span {
+  color: var(--cw-color-rule-cool);
+}
+/* A fenced block with no language is code too (cell output is not: it
+   stays a pane on paper). */
+main.content pre:not(.sourceCode):not(.cell-output pre) {
+  background-color: var(--cw-color-ink-light) !important;
+  border: 0 !important;
+  border-radius: var(--cw-radius-pane) !important;
+  box-shadow: none;
+  color: var(--cw-color-rule-cool);
+  padding: 1.05rem 1.3rem 1.1rem !important;
+}
+main.content pre:not(.sourceCode):not(.cell-output pre) > code {
+  color: var(--cw-color-rule-cool);
 }
 
 /* Code-fold ("Code" toggle): unstyled by Quarto/the browser by default —
@@ -1804,28 +2203,104 @@ code span.al {
 }
 
 
+
+/* On the obsidian panel (2026-11-18) the light palette does not read, so
+   the same roles take the series hues and the slates of ink, all existing
+   tokens: keywords `primary`, strings `chart-green`, numbers and constants
+   `chart-purple`, types `chart-blue`, operators and attributes
+   `chart-teal`, function names `paper`, the rest `rule-cool`, comments
+   `ink-fg` in italic. The light palette above stays for highlighted
+   inline code (the slate pill). */
+div.sourceCode code span.kw,
+div.sourceCode code span.cf,
+div.sourceCode code span.ot,
+div.sourceCode code span.im,
+div.sourceCode code span.pp {
+  color: var(--cw-color-primary);
+}
+div.sourceCode code span.st,
+div.sourceCode code span.ss,
+div.sourceCode code span.ch,
+div.sourceCode code span.vs {
+  color: var(--cw-color-chart-green);
+}
+div.sourceCode code span.dv,
+div.sourceCode code span.bn,
+div.sourceCode code span.fl,
+div.sourceCode code span.cn {
+  color: var(--cw-color-chart-purple);
+}
+div.sourceCode code span.op,
+div.sourceCode code span.sc,
+div.sourceCode code span.at {
+  color: var(--cw-color-chart-teal);
+}
+div.sourceCode code span.fu {
+  color: var(--cw-color-paper);
+}
+div.sourceCode code span.dt,
+div.sourceCode code span.bu {
+  color: var(--cw-color-chart-blue);
+}
+div.sourceCode code span.va {
+  color: var(--cw-color-rule-cool);
+}
+div.sourceCode code span.co,
+div.sourceCode code span.cv,
+div.sourceCode code span.an,
+div.sourceCode code span.do,
+div.sourceCode code span.in,
+div.sourceCode code span.wa {
+  color: var(--cw-color-ink-fg);
+  font-style: italic;
+}
+div.sourceCode code span.er,
+div.sourceCode code span.al {
+  color: var(--cw-color-chart-red);
+}
+
+/* Terminal (unified with the kit, 2026-11-18): the code block labelled
+   «Terminal» (title-banner-layout.html), the prompt orange, the command in
+   `rule-cool`, the output in `fg-subtle`. */
+div.sourceCode pre.cw-terminal code span.cw-command,
+div.sourceCode pre.cw-terminal code span.cw-command span { color: var(--cw-color-rule-cool); }
+div.sourceCode pre.cw-terminal code span.cw-output,
+div.sourceCode pre.cw-terminal code span.cw-output span { color: var(--cw-color-fg-subtle); }
+div.sourceCode pre.cw-terminal code span.cw-prompt { color: var(--cw-color-primary); }
+
+/* Line numbers (`code-line-numbers`) on ink. */
+div.sourceCode pre.numberSource code > span > a:first-child::before {
+  color: var(--cw-color-ink-fg);
+}
+
 /* Tables (v2): a pane — white, the hairline all round, the dense 12px
    radius, the rest shadow — with the header row on the slate tint and
    hairline rows. Mono caps column labels and tabular figures stay: the
    chanwe_gt() / chanwe_kbl() grammar, so markdown, gt and Typst tables
    read as one. */
+/* Unified with the kit (2026-11-18): tables are `open` by default (no
+   pane, no fill, the header a mono label in `fg-subtle`, hairlines between
+   rows); `chanwe: table-style: pane` keeps the framed pane below. Numbers
+   follow the column's markdown alignment (`---:` for right). */
 table {
   border-collapse: separate;
   border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+:root[data-cw-tables="pane"] table {
   overflow: hidden;
   border: var(--cw-pane-border);
   border-radius: var(--cw-radius-pane);
   background: var(--cw-color-pane);
   box-shadow: var(--cw-shadow-rest);
-  font-variant-numeric: tabular-nums;
 }
 
 /* `main.content` prefix: Bootstrap's `.table > :not(caption) > * > *` (0,1,1)
    otherwise outranks `table thead th` for colour and padding. */
 main.content table thead th,
 table thead th {
-  background: var(--cw-color-tint) !important;
-  color: var(--cw-color-fg-muted);
+  background: transparent !important;
+  color: var(--cw-color-fg-subtle);
   border-top: 0 !important;
   border-bottom: var(--cw-pane-border) !important;
   font-family: var(--cw-font-mono);
@@ -1847,6 +2322,11 @@ table tbody td {
 main.content table tbody tr:last-child td,
 table tbody tr:last-child td {
   border-bottom: 0;
+}
+:root[data-cw-tables="pane"] main.content table thead th,
+:root[data-cw-tables="pane"] table thead th {
+  background: var(--cw-color-tint) !important;
+  color: var(--cw-color-fg-muted);
 }
 
 /* Priority badges (.chanwe-priority-must / -should / -could / -future):
@@ -1904,19 +2384,23 @@ table tbody tr:nth-child(even) {
 /* `main.content` adelante: Pandoc emite `<blockquote class="blockquote">`
    y Bootstrap le pone `.blockquote{font-size:1.0546875rem}`, que gana
    contra una `blockquote` pelada. */
+/* The pull quote, unified with the kit (2026-11-18): display type
+   (Schibsted 600, no serif) on a pane with the `pane` radius; the
+   attribution an orange dot and a mono label. */
 main.content blockquote {
   margin: 1.6rem 0;
   border: var(--cw-pane-border);
-  border-radius: var(--cw-radius-surface);
+  border-radius: var(--cw-radius-pane);
   background: var(--cw-color-pane);
   box-shadow: var(--cw-shadow-rest);
   padding: 1.35rem 1.6rem;
-  color: var(--cw-color-fg-muted);
-  font-family: var(--cw-font-serif);
-  font-size: 1.75rem;
-  font-style: italic;
-  font-weight: 300;
-  line-height: 1.34;
+  color: var(--cw-color-fg);
+  font-family: var(--cw-font-display);
+  font-size: 1.3rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
 }
 
 /* Adentro del panel el aire de parrafo baja a medio cuerpo: el aire
@@ -1943,10 +2427,24 @@ blockquote > p + p {
    dibujaba 6; a 1.75rem llega a 10, un cuarto por encima del cuerpo,
    que es como tiene que leerse un aparte. */
 blockquote .attribution {
-  display: block;
-  margin-top: 1.5mm;
-  font-size: 0.6em;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.7rem;
+  font-family: var(--cw-font-mono);
+  font-size: var(--cw-text-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--cw-color-fg-muted);
+}
+blockquote .attribution::before {
+  content: "";
+  flex: none;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--cw-color-primary);
 }
 
 /* Great Quote (v2): the obsidian band — 24px, floating with a margin
@@ -2471,20 +2969,16 @@ main.content .chanwe-figure-alt-footer-right {
 /* Topic tab at the bottom of the right column, matching the banner
    masthead tab. */
 .chanwe-footer-topic {
+  /* v2: the topic is one more mono contact line, not an orange pill. */
+  color: var(--cw-color-rule-cool);
+}
+.chanwe-footer-qr {
+  display: block;
+  width: 96px;
+  height: 96px;
   margin-top: 1rem;
-  background: var(--cw-color-primary);
-  /* Blanco puro sobre bermellon: esta permitido. El que esta vedado
-     es el blanco puro sobre obsidiana, que se reserva para el papel
-     de la tarjeta del QR. */
-  color: var(--cw-color-pure-white);
-  font-family: var(--cw-font-mono);
-  font-size: 0.6rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  line-height: 1.2;
-  padding: 0.3rem 0.75rem;
-  border-radius: var(--cw-radius-pill);
+  border-radius: var(--cw-radius-row);
+  background: var(--cw-qr-paper) center / contain no-repeat;
 }
 
 .chanwe-footer-brand {
@@ -2727,6 +3221,18 @@ main.content .chanwe-figure-alt-footer-right {
 /* The real wordmark with the photograph inside it: a generated vector asset. */
 .giant-word { margin: 3rem 0 2rem; text-align: center; }
 .cw-giant__word { width: 100%; aspect-ratio: 1656 / 340; background: var(--cw-art-wordmark, none) center / contain no-repeat; }
+/* `variant="plain"` (2026-11-18): the obsidian wordmark alone at full width,
+   on a very faint dot field: no photograph, no Aspa, no orange dot. */
+.giant-word.cw-giant--plain {
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: var(--cw-radius-band);
+  background: radial-gradient(circle at center, #{rgba($brand-ink-fg, 0.16)} 0.7px, transparent 0.85px) 0 0 / 14.4px 14.4px;
+}
+.cw-giant--plain .cw-giant__word {
+  aspect-ratio: 1710 / 365;
+  background: var(--cw-wordmark-ink, none) center / contain no-repeat;
+}
+.cw-giant--plain .cw-proof__label { margin-top: 1.5rem; }
 
 @media (max-width: 640px) {
   .cw-statement, .proof-card { grid-template-columns: 1fr; }

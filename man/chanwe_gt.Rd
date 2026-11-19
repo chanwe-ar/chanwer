@@ -26,7 +26,7 @@ chanwe_gt(
 
 \item{subtitle}{Subtitle line rendered below the title.}
 
-\item{eyebrow}{Small mono-caps label with an orange rule prefix, rendered
+\item{eyebrow}{Small mono-caps label in slate after an orange dot, rendered
 above the title.}
 
 \item{caption}{Source note at the bottom, a mono label (or the orange
@@ -61,7 +61,7 @@ A \code{gt_tbl} object.
 \description{
 The HTML counterpart of \code{\link[=chanwe_kbl]{chanwe_kbl()}}: a \code{gt} table as a v2 pane
 (16px corners, a hairline border, no shadow) with the Chanwe header
-grammar -- mono-caps eyebrow with an orange rule prefix, Schibsted
+grammar -- eyebrow (an orange dot and a slate mono label), Schibsted
 Grotesk title, Satoshi subtitle and body text, JetBrains Mono column
 labels on the tint header, JetBrains Mono tabular figures right-aligned,
 hairline rows (the tint on hover, matching \code{\link[=chanwe_reactable]{chanwe_reactable()}}, no zebra

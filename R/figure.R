@@ -14,7 +14,8 @@
 }
 .cwf_fonts <- function() {
   list(DISP = "Schibsted Grotesk SemiBold", MONO = "JetBrains Mono", SANS = "Satoshi", LIGHT = "Satoshi Light",
-       SERIF = "Instrument Serif", ITAL = "Cormorant Garamond")
+       # Figures are Schibsted (chanwe-brand, 2026-11-18): the numeral leaves Instrument Serif.
+       SERIF = "Schibsted Grotesk SemiBold", ITAL = "Cormorant Garamond")
 }
 # Compact dimensions in pt, for a figure drawn about 255pt wide and shown at
 # full text width (the size the options document was judged at). `scale`
@@ -71,7 +72,7 @@
   if (is.null(kpi)) return(NULL)
   k <- if (is.list(kpi)) kpi else .cw_parse_kpi(kpi)
   if (is.null(k)) return(NULL)
-  k$unit_line <- paste(Filter(nzchar, c(k$unit, k$date)), collapse = " · ")
+  k$unit_line <- paste(Filter(nzchar, c(k$unit, k$date)), collapse = " \u00b7 ")
   k
 }
 .cwf_change_col <- function(m, C) {
@@ -79,7 +80,7 @@
   if (v > 0) C$GREEN else if (v < 0) C$RED else C$NEUTRAL
 }
 .cwf_change_lbl <- function(m) {
-  arrow <- if (m$dir > 0) "↑ " else if (m$dir < 0) "↓ " else "= "
+  arrow <- if (m$dir > 0) "\u2191 " else if (m$dir < 0) "\u2193 " else "= "
   paste(m$label, paste0(arrow, m$value))
 }
 .cwf_pills_w <- function(k, d) {
@@ -128,7 +129,8 @@
   kind <- s$header; dark <- kind == "dark"; bare <- !dark && s$header_fill == "none"
   x0 <- pad; w <- W - 2 * pad
   ip <- if (bare) 0 else d$ip
-  tcol <- if (dark) C$COOL else C$INK; scol <- if (dark) C$SU else C$MU
+  # Text on obsidian is white (chanwe-brand 3.8.0).
+  tcol <- if (dark) C$WHITE else C$INK; scol <- if (dark) C$COOL else C$MU
   line_t <- d$title * 1.14; line_s <- d$sub * 1.45; slot <- d$eye + 4.6
   legend <- s$legend == "header" && length(s$keys) > 0
   k <- s$kpi; kpi <- !is.null(k) && s$kpi_position == "pane"
@@ -188,7 +190,8 @@
   if (kind == "C" && !is.null(s$numeral)) .cwf_txt(s$numeral, x0 + ip - 1, top + left_h / 2 + 1, F$SERIF, d$numeral, C$P)
   y <- top
   if (has_eye) {
-    eyebrow_line(lx, y + slot / 2, if (dark) C$P else C$INK)
+    # The brand eyebrow: orange dot, slate label (rule-cool on obsidian).
+    eyebrow_line(lx, y + slot / 2, if (dark) C$COOL else C$MU)
     if (tag_inline && !is.null(s$tag)) .cwf_mono(s$tag, -(pad + ip), y + slot / 2, d$stamp, if (dark) C$SU else C$MU, c("right", "center"))
     y <- y + slot + 1.5
   }
@@ -201,7 +204,7 @@
     y <- top; prev <- NULL
     for (it in right) {
       if (!is.null(prev) && prev %in% c("eyebrow", "tag") && it$type %in% c("key", "keys", "pane")) y <- y + gap_group
-      if (it$type == "eyebrow") eyebrow_line(rx, y + it$h / 2, C$INK)
+      if (it$type == "eyebrow") eyebrow_line(rx, y + it$h / 2, if (dark) C$COOL else C$MU)
       if (it$type == "tag") .cwf_mono(s$tag, rx, y + it$h / 2, d$stamp, if (dark) C$SU else C$MU)
       if (it$type == "key") {
         .cwf_dot(rx + 1.6, y + it$h / 2, 1.6, s$keys[[it$key]])
@@ -345,7 +348,7 @@
     .cwf_txt(s$numeral, pad - 1, y + 11, F$SERIF, 28, C$P)
     x <- pad + .cwf_tw(s$numeral, F$SERIF, 28) + 8
   }
-  if (!is.null(s$eyebrow)) { .cwf_dot(x + 1.3, y + 2, 1.3, C$P); .cwf_mono(s$eyebrow, x + 5.5, y + 2, d$eye, C$INK) }
+  if (!is.null(s$eyebrow)) { .cwf_dot(x + 1.3, y + 2, 1.3, C$P); .cwf_mono(s$eyebrow, x + 5.5, y + 2, d$eye, C$MU) }
   if (!is.null(s$tag)) .cwf_mono(s$tag, -pad, y + 2, d$stamp, C$MU, c("right", "center"))
   yy <- y + 9
   for (l in .cwf_wrap(s$title, F$DISP, 8.8, W - x - pad)) { .cwf_txt(l, x, yy + 5, F$DISP, 8.8, C$INK); yy <- yy + 10 }
@@ -403,7 +406,7 @@
 #'   (`"Sector externo · Reservas"`).
 #' @param tag The section or series, at the right of the header
 #'   (`"Monitor macro · 3.2"`). Not the ID: that goes to `id`.
-#' @param numeral The figure number in Instrument Serif, for `header = "C"`
+#' @param numeral The figure number in Schibsted Grotesk, for `header = "C"`
 #'   and the editorial style (`"07"`).
 #' @param kpi A [chanwe_kpi()] string.
 #' @param kpi_position `"pane"` (in the header's right column, or a row under

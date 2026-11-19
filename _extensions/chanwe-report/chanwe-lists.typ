@@ -8,19 +8,27 @@
 // glifos ☐ y ☒ dentro de una lista común y cada ítem salía con dos marcas.
 // =============================================================
 
-// La casilla, a canto vivo, del cuerpo de una versal chica: vacía para lo
-// pendiente, llena con la tilde blanca para lo hecho.
-#let _task-box(done) = box(
-  width: 7.2pt, height: 7.2pt, radius: 0pt,
-  stroke: 0.7pt + _t.primary,
-  fill: if done { _t.primary } else { none },
-  if done {
-    place(top + left, line(start: (1.6pt, 3.7pt), end: (3.0pt, 5.2pt),
-      stroke: (paint: _t.white, thickness: 0.9pt, cap: "round")))
-    place(top + left, line(start: (3.0pt, 5.2pt), end: (5.7pt, 2.0pt),
-      stroke: (paint: _t.white, thickness: 0.9pt, cap: "round")))
-  },
-)
+// The box is the bullet. `square` (the default since the kit and the formats
+// were unified, 2026-11-18): a hairline square, filled obsidian with a white
+// tick when done, and the done item struck through in `fg-subtle`. `round`:
+// a circle in the control hairline, an orange disc when done.
+// The document picks with `chanwe: task-style:` (cw-style, chanwe-v2.typ).
+#let _task-tick = {
+  place(top + left, line(start: (1.6pt, 3.7pt), end: (3.0pt, 5.2pt),
+    stroke: (paint: _t.white, thickness: 0.9pt, cap: "round")))
+  place(top + left, line(start: (3.0pt, 5.2pt), end: (5.7pt, 2.0pt),
+    stroke: (paint: _t.white, thickness: 0.9pt, cap: "round")))
+}
+#let _task-box(done) = context {
+  let round = cw-style("task-style", "square") == "round"
+  box(
+    width: 7.2pt, height: 7.2pt,
+    radius: if round { 3.6pt } else { 1.8pt },
+    stroke: if done { none } else if round { 0.7pt + _t.rule-cool } else { 0.7pt + _t.fg-muted },
+    fill: if done { if round { _t.primary } else { _t.ink } } else { none },
+    if done { _task-tick },
+  )
+}
 
 // `items`: tupla de `(hecho, cuerpo)`. La casilla ocupa la columna de la
 // viñeta y el cuerpo cuelga a su derecha; con `align: top` la casilla se
@@ -30,5 +38,5 @@
   column-gutter: gutter,
   row-gutter: spacing,
   align: (top, top),
-  ..items.map(((done, body)) => (_task-box(done), body)).flatten(),
+  ..items.map(((done, body)) => (_task-box(done), if done { text(fill: _t.fg-subtle, strike(stroke: 0.5pt + _t.fg-subtle, body)) } else { body })).flatten(),
 ))

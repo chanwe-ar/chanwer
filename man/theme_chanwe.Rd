@@ -11,7 +11,7 @@ theme_chanwe(
   legend_position = "bottom",
   bg_color = "paper",
   plot_padding = 14,
-  eyebrow_style = c("band", "rule"),
+  eyebrow_style = c("band", "dot", "rule"),
   pane = TRUE,
   plot_borders = "none",
   has_subtitle = TRUE,
@@ -44,8 +44,9 @@ the plot (title, caption, and panel included). Default \code{10}.
 Pass a single number, e.g. \code{plot_padding = 18}.}
 
 \item{eyebrow_style}{\code{"band"} (default): the eyebrow on an obsidian pill
-across the header, with \code{chanwe_title(stamp = )} at its right; \code{"rule"}:
-the short orange rule before the label.}
+across the header, with \code{chanwe_title(stamp = )} at its right; \code{"dot"}:
+the brand eyebrow, an orange dot and the label in slate, no band;
+\code{"rule"}: the short orange rule before the label.}
 
 \item{pane}{Draw the plot's surface as a pane (the \code{pane} radius, the
 \code{rule} hairline). Default \code{TRUE}.}

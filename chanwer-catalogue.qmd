@@ -1,0 +1,361 @@
+---
+title: "chanwer, the chart catalogue"
+subtitle: "Every chart builder in every style, and every other plot in the Chanwe repos checked against the brand grammar"
+author: "Chanwe"
+date: today
+lang: en
+brand: false
+format:
+  chanwe-report-typst:
+    number-sections: true
+execute:
+  echo: false
+  warning: false
+  message: false
+  dev: ragg_png
+  fig-format: png
+  fig-dpi: 220
+  fig-width: 7.08
+  fig-height: 3.9
+chanwe:
+  document: "CHW · CATALOGUE"
+  edition: "ROUND 8 / 2026"
+  chapter: "Data visualization"
+  section: "R Package"
+  topic: "chanwer catalogue"
+  cover: true
+  toc: true
+  toc-eyebrow: "Document map"
+  toc-title: "Contents"
+  agenda-style: timeline
+  publication-art: "_extensions/chanwe-report/assets/cover-snow-ridge.jpg"
+  publication-series: "CHANWE / DATAVIZ"
+  meta-rows:
+    - { label: "Package", value: "chanwer", sub: "chart builders" }
+    - { label: "Reviewed", value: "85 plots", sub: "six sources" }
+    - { label: "Rounds", value: "6 to 8", sub: "Ale's picks" }
+  back-cover: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(dev = "ragg_png")
+suppressPackageStartupMessages({ library(ggplot2); library(chanwer) })
+chanwe_load_fonts()
+set.seed(11)
+L <- function(eb, t, s, src) labs(title = chanwe_title(t, eyebrow = eb), subtitle = s, caption = paste("Fuente ·", src))
+prov <- c("Mendoza", "Córdoba", "Santa Fe", "Buenos Aires", "Tucumán", "Salta", "Neuquén", "Chubut", "Misiones", "Entre Ríos")
+months <- seq(as.Date("2021-01-01"), by = "month", length.out = 60)
+unemp <- data.frame(date = months, value = 9 + cumsum(rnorm(60, 0, .25)) + 2.5 * plogis((seq_along(months) - 38) / 2))
+cn <- c("Argentina", "Brasil", "Chile", "Uruguay", "Paraguay", "Perú", "Bolivia", "Colombia")
+act <- do.call(rbind, lapply(seq_along(cn), function(i) data.frame(date = months, country = cn[i],
+  value = 100 + cumsum(rnorm(60, c(.15, .35, .45, .3, .25, .4, .2, .3)[i], .9)))))
+act$country <- factor(act$country, cn)
+regions <- data.frame(region = c("Cuyo", "Pampeana", "NOA", "Patagonia", "NEA"), value = c(41.2, 33.8, 27.5, 22.9, 18.4))
+weeks <- expand.grid(week = 1:12, region = c("Norte", "Centro", "Oeste", "Sur")); weeks$delta <- round(rnorm(48, 0, 4.5), 1)
+mt <- mtcars; mt$tr <- factor(ifelse(mt$am == 1, "Manual", "Automática"), c("Manual", "Automática"))
+```
+
+# The grammar
+
+Every chart in this catalogue follows the CHANWE v2 chart grammar (the brand
+hub's `plot` tokens). These are the rules the last part of the document checks
+the other plots against.
+
+- **One orange signal.** The series, bar or group that matters is orange; the
+  rest sit on the slate ramp. The categorical eight only when nothing is the
+  point, in their fixed order.
+- **Quiet names.** Axis labels and series names are visible but never the
+  protagonist: slate mono, never the series colour (Ale, 2026-11-19).
+- **Grid and marks.** Horizontal hairlines only, no axis lines or ticks; lines
+  at 2px, rounded bars, points only where they mean something.
+- **Colour never alone.** Every series is named; status colours (green, red)
+  appear as dots, pills, pastel steps or signed values, never as a wash; orange
+  is never the background of an area (a fading gradient carries it lightly).
+- **The header.** An eyebrow for the topic, a title that states the claim, a
+  subtitle with the metric, the unit and the period; the source in the footer.
+- **Numbers in Spanish.** Decimal comma, a space before `%`, months as
+  `jun-25`.
+
+# The everyday charts
+
+The five builders of round 6. Each returns a ggplot with the Chanwe theme; add
+`labs()` for the title, the subtitle and the source. The first style is the
+default.
+
+## The header
+
+`theme_chanwe()` keeps today's band (its text now white); `eyebrow_style =
+"dot"` is the brand eyebrow without the band.
+
+```{r}
+#| label: hdr
+#| layout-ncol: 1
+d4 <- act[act$country %in% cn[1:4] & act$date >= as.Date("2024-01-01"), ]
+hl <- L("Actividad · Región", "Actividad económica", "Índice, 2016 = 100, mensual, ene-24 a dic-25", "INDEC")
+chanwe_lines(d4, "date", "value", "country") + hl
+chanwe_lines(d4, "date", "value", "country", theme = theme_chanwe(eyebrow_style = "dot")) + hl
+```
+
+## Bars
+
+`chanwe_bars(style = "labelled")` (default), `"ranking"` and `"lollipop"`.
+
+```{r}
+#| label: bars
+bl <- L("Ventas · Región", "Cuyo lidera las ventas", "USD millones, acumulado ene-dic 2025", "elaboración propia")
+chanwe_bars(regions, "region", "value") + bl
+chanwe_bars(regions, "region", "value", style = "ranking", reference = median(regions$value)) + bl
+chanwe_bars(regions, "region", "value", style = "lollipop") + bl
+```
+
+## Several series
+
+`chanwe_lines(style = "direct")` (default) and `"spaghetti"`.
+
+```{r}
+#| label: lines
+ll <- L("Actividad · Región", "Argentina crece por debajo de sus vecinos", "Índice, 2016 = 100, mensual, ene-21 a dic-25", "INDEC, bancos centrales")
+chanwe_lines(act[act$country %in% cn[1:4], ], "date", "value", "country") + ll
+chanwe_lines(act, "date", "value", "country", style = "spaghetti") + ll
+```
+
+## Area
+
+`chanwe_area()`: the line over a gradient that fades to the axis.
+
+```{r}
+#| label: area
+chanwe_area(unemp, "date", "value") + L("Empleo", "El desempleo sube desde 2024", "Personas desocupadas, millones, mensual, ene-21 a dic-25", "INDEC")
+```
+
+## Diverging heatmap
+
+`chanwe_heatmap()` (today's tiles) and `labels = TRUE`.
+
+```{r}
+#| label: heat
+hm <- L("Desvío · Plan", "Desvío semanal contra el plan", "Puntos porcentuales, semanas 1 a 12 de 2026", "elaboración propia")
+chanwe_heatmap(weeks, "week", "region", "delta") + hm
+chanwe_heatmap(weeks, "week", "region", "delta", labels = TRUE) + hm
+```
+
+## Distributions
+
+`chanwe_density(style = "gradient")` (default) and `"outline"`.
+
+```{r}
+#| label: dens
+dl <- L("Consumo", "Los manuales rinden más", "Densidad de millas por galón, 32 modelos, 1974", "Motor Trend, 1974")
+chanwe_density(mt, "mpg", "tr") + dl
+chanwe_density(mt, "mpg", "tr", style = "outline") + dl
+```
+
+# The catalogue
+
+The builders of rounds 7 and 8.
+
+## Dot plot
+
+```{r}
+#| label: dots
+dp <- data.frame(p = prov, v = round(runif(10, 18, 46), 1)); dp$lo <- dp$v - runif(10, 2, 6); dp$hi <- dp$v + runif(10, 2, 6)
+dpl <- L("Empleo · Provincias", "Mendoza, cuarta en informalidad", "Asalariados sin descuento jubilatorio, %, 3.er trimestre 2025", "EPH, INDEC")
+chanwe_dots(dp, "p", "v", focus = "Mendoza") + dpl
+chanwe_dots(dp, "p", "v", focus = "Mendoza", style = "range", lo = "lo", hi = "hi") + dpl
+```
+
+## Dumbbell and slope
+
+```{r}
+#| label: dumbbell-slope
+db <- data.frame(p = prov[1:8], a = round(runif(8, 20, 40), 1)); db$b <- db$a + round(rnorm(8, 3, 4), 1)
+chanwe_dumbbell(db, "p", "a", "b", labels = c("2024", "2025")) +
+  L("Pobreza · Provincias", "La pobreza cambió poco", "Personas pobres, %, 1.er semestre 2024 y 2025", "EPH, INDEC")
+sl <- data.frame(p = prov[1:7], a = round(runif(7, 10, 30), 1)); sl$b <- sl$a + round(rnorm(7, 1, 5), 1)
+chanwe_slope(sl, "p", "a", "b", labels = c("2020", "2025"), focus = "Mendoza") +
+  L("Exportaciones · Provincias", "Mendoza ganó terreno", "Participación en las exportaciones regionales, %, 2020 y 2025", "INDEC")
+```
+
+## Scatter
+
+```{r}
+#| label: scatter
+sc <- data.frame(p = c(prov, paste("Región", 1:14)), x = runif(24, 20, 60)); sc$y <- 8 + .45 * sc$x + rnorm(24, 0, 4); sc$pop <- runif(24, .3, 9)
+scl <- L("Productividad", "Más inversión, más productividad", "Inversión por ocupado (USD miles) y productividad (índice), 2025", "elaboración propia")
+ax <- labs(x = "Inversión por ocupado", y = "Productividad")
+chanwe_scatter(sc, "x", "y", "p", focus = "Mendoza", highlight = c("Córdoba", "Neuquén")) + ax + scl
+chanwe_scatter(sc, "x", "y", "p", focus = "Mendoza", style = "trend") + ax + scl
+chanwe_scatter(sc, "x", "y", "p", focus = "Mendoza", style = "bubble", size = "pop") + ax + scl
+```
+
+## Waterfall
+
+```{r}
+#| label: waterfall
+wf <- data.frame(k = c("2024", "Precios", "Volumen", "Mix", "Tipo de cambio", "Costos"), v = c(120, 18, 9, -4, -14, -7))
+wfl <- L("Resultado", "Los precios explican casi todo el aumento", "Resultado operativo, USD millones, 2024 a 2025", "estados contables")
+chanwe_waterfall(wf, "k", "v", end_label = "2025") + wfl
+chanwe_waterfall(wf, "k", "v", end_label = "2025", style = "totals") + wfl
+```
+
+## Composition over time
+
+```{r}
+#| label: stack
+st <- expand.grid(y = 2021:2025, s = c("Energía", "Agro", "Industria", "Servicios"))
+st$v <- c(18, 22, 25, 31, 38, 30, 29, 33, 31, 34, 22, 21, 20, 19, 18, 12, 13, 14, 16, 17)
+stl <- L("Exportaciones · Sectores", "La energía ya es la primera exportación", "Exportaciones de Mendoza por sector, USD millones", "INDEC")
+chanwe_stack(st, "y", "s", "v") + stl
+chanwe_stack(st, "y", "s", "v", style = "share") + stl + labs(subtitle = "Participación por sector, % del total")
+chanwe_stack(st, "y", "s", "v", style = "grouped", compare = c("2021", "2025")) + stl + labs(subtitle = "USD millones, 2021 y 2025")
+```
+
+## Histogram and spread
+
+```{r}
+#| label: hist-spread
+hv <- data.frame(v = rlnorm(900, 6.4, .45))
+hl2 <- L("Ingresos", "La mitad gana menos de 600 mil", "Ingreso mensual por ocupado, miles de pesos, 3.er trimestre 2025", "EPH, INDEC")
+chanwe_histogram(hv, "v") + hl2
+chanwe_histogram(hv, "v", style = "split", note = "← La mitad que gana menos") + hl2
+bx <- data.frame(r = rep(c("Cuyo", "Pampeana", "NOA", "Patagonia", "NEA"), each = 60))
+bx$v <- rlnorm(300, rep(c(6.3, 6.5, 6.1, 6.7, 6.0), each = 60), .35)
+bxl <- L("Ingresos · Regiones", "Patagonia paga más y más parejo", "Ingreso mensual por ocupado, miles de pesos, 3.er trimestre 2025", "EPH, INDEC")
+chanwe_spread(bx, "r", "v", focus = "Cuyo") + bxl
+chanwe_spread(bx, "r", "v", focus = "Cuyo", style = "violin") + bxl
+```
+
+## Ranking, multiples and progress
+
+```{r}
+#| label: bump-multiples-bullet
+bp <- expand.grid(y = 2019:2025, p = prov[1:7])
+bp$score <- rnorm(nrow(bp), 0, .35) + rep(seq(1.2, -1.2, length.out = 7), each = 7) + as.numeric(bp$p == "Mendoza") * ((bp$y - 2019) * .55 - 1.6)
+bp <- do.call(rbind, lapply(split(bp, bp$y), function(g) transform(g, rk = rank(-score))))
+chanwe_bump(bp, "y", "p", "rk", focus = "Mendoza") +
+  L("Competitividad", "Mendoza subió al primer puesto", "Ranking provincial de competitividad, 2019 a 2025", "elaboración propia")
+mm <- expand.grid(t = 1:36, p = prov[1:6]); mm$v <- ave(rnorm(nrow(mm), .3, 1), mm$p, FUN = cumsum)
+chanwe_multiples(mm, "t", "v", "p") + theme(axis.text.x = element_blank()) +
+  L("Empleo · Provincias", "Seis provincias, seis caminos", "Empleo registrado, variación acumulada en puntos, ene-23 a dic-25", "SIPA")
+bt <- data.frame(k = c("Ventas", "Margen", "Clientes nuevos", "Retención", "NPS"), a = c(82, 64, 91, 77, 58), t = c(90, 70, 85, 80, 65))
+chanwe_bullet(bt, "k", "a", "t") +
+  L("Metas · 2025", "Cuatro de cinco metas, todavía lejos", "Avance contra la meta anual, %, a noviembre de 2025", "tablero de gestión")
+```
+
+## Part of a whole
+
+`chanwe_whole(style = "bar")` (default), `"donut"`, `"waffle"` and `"treemap"`.
+
+```{r}
+#| label: whole
+pw <- data.frame(k = c("Energía", "Agro", "Industria", "Servicios", "Turismo", "Otros"), v = c(34, 28, 16, 10, 7, 5))
+pwl <- L("Exportaciones · Sectores", "La energía, un tercio de lo exportado", "Exportaciones de Mendoza por sector, %, 2025", "INDEC")
+for (s in c("bar", "donut", "waffle", "treemap")) print(chanwe_whole(pw, "k", "v", style = s) + pwl)
+```
+
+## Forecast
+
+`chanwe_forecast(style = "fan")` (default) and `"zone"`, its range a shaded
+band.
+
+```{r}
+#| label: forecast
+mo <- seq(as.Date("2023-01-01"), by = "month", length.out = 48)
+fv <- data.frame(d = mo, v = 2.6 + cumsum(c(rnorm(36, -.03, .22), rep(-.04, 12))), s = pmax(seq_len(48) - 36, 0) * .15)
+fl <- L("Inflación", "La inflación seguiría bajando en 2026", "Variación mensual del IPC, %, ene-23 a dic-26; proyección desde ene-26", "INDEC, proyección propia")
+chanwe_forecast(fv, "d", "v", from = mo[36], spread = "s") + fl
+chanwe_forecast(fv, "d", "v", from = mo[36], spread = "s", style = "zone") + fl
+```
+
+## Level and change
+
+`chanwe_level_change(style = "change")` (default), `"panels"` and `"strip"`;
+never a second axis.
+
+```{r}
+#| label: level-change
+cb <- data.frame(y = 2014:2025, v = c(700, 735, 690, 760, 820, 790, 640, 760, 880, 910, 870, 960))
+cl <- L("Producción", "2025, récord de la serie", "Producción, miles de toneladas, y su variación anual, 2014 a 2025", "elaboración propia")
+chanwe_level_change(cb, "y", "v") + cl
+chanwe_level_change(cb, "y", "v", style = "panels", level_name = "Miles de toneladas") + cl
+chanwe_level_change(cb, "y", "v", style = "strip") + cl
+```
+
+# Plots elsewhere, checked
+
+```{r}
+#| label: review-data
+ext <- list.files("catalogue/external", pattern = "\\.jpg$")
+src <- sub("--.*", "", ext)
+sources <- c(`chanwer-pdf` = "chanwer, the PDF showcase", `chanwer-inst` = "chanwer, inst/examples scripts",
+             `chanwer-readme` = "chanwer, README", `brand-html` = "chanwe-brand, HTML components starter",
+             `brand-demo` = "chanwe-brand, brand demo example", `brand-gtgg` = "chanwe-brand, gt + ggplot example")
+# One verdict per plot: (pattern, verdict, what is wrong, the builder that replaces it)
+rules <- list(
+  c("preview|display_color_palettes-0[1-4]|focus-palette", "Reference", "A palette swatch, not a chart.", "—"),
+  c("form-area|showcase-chunk-16|fig-area", "Fails", "Orange (and blue) as the background of an area.", "chanwe_area() / chanwe_stack()"),
+  c("form-density|showcase-chunk-13", "Fails", "Opaque or translucent fills cover each other; the overlap is hidden.", "chanwe_density()"),
+  c("showcase-chunk-09|showcase-chunk-10|complex-box", "Fails", "Boxes and violins filled with the categorical hues: colour as a wash.", "chanwe_spread()"),
+  c("showcase-chunk-11|simple-bar|cat-bars|ordinal|display_color_palettes-06", "Fails", "Bars in three or more saturated hues with no focus; no values.", "chanwe_bars() / chanwe_stack()"),
+  c("div-heat|display_color_palettes-08", "Complies", "Today's heatmap, kept as the default by Ale; labels now optional.", "chanwe_heatmap()"),
+  c("div-bars", "Partly", "Signed bars in green and red: allowed as signed values, but saturated and unlabelled.", "chanwe_bars() / chanwe_dots()"),
+  c("frame-card|frame-editorial|v2-focus|kpi-valence|display_core_components-02|fig-margen|fig-disp|fig-barras-h|fig-ancha", "Complies", "One orange signal, slate context.", "—"),
+  c("form-line|fig-linea|fig-tab", "Partly", "Focus right, but a legend or coloured names instead of quiet direct labels.", "chanwe_lines()"),
+  c("fig-barras", "Partly", "Focus and slate right, but grouped bars without values.", "chanwe_stack(style = \"grouped\")"),
+  c("seq-|form-errorbar|form-focus", "Partly", "Readable, but the colour encodes a third variable or the values are missing.", "chanwe_scatter() / chanwe_bars()"),
+  c(".", "Partly", "Three categorical hues where a focus would carry the claim; a descriptive title.", "chanwe_scatter() / chanwe_lines()")
+)
+verdict <- t(vapply(ext, function(f) { for (r in rules) if (grepl(r[1], f)) return(r[2:4]); c("Partly", "", "") }, character(3)))
+review <- data.frame(file = ext, source = src, verdict = verdict[, 1], issue = verdict[, 2], builder = verdict[, 3])
+```
+
+Every plot found outside the builders: `r nrow(review)` figures in six sources,
+rendered as their documents render them today, each checked against the
+grammar. *Complies* follows it; *Partly* is readable but misses a rule;
+*Fails* breaks one of the grammar's hard rules (an orange or categorical wash,
+hidden overlaps, hues with no focus); *Reference* is a palette swatch.
+
+```{r}
+#| label: review-summary
+tab <- as.data.frame.matrix(table(factor(sources[review$source], sources), factor(review$verdict, c("Complies", "Partly", "Fails", "Reference"))))
+tab <- data.frame(Source = rownames(tab), tab, row.names = NULL, check.names = FALSE)
+tab$Total <- rowSums(tab[, -1])
+chanwe_kbl(tab, title = "Verdicts by source", stub = "Source", density = "compact",
+           caption = "Fuente · this review, 85 figures rendered on 2026-11-19.")
+```
+
+```{r}
+#| label: review-figures
+#| results: asis
+for (s in names(sources)) {
+  r <- review[review$source == s, ]
+  if (!nrow(r)) next
+  cat("\n\n## ", sources[[s]], "\n\n", sep = "")
+  cat("::: {layout-ncol=2}\n\n")
+  for (i in seq_len(nrow(r))) {
+    cat(sprintf("![**%s.** %s%s](catalogue/external/%s){width=100%%}\n\n", r$verdict[i], r$issue[i],
+                if (r$builder[i] %in% c("", "—")) "" else paste0(" Use `", r$builder[i], "`."), r$file[i]))
+  }
+  cat(":::\n\n")
+}
+```
+
+# Findings
+
+- **The everyday chart forms in the showcases and the brand examples still
+  carry the pre-v2 look**: categorical hues where a focus would carry the
+  claim, solid orange and blue areas, overlapping density fills and
+  colour-filled boxes and violins. Each now has a builder that replaces it.
+- **The chanwe-brand examples** (the brand demo, the gt + ggplot example and the
+  HTML starter's charts) should be rewritten with the builders: they are the
+  pages people copy from.
+- **The README's second example does not run** (it uses a `sales` data frame it
+  never defines), so it is not copy-pasteable as `AGENTS.md` asks.
+- **Two scripts in `inst/examples` are developer diagnostics**
+  (`kpi_layout_map.R`, `reproduce_chanwe_outputs.R`) that draw nothing to keep;
+  `display_color_palettes.R` and `display_core_components.R` still run.
+- **What already complies**: the figure frame (`chanwe_figure()`, card and
+  editorial), the v2 focus charts, the KPI chart and the HTML starter's
+  single-series and ranking charts.

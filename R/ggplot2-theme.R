@@ -112,8 +112,9 @@ chanwe_seq_pal <- function(palette = "orange", reverse = FALSE) {
 #'   or one of `"paper"` (default), `"white"`, `"sunken"`, `"slate"`, or
 #'   `"transparent"`.
 #' @param eyebrow_style `"band"` (default): the eyebrow on an obsidian pill
-#'   across the header, with `chanwe_title(stamp = )` at its right; `"rule"`:
-#'   the short orange rule before the label.
+#'   across the header, with `chanwe_title(stamp = )` at its right; `"dot"`:
+#'   the brand eyebrow, an orange dot and the label in slate, no band;
+#'   `"rule"`: the short orange rule before the label.
 #' @param pane Draw the plot's surface as a pane (the `pane` radius, the
 #'   `rule` hairline). Default `TRUE`.
 #' @param plot_padding Uniform outer margin in pts applied to all four sides of
@@ -223,7 +224,7 @@ theme_chanwe <- function(
   legend_position = "bottom",
   bg_color = "paper",
   plot_padding = 14,
-  eyebrow_style = c("band", "rule"),
+  eyebrow_style = c("band", "dot", "rule"),
   pane = TRUE,
   plot_borders = "none",
   has_subtitle = TRUE,
@@ -305,7 +306,9 @@ theme_chanwe <- function(
     rule_colour = colors[["border-cool"]],
     top_pad = if (compact_title) 4 else 8,
     eyebrow_style = eyebrow_style,
-    band_text_colour = colors[["rule-cool"]],
+    # Text on obsidian is white (chanwe-brand, 2026-11-19).
+    band_text_colour = colors[["pure-white"]],
+    dot_label_colour = colors[["fg-muted"]],
     band_stamp_colour = colors[["fg-subtle"]]
   )
   if (!has_subtitle) {
@@ -479,7 +482,9 @@ theme_chanwe <- function(
 #'
 #' @param text Main title string. Rendered in Schibsted Grotesk SemiBold by [theme_chanwe()].
 #' @param eyebrow Optional short label above the title, e.g.
-#'   `"SECTION · PROFITABILITY"`. Displayed in orange mono caps.
+#'   `"SECTION · PROFITABILITY"`. Displayed as the theme's eyebrow (the band by
+#'   default; see `eyebrow_style` in [theme_chanwe()]).
+#' @param stamp Optional mono stamp on the eyebrow's line, right-aligned.
 #'
 #' @return A character string for `labs(title = ...)`.
 #' @export

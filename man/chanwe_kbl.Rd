@@ -20,8 +20,8 @@ chanwe_kbl(
   title_size = "13pt",
   eyebrow_size = "4pt",
   subtitle_size = "8pt",
-  body_size = "7pt",
-  header_size = "5.5pt",
+  body_size = "6.3pt",
+  header_size = "5pt",
   note_size = "5.5pt",
   col_label_top = 0,
   footer_top = 0,
@@ -92,11 +92,11 @@ pass \code{NULL} for the density-based default (\code{"19pt"} spacious /
 \item{subtitle_size}{Typst size string for the subtitle. Default \code{"8pt"};
 \code{NULL} for the density-based default (\code{"10pt"} / \code{"9pt"}).}
 
-\item{body_size}{Typst size string for data cell text. Default \code{"7pt"};
+\item{body_size}{Typst size string for data cell text. Default \code{"6.3pt"};
 \code{NULL} for the density-based default (\code{"10pt"} / \code{"7pt"}).}
 
 \item{header_size}{Typst size string for column label text. Default
-\code{"5.5pt"}; \code{NULL} for the density-based default
+\code{"5pt"}; \code{NULL} for the density-based default
 (\code{"8pt"} / \code{"7pt"}).}
 
 \item{note_size}{Typst size string for the footer note. Default

@@ -2,7 +2,7 @@
 #'
 #' The HTML counterpart of [chanwe_kbl()]: a `gt` table as a v2 pane
 #' (16px corners, a hairline border, no shadow) with the Chanwe header
-#' grammar -- mono-caps eyebrow with an orange rule prefix, Schibsted
+#' grammar -- eyebrow (an orange dot and a slate mono label), Schibsted
 #' Grotesk title, Satoshi subtitle and body text, JetBrains Mono column
 #' labels on the tint header, JetBrains Mono tabular figures right-aligned,
 #' hairline rows (the tint on hover, matching [chanwe_reactable()], no zebra
@@ -21,7 +21,7 @@
 #' @param data A data frame or tibble.
 #' @param title Table title (Schibsted Grotesk, 20px).
 #' @param subtitle Subtitle line rendered below the title.
-#' @param eyebrow Small mono-caps label with an orange rule prefix, rendered
+#' @param eyebrow Small mono-caps label in slate after an orange dot, rendered
 #'   above the title.
 #' @param caption Source note at the bottom, a mono label (or the orange
 #'   stamp, see `caption_style`).
@@ -171,12 +171,13 @@ chanwe_gt <- function(
       "  background:%11$s; }",
       "#%1$s .gt_table { margin:0 !important; }",
       "#%1$s .gt_heading { padding: 14px 16px 12px !important; }",
+      # The one eyebrow: an orange dot, then the label in slate mono
       "#%1$s .chanwe-eyebrow { display:block; font: 500 10px/1.2 %6$s;",
-      "  letter-spacing:.18em; text-transform:uppercase; color:%2$s;",
+      "  letter-spacing:.16em; text-transform:uppercase; color:%4$s;",
       "  margin-bottom:8px; }",
       "#%1$s .chanwe-eyebrow::before { content:''; display:inline-block;",
-      "  width:22px; height:1px; background:%2$s; vertical-align:middle;",
-      "  margin-right:8px; }",
+      "  width:6px; height:6px; border-radius:50%%; background:%2$s;",
+      "  vertical-align:middle; margin:-2px 8px 0 0; }",
       "#%1$s .chanwe-title { font: 600 20px/1.1 %7$s;",
       "  letter-spacing:-0.015em; color:%3$s; }",
       "#%1$s .gt_subtitle { font: 400 13px/1.45 %8$s !important;",
@@ -190,6 +191,11 @@ chanwe_gt <- function(
       # (for plain markdown tables) otherwise wins over column_labels.border
       # .bottom.* above and repaints this ink instead of the hairline
       "#%1$s thead th { border-bottom:1px solid %9$s !important; }",
+      # Spanners: the same mono label on the tint, a hairline under the label
+      "#%1$s .gt_column_spanner_outer { background:%5$s !important; }",
+      "#%1$s .gt_column_spanner { font: 500 10px/1.2 %6$s !important;",
+      "  letter-spacing:.12em; text-transform:uppercase; color:%4$s !important;",
+      "  border-bottom:1px solid %9$s !important; }",
       "#%1$s .gt_row { font-variant-numeric: tabular-nums; }",
       "#%1$s .gt_row.gt_right { font-family:%6$s; font-size:12px; }",
       "#%1$s .gt_stub { color:%3$s; font-weight:500; }",
@@ -206,12 +212,16 @@ chanwe_gt <- function(
       # .table-striped class (separate from gt's native row.striping option,
       # already off above); Bootstrap paints it with an inset box-shadow,
       # not background-color, so that's what has to be neutralised here.
-      "#%1$s tbody tr > td, #%1$s tbody tr > th",
+      # Cells gt::data_color() fills carry an inline background: keep it.
+      "#%1$s tbody tr > td:not([style*='background']), #%1$s tbody tr > th",
       "  { background:transparent !important; box-shadow:none !important;",
       "    transition: background-color 120ms ease-out; }",
-      "#%1$s tbody tr:hover > td, #%1$s tbody tr:hover > th",
+      "#%1$s tbody tr > td[style*='background'] { box-shadow:none !important; }",
+      "#%1$s tbody tr:hover > td:not([style*='background']), #%1$s tbody tr:hover > th",
       "  { background:%5$s !important; }",
       "#%1$s .gt_row, #%1$s .gt_stub { padding-left:16px; padding-right:16px; }",
+      "#%1$s .gt_group_heading { padding-left:16px !important; font-weight:500;",
+      "  color:%3$s; }",
       "@media (prefers-reduced-motion: reduce) {",
       "  #%1$s tbody tr > td, #%1$s tbody tr > th { transition: none; } }",
       sep = "\n"

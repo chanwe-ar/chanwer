@@ -13,8 +13,6 @@
 // del panel; dos celdas en la misma fila miden exactamente lo mismo.
 // =============================================================
 
-#let _ch-bar-w = 1.6pt
-
 // A card is a pane, so `white` is the default since 2026-11-05 (it was
 // `light`, the slate tint, which on a memo's first page —lede plus four
 // cards— read as a grey block); `light` is still there for grouping.
@@ -22,12 +20,11 @@
 // Divs del reporte. La barra usa el mismo vocabulario que el panel: `accent`
 // toma `primary`, `light` (slate) o `dark` (obsidiana), resuelto contra el
 // fondo para que siempre se vea.
-#let _ch-scheme(color) = if color == "dark" {
-  (bg: _t.ink, eyebrow: _t.fg-subtle, title: _t.rule-cool, body: _t.rule-cool,
+// `primary` is the dark card: orange is a signal (the bar, the dot), not a
+// fill (2026-11-18).
+#let _ch-scheme(color) = if color == "dark" or color == "primary" {
+  (bg: _t.ink, eyebrow: _t.fg-subtle, title: _t.white, body: _t.white,
    bar-primary: _t.primary, bar-light: _t.rule-cool, bar-dark: _t.rule-ink)
-} else if color == "primary" {
-  (bg: _t.primary, eyebrow: _t.white.transparentize(30%), title: _t.white, body: _t.white,
-   bar-primary: _t.white, bar-light: _t.white.transparentize(55%), bar-dark: _t.ink)
 } else if color == "white" {
   (bg: _t.white, eyebrow: _t.fg-muted, title: _t.ink, body: _t.fg-muted,
    bar-primary: _t.primary, bar-light: _t.rule-cool, bar-dark: _t.ink)

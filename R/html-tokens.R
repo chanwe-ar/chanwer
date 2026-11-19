@@ -163,10 +163,11 @@ chanwe_html_header_tag <- function(
             "font: 500 10px/1.2 %s; letter-spacing:.18em; ",
             "text-transform:uppercase; color:%s; margin-bottom:8px;"
           ),
-          .cw_font_mono, tk$accent
+          .cw_font_mono, tk$fg_muted
         ),
+        # The one eyebrow: an orange dot, then the label in slate mono
         tags$span(style = sprintf(
-          "display:inline-block; width:22px; height:1px; background:%s;",
+          "display:inline-block; width:6px; height:6px; border-radius:50%%; background:%s;",
           tk$accent
         )),
         eyebrow

@@ -35,8 +35,10 @@
   --chanwe-slate: #EBF0F6;            /* surface-slate */
   --chanwe-rule: #E2E8F0;             /* rule */
   --chanwe-white: #FFFFFF;            /* pure-white */
-  --chanwe-radius: 4px;
-  --chanwe-radius-sm: 4px;
+  --chanwe-radius: 16px;              /* radius.surface (v2) */
+  --chanwe-radius-sm: 12px;           /* radius.pane (v2) */
+  --chanwe-ink-light: #232A35;        /* ink-light */
+  --chanwe-fg-muted: #475569;         /* fg-muted */
   --chanwe-sans-font: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   --chanwe-display-font: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
   --chanwe-italic-font: "Cormorant Garamond", Georgia, serif;
@@ -107,9 +109,11 @@ pre,
 pre.sourceCode,
 div.sourceCode,
 .cell-output pre {
-  background: var(--chanwe-slate) !important;
-  border: 1px solid var(--chanwe-rule);
-  border-left: 4px solid var(--chanwe-primary);
+  /* v2: code is a dark pane (ink-light), no side bar (chanwe-brand 3.8.0). */
+  background: var(--chanwe-ink-light) !important;
+  color: #F8FAFC;                     /* paper */
+  border: 0;
+  border-radius: var(--chanwe-radius-sm);
   padding: 0.9rem 1rem;
 }
 
@@ -179,79 +183,48 @@ figcaption,
   font-size: 0.9em;
 }
 
-/* Callouts */
+/* Callouts (v2, chanwe-brand 3.8.0): a white pane with the rule hairline and
+   the pane radius; no tinted title row and no coloured border. The callout's
+   kind is a dot in its role colour before a mono label. */
 .callout {
   background: var(--chanwe-white) !important;
   color: var(--chanwe-body);
-  border-radius: var(--chanwe-radius);
-  border-width: 1px;
+  border: 1px solid var(--chanwe-rule) !important;
+  border-radius: var(--chanwe-radius-sm);
   box-shadow: none !important;
+  --chanwe-callout-role: var(--chanwe-info);
 }
 
 .callout .callout-header {
-  font-weight: 700;
-  border-bottom-width: 1px;
+  background: transparent !important;
+  border-bottom: 0 !important;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--chanwe-fg-muted);
 }
 
-.callout.callout-note,
-.callout.callout-info {
-  border-color: var(--chanwe-info);
+.callout .callout-header::before {
+  content: "";
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.55rem;
+  border-radius: 50%;
+  background: var(--chanwe-callout-role);
+  vertical-align: 0.05rem;
 }
 
-.callout.callout-note .callout-header,
-.callout.callout-info .callout-header {
-  background: color-mix(in srgb, var(--chanwe-info) 15%, white);
-  border-bottom-color: var(--chanwe-info);
-}
+.callout .callout-icon-container { display: none; }
 
-.callout.callout-tip,
-.callout.callout-success {
-  border-color: var(--chanwe-success);
-}
-
-.callout.callout-tip .callout-header,
-.callout.callout-success .callout-header {
-  background: color-mix(in srgb, var(--chanwe-success) 14%, white);
-  border-bottom-color: var(--chanwe-success);
-}
-
-.callout.callout-warning {
-  border-color: var(--chanwe-warning);
-}
-
-.callout.callout-warning .callout-header {
-  background: color-mix(in srgb, var(--chanwe-warning) 22%, white);
-  border-bottom-color: var(--chanwe-warning);
-}
-
-.callout.callout-important {
-  border-color: var(--chanwe-important);
-}
-
-.callout.callout-important .callout-header {
-  background: color-mix(in srgb, var(--chanwe-important) 14%, white);
-  border-bottom-color: var(--chanwe-important);
-}
-
-.callout.callout-caution {
-  border-color: var(--chanwe-caution);
-}
-
-.callout.callout-caution .callout-header {
-  background: color-mix(in srgb, var(--chanwe-caution) 14%, white);
-  border-bottom-color: var(--chanwe-caution);
-}
-
-.callout.callout-alert,
-.callout.callout-danger {
-  border-color: var(--chanwe-danger);
-}
-
-.callout.callout-alert .callout-header,
-.callout.callout-danger .callout-header {
-  background: color-mix(in srgb, var(--chanwe-danger) 14%, white);
-  border-bottom-color: var(--chanwe-danger);
-}
+.callout.callout-note, .callout.callout-info { --chanwe-callout-role: var(--chanwe-info); }
+.callout.callout-tip, .callout.callout-success { --chanwe-callout-role: var(--chanwe-success); }
+.callout.callout-warning { --chanwe-callout-role: var(--chanwe-warning); }
+.callout.callout-important { --chanwe-callout-role: var(--chanwe-important); }
+.callout.callout-caution { --chanwe-callout-role: var(--chanwe-caution); }
+.callout.callout-alert, .callout.callout-danger { --chanwe-callout-role: var(--chanwe-danger); }
 
 /* Section numbering accents */
 .header-section-number,

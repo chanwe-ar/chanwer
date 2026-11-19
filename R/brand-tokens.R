@@ -72,7 +72,8 @@ chanwe_tokens <- list(
     `violet` = "#7C3AED",
     `violet-soft` = "#EFE7FD",
     `canvas` = "#E9EEF4",
-    `pane` = "#FFFFFF"
+    `pane` = "#FFFFFF",
+    `favorite` = "#FFCC00"
   ),
   colors_dark = list(
     `ink` = "#F4F6F9",
@@ -106,7 +107,8 @@ chanwe_tokens <- list(
     `code-comment` = "#7E8A99",
     `research-muted` = "#7E8390",
     `canvas` = "#232A35",
-    `pane` = "#111319"
+    `pane` = "#111319",
+    `favorite` = "#FFD60A"
   ),
   radii = list(
     `hair` = 2,
@@ -170,6 +172,43 @@ chanwe_tokens <- list(
   state = list(
     `primary-hover` = "#EA3511",
     `primary-pressed` = "#D73211"
+  ),
+  callout = list(
+    `dot` = 7,
+    `label-tracking` = "0.14em",
+    `radius` = 12
+  ),
+  eyebrow = list(
+    `dot` = 7,
+    `tracking` = "0.14em"
+  ),
+  code = list(
+    `surface` = "#232A35",
+    `fg` = "#C6CDD6",
+    `label` = "#8A94A6",
+    `output` = "#8A94A6",
+    `prompt` = "#FD3810",
+    `radius` = 12
+  ),
+  syntax = list(
+    `keyword` = "#FD3810",
+    `string` = "#34C759",
+    `number` = "#AF52DE",
+    `operator` = "#00C7BE",
+    `function` = "#F8FAFC",
+    `type` = "#FF9500",
+    `comment` = "#8A94A6",
+    `function-weight` = 700,
+    `comment-style` = "italic"
+  ),
+  dots = list(
+    `step` = 18,
+    `size` = 1,
+    `on-light` = "color-mix(in srgb, #111319 7%, transparent)",
+    `on-ink` = "color-mix(in srgb, #FFFFFF 5%, transparent)",
+    `origin` = "100% 0%",
+    `fade-reach` = "70%",
+    `fade-soft` = "100%"
   ),
   fonts = list(
     `display` = "Schibsted Grotesk",

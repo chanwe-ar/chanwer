@@ -22,7 +22,7 @@
 // sobre papel no se ve.
 //
 // El asset por defecto es `assets/contact-qr.svg`, que codifica
-// https://chanwe.com.ar (v3, nivel H, máscara 4). Lo genera
+// https://chanwe.ar (nivel H). Lo genera
 // `scripts/make-qr-svg.mjs`; no se edita a mano.
 // =================================================================
 

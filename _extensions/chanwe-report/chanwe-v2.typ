@@ -1,6 +1,6 @@
 // =============================================================
 // chanwe-v2.typ — the CHANWE v2 shapes for paper ("v2-print", Q1 B of the
-// brand-v2 plan; the language is chanwe-brandbook brand/guidelines/brand-v2.md).
+// brand-v2 plan; the language is chanwe-brandbook brand/guide/guidelines/brand-v2.md).
 //
 // Shared by every Typst format (listed by parent path under
 // `template-partials` and included right after the chanwe-tokens.typ partial).
@@ -105,7 +105,7 @@
 // The obsidian band (brand-v2 §2, §7): one per page at most, floating with
 // a margin (never edge to edge), 24px corners, the dot field and the neutral
 // top sheen over its top 30%, a 1px light edge on top. Text on it is
-// `rule-cool` for display and `fg-subtle` for labels (CLAUDE.md).
+// white for display and `fg-subtle` for labels (CLAUDE.md, 2026-11-19).
 #let cw-band(
   body,
   inset: (x: _t.space-xl, y: _t.space-xl),
@@ -138,3 +138,109 @@
     ),
   ),
 )
+
+// ---------- Document-wide choices --------------------------------------
+// Each format's template writes its YAML choices here once, at the start of
+// the document (`_cw-style.update(...)`): the variant of a component, and the
+// assets path, so the shared partials can find the v2 icons. Components read
+// them inside `context` with `cw-style(key, default)`.
+#let _cw-style = state("cw-style", (:))
+#let cw-style(key, default) = _cw-style.get().at(key, default: default)
+// Switch a choice from here on, inside the document (raw Typst):
+// `#chanwe-use(task-style: "square", quote-style: "display")`. The galleries
+// use it to show every variant in one file.
+#let chanwe-use(..args) = _cw-style.update(s => s + args.named())
+
+// The faint dot field of the v2 covers, back covers and dividers, as a
+// gradient (Ale, 2026-11-18: "more subtle, with a gradient feel"): the dots
+// are at their strongest in one corner (`from`, in fractions of the area;
+// the bottom right by default) and fade out across the page. Drawn dot by
+// dot, because a tiling cannot be masked with a gradient. It fills its
+// container: use it as a page `background`, or `place` it in a block.
+#let cw-dot-gradient(color: _t.ink-fg, from: (1.0, 1.0), reach: 1.3, peak: 32%, step: 3.4mm, dot: 0.42pt) = layout(size => {
+  let (w, h) = (size.width, size.height)
+  if w == 0pt or h == 0pt or w == float.inf * 1pt { return }
+  let nx = int(w / step)
+  let ny = int(h / step)
+  for i in range(nx) {
+    for j in range(ny) {
+      let x = (i + 0.5) * step
+      let y = (j + 0.5) * step
+      let d = calc.sqrt(calc.pow(x / w - from.at(0), 2) + calc.pow(y / h - from.at(1), 2)) / reach
+      if d >= 1 { continue }
+      let a = peak * calc.pow(1 - d, 1.8)
+      place(top + left, dx: x, dy: y, circle(radius: dot, fill: color.transparentize(100% - a)))
+    }
+  }
+})
+
+// The Fundido icons (brand/assets/patrones in the hub, copied to
+// assets/v2/iconos/), in any token colour: the Color cut has one fill, the
+// primary, and it is swapped for the colour asked. Names: Aspa, Nudo, Paso,
+// Mas, Codo, Reloj, Onda, Traslado, Rombo, Damero, Escala, Cruz.
+#let cw-icon-names = ("Nudo", "Paso", "Onda", "Escala", "Reloj", "Traslado", "Codo", "Rombo", "Damero", "Mas")
+#let cw-icon(name, fill: _t.primary, width: auto, height: auto) = context {
+  let base = cw-style("assets", "")
+  let svg = read(base + "v2/iconos/Icono_" + name + "_Color.svg")
+  image(bytes(svg.replace("#FD3810", fill.to-hex()).replace("#fd3810", fill.to-hex())),
+        format: "svg", width: width, height: height)
+}
+// The wordmark alone (D-0009, 2026-11-18: the logo almost never goes with
+// the Aspa; the Aspa lives on its own as a symbol or a signal). `Negro` on
+// paper, `Papel` on obsidian and on orange. No lockup is copied here: a
+// piece that needs both takes it from the hub's logo/formatos.
+#let cw-wordmark(cut: "Negro", height: auto, width: auto) = context image(
+  cw-style("assets", "") + "Logo_" + cut + ".svg", height: height, width: width,
+)
+
+// ---------- Base components shared by the Typst formats -----------------
+// The code block (brand-v2 §6: a code block stays dark): the lighter obsidian
+// (`ink-light`, the owner's choice of 2026-11-18), 12px corners, the language
+// as a quiet mono label, the code in the dark theme (assets/chanwe-dark.tmTheme).
+// `terminal` (also `console`, `shell-session`): the same block labelled
+// «Terminal», the dollar prompt in orange, the command in `rule-cool`, the output
+// lines in `fg-subtle` (unified with the kit, 2026-11-18).
+#let _cw-terminal-langs = ("terminal", "console", "shell-session")
+#let _cw-terminal(it) = {
+  for (i, line) in it.text.split("\n").enumerate() {
+    if i > 0 { linebreak() }
+    if line.starts-with("$$") {
+      text(fill: _t.primary, "$$")
+      text(fill: _t.rule-cool, line.slice(1))
+    } else {
+      text(fill: _t.fg-subtle, line)
+    }
+  }
+}
+#let cw-code-block(it) = block(
+  fill: _t.ink-light,
+  stroke: none,
+  radius: _t.radius-pane,
+  inset: (x: 4.5mm, y: 3.6mm),
+  width: 100%,
+  breakable: false,
+)[
+  #set block(fill: none, spacing: 0pt)
+  #set par(spacing: 0pt)
+  #let term = it.lang != none and lower(it.lang) in _cw-terminal-langs
+  #if term {
+    cw-label("Terminal", fill: _t.fg-subtle, size: 6pt)
+    v(2.6mm)
+  } else if it.lang != none {
+    cw-label(it.lang + " · " + str(it.lines.len()) + " lines", fill: _t.fg-subtle, size: 6pt)
+    v(2.6mm)
+  }
+  #text(font: _t.font-mono, size: 9pt, weight: _t.weight-body, fill: _t.rule-cool, if term { _cw-terminal(it) } else { it })
+]
+
+// The markdown `---`: the `rule` hairline across the measure, broken in the
+// middle by the small Más icon in `rule-cool`. Orange is a signal; a section
+// break is not one.
+#let cw-horizontal-rule = block(above: 11mm, below: 11mm, width: 100%, grid(
+  columns: (1fr, auto, 1fr),
+  column-gutter: 3mm,
+  align: horizon,
+  line(length: 100%, stroke: 0.5pt + _t.rule),
+  cw-icon("Mas", fill: _t.rule-cool, width: 3.4mm),
+  line(length: 100%, stroke: 0.5pt + _t.rule),
+))

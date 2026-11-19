@@ -69,6 +69,8 @@ local function as_typst(el)
     local parts = {}
     local caption = attr(el, "caption")
     if caption then parts[#parts + 1] = "caption: " .. typst_string(caption) end
+    local variant = attr(el, "variant")
+    if variant then parts[#parts + 1] = "variant: " .. typst_string(variant) end
     return pandoc.RawBlock("typst", "#chanwe-giant-word(" .. table.concat(parts, ", ") .. ")")
   end
 end
@@ -113,6 +115,8 @@ local function as_html(el)
     el.content = c
     return el
   elseif el.classes:includes("giant-word") then
+    -- `variant="plain"` (2026-11-18): the obsidian wordmark, no photograph.
+    if attr(el, "variant") == "plain" then el.classes:insert("cw-giant--plain") end
     local c = { pandoc.RawBlock("html", '<div class="cw-giant__word" role="img" aria-label="chanwe"></div>') }
     if attr(el, "caption") then c[#c + 1] = html_text("cw-proof__label", attr(el, "caption")) end
     el.content = c

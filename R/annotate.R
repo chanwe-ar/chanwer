@@ -19,8 +19,8 @@
 #' @return A list of ggplot layers.
 #' @export
 #' @examples
-#' last <- tail(economics, 1)
-#' ggplot2::ggplot(economics, ggplot2::aes(date, unemploy)) +
+#' last <- tail(ggplot2::economics, 1)
+#' p <- ggplot2::ggplot(ggplot2::economics, ggplot2::aes(date, unemploy)) +
 #'   ggplot2::geom_line() +
 #'   annotate_chanwe_main(last$date, last$unemploy, label = format(last$unemploy, big.mark = "."))
 annotate_chanwe_main <- function(x, y, label = NULL, chip = TRUE, hjust = -0.2, vjust = 0.5, size = 2.6) {
@@ -47,7 +47,8 @@ annotate_chanwe_main <- function(x, y, label = NULL, chip = TRUE, hjust = -0.2, 
 #' Label Series at Their End
 #'
 #' Direct labels: each series named, with its last value, at the end of its
-#' line and in its colour, so the chart needs no legend.
+#' line, so the chart needs no legend. The names are slate mono; the dot at the
+#' end carries the series colour. Labels closer than `gap` are pushed apart.
 #'
 #' @param data The data the lines are drawn from.
 #' @param x,y,group Column names (strings).
@@ -55,19 +56,47 @@ annotate_chanwe_main <- function(x, y, label = NULL, chip = TRUE, hjust = -0.2, 
 #' @param nudge How far past the last point, in x units (days for dates).
 #' @param size Text size (mm).
 #' @param upper Names in capitals, as mono labels. Default `TRUE`.
+#' @param gap The least vertical distance between two labels, as a share of the
+#'   data's y range. Default `0.06`.
 #' @return A list of ggplot layers. Widen the x scale's right expansion
 #'   (about 0.2) so the labels fit.
 #' @export
-annotate_chanwe_ends <- function(data, x, y, group, values = TRUE, nudge = NULL, size = 2.6, upper = TRUE) {
+annotate_chanwe_ends <- function(data, x, y, group, values = TRUE, nudge = NULL, size = 2.6, upper = TRUE,
+                                 gap = 0.06) {
   ends <- do.call(rbind, lapply(split(data, data[[group]]), function(g) g[which.max(g[[x]]), , drop = FALSE]))
   nm <- as.character(ends[[group]]); if (upper) nm <- toupper(nm)
   ends$.label <- if (values) paste0(nm, "  ", .cwa_num(ends[[y]])) else nm
+  ends$.label_y <- .cwa_spread(ends[[y]], gap * diff(range(data[[y]], na.rm = TRUE)))
   if (is.null(nudge)) nudge <- if (inherits(data[[x]], "Date")) 14 else diff(range(data[[x]])) * .02
   list(
     ggplot2::geom_point(data = ends, ggplot2::aes(.data[[x]], .data[[y]], colour = .data[[group]]), inherit.aes = FALSE, size = 1.2),
-    ggplot2::geom_text(data = ends, ggplot2::aes(.data[[x]], .data[[y]], colour = .data[[group]], label = .data$.label),
-                       inherit.aes = FALSE, hjust = 0, nudge_x = nudge, family = "JetBrains Mono", size = size)
+    # The names are visible but quiet (Ale, 2026-11-19): slate mono, never the
+    # series colour; the dot at the end carries the colour to its line.
+    ggplot2::geom_text(data = ends, ggplot2::aes(.data[[x]], .data$.label_y, label = .data$.label),
+                       inherit.aes = FALSE, hjust = 0, nudge_x = nudge, family = "JetBrains Mono", size = size,
+                       colour = chanwe_get_colors()[["fg-muted"]])
   )
+}
+
+# Push label positions apart so no two sit closer than `gap`: labels that
+# crowd form a cluster, spaced by `gap` and centred on the values they label;
+# clusters merge until none overlap. Labels with room stay where they are.
+.cwa_spread <- function(y, gap) {
+  if (length(y) < 2 || gap <= 0) return(y)
+  o <- order(y); v <- y[o]
+  cl <- as.list(seq_along(v))
+  place <- function(idx) mean(v[idx]) + (seq_along(idx) - (length(idx) + 1) / 2) * gap
+  repeat {
+    pos <- lapply(cl, place); merged <- FALSE
+    for (k in seq_along(cl)[-1]) {
+      if (min(pos[[k]]) - max(pos[[k - 1]]) < gap - 1e-9) {
+        cl[[k - 1]] <- c(cl[[k - 1]], cl[[k]]); cl[[k]] <- NULL; merged <- TRUE; break
+      }
+    }
+    if (!merged) break
+  }
+  y[o] <- unlist(lapply(cl, place))
+  y
 }
 
 #' Shade the Gap Between Two Series

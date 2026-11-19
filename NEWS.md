@@ -1,5 +1,67 @@
-# chanwer (development version)
+# chanwer 3.4.0
 
+- **Interactive builders** that mimic the paper ones on highcharter: `chanwe_hc_bars()` (`"labelled"`,
+  `"ranking"`), `chanwe_hc_lines()` (`"direct"`, `"spaghetti"`; names at the end of each line, spread when they
+  crowd), `chanwe_hc_area()` (the fading gradient and the last value in an ink pill), `chanwe_hc_scatter()`
+  (`"named"`, `"trend"`), `chanwe_hc_heatmap()` (signed, symmetric) and `chanwe_hc_stack()` (`"stacked"`,
+  `"share"`). The same focus, slate ramp, mono labels and Spanish numbers and months as on paper; the header from
+  `chanwe_highchart()`.
+- **Docs in Spanish and English** (`docs/es`, `docs/en`): `start_here.md`, `guide.md` (which builder for which
+  need, paper and interactive, and how to release) and `data-tree.md` (hub tokens → package → chart).
+
+- **The showcases and the README use the builders.** The chart forms and scale examples the catalogue
+  marked failing or partly right (categorical bars with no focus, the orange area, overlapping density
+  fills, unlabelled ordinal and diverging bars, a line coloured by a third variable) are rewritten with
+  `chanwe_stack()`, `chanwe_lines()`, `chanwe_area()`, `chanwe_density()`, `chanwe_dots()`,
+  `chanwe_bars()` and `chanwe_multiples()`, with titles that state the claim. The README's examples
+  define their data and run as written (its second example used an undefined `sales`).
+- **Fix: `chanwe_kbl()` headers compile again** with chanwe-brand 3.8.0, whose `chanwe-eyebrow` no
+  longer takes `with-rule`; the table eyebrow is now the report's own (orange dot, slate label).
+- **`annotate_chanwe_ends()` spreads crowded labels** (`gap =`, 6 % of the y range): two series that end
+  close no longer print their names on top of each other.
+- Fix: the `annotate_chanwe_main()` example runs without ggplot2 attached.
+- **The HTML eyebrow is the report's**: `chanwe_gt()`, `chanwe_reactable()` and `chanwe_highchart()` draw
+  an orange dot and a slate mono label (they kept the 2.x orange rule and orange text).
+- **`chanwe_gt()`**: spanners are mono labels on the tint (they rendered as an empty white cell), group
+  headings sit on the 16px inset, and `gt::data_color()` fills survive (the flat-rows rule painted every
+  cell transparent).
+- **`chanwe_highchart()`**: the line width and hidden markers apply to line, spline and area series only
+  (scatters were drawn as joined lines without points); scatter points take `plot.point-size`; a colour
+  axis that spans zero gets the signed poles (red, white, green) instead of Highcharts' blue and red.
+- `chanwe_scatter()` names in the right third of the panel read leftwards, so they stay inside;
+  `chanwe_multiples()` labels dates with `label_chanwe_month()` (Spanish months).
+
+- **Chart builders** (Ale's picks, round 6, 2026-11-19), each with its look decided once and
+  `style =` for the alternatives he kept: `chanwe_bars()` (`"labelled"` by default, `"ranking"`,
+  `"lollipop"`), `chanwe_lines()` (`"direct"` labels by default, `"spaghetti"`), `chanwe_area()` (the
+  line over a gradient that fades to the axis), `chanwe_heatmap()` (today's tiles, `labels = TRUE` for
+  the values) and `chanwe_density()` (`"gradient"` outlines by default, `"outline"`).
+- **The chart catalogue** (Ale's picks, round 7): `chanwe_dots()` (`"values"`, `"range"`),
+  `chanwe_dumbbell()`, `chanwe_slope()`, `chanwe_scatter()` (`"named"`, `"trend"`, `"bubble"`),
+  `chanwe_waterfall()` (`"signed"` in pastel green and red, `"totals"`), `chanwe_stack()` (`"stacked"`,
+  `"share"`, `"grouped"`), `chanwe_histogram()` (`"median"`, `"split"`), `chanwe_spread()` (`"box"`,
+  `"violin"`), `chanwe_bump()`, `chanwe_multiples()`, `chanwe_bullet()` and `chanwe_whole()` (`"bar"`,
+  `"donut"`, `"waffle"`, `"treemap"`, a squarified layout with no dependency).
+- `chanwe_forecast()` (`"fan"`, nested pastel bands, by default; `"zone"`, the projection period shaded with
+  its range as a band) and `chanwe_level_change()` (`"change"` lollipops by default, `"panels"`, `"strip"`;
+  never a second axis) (Ale, round 8).
+- `chanwer-catalogue.qmd` / `.pdf`: every builder in every style, and the 85 plots of the showcases, the
+  README, `inst/examples` and the chanwe-brand examples checked against the grammar (14 comply, 48 partly,
+  13 fail, 10 are palette swatches), with the builder that replaces each.
+- The bundled `_extensions/` are chanwe-brand 3.8.0 (white text on obsidian, the research cover's ledger,
+  the timeline agenda).
+- Names and axis labels are visible but quiet (Ale, 2026-11-19): the end labels of
+  `annotate_chanwe_ends()` and every builder's names are slate mono, never the series colour.
+- `theme_chanwe(eyebrow_style = "dot")`: the brand eyebrow, an orange dot and the label in slate, no
+  band. The band stays the default.
+- Text on the obsidian band is white (chanwe-brand 3.8.0), not `rule-cool`.
+- **Aligned with chanwe-brand 3.8.0:** the figure and table frames' numeral is Schibsted Grotesk (it was
+  Instrument Serif); the eyebrow label is slate (`fg-muted` on paper, `rule-cool` on obsidian) instead of
+  orange or ink, and text on the dark header is white; `chanwe_reporting_css()` draws callouts as v2 panes
+  (hairline, pane radius, a dot in the role colour before a mono label; no tinted title row, no coloured
+  border) and code blocks on `ink-light` without the orange side bar; the radii are v2 (16 and 12px).
+- **Brand tokens synced from chanwe-brandbook**: `favorite`, and the `callout`, `eyebrow`, `code`,
+  `syntax` and `dots` groups.
 - **Brand tokens from chanwe-brandbook 2.0.1**: `fg-subtle` is darker (#8A94A6 → #5B6677), and new
   `layout` (`shell-bar`) and `state` (`primary-hover`, `primary-pressed`) groups. The hub file moved to
   `brand/ui/tokens/tokens.json`; the drift test and `R/palette.R` name the new path.

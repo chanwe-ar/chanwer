@@ -31,9 +31,6 @@ $endif$
 $if(chanwe.taggy)$
   taggy: "$chanwe.taggy$",
 $endif$
-$if(chanwe.volume)$
-  volume: "$chanwe.volume$",
-$endif$
 $if(chanwe.chapter)$
   chapter: "$chanwe.chapter$",
 $endif$
@@ -60,9 +57,6 @@ $if(chanwe.cover-eyebrow)$
 $endif$
 $if(chanwe.hero-image)$
   hero-image: "$chanwe.hero-image$",
-$endif$
-$if(chanwe.hero-img-position)$
-  hero-img-position: $chanwe.hero-img-position$,
 $endif$
 $if(chanwe.wordmark)$
   wordmark: "$chanwe.wordmark$",
@@ -106,12 +100,6 @@ $endif$
 $if(chanwe.abstract-takeaway)$
   abstract-takeaway: "$chanwe.abstract-takeaway$",
 $endif$
-$if(chanwe.stamp)$
-  stamp: ($for(chanwe.stamp)$"$it$"$sep$, $endfor$),
-$endif$
-$if(chanwe.hero-date)$
-  hero-date: "$chanwe.hero-date$",
-$endif$
 $if(chanwe.meta-rows)$
   meta-rows: (
 $for(chanwe.meta-rows)$
@@ -138,14 +126,41 @@ $endif$
 $if(chanwe.cover-edge)$
   cover-edge: "$chanwe.cover-edge$",
 $endif$
-$if(chanwe.cover-edge-color)$
-  cover-edge-color: rgb("#$chanwe.cover-edge-color$"),
-$endif$
 $if(chanwe.cover-variant)$
   cover-variant: "$chanwe.cover-variant$",
 $endif$
-$if(chanwe.cover-dark)$
-  cover-dark: $chanwe.cover-dark$,
+$if(chanwe.back-cover-variant)$
+  back-cover-variant: "$chanwe.back-cover-variant$",
+$endif$
+$if(chanwe.chapter-band)$
+  chapter-band: "$chanwe.chapter-band$",
+$endif$
+$if(chanwe.agenda-style)$
+  agenda-style: "$chanwe.agenda-style$",
+$endif$
+$if(chanwe.findings-numeral)$
+  findings-numeral: "$chanwe.findings-numeral$",
+$endif$
+$if(chanwe.divider-variant)$
+  divider-variant: "$chanwe.divider-variant$",
+$endif$
+$if(chanwe.eyebrow-style)$
+  eyebrow-style: "$chanwe.eyebrow-style$",
+$endif$
+$if(chanwe.table-style)$
+  table-style: "$chanwe.table-style$",
+$endif$
+$if(chanwe.task-style)$
+  task-style: "$chanwe.task-style$",
+$endif$
+$if(chanwe.quote-style)$
+  quote-style: "$chanwe.quote-style$",
+$endif$
+$if(chanwe.exec-style)$
+  exec-style: "$chanwe.exec-style$",
+$endif$
+$if(chanwe.cover-icon)$
+  cover-icon: "$chanwe.cover-icon$",
 $endif$
 $if(chanwe.publication-period)$
   publication-period: "$chanwe.publication-period$",

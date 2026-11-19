@@ -12,7 +12,8 @@ annotate_chanwe_ends(
   values = TRUE,
   nudge = NULL,
   size = 2.6,
-  upper = TRUE
+  upper = TRUE,
+  gap = 0.06
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ annotate_chanwe_ends(
 \item{size}{Text size (mm).}
 
 \item{upper}{Names in capitals, as mono labels. Default \code{TRUE}.}
+
+\item{gap}{The least vertical distance between two labels, as a share of the
+data's y range. Default \code{0.06}.}
 }
 \value{
 A list of ggplot layers. Widen the x scale's right expansion
@@ -34,5 +38,6 @@ A list of ggplot layers. Widen the x scale's right expansion
 }
 \description{
 Direct labels: each series named, with its last value, at the end of its
-line and in its colour, so the chart needs no legend.
+line, so the chart needs no legend. The names are slate mono; the dot at the
+end carries the series colour. Labels closer than \code{gap} are pushed apart.
 }

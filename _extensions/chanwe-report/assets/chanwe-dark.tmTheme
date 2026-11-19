@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Chanwe dark code theme: the code block on the lighter obsidian (`ink-light`),
+  the owner's choice of 2026-11-18 (brand-v2 §6: a code block stays dark).
+  A tmTheme cannot read tokens, so it mirrors them by hand, like chanwe.tmTheme;
+  every colour is a brand token. Change it with the token.
+
+    keyword     #FD3810   primary
+    operator    #00C7BE   chart-teal
+    string      #34C759   chart-green
+    number      #AF52DE   chart-purple
+    function    #F8FAFC   paper (bold)
+    type        #FF9500   chart-orange
+    comment     #8A94A6   fg-subtle on ink (italic)
+
+  The base text colour comes from the block: `rule-cool`, the text on obsidian.
+-->
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>Chanwe Dark</string>
+  <key>settings</key>
+  <array>
+    <dict>
+      <key>settings</key>
+      <dict/>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Comment</string>
+      <key>scope</key>
+      <string>comment</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#8A94A6</string>
+        <key>fontStyle</key>
+        <string>italic</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Keyword</string>
+      <key>scope</key>
+      <string>keyword, storage, storage.modifier</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#FD3810</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Operator and punctuation</string>
+      <key>scope</key>
+      <string>keyword.operator, punctuation, meta.function-call.arguments punctuation, meta.function.parameters punctuation</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#00C7BE</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>String</string>
+      <key>scope</key>
+      <string>string</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#34C759</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Number and language constant</string>
+      <key>scope</key>
+      <string>constant.numeric, constant.language, constant.character</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#AF52DE</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Function and type name</string>
+      <key>scope</key>
+      <string>entity.name.function, entity.name.type, entity.name.class, variable.function, support.function</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#F8FAFC</string>
+        <key>fontStyle</key>
+        <string>bold</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Built-in type</string>
+      <key>scope</key>
+      <string>storage.type, support.type, support.class</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>#FF9500</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>

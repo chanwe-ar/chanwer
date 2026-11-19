@@ -48,29 +48,37 @@ $chanwe-v2.typ()$
   #place(center + horizon, rotate(45deg, square(size: size * 0.72, fill: color)))
 ]
 
-#let chanwe-eyebrow(body, color: _t.primary, with-rule: false, size: 8.5pt) = {
-  if with-rule {
-    box(width: 22pt, height: 0.75pt, fill: color, baseline: -3pt)
-    h(8pt)
+// The eyebrow, unified with the kit (Ale, 2026-11-18): an orange dot and a
+// JetBrains Mono uppercase label in slate (`fill`: `fg-muted` on paper,
+// `rule-cool` on ink). Documents may opt into the orange rule with an
+// orange label, the eyebrow of before, for covers, openers and bands:
+// `chanwe: eyebrow-style: rule`, or `style: "rule"` on one call.
+#let chanwe-eyebrow(body, dot: _t.primary, fill: _t.fg-muted, size: 8.5pt, style: auto) = context {
+  let style = if style == auto { cw-style("eyebrow-style", "dot") } else { style }
+  if style == "rule" {
+    box(width: size * 2.6, height: 0.75pt, fill: dot, baseline: -size * 0.35)
+    h(size * 0.95)
+  } else {
+    box(baseline: -size * 0.12, circle(radius: size * 0.26, fill: dot, stroke: none))
+    h(size * 0.7)
   }
   text(
     font: _t.font-mono,
     size: size,
     weight: _t.weight-medium,
-    tracking: 0.18em,
-    fill: color,
+    tracking: 0.16em,
+    fill: if style == "rule" { dot } else { fill },
     upper(body),
   )
 }
 
-#let chanwe-section-eyebrow(body) = chanwe-eyebrow(body, with-rule: true)
+#let chanwe-section-eyebrow(body, fill: _t.fg-muted) = chanwe-eyebrow(body, fill: fill)
 
 // El `---` de markdown. Pandoc lo escribe como `#horizontalrule`, que Quarto
 // define en su `definitions.typ` (cargado antes que este archivo) como una
 // línea negra al ancho del medio. Se vuelve a definir acá, y gana ésta:
 // misma geometría, filete fino en naranja.
-#let horizontalrule = block(above: 11mm, below: 11mm, width: 100%,
-  line(start: (25%, 0%), end: (75%, 0%), stroke: 0.5pt + _t.primary))
+#let horizontalrule = cw-horizontal-rule
 
 #let chanwe-meta-row(label, value, sub: none) = {
   grid(
@@ -99,7 +107,7 @@ $chanwe-v2.typ()$
 #let _hf-palette(inverse) = if inverse == "primary" {
   (text: _t.white, strong: _t.white, accent: _t.white, rule: _t.white.transparentize(60%), logo: "Logo_Papel.svg")
 } else if inverse == "dark" {
-  (text: _t.fg-subtle, strong: _t.rule-cool, accent: _t.primary, rule: _t.rule-ink, logo: "Logo_Gris.svg")
+  (text: _t.fg-subtle, strong: _t.white, accent: _t.primary, rule: _t.rule-ink, logo: "Logo_Papel.svg")
 } else {
   (text: _t.fg-muted, strong: _t.fg, accent: _t.primary, rule: _t.border, logo: "Logo_Negro.svg")
 }
@@ -205,7 +213,6 @@ $chanwe-site.typ()$
   lang: "en",           // Quarto's `lang:` — hyphenation, smart quotes; crossref labels follow it too
   doc-id: "SERIES-A #0934",
   edition: "Edition 01 / 2026",
-  volume: "Confidential",
   chapter: "Chapter",
   section: "",
   topic: "",
@@ -218,10 +225,7 @@ $chanwe-site.typ()$
   cover-eyebrow: none,      // overrides rail-eyebrow on the cover page only
   // assets
   hero-image: none,
-  hero-img-position: none,  // 1–10 (left→right); none = fit:cover (centered)
   wordmark: none,
-  stamp: ("VOL", "I", "2026"),
-  hero-date: "",
   meta-rows: (
     ("Author", "Chanwe Studio", "Estrategia Activa"),
   ),
@@ -248,13 +252,23 @@ $chanwe-site.typ()$
   back-cover-cols: (),
   // edge label (vertical text on right side of cover + back cover)
   cover-edge: none,
-  cover-edge-color: none,
   // ── portada ──────────────────────────────────────────────────
-  // "research" (default) es la portada de la vieja chanwe-publications;
-  // "hero" es la que traia chanwe-report: panel hero, riel y losa de
-  // wordmark al pie. `cover-dark` solo aplica a la variante "hero".
+  // research (default) | photo | paper | photo-obsidian | series.
+  // "hero" se retiro el 2026-11-18.
   cover-variant: "research",
-  cover-dark: false,
+  cover-icon: none,                 // the Fundido icon of the `series` cover (default Onda)
+  // ── variantes v2 (2026-11-18): cada una es una opción del YAML (`chanwe:`)
+  // con la de hoy como valor por defecto ───────────────────────────
+  back-cover-variant: "research",   // research | aspa | orange | mark
+  chapter-band: "numeral",          // numeral | icon (un ícono Fundido fantasma en la banda)
+  agenda-style: "band",             // band | paper | timeline
+  findings-numeral: "orange",       // orange | slate
+  task-style: "square",             // square | round (unified with the kit, 2026-11-18)
+  table-style: "open",              // open | pane
+  eyebrow-style: "dot",             // dot | rule (the orange rule, opt-in for documents)
+  divider-variant: "numeral",       // numeral | series | series-dark
+  quote-style: "serif",             // serif | display | serif-art
+  exec-style: "page",               // page | brief (the executive summary page)
   // publication cover
   publication-period: none,
   publication-edition: none,
@@ -284,6 +298,13 @@ $chanwe-site.typ()$
   // ---- store metadata in global state -----------------------
   _chanwe-doc.update((doc-id: _chanwe-clean-str(doc-id), edition: _chanwe-clean-str(edition), taggy: taggy, meta-rows: meta-rows, section: section, topic: topic))
 
+  _cw-style.update(s => s + (
+    assets: _chanwe-assets, findings-numeral: findings-numeral, task-style: task-style,
+    quote-style: quote-style, chapter-band: chapter-band, divider-variant: divider-variant,
+    agenda-style: agenda-style, table-style: table-style, eyebrow-style: eyebrow-style,
+    exec-style: exec-style,
+  ))
+
   // ---- global text + page defaults ---------------------------
   set page(fill: page-bg)
   set text(font: _t.font-sans, size: 11pt, weight: _t.weight-body, fill: _t.body-fg, lang: lang)
@@ -292,6 +313,9 @@ $chanwe-site.typ()$
   // palabras clave en naranja, cadenas y nombres en obsidiana, comentarios en
   // fg-subtle. El texto base hereda body-fg, como la prosa.
   set raw(theme: _chanwe-assets + "chanwe.tmTheme")
+  // The code block is dark (brand-v2 §6) and takes the dark theme; inline code
+  // stays the slate pill with the light one.
+  show raw.where(block: true): set raw(theme: _chanwe-assets + "chanwe-dark.tmTheme")
   set heading(numbering: "1.1.1.")
 
   // ---- inline rules (apply to entire document) ---------------
@@ -333,44 +357,17 @@ $chanwe-site.typ()$
   // cuerpo, asi que un renglon con chip no separa mas que uno sin chip.
   // Medido: 17.64pt de interlineado en ambos casos. Subir mas el inset o el
   // cuerpo rompe esa paridad.
-  // v2: the chip sits on the slate tint, a pill with no frame.
-  show raw.where(block: false): it => box(
-    fill: _t.tint,
-    stroke: none,
-    inset: (x: 5.5pt, y: 4.2pt),
-    radius: _t.radius-pill,
-    baseline: 4.20pt,
-    text(font: _t.font-mono, size: 1.035em, fill: _t.fg-muted, it),
-  )
+  // Inline code, unified with the kit (2026-11-18): orange mono, no pill.
+  show raw.where(block: false): it => text(font: _t.font-mono, size: 0.95em, fill: _t.primary, it)
+
   // El panel de código va con el mismo marco slate que el chip en línea y el
   // callout —un filete fino a todo el contorno, no un canto naranja— y con
   // las esquinas a 3pt (los 4px de la marca), que es el radio de todos los paneles del reporte.
   // Entero o a la página siguiente: partido, el rótulo "# python · N lines"
   // quedaba solo al pie de una página y el código arrancaba en la otra con un
   // marco nuevo, como si fueran dos paneles.
-  // v2: the code panel is a pane on the slate tint, the dense radius (12px).
-  show raw.where(block: true): it => block(
-    fill: _t.tint,
-    stroke: cw-hairline + _t.rule,
-    radius: _t.radius-pane,
-    inset: (x: 4mm, y: 3mm),
-    width: 100%,
-    breakable: false,
-  )[
-    #set block(fill: none)
-    // Sin el espaciado de párrafo del cuerpo (2.6em): se sumaba al `v` y
-    // dejaba un centímetro entre el rótulo y la primera línea.
-    #set block(spacing: 0pt)
-    #set par(spacing: 0pt)
-    #if it.lang != none {
-      text(
-        font: _t.font-mono, size: 7.5pt, fill: _t.fg-muted,
-        "# " + it.lang + " · " + str(it.lines.len()) + " lines",
-      )
-      v(2.5mm)
-    }
-    #text(font: _t.font-mono, size: 9pt, weight: _t.weight-body, it)
-  ]
+  // v2: the code block is the lighter obsidian (cw-code-block, chanwe-v2.typ).
+  show raw.where(block: true): cw-code-block
 
   // ---- notas al pie -------------------------------------------
   // Typst las deja en negro y con un filete negro al 30%. La nota es material
@@ -412,9 +409,18 @@ $chanwe-site.typ()$
     cw-band(inset: (left: 12mm, right: 12mm, top: 12mm, bottom: 11mm))[
       #block(above: 0pt, below: 0pt, rect(width: 50pt, height: 0.9pt, fill: _t.primary, stroke: none))
       #v(10mm)
-      #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-        weight: _t.weight-body, size: 50pt, fill: _t.primary,
-        _pad2(counter(heading).get().first())), 50pt, fill: _t.primary)
+      // v2: the numeral is Schibsted (figures are display type), orange, at
+      // the title's size; it was Cormorant italic at 50pt until 2026-11-18.
+      #let mark = _h-mark(it, text(font: _t.font-display, weight: _t.weight-display,
+        size: 33pt, tracking: -0.03em, fill: _t.primary, number-type: "lining", number-width: "tabular",
+        _pad2(counter(heading).get().first())), 33pt, fill: _t.primary)
+      // `chapter-band: icon`: the chapter's Fundido icon, in `ink-light`, cut
+      // by the band's right corner. One icon per chapter, in a fixed cycle.
+      #if cw-style("chapter-band", chapter-band) == "icon" {
+        let n = counter(heading).get().first()
+        place(top + right, dx: 12mm + 14mm, dy: -12mm - 18mm,
+          cw-icon(cw-icon-names.at(calc.rem(calc.max(n, 1) - 1, cw-icon-names.len())), fill: _t.ink-light, width: 62mm))
+      }
       #grid(
         columns: (auto, 1fr),
         column-gutter: 8mm,
@@ -424,7 +430,7 @@ $chanwe-site.typ()$
           #set par(leading: 0.18em)
           // Mismo peso que el titular de portada.
           #text(font: _t.font-display, size: 33pt, weight: _t.weight-display,
-               tracking: -0.05em, fill: _t.rule-cool, it.body)#_chanwe-title-dot(33pt)
+               tracking: -0.05em, fill: _t.white, it.body)#_chanwe-title-dot(33pt)
         ],
       )
     ]
@@ -433,8 +439,9 @@ $chanwe-site.typ()$
   }
   show heading.where(level: 2): it => block(above: 12mm, below: 6mm)[
     #set par(leading: 0.2em)
-    #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-      weight: _t.weight-body, size: 21pt, fill: _t.fg-muted, counter(heading).display("1.1")), 21pt)
+    #let mark = _h-mark(it, text(font: _t.font-display, weight: _t.weight-medium,
+      size: 19pt, tracking: -0.02em, fill: _t.fg-muted, number-type: "lining", number-width: "tabular",
+      counter(heading).display("1.1")), 19pt)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 6mm,
@@ -452,8 +459,9 @@ $chanwe-site.typ()$
   // Cormorant y a peso 700, y la escala se rompía a cada nivel.
   show heading.where(level: 3): it => block(above: 10mm, below: 5.5mm)[
     #set par(leading: 0.2em)
-    #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-      weight: _t.weight-body, size: 14.8pt, fill: _t.fg-muted, counter(heading).display("1.1.1")), 14.8pt)
+    #let mark = _h-mark(it, text(font: _t.font-display, weight: _t.weight-medium,
+      size: 15pt, tracking: -0.02em, fill: _t.fg-muted, number-type: "lining", number-width: "tabular",
+      counter(heading).display("1.1.1")), 15pt)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4.7mm,
@@ -467,8 +475,9 @@ $chanwe-site.typ()$
     #set par(leading: 0.2em)
     // Dos puntos por debajo del titular: a cuatro cifras el numeral ya
     // pesa bastante y a la proporción del H2 se comía el título.
-    #let mark = _h-mark(it, text(font: _t.font-serif-display, style: "italic",
-      weight: _t.weight-body, size: 11.8pt, fill: _t.fg-muted, counter(heading).display("1.1.1.1")), 11.8pt)
+    #let mark = _h-mark(it, text(font: _t.font-display, weight: _t.weight-medium,
+      size: 14pt, tracking: -0.02em, fill: _t.fg-muted, number-type: "lining", number-width: "tabular",
+      counter(heading).display("1.1.1.1")), 14pt)
     #grid(
       columns: (auto, 1fr),
       column-gutter: 4.4mm,
@@ -513,17 +522,18 @@ $chanwe-site.typ()$
   // emite este mismo `quote`.
   // v2-print: the quote is a pane (white, hairline, 16px), no orange edge.
   // The orange is one dot before the attribution.
+  // The pull quote, unified with the kit (2026-11-18): display type
+  // (Schibsted 600, no serif) on a pane, the attribution an orange dot and a
+  // mono label. The serif stays for the great quotes' `serif` styles.
   show quote: it => cw-pane(
     above: 6mm, below: 6mm,
+    radius: _t.radius-pane,
     inset: (x: _t.space-lg, y: _t.space-md + 1mm),
   )[
-    // El aire de párrafo del cuerpo (2.6em) se colaba entre la cita y su
-    // atribución y las separaba un renglón entero; adentro del panel baja a
-    // medio cuerpo, que también es lo que separa dos párrafos de una cita.
-    #set par(leading: 0.425em, spacing: 0.5em)
-    #text(font: _t.font-serif, size: 13.2pt, weight: _t.weight-body, style: "italic", fill: _t.fg-muted, it.body)
+    #set par(leading: 0.42em, spacing: 0.5em)
+    #text(font: _t.font-display, size: 12.5pt, weight: _t.weight-display, tracking: -0.02em, fill: _t.fg, it.body)
     #if it.attribution != none {
-      v(2mm)
+      v(2.6mm)
       cw-dot(_t.primary, size: 4pt, baseline: -1pt)
       h(_t.space-xs)
       cw-label(it.attribution, size: 6.5pt)
@@ -536,22 +546,29 @@ $chanwe-site.typ()$
   // hallazgos y el marco del callout.
   // v2-print: a table is a pane (white, hairline, the dense 12px corners)
   // with its header row on the slate tint and hairline rows; no outer rules.
+  // Tables (unified with the kit, 2026-11-18): `open` by default (no pane,
+  // no fill, the header a mono label in `fg-subtle`, hairlines between rows);
+  // `chanwe: table-style: pane` keeps the framed pane with the tint header.
+  let _pane-tables = table-style == "pane"
   set table(
-    fill: (col, row) => if row == 0 { _t.tint } else { none },
+    fill: (col, row) => if _pane-tables and row == 0 { _t.tint } else { none },
     stroke: (col, row) => (
-      bottom: if row == 0 { cw-hairline + _t.rule } else { 0.4pt + _t.rule },
+      bottom: if row == 0 { 0.5pt + _t.rule } else { 0.3pt + _t.rule },
     ),
-    inset: (x: 4mm, y: 3.5mm),
+    inset: if _pane-tables { (x: 4mm, y: 3.5mm) } else { (x: 2.5mm, y: 3mm) },
   )
+  // Pandoc writes a bare `table.hline()` under the header row, which Typst
+  // draws 1pt black; it is the same hairline as the header's own rule.
+  set table.hline(stroke: 0.5pt + _t.rule)
   // The pane takes the table's own width (a narrow table does not get a
   // full-width frame) and keeps the table breakable.
-  show table: it => layout(size => {
+  show table: it => if _pane-tables { layout(size => {
     let w = calc.min(measure(it, width: size.width).width, size.width)
     block(
       stroke: cw-hairline + _t.rule, radius: _t.radius-pane, clip: true,
       fill: _t.pane, width: w, breakable: true, it,
     )
-  })
+  }) } else { it }
   show table.cell: set text(
     size: 7pt, weight: _t.weight-thin, fill: _t.fg,
   )
@@ -559,7 +576,7 @@ $chanwe-site.typ()$
   // por debajo del cuerpo, así el peso los distingue sin que el cuerpo mande.
   show table.cell.where(y: 0): set text(
     font: _t.font-mono, size: 6pt, weight: _t.weight-medium,
-    tracking: 0.1em, fill: _t.fg-muted,
+    tracking: 0.1em, fill: if _pane-tables { _t.fg-muted } else { _t.fg-subtle },
   )
   // A cell across the whole table is a title row (chanwe_kbl), not a column label.
   show table.cell.where(y: 0): it => if it.colspan > 1 { it } else { upper(it) }
@@ -589,34 +606,25 @@ $chanwe-site.typ()$
   show figure.caption: cw-figure-caption
 
   // ---- COVER (optional) -------------------------------------
-  if cover and cover-variant == "photo" {
+  let _v2-eyebrow = if cover-eyebrow != none { cover-eyebrow } else { rail-eyebrow }
+  let _v2-meta = meta-rows.map(((l, v, ..)) => (l, v))
+  if cover and cover-variant == "paper" {
+    chanwe-cover-paper(title: title, subtitle: subtitle, eyebrow: _v2-eyebrow,
+      top-lines: (_chanwe-clean-str(edition), _chanwe-clean-str(publication-series)),
+      meta-rows: _v2-meta, place-label: _chanwe-clean-str(publication-location))
+  } else if cover and cover-variant == "photo-obsidian" {
+    chanwe-cover-photo-obsidian(title: title, subtitle: subtitle, eyebrow: _v2-eyebrow,
+      image-path: if hero-image != none { _chanwe-clean-path(hero-image) } else { none },
+      edition: _chanwe-clean-str(edition), meta-rows: _v2-meta)
+  } else if cover and cover-variant == "series" {
+    chanwe-cover-series(title: title, subtitle: subtitle,
+      series: _chanwe-clean-str(publication-series), place-label: _chanwe-clean-str(publication-location),
+      icon: if cover-icon != none { cover-icon } else { "Onda" })
+  } else if cover and cover-variant == "photo" {
     // The site's hero as the whole page (chanwe-site.typ).
     chanwe-photo-cover-page(
       title: title, subtitle: subtitle, badge: taggy, doc-id: doc-id, edition: edition,
       date: date, meta-rows: meta-rows, art: hero-image, wordmark: wordmark,
-    )
-  } else if cover and cover-variant == "hero" {
-    // La portada que traia chanwe-report antes de la fusion. No recibe las
-    // claves `publication-*`: esas son de la research.
-    chanwe-hero-cover-page(
-      title: title,
-      subtitle: subtitle,
-      doc-id: doc-id,
-      edition: edition,
-      volume: volume,
-      rail-eyebrow: if cover-eyebrow != none { cover-eyebrow } else { rail-eyebrow },
-      hero-image: hero-image,
-      hero-img-position: hero-img-position,
-      wordmark: wordmark,
-      stamp: stamp,
-      hero-caption-1: hero-caption-1,
-      hero-caption-2: hero-caption-2,
-      hero-date: hero-date,
-      meta-rows: meta-rows,
-      date: date,
-      cover-edge: cover-edge,
-      cover-edge-color: cover-edge-color,
-      dark: cover-dark,
     )
   } else if cover {
     chanwe-cover-page(
@@ -628,17 +636,11 @@ $chanwe-site.typ()$
       subtitle: subtitle,
       doc-id: doc-id,
       edition: edition,
-      volume: volume,
-      rail-eyebrow: if cover-eyebrow != none { cover-eyebrow } else { rail-eyebrow },
       hero-image: hero-image,
-      hero-img-position: hero-img-position,
       wordmark: wordmark,
-      stamp: stamp,
-      hero-date: hero-date,
       meta-rows: meta-rows,
       date: date,
       cover-edge: cover-edge,
-      cover-edge-color: cover-edge-color,
       publication-period: publication-period,
       publication-edition: publication-edition,
       publication-art: publication-art,
@@ -741,7 +743,16 @@ $chanwe-site.typ()$
   }
 
   // ---- back cover (optional) --------------------------------
-  if back-cover {
+  let _bt1 = _chanwe-clean-str(back-cover-tagline-1)
+  let _bt2 = _chanwe-clean-str(back-cover-tagline-2)
+  let _bplace = _chanwe-clean-str(publication-location)
+  if back-cover and back-cover-variant == "aspa" {
+    chanwe-back-cover-aspa(tagline-1: _bt1, tagline-2: _bt2, back-cols: back-cover-cols, place-label: _bplace)
+  } else if back-cover and back-cover-variant == "orange" {
+    chanwe-back-cover-orange(tagline-1: _bt1, tagline-2: _bt2, back-cols: back-cover-cols, place-label: _bplace)
+  } else if back-cover and back-cover-variant == "mark" {
+    chanwe-back-cover-mark(place-label: _bplace)
+  } else if back-cover {
     chanwe-back-cover-page(
       tagline-1: back-cover-tagline-1,
       tagline-2: back-cover-tagline-2,
@@ -756,7 +767,3 @@ $chanwe-site.typ()$
     )
   }
 }
-
-// chanwe-publications se fusiono aca: este formato es el de aquella, en A4,
-// con la portada del viejo chanwe-report conservada como variante "hero".
-#let chanwe = chanwe-report

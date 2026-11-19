@@ -86,20 +86,6 @@ rev_df <- expand.grid(
         )
     ) |>
     ungroup()
-spread_labels <- function(y, gap) {
-    o <- order(y)
-    ys <- y[o]
-    for (i in seq_along(ys)[-1]) {
-        if (ys[i] - ys[i - 1] < gap) ys[i] <- ys[i - 1] + gap
-    }
-    y[o] <- ys
-    y
-}
-rev_last <- rev_df |>
-    group_by(segment) |>
-    slice_max(month, n = 1) |>
-    ungroup() |>
-    mutate(y_lab = spread_labels(revenue, 1.5))
 
 cyl_summary <- mt |>
     group_by(cyl) |>
@@ -150,10 +136,12 @@ kpi_reserves <- chanwe_kpi(
     mtc3_direction = "+"
 )
 
-p_fleet <- ggplot(mt, aes(wt, mpg, color = hp_band)) +
-    geom_point(size = 2.2, alpha = 0.88) +
-    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 0.7) +
-    scale_color_chanwe_d() +
+# one orange signal: the high-horsepower band, the rest on the slate ramp
+p_fleet <- ggplot(mt, aes(wt, mpg)) +
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE, linewidth = 0.5,
+                colour = chanwe_palette("all")[["rule-cool"]]) +
+    geom_point(aes(color = hp_band), size = 2.2) +
+    scale_color_chanwe_focus("High") +
     labs(
         x = "Weight (1000 lbs)",
         y = "Miles per gallon",
@@ -286,7 +274,7 @@ ggplot(mt, aes(wt, mpg, color = am)) +
     scale_color_chanwe_d() +
     labs(
         title = chanwe_title(
-            "Fuel economy by weight",
+            "Heavier cars burn more, whatever the gearbox",
             eyebrow = "CATEGORICAL - 2 SERIES"
         ),
         subtitle = chanwe_subtitle(
@@ -307,96 +295,73 @@ Scatter, bubble and maps: three series maximum — any two marks can sit side by
 
 ```{r}
 #| label: cat-bars
-mpg_drv <- ggplot2::mpg |>
-    mutate(
-        drv = factor(
-            drv,
-            levels = c("f", "4", "r"),
-            labels = c("Front", "4WD", "Rear")
-        ),
-        class = reorder(class, class, FUN = length)
-    )
-ggplot(mpg_drv, aes(y = class, fill = drv)) +
-    geom_chanwe_bar(width = 0.62) +
-    scale_fill_chanwe_d() +
+drv_class <- ggplot2::mpg |>
+    mutate(drv = factor(drv, levels = c("f", "4", "r"), labels = c("Front", "4WD", "Rear"))) |>
+    count(class, drv, name = "n")
+chanwe_stack(drv_class, "class", "drv", "n", focus = "4WD") +
     labs(
-        title = chanwe_title(
-            "Vehicles by class and drivetrain",
-            eyebrow = "CATEGORICAL - STACKED BARS"
-        ),
-        subtitle = chanwe_subtitle(
-            "Color encodes a second nominal variable - bars and stacks may use up to six series"
-        ),
-        x = "Vehicles",
-        y = NULL,
-        fill = "Drivetrain",
+        title = chanwe_title("Four-wheel drive carries SUVs and pickups", eyebrow = "CATEGORICAL - STACKED BARS"),
+        subtitle = chanwe_subtitle("Vehicles by class and drivetrain, count - the part that matters in orange, the rest on slate"),
         caption = chanwe_caption("Source: ggplot2::mpg")
-    ) +
-    theme_chanwe(grid = "x")
+    )
 ```
 
 ## Ordinal: one-hue ramp
 
 ```{r}
 #| label: ordinal
-ggplot(mt, aes(hp_band, fill = hp_band)) +
-    geom_chanwe_bar(width = 0.55) +
+hp_counts <- count(mt, hp_band, name = "n")
+ggplot(hp_counts, aes(hp_band, n, fill = hp_band)) +
+    geom_chanwe_col(width = 0.55) +
+    geom_text(aes(label = n), vjust = -0.7, family = "JetBrains Mono", size = 2.5,
+              colour = chanwe_palette("semantic")[["foreground"]]) +
     scale_fill_chanwe_d(palette = "ramp_blue", reverse = TRUE) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.14))) +
     labs(
-        title = chanwe_title(
-            "Fleet by horsepower band",
-            eyebrow = "ORDINAL - ONE HUE"
-        ),
-        subtitle = chanwe_subtitle(
-            "Low to High reads light to dark in a single family"
-        ),
-        x = NULL,
-        y = "Vehicles",
+        title = chanwe_title("Most of the fleet sits in the low band", eyebrow = "ORDINAL - ONE HUE"),
+        subtitle = chanwe_subtitle("Vehicles by horsepower band - Low to High reads light to dark, counts on the bars"),
+        x = NULL, y = NULL,
         caption = chanwe_caption("Source: mtcars")
     ) +
-    theme_chanwe(legend_position = "none")
+    theme_chanwe(legend_position = "none") +
+    theme(axis.text.y = element_blank(), panel.grid.major.y = element_blank())
 ```
 
 ## Sequential
 
 ```{r}
 #| label: seq-teal
-ggplot(mt, aes(wt, mpg, color = disp)) +
-    geom_point(size = 2.8) +
-    scale_color_chanwe_c(palette = "teal") +
+cyl_gear <- mt |> group_by(cyl, gear) |> summarise(mpg = mean(mpg), .groups = "drop")
+ggplot(cyl_gear, aes(gear, cyl, fill = mpg)) +
+    geom_tile(color = chanwe_palette("core")[["brand-white"]], linewidth = 1.2) +
+    geom_text(aes(label = formatC(mpg, format = "f", digits = 1, decimal.mark = ",")),
+              family = "JetBrains Mono", size = 2.6, colour = chanwe_palette("semantic")[["secondary"]]) +
+    scale_fill_chanwe_c(palette = "teal") +
     labs(
-        title = chanwe_title(
-            "Displacement gradient",
-            eyebrow = "SEQUENTIAL - TEAL"
-        ),
-        subtitle = chanwe_subtitle("One hue, light to dark, magnitude only"),
-        x = "Weight (1000 lbs)",
-        y = "MPG",
-        color = "Disp.",
+        title = chanwe_title("Four cylinders and four gears go furthest", eyebrow = "SEQUENTIAL - TEAL"),
+        subtitle = chanwe_subtitle("Mean miles per gallon by cylinders and gears - one hue, light to dark, values in the cells"),
+        x = "Gears", y = "Cylinders",
         caption = chanwe_caption("Source: mtcars")
     ) +
-    theme_chanwe()
+    theme_chanwe(grid = "none", legend_position = "none")
 ```
 
 ```{r}
-#| label: seq-orange
-ggplot(econ, aes(date, unemp_pct, color = psavert)) +
-    geom_line(linewidth = 0.9) +
-    scale_color_chanwe_c() +
+#| label: seq-blue
+unemp_grid <- econ |>
+    mutate(year = format(date, "%Y"), month = factor(format(date, "%m"), labels = month.abb)) |>
+    filter(year >= "2005")
+ggplot(unemp_grid, aes(month, year, fill = unemp_pct)) +
+    geom_tile(color = chanwe_palette("core")[["brand-white"]], linewidth = 0.8) +
+    scale_fill_chanwe_c(palette = "blue") +
+    guides(fill = guide_colourbar(barwidth = unit(8, "lines"))) +
     labs(
-        title = chanwe_title(
-            "Unemployment, colored by savings rate",
-            eyebrow = "SEQUENTIAL - ORANGE (DEFAULT)"
-        ),
-        subtitle = chanwe_subtitle(
-            "The default gradient anchors on the report primary"
-        ),
-        x = NULL,
-        y = "Unemployment (%)",
-        color = "Savings %",
+        title = chanwe_title("Unemployment peaked in 2010 and took six years to recede", eyebrow = "SEQUENTIAL - BLUE"),
+        subtitle = chanwe_subtitle("Unemployed as a share of population, %, monthly, 2005 to 2015"),
+        x = NULL, y = NULL, fill = "%",
         caption = chanwe_caption("Source: ggplot2::economics")
     ) +
-    theme_chanwe()
+    theme_chanwe(grid = "none")
 ```
 
 ## Diverging
@@ -459,24 +424,28 @@ ggplot(heat, aes(week, region, fill = delta)) +
 mk <- ggplot2::mpg |>
     group_by(manufacturer) |>
     summarise(hwy = mean(hwy), .groups = "drop") |>
-    mutate(delta = hwy - mean(hwy), manufacturer = reorder(manufacturer, delta))
-md <- max(abs(mk$delta))
-ggplot(mk, aes(delta, manufacturer, fill = delta)) +
-    geom_chanwe_col(width = 0.62) +
-    scale_fill_chanwe_div(limits = c(-md, md)) +
+    mutate(
+        delta = hwy - mean(hwy),
+        manufacturer = reorder(manufacturer, delta),
+        label = sprintf("%+.1f", delta) |> sub(pattern = ".", replacement = ",", fixed = TRUE)
+    )
+signed <- chanwe_palette("signed")
+ggplot(mk, aes(delta, manufacturer)) +
+    geom_vline(xintercept = 0, colour = chanwe_palette("all")[["rule-cool"]], linewidth = 0.4) +
+    geom_chanwe_col(aes(fill = delta > 0), orientation = "y", width = 0.58) +
+    geom_text(aes(label = label, hjust = ifelse(delta > 0, -0.25, 1.25)),
+              family = "JetBrains Mono", size = 2.4, colour = signed[["neutral"]]) +
+    scale_fill_manual(values = c(`TRUE` = scales::alpha(signed[["positive"]], 0.55),
+                                 `FALSE` = scales::alpha(signed[["negative"]], 0.55)), guide = "none") +
+    scale_x_continuous(expand = expansion(mult = 0.16)) +
     labs(
-        title = chanwe_title(
-            "Highway MPG vs fleet average",
-            eyebrow = "DIVERGING - BARS"
-        ),
-        subtitle = chanwe_subtitle(
-            "Above average in green, below in red"
-        ),
-        x = "Δ MPG",
-        y = NULL,
+        title = chanwe_title("Honda and Volkswagen lead the fleet on the highway", eyebrow = "DIVERGING - BARS"),
+        subtitle = chanwe_subtitle("Highway MPG against the fleet average, difference in MPG - signed values beside the bars"),
+        x = NULL, y = NULL,
         caption = chanwe_caption("Source: ggplot2::mpg")
     ) +
-    theme_chanwe(legend_position = "none")
+    theme_chanwe(grid = "none") +
+    theme(axis.text.x = element_blank())
 ```
 
 # The Signed System
@@ -851,7 +820,7 @@ p_fleet +
 ```{r}
 #| label: frame-top-bottom
 ggplot(mt, aes(wt, mpg)) +
-    geom_point(size = 2.2, color = chart[["chart-teal"]]) +
+    geom_point(size = 2.2, color = chart[["primary"]]) +
     labs(
         title = chanwe_title("plot_borders · top_bottom", eyebrow = "FRAME"),
         subtitle = chanwe_subtitle('plot_borders = "top_bottom"'),
@@ -870,132 +839,63 @@ ggplot(mt, aes(wt, mpg)) +
 
 ```{r}
 #| label: form-line
-ggplot(rev_df, aes(month, revenue, color = segment)) +
-    geom_line(linewidth = 0.8) +
-    geom_point(data = rev_last, size = 1.9) +
-    geom_text(
-        data = rev_last,
-        aes(y = y_lab, label = segment),
-        hjust = 0,
-        nudge_x = 7,
-        family = "JetBrains Mono",
-        size = 6.75 * 0.72 / ggplot2::.pt,
-        show.legend = FALSE
-    ) +
-    scale_color_chanwe_d() +
-    scale_x_date(
-        date_labels = "%b",
-        breaks = months[c(2, 5, 8, 11)],
-        expand = expansion(mult = c(0.02, 0.2))
-    ) +
-    coord_cartesian(clip = "off") +
+chanwe_lines(rev_df, "month", "revenue", "segment", focus = "Online") +
     labs(
-        title = chanwe_title(
-            "Monthly revenue by segment",
-            eyebrow = "FORM - LINE"
-        ),
-        subtitle = chanwe_subtitle(
-            "Twelve trailing months, USD MM - series labelled where they end"
-        ),
-        x = NULL,
-        y = "USD MM",
+        title = chanwe_title("Online grows fastest, from the smallest base", eyebrow = "FORM - LINE"),
+        subtitle = chanwe_subtitle("Monthly revenue by segment, USD millions, twelve trailing months"),
         caption = chanwe_caption("Source: internal ledger, simulated")
-    ) +
-    theme_chanwe(legend_position = "none")
+    )
 ```
 
 ## Area
 
 ```{r}
 #| label: form-area
-ggplot(econ, aes(date, unemploy / 1000)) +
-    geom_area(fill = chart[["primary"]], alpha = 0.85) +
+unemployed <- econ |> transmute(date, value = unemploy / 1000)
+chanwe_area(unemployed, "date", "value") +
     labs(
-        title = chanwe_title("Unemployed persons", eyebrow = "FORM - AREA"),
-        subtitle = chanwe_subtitle("Millions, monthly since 2000"),
-        x = NULL,
-        y = "Millions",
+        title = chanwe_title("Unemployment doubled in the 2008 crisis", eyebrow = "FORM - AREA"),
+        subtitle = chanwe_subtitle("Unemployed persons, millions, monthly since 2000"),
         caption = chanwe_caption("Source: ggplot2::economics")
-    ) +
-    theme_chanwe()
+    )
 ```
 
 ## Distribution · density
 
 ```{r}
 #| label: form-density
-ggplot(mt, aes(mpg, fill = am)) +
-    geom_density(alpha = 0.7, color = NA) +
-    scale_fill_chanwe_d() +
+chanwe_density(mt, "mpg", "am", focus = "Manual") +
     labs(
-        title = chanwe_title(
-            "Fuel economy distribution",
-            eyebrow = "FORM - DENSITY"
-        ),
-        subtitle = chanwe_subtitle("Manual transmissions skew to higher MPG"),
-        x = "MPG",
-        y = "Density",
-        fill = NULL,
+        title = chanwe_title("Manual transmissions skew to higher MPG", eyebrow = "FORM - DENSITY"),
+        subtitle = chanwe_subtitle("Distribution of miles per gallon by transmission - outlines, so the overlap stays visible"),
         caption = chanwe_caption("Source: mtcars")
-    ) +
-    theme_chanwe()
+    )
 ```
 
 ## Error bars · mean ± SD
 
 ```{r}
 #| label: form-errorbar
-ggplot(cyl_summary, aes(cyl, avg_mpg)) +
-    geom_pointrange(
-        aes(ymin = avg_mpg - sd_mpg, ymax = avg_mpg + sd_mpg),
-        color = chart[["chart-blue"]],
-        linewidth = 0.7,
-        size = 0.6
-    ) +
+cyl_range <- cyl_summary |>
+    transmute(cyl = paste(cyl, "cylinders"), mpg = avg_mpg, lo = avg_mpg - sd_mpg, hi = avg_mpg + sd_mpg)
+chanwe_dots(cyl_range, "cyl", "mpg", focus = "4 cylinders", style = "range", lo = "lo", hi = "hi") +
     labs(
-        title = chanwe_title(
-            "Fuel economy by cylinders",
-            eyebrow = "FORM - ERROR BARS"
-        ),
-        subtitle = chanwe_subtitle("Mean ± one standard deviation"),
-        x = "Cylinders",
-        y = "MPG",
+        title = chanwe_title("Four cylinders: the best mean and the widest spread", eyebrow = "FORM - ERROR BARS"),
+        subtitle = chanwe_subtitle("Mean miles per gallon and one standard deviation either side, by cylinders"),
         caption = chanwe_caption("Source: mtcars")
-    ) +
-    theme_chanwe()
+    )
 ```
 
 ## Focus bar · value labels
 
 ```{r}
 #| label: form-focus
-ggplot(cyl_summary, aes(cyl, avg_mpg)) +
-    geom_chanwe_col(aes(fill = cyl), width = 0.62) +
-    geom_text(
-        aes(label = sprintf("%.1f", avg_mpg)),
-        vjust = -0.7,
-        family = "JetBrains Mono",
-        colour = chanwe_palette("semantic")[["secondary"]],
-        size = 6.75 * 0.8 / ggplot2::.pt
-    ) +
-    scale_fill_chanwe_focus("4", guide = "none") +
-    scale_y_continuous(expand = expansion(mult = c(0, 0.14))) +
+cyl_mpg <- cyl_summary |> transmute(cyl = paste(cyl, "cyl."), mpg = avg_mpg)
+chanwe_bars(cyl_mpg, "cyl", "mpg", focus = "4 cyl.") +
     labs(
-        title = chanwe_title(
-            "Fuel economy by cylinders",
-            eyebrow = "FORM - FOCUS BAR"
-        ),
-        subtitle = chanwe_subtitle(
-            "The focus in orange, the context on the slate ramp, values on the bars"
-        ),
-        x = "Cylinders",
+        title = chanwe_title("Four cylinders go almost twice as far as eight", eyebrow = "FORM - FOCUS BAR"),
+        subtitle = chanwe_subtitle("Mean miles per gallon by cylinders - the focus in orange, values on the bars"),
         caption = chanwe_caption("Source: mtcars")
-    ) +
-    theme_chanwe() +
-    theme(
-        panel.grid.major.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.title.y = element_blank()
     )
 ```
 
@@ -1004,22 +904,12 @@ ggplot(cyl_summary, aes(cyl, avg_mpg)) +
 ```{r}
 #| label: form-facets
 #| fig-height: 5.0
-ggplot(mt, aes(wt, mpg, color = cyl)) +
-    geom_point(size = 2.0) +
-    facet_wrap(~am) +
-    scale_color_chanwe_d() +
+chanwe_multiples(rev_df, "month", "revenue", "segment") +
     labs(
-        title = chanwe_title(
-            "Faceted by transmission",
-            eyebrow = "FORM - FACETS"
-        ),
-        subtitle = chanwe_subtitle("Strip labels in JetBrains Mono"),
-        x = "Weight",
-        y = "MPG",
-        color = "Cyl",
-        caption = chanwe_caption("Source: mtcars")
-    ) +
-    theme_chanwe()
+        title = chanwe_title("Online climbs all year; retail and wholesale wobble", eyebrow = "FORM - SMALL MULTIPLES"),
+        subtitle = chanwe_subtitle("Monthly revenue by segment, USD millions - one panel each, same scale"),
+        caption = chanwe_caption("Source: internal ledger, simulated")
+    )
 ```
 
 # Static HTML Tables — `chanwe_gt()`

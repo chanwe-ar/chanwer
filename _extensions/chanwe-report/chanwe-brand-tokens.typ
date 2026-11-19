@@ -1,4 +1,4 @@
-// Generated from brand/tokens/tokens.json by scripts/brand-tokens.mjs. Do not edit; change tokens.json and run npm run brand:tokens.
+// Generated from brand/ui/tokens/tokens.json by scripts/brand-tokens.mjs. Do not edit; change tokens.json and run npm run brand:tokens.
 // Lengths are px numbers (multiply by 0.75pt in print); colours are rgb().
 #let chanwe-colors = (
   "primary": rgb("#FD3810"),
@@ -13,7 +13,7 @@
   "fg": rgb("#111319"),
   "body-fg": rgb("#475569"),
   "fg-muted": rgb("#475569"),
-  "fg-subtle": rgb("#8A94A6"),
+  "fg-subtle": rgb("#5B6677"),
   "emphasis": rgb("#484848"),
   "paper": rgb("#F8FAFC"),
   "callout-surface": rgb("#F8FAFC"),
@@ -72,6 +72,7 @@
   "violet-soft": rgb("#EFE7FD"),
   "canvas": rgb("#E9EEF4"),
   "pane": rgb("#FFFFFF"),
+  "favorite": rgb("#FFCC00"),
 )
 #let chanwe-colors-dark = (
   "ink": rgb("#F4F6F9"),
@@ -106,6 +107,7 @@
   "research-muted": rgb("#7E8390"),
   "canvas": rgb("#232A35"),
   "pane": rgb("#111319"),
+  "favorite": rgb("#FFD60A"),
 )
 #let chanwe-radii = (
   "hair": 2,
@@ -163,8 +165,52 @@
   "point-size": 3,
   "bar-radius": 3,
 )
+#let chanwe-layout = (
+  "shell-bar": 56,
+)
+#let chanwe-state = (
+  "primary-hover": rgb("#EA3511"),
+  "primary-pressed": rgb("#D73211"),
+)
 #let chanwe-fonts = (
   "display": "Schibsted Grotesk",
   "body": "Satoshi",
   "mono": "JetBrains Mono",
+)
+#let chanwe-callout = (
+  "dot": 7,
+  "label-tracking": "0.14em",
+  "radius": 12,
+)
+#let chanwe-eyebrow = (
+  "dot": 7,
+  "tracking": "0.14em",
+)
+#let chanwe-code = (
+  "surface": rgb("#232A35"),
+  "fg": rgb("#C6CDD6"),
+  "label": rgb("#8A94A6"),
+  "output": rgb("#8A94A6"),
+  "prompt": rgb("#FD3810"),
+  "radius": 12,
+)
+#let chanwe-syntax = (
+  "keyword": rgb("#FD3810"),
+  "string": rgb("#34C759"),
+  "number": rgb("#AF52DE"),
+  "operator": rgb("#00C7BE"),
+  "function": rgb("#F8FAFC"),
+  "type": rgb("#FF9500"),
+  "comment": rgb("#8A94A6"),
+  "function-weight": 700,
+  "comment-style": "italic",
+)
+#let chanwe-dots = (
+  "step": 18,
+  "size": 1,
+  "on-light": "color-mix(in srgb, #111319 7%, transparent)",
+  "on-ink": "color-mix(in srgb, #FFFFFF 5%, transparent)",
+  "origin": "100% 0%",
+  "fade-reach": "70%",
+  "fade-soft": "100%",
 )

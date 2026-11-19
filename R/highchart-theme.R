@@ -101,17 +101,17 @@ chanwe_highchart <- function(
     # of the title-subtitle one.
     parts <- c(
       if (!is.null(eyebrow)) {
-        # The brand eyebrow: an orange rule, then JetBrains Mono caps with
-        # wide tracking (same as chanwe_html_header_tag()).
+        # The brand eyebrow: an orange dot, then JetBrains Mono caps in slate
+        # with wide tracking (same as chanwe_html_header_tag()).
         sprintf(
           paste0(
             "<div style='font-size:10px;font-weight:500;font-family:%1$s;",
-            "color:%2$s;letter-spacing:.18em;text-transform:uppercase;",
-            "margin-bottom:9px'><span style='display:inline-block;width:22px;",
-            "height:1px;background:%2$s;vertical-align:middle;",
-            "margin-right:8px'></span>%3$s</div>"
+            "color:%4$s;letter-spacing:.16em;text-transform:uppercase;",
+            "margin-bottom:9px'><span style='display:inline-block;width:6px;",
+            "height:6px;border-radius:50%%;background:%2$s;vertical-align:middle;",
+            "margin:-2px 8px 0 0'></span>%3$s</div>"
           ),
-          hc_mono, tk$accent, chanwe_html_escape(eyebrow)
+          hc_mono, tk$accent, chanwe_html_escape(eyebrow), tk$fg_muted
         )
       },
       if (!is.null(title)) {
@@ -244,11 +244,16 @@ chanwe_highchart <- function(
     highcharter::hc_exporting(enabled = FALSE) |>
     highcharter::hc_credits(enabled = FALSE) |>
     highcharter::hc_plotOptions(
-      series = list(
-        marker = list(enabled = FALSE),
-        lineWidth = chanwe_tokens$plot$`line-width`,
-        states = list(hover = list(lineWidthPlus = 0))
-      ),
+      series = list(states = list(hover = list(lineWidthPlus = 0))),
+      # Line marks only: set on `series`, the width and the hidden markers
+      # also reached scatters (drawn as joined lines, without points) and
+      # heatmaps.
+      line = list(marker = list(enabled = FALSE), lineWidth = chanwe_tokens$plot$`line-width`),
+      spline = list(marker = list(enabled = FALSE), lineWidth = chanwe_tokens$plot$`line-width`),
+      area = list(marker = list(enabled = FALSE), lineWidth = chanwe_tokens$plot$`line-width`),
+      areaspline = list(marker = list(enabled = FALSE), lineWidth = chanwe_tokens$plot$`line-width`),
+      scatter = list(lineWidth = 0, marker = list(enabled = TRUE, radius = chanwe_tokens$plot$`point-size`,
+                                                   symbol = "circle")),
       # v2 bars: plot.bar-radius (Highcharts 9 rounds every corner)
       column = list(borderRadius = tk$bar_radius, borderWidth = 0),
       bar = list(borderRadius = tk$bar_radius, borderWidth = 0)
@@ -280,6 +285,13 @@ chanwe_highchart <- function(
         useHTML = TRUE, align = "left", margin = caption_margin,
         style = list(fontFamily = hc_mono)
       )
+  }
+
+  # A colour axis that spans zero is signed: red through white to green,
+  # the paper heatmap's poles, never Highcharts' default blue and red.
+  ca <- hc$x$hc_opts$colorAxis
+  if (!is.null(ca) && is.numeric(ca$min) && ca$min < 0) {
+    hc$x$hc_opts$colorAxis$stops <- list(list(0, tk$negative), list(0.5, tk$white), list(1, tk$positive))
   }
 
   # The v2 colour rule: the focus series in orange, the rest on the slate

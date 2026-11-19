@@ -38,7 +38,7 @@ in what unit and over what period.}
 \item{tag}{The section or series, at the right of the header
 (\code{"Monitor macro · 3.2"}). Not the ID: that goes to \code{id}.}
 
-\item{numeral}{The figure number in Instrument Serif, for \code{header = "C"}
+\item{numeral}{The figure number in Schibsted Grotesk, for \code{header = "C"}
 and the editorial style (\code{"07"}).}
 
 \item{kpi}{A \code{\link[=chanwe_kpi]{chanwe_kpi()}} string.}

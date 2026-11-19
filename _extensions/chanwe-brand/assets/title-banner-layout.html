@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     location.textContent = "Mendoza, Argentina";
 
     var website = document.createElement("span");
-    website.textContent = "chanwe.com.ar";
+    website.textContent = "chanwe.ar";
 
     contact.appendChild(location);
     contact.appendChild(website);
@@ -60,12 +60,19 @@ document.addEventListener("DOMContentLoaded", function () {
     var topicPill = document.querySelector(
       ".quarto-title-banner .quarto-categories .quarto-category"
     );
+    // v2 (Ale, 2026-11-18): the topic joins the mono contact lines (no
+    // orange pill) and the right column ends on the paper contact code.
     if (topicPill && topicPill.textContent.trim() !== "") {
-      var topic = document.createElement("div");
+      var topic = document.createElement("span");
       topic.className = "chanwe-footer-topic";
       topic.textContent = topicPill.textContent.trim();
-      right.appendChild(topic);
+      contact.appendChild(topic);
     }
+    var qr = document.createElement("span");
+    qr.className = "chanwe-footer-qr";
+    qr.setAttribute("role", "img");
+    qr.setAttribute("aria-label", "chanwe.ar");
+    right.appendChild(qr);
 
     footer.appendChild(brand);
     footer.appendChild(right);
@@ -90,6 +97,39 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener("scroll", syncTocVisibility, { passive: true });
     window.addEventListener("resize", syncTocVisibility, { passive: true });
     window.addEventListener("load", syncTocVisibility);
+  }
+
+  // toc-style: glass — a reading-progress bar under the index title and a
+  // «back to top» link at its foot. Quarto builds the index after this script,
+  // so both are added on `load`.
+  if (document.documentElement.dataset.cwToc === "glass") {
+    window.addEventListener("load", function () {
+      var toc = document.querySelector('nav[role="doc-toc"]');
+      if (!toc || toc.querySelector(".chanwe-toc-progress")) return;
+      var bar = document.createElement("div");
+      bar.className = "chanwe-toc-progress";
+      bar.setAttribute("aria-hidden", "true");
+      var fill = document.createElement("i");
+      bar.appendChild(fill);
+      var title = toc.querySelector("#toc-title, h2");
+      if (title) title.insertAdjacentElement("afterend", bar); else toc.prepend(bar);
+      var top = document.createElement("a");
+      top.className = "chanwe-toc-top";
+      top.href = "#";
+      top.textContent = (document.documentElement.lang || "").indexOf("es") === 0 ? "↑ Volver arriba" : "↑ Back to top";
+      top.addEventListener("click", function (event) {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      toc.appendChild(top);
+      var syncProgress = function () {
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        fill.style.width = (max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0) + "%";
+      };
+      syncProgress();
+      window.addEventListener("scroll", syncProgress, { passive: true });
+      window.addEventListener("resize", syncProgress, { passive: true });
+    });
   }
 
   var header = document.getElementById("title-block-header");
@@ -188,8 +228,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // A document without author or date has no meta block, but it still gets
+  // the foot band and the bottom wrapper below.
   var titleMeta = header.querySelector(".quarto-title-meta");
-  if (!titleMeta) return;
 
   var nativeKeywordBlocks = header.querySelectorAll(".keywords");
   nativeKeywordBlocks.forEach(function (block) {
@@ -208,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function () {
     titlePanel.appendChild(bottom);
   }
 
-  if (titleMeta.parentElement !== bottom) {
+  if (titleMeta && titleMeta.parentElement !== bottom) {
     bottom.appendChild(titleMeta);
   }
 
@@ -229,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // si el documento declara un tema, el tema.
     var firstPill = titlePanel.querySelector(".quarto-categories .quarto-category");
     var topic = firstPill ? firstPill.textContent.trim() : "";
-    seriesLabel.textContent = topic ? "Chanwe" : "Chanwe";
+    seriesLabel.textContent = "Chanwe";
     series.appendChild(seriesLabel);
     if (topic) {
       var seriesSlash = document.createElement("span");
@@ -299,5 +340,119 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   keywordsHost.appendChild(categories);
+});
+</script>
+<script>
+// v2 (2026-11-18): the pieces the rules layer cannot draw alone. This
+// listener runs after the banner one above, so the banner is already built.
+document.addEventListener("DOMContentLoaded", function () {
+  var lang = (document.documentElement.lang || "").trim().toLowerCase();
+  var es = lang.indexOf("es") === 0;
+
+  // ── Callouts: the kind (dot + mono label) as the first line ──────────
+  var KINDS = es
+    ? { note: "Nota", tip: "Consejo", warning: "Advertencia", important: "Importante", caution: "Precaución" }
+    : { note: "Note", tip: "Tip", warning: "Warning", important: "Important", caution: "Caution" };
+  var norm = function (text) { return (text || "").replace(/\s+/g, " ").trim().toLowerCase(); };
+  document.querySelectorAll(".callout").forEach(function (callout) {
+    var match = callout.className.match(/\bcallout-(note|tip|warning|important|caution)\b/);
+    if (!match || callout.querySelector(".cw-callout-kind")) return;
+    var kind = document.createElement("div");
+    kind.className = "cw-callout-kind";
+    kind.setAttribute("aria-hidden", "true");
+    kind.textContent = KINDS[match[1]];
+
+    var titleBox = callout.querySelector(".callout-header .callout-title-container");
+    if (!titleBox) {
+      var body = callout.querySelector(".callout-body-container");
+      if (body) body.insertBefore(kind, body.firstChild);
+      return;
+    }
+    // The visible title is every node but Quarto's screen-reader label.
+    var sr = titleBox.querySelector(".screen-reader-only");
+    var title = document.createElement("span");
+    title.className = "cw-callout-title";
+    Array.prototype.slice.call(titleBox.childNodes).forEach(function (node) {
+      if (node !== sr) title.appendChild(node);
+    });
+    titleBox.appendChild(title);
+    titleBox.insertBefore(kind, titleBox.firstChild);
+    var said = norm(title.textContent);
+    if (!said || said === norm(kind.textContent) || (sr && said === norm(sr.textContent))) {
+      titleBox.classList.add("cw-callout-title-dup");
+    }
+  });
+
+  // ── Source code: the language as the panel's mono label ──────────────
+  var SKIP = { sourceCode: 1, "code-with-copy": 1, numberSource: 1, "code-annotation-code": 1, cell: 1 };
+  document.querySelectorAll("div.sourceCode > pre.sourceCode").forEach(function (pre) {
+    if (pre.dataset.cwLang) return;
+    var langName = Array.prototype.filter.call(pre.classList, function (c) {
+      return !SKIP[c] && c.indexOf("number") !== 0;
+    })[0];
+    if (langName) pre.dataset.cwLang = langName;
+    // Terminal (unified with the kit, 2026-11-18): the block is labelled
+    // «Terminal», the prompt is orange, the output lines `fg-subtle`.
+    if (/^(terminal|console|shell-session)$/i.test(langName || "")) {
+      pre.dataset.cwLang = "Terminal";
+      pre.classList.add("cw-terminal");
+      pre.querySelectorAll("code > span").forEach(function (line) {
+        var walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+        var first = walker.nextNode();
+        while (first && !first.nodeValue.trim()) first = walker.nextNode();
+        if (first && first.nodeValue.replace(/^\s+/, "").charAt(0) === "$") {
+          var at = first.nodeValue.indexOf("$");
+          var rest = first.splitText(at);
+          rest.nodeValue = rest.nodeValue.slice(1);
+          var prompt = document.createElement("span");
+          prompt.className = "cw-prompt";
+          prompt.textContent = "$";
+          rest.parentNode.insertBefore(prompt, rest);
+          line.classList.add("cw-command");
+        } else {
+          line.classList.add("cw-output");
+        }
+      });
+    }
+  });
+
+  // ── Cover variants: the eyebrow and the lockup foot ──────────────────
+  var variant = document.documentElement.dataset.cwCover;
+  if (!variant) return;
+  var panel = document.querySelector("#title-block-header .quarto-title-banner .quarto-title");
+  if (!panel) return;
+
+  var datum = panel.querySelector(".chanwe-datum");
+  var firstPill = panel.querySelector(".quarto-categories.chanwe-top-pills .quarto-category");
+  if (datum && firstPill && !datum.querySelector(".chanwe-cover-eyebrow")) {
+    var eyebrow = document.createElement("div");
+    eyebrow.className = "chanwe-cover-eyebrow";
+    eyebrow.textContent = firstPill.textContent.trim();
+    datum.insertBefore(eyebrow, datum.firstChild);
+  }
+
+  var foot = panel.querySelector(".chanwe-cover-foot");
+  if (!foot) {
+    foot = document.createElement("div");
+    foot.className = "chanwe-cover-foot";
+    var holder = panel.querySelector(".chanwe-cover-bottom");
+    if (!holder) {
+      holder = document.createElement("div");
+      holder.className = "chanwe-cover-bottom";
+      panel.appendChild(holder);
+    }
+    holder.appendChild(foot);
+  }
+  if (!foot.querySelector(".chanwe-cover-lockup")) {
+    var lockup = document.createElement("span");
+    lockup.className = "chanwe-cover-lockup";
+    lockup.setAttribute("role", "img");
+    lockup.setAttribute("aria-label", "Chanwe");
+    var place = document.createElement("span");
+    place.className = "chanwe-cover-place";
+    place.textContent = "Mendoza · Argentina";
+    foot.insertBefore(place, foot.firstChild);
+    foot.insertBefore(lockup, foot.firstChild);
+  }
 });
 </script>

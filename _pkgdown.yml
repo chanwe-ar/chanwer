@@ -1,4 +1,6 @@
 url: https://chanwe-ar.github.io/chanwer
+# The site builds into site/: docs/ holds the es/en documentation.
+destination: site
 
 template:
   bootstrap: 5
