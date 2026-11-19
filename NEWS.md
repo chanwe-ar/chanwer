@@ -11,6 +11,16 @@
 - **`annotate_chanwe_ends()` spreads crowded labels** (`gap =`, 6 % of the y range): two series that end
   close no longer print their names on top of each other.
 - Fix: the `annotate_chanwe_main()` example runs without ggplot2 attached.
+- **The HTML eyebrow is the report's**: `chanwe_gt()`, `chanwe_reactable()` and `chanwe_highchart()` draw
+  an orange dot and a slate mono label (they kept the 2.x orange rule and orange text).
+- **`chanwe_gt()`**: spanners are mono labels on the tint (they rendered as an empty white cell), group
+  headings sit on the 16px inset, and `gt::data_color()` fills survive (the flat-rows rule painted every
+  cell transparent).
+- **`chanwe_highchart()`**: the line width and hidden markers apply to line, spline and area series only
+  (scatters were drawn as joined lines without points); scatter points take `plot.point-size`; a colour
+  axis that spans zero gets the signed poles (red, white, green) instead of Highcharts' blue and red.
+- `chanwe_scatter()` names in the right third of the panel read leftwards, so they stay inside;
+  `chanwe_multiples()` labels dates with `label_chanwe_month()` (Spanish months).
 
 - **Chart builders** (Ale's picks, round 6, 2026-11-19), each with its look decided once and
   `style =` for the alternatives he kept: `chanwe_bars()` (`"labelled"` by default, `"ranking"`,

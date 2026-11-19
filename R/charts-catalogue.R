@@ -163,8 +163,12 @@ chanwe_scatter <- function(data, x, y, label = NULL, focus = NULL, highlight = N
   }
   if (!is.null(label)) {
     named <- d[as.character(d[[label]]) %in% c(focus, highlight), , drop = FALSE]
-    if (nrow(named)) p <- p + .cwc_label(data = named, ggplot2::aes(.data[[x]], .data[[y]], label = toupper(.data[[label]])),
-                                         hjust = -.15, vjust = -.7, inherit.aes = FALSE)
+    # A name in the right third of the panel reads leftwards, so it stays inside.
+    xs <- as.numeric(d[[x]])
+    named$.hj <- ifelse(as.numeric(named[[x]]) > min(xs) + diff(range(xs)) * 2 / 3, 1.1, -.15)
+    if (nrow(named)) p <- p + .cwc_label(data = named, ggplot2::aes(.data[[x]], .data[[y]], label = toupper(.data[[label]]),
+                                                                     hjust = .data$.hj),
+                                         vjust = -.7, inherit.aes = FALSE)
   }
   p + theme
 }
@@ -400,7 +404,8 @@ chanwe_multiples <- function(data, x, y, group, ncol = 3, theme = theme_chanwe(g
   ggplot2::ggplot(d, ggplot2::aes(.data[[x]], .data[[y]])) +
     ggplot2::geom_line(data = ghost, ggplot2::aes(group = .data[[group]]), colour = .cwc_slate(5), linewidth = .3) +
     ggplot2::geom_line(colour = .cwc_col("primary"), linewidth = .7) +
-    ggplot2::facet_wrap(ggplot2::vars(.data$.panel), ncol = ncol) + theme +
+    ggplot2::facet_wrap(ggplot2::vars(.data$.panel), ncol = ncol) +
+    (if (inherits(data[[x]], "Date")) ggplot2::scale_x_date(labels = label_chanwe_month(year = FALSE))) + theme +
     ggplot2::theme(strip.text = ggplot2::element_text(family = .cwc_mono, size = 6, colour = .cwc_quiet(), hjust = 0)) +
     ggplot2::labs(x = NULL, y = NULL)
 }
