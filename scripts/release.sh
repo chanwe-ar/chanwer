@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Publishes a release of chanwer: tag vX.Y.Z on main, and a GitHub release with the NEWS.md notes
-# for X.Y.Z and chanwer-vX.Y.Z.zip, the package source as `R CMD build` sees it (.Rbuildignore
-# applied). Install with remotes::install_local("chanwer-vX.Y.Z.zip").
+# for X.Y.Z, chanwer-vX.Y.Z.zip, the package source as `R CMD build` sees it (.Rbuildignore
+# applied; install with remotes::install_local("chanwer-vX.Y.Z.zip")), and
+# chanwer-catalogue-vX.Y.Z.zip, the chart catalogue for the brand library
+# (chanwer-catalogue.json and images/, from scripts/export-catalogue.R).
 #
 #   scripts/release.sh 2.7.0
 set -euo pipefail
@@ -30,7 +32,12 @@ for path in subprocess.run(['git', 'ls-files'], capture_output=True, text=True, 
     print(path)
 PY
 git archive --format=zip --prefix="$name/" -o "$zip" HEAD -- $(cat "$zip.files")
+# The catalogue the brand library reads: rendered before tagging, so a failed render stops the release.
+cat_dir="$(dirname "$zip")/catalogue"; cat_zip="$(dirname "$zip")/$name-catalogue-$tag.zip"
+Rscript scripts/export-catalogue.R "$cat_dir" >/dev/null
+(cd "$cat_dir" && zip -qr "$cat_zip" chanwer-catalogue.json images)
 git tag -a "$tag" -m "$name $tag"
 git push -q origin "$tag"
-gh release create "$tag" "$zip" --title "$name $tag" --notes-file "$notes"
+gh release create "$tag" "$zip" "$cat_zip" --title "$name $tag" --notes-file "$notes"
 echo "released $tag · $(basename "$zip") · sha256 $(shasum -a 256 "$zip" | cut -d' ' -f1)"
+echo "catalogue · $(basename "$cat_zip") · sha256 $(shasum -a 256 "$cat_zip" | cut -d' ' -f1)"

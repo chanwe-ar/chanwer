@@ -39,3 +39,5 @@
 ^chanwer-catalogue_files$
 ^docs$
 ^site$
+^chanwer-showcase.*$
+^graphify-out$

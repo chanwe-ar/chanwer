@@ -1,3 +1,13 @@
+# chanwer 3.4.1
+
+- **The catalogue for the brand library**: `scripts/export-catalogue.R <out>` writes `chanwer-catalogue.json` (one
+  entry per builder and style: the need and when not to use it in Spanish and English, the R call, the header it is
+  shown with, the interactive twin, the image) and `images/<builder>-<style>.png` at 1200 px (2x), from the same demo
+  data as `chanwer-catalogue.qmd`. `scripts/release.sh` runs it and attaches `chanwer-catalogue-vX.Y.Z.zip` to every
+  release, which chanwe-brandbook's «Visualizaciones de papel» page pulls.
+- Fix: the waterfall's and the histogram's value pills and `chanwe_level_change()` no longer raise ggplot2 4
+  deprecation warnings (`label.size`, `d$.x` inside `aes()`).
+
 # chanwer 3.4.0
 
 - **Interactive builders** that mimic the paper ones on highcharter: `chanwe_hc_bars()` (`"labelled"`,

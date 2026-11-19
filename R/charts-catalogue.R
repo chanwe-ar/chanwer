@@ -215,7 +215,7 @@ chanwe_waterfall <- function(data, step, value, end_label = "Total", style = c("
     st <- d[d$type != "total", ]
     p <- p + ggplot2::geom_label(data = st, ggplot2::aes(.data$i, pmax(.data$start, .data$end), label = .cwc_signed(.data$v, digits),
                                                          colour = .data$type), vjust = -.35, fill = .cwc_col("pure-white"),
-                                 family = .cwc_mono, size = 2.1, label.size = 0, label.r = grid::unit(5, "pt"), show.legend = FALSE) +
+                                 family = .cwc_mono, size = 2.1, border.colour = NA, label.r = grid::unit(5, "pt"), show.legend = FALSE) +
       ggplot2::scale_colour_manual(values = c(up = .cwc_col("kpi-green"), down = .cwc_col("kpi-red"))) +
       .cwc_label(data = d[d$type == "total", ], ggplot2::aes(.data$i, .data$end, label = .cwa_num(.data$v, digits)), vjust = -.6)
   }
@@ -305,7 +305,7 @@ chanwe_histogram <- function(data, x, style = c("median", "split"), bins = 36, n
       ggplot2::geom_histogram(bins = bins, fill = .cwc_slate(4), colour = W, linewidth = .3) +
       ggplot2::geom_vline(xintercept = md, colour = .cwc_col("primary"), linewidth = .6) +
       ggplot2::annotate("label", x = md, y = Inf, vjust = 1.4, label = paste(toupper(label), .cwa_num(md, 0)),
-                        family = .cwc_mono, size = 2.1, colour = W, fill = .cwc_col("ink"), label.size = 0, label.r = grid::unit(5, "pt"))
+                        family = .cwc_mono, size = 2.1, colour = W, fill = .cwc_col("ink"), border.colour = NA, label.r = grid::unit(5, "pt"))
   } else {
     d <- data; d$.lo <- d[[x]] < md
     p <- ggplot2::ggplot(d, ggplot2::aes(.data[[x]], fill = .data$.lo)) +
@@ -636,8 +636,9 @@ chanwe_level_change <- function(data, x, level, style = c("change", "panels", "s
                      strip.placement = "outside") + ggplot2::labs(x = NULL, y = NULL))
   }
   off <- -max(d[[level]], na.rm = TRUE) * .08
+  last_x <- utils::tail(levels(d$.x), 1)
   ggplot2::ggplot(d, ggplot2::aes(.data$.x, .data[[level]])) +
-    geom_chanwe_col(ggplot2::aes(fill = .data$.x == utils::tail(levels(d$.x), 1)), width = .58, show.legend = FALSE) +
+    geom_chanwe_col(ggplot2::aes(fill = .data$.x == last_x), width = .58, show.legend = FALSE) +
     ggplot2::scale_fill_manual(values = c(`TRUE` = .cwc_col("primary"), `FALSE` = .cwc_slate(4))) +
     ggplot2::geom_text(ggplot2::aes(y = off, label = ifelse(is.na(.data$.chg), "", .cwc_signed(.data$.chg, digits)),
                                     colour = !is.na(.data$.chg) & .data$.chg > 0), family = .cwc_mono, size = 2.2, show.legend = FALSE) +
