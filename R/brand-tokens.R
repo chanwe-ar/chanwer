@@ -11,6 +11,7 @@ chanwe_tokens <- list(
     `ink-fg` = "#64748B",
     `ink-subtle` = "#646464",
     `rule-ink` = "#434D5D",
+    `dusk` = "#24394A",
     `fg` = "#111319",
     `body-fg` = "#475569",
     `fg-muted` = "#475569",
@@ -119,7 +120,10 @@ chanwe_tokens <- list(
     `row` = 8,
     `pill` = 999,
     `surface` = 16,
-    `band` = 24
+    `band` = 24,
+    `print-band` = 16,
+    `print-pane` = 12,
+    `print-dense` = 8
   ),
   space = list(
     `2xs` = 4,
@@ -176,7 +180,12 @@ chanwe_tokens <- list(
   callout = list(
     `dot` = 7,
     `label-tracking` = "0.14em",
-    `radius` = 12
+    `radius` = 12,
+    `special-surface` = "#111319",
+    `special-fg` = "#FFFFFF",
+    `special-label` = "#C6CDD6",
+    `special-rule` = "#434D5D",
+    `special-radius` = 24
   ),
   eyebrow = list(
     `dot` = 7,
