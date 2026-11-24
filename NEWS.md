@@ -1,3 +1,7 @@
+# chanwer 3.5.0
+
+- Brand copies from chanwe-brandbook (D-0062, 2026-11-23): the tokens gain `signal-{ok,warn,fail,plan}` and their `-bg` washes (light and dark), for screens that show a live system's state; nothing else changes.
+
 # chanwer 3.4.1
 
 - **The catalogue for the brand library**: `scripts/export-catalogue.R <out>` writes `chanwer-catalogue.json` (one
