@@ -304,6 +304,11 @@
 # The plot inside the frame: its own title, subtitle, caption and legend are
 # the frame's, and its surface is the card's.
 .cwf_body <- function(plot) {
+  # theme_chanwe()'s pane draws the backgrounds with element_chanwe_surface,
+  # which ggplot2 4 (S7) will not merge with an element_rect: blank them
+  # first (a blank replaces any element), then set the frame's own.
+  plot <- plot + ggplot2::theme(plot.background = ggplot2::element_blank(),
+                                panel.background = ggplot2::element_blank())
   plot + ggplot2::theme(
     plot.title = ggplot2::element_blank(), plot.subtitle = ggplot2::element_blank(),
     plot.caption = ggplot2::element_blank(), legend.position = "none",
