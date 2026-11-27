@@ -24,7 +24,7 @@ BugReports: https://github.com/chanwe-ar/chanwer/issues
 Depends:
     R (>= 4.2.0)
 Imports:
-    ggplot2 (>= 3.5.0),
+    ggplot2 (>= 4.0.0),
     grDevices,
     grid,
     stats,

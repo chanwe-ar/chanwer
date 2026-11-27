@@ -55,3 +55,21 @@ test_that("chanwe_kbl takes the figure frame", {
   expect_match(txt, "measure(_cw-card", fixed = TRUE)
   expect_false(grepl("table.cell(align: left, colspan: 3, inset: (top", txt, fixed = TRUE))
 })
+
+test_that("chanwe_figure draws a whole figure whatever surface the plot's theme has (ggplot2 4, S7)", {
+  skip_if_not_installed("ragg")
+  chanwe_load_fonts()
+  themes <- list(pane = theme_chanwe(), white = theme_chanwe(bg_color = "white"), flat = theme_chanwe(pane = FALSE),
+                 minimal = ggplot2::theme_minimal())
+  for (name in names(themes)) {
+    p <- ggplot2::ggplot(mtcars, ggplot2::aes(wt, mpg, colour = factor(cyl))) + ggplot2::geom_point() + themes[[name]]
+    f <- chanwe_figure(p, title = "Consumo", subtitle = "Millas por galón", source = "Motor Trend", id = "CHW")
+    ragg::agg_png(tempfile(fileext = ".png"), width = 600, height = 450)
+    drawn <- tryCatch({ print(f); grid::grid.ls(print = FALSE)$name }, error = function(e) conditionMessage(e))
+    body <- ggplot2::ggplotGrob(chanwer:::.cwf_body(p))
+    grDevices::dev.off()
+    # The body (the ggplot's gtable, named "layout") is drawn after the header, and holds its panel.
+    expect_true("layout" %in% drawn, info = paste(name, paste(drawn, collapse = " ")))
+    expect_true("panel" %in% body$layout$name, info = name)
+  }
+})

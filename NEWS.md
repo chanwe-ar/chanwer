@@ -1,5 +1,13 @@
 # chanwer 3.6.0
 
+- **Fix: `chanwe_figure()` draws a plot themed with the default `theme_chanwe()`** on ggplot2 4 (S7): the frame set
+  the plot's backgrounds with `element_rect()`, which ggplot2 4 refuses to merge into the pane's
+  `element_chanwe_surface` («Only elements of the same class can be merged»), so only the header drew. A test draws
+  full figures with every theme surface.
+- **ggplot2 4.0.0 or later** (was 3.5.0): on 3.5.0 `geom_chanwe_col()` ignored its `width` and the snapshot tests
+  drew differently, so 3.5.0 never really worked; 4.0.0 is the minimum the package is tested on. Layers that
+  `chanwe_timeseries()` names are named by hand, so they read the same on both.
+
 - **Series over time on a period axis** (for Radar Macro's report figures, Radar Task 243): `chanwe_timeseries()`
   draws dated series on a day, month, quarter, half-year or year axis: lines, bars and areas in one chart, a second
   axis aligned on zero (the plot's `"chanwe_secondary"` attribute reads its values back), bars stacked from the first

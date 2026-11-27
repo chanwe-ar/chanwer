@@ -298,6 +298,16 @@ annotate_chanwe_break <- function(x, label = "Ruptura", size = 2.1) {
 
 # ── the builder ─────────────────────────────────────────────────────────────
 
+# Add a layer under a name the tests and callers can find it by (`names(p$layers)`). Set by hand: ggplot2 3.5.0
+# has no `name =` on layers.
+.cwt_add <- function(p, layer, name) {
+  p <- p + layer
+  nm <- names(p$layers) %||_% rep("", length(p$layers))
+  nm[[length(nm)]] <- name
+  names(p$layers) <- nm
+  p
+}
+
 # The largest absolute height a side reaches: its values, and its stacked bars' sums by date.
 .cwt_extent <- function(d, stacked) {
   if (!nrow(d)) return(NA_real_)
@@ -424,8 +434,8 @@ chanwe_timeseries <- function(data, x, y, group = NULL, focus = NULL, frequency 
     if (!nrow(a)) next
     grad <- grid::linearGradient(colours = c(grDevices::adjustcolor(cols[[s]], .26), grDevices::adjustcolor(cols[[s]], 0)),
                                  x1 = 0, y1 = 1, x2 = 0, y2 = 0)
-    p <- p + ggplot2::geom_ribbon(data = a, ggplot2::aes(x = .data$x, ymin = 0, ymax = .data$yp), fill = grad,
-                                  inherit.aes = FALSE, name = paste0("chanwe_area_", match(s, lv)))
+    p <- .cwt_add(p, ggplot2::geom_ribbon(data = a, ggplot2::aes(x = .data$x, ymin = 0, ymax = .data$yp), fill = grad,
+                                          inherit.aes = FALSE), paste0("chanwe_area_", match(s, lv)))
   }
 
   # Bars, one layer per side: stacked from the first series up, side by side, or one series with rounded ends.
@@ -434,22 +444,21 @@ chanwe_timeseries <- function(data, x, y, group = NULL, focus = NULL, frequency 
     if (!nrow(b)) next
     nb <- length(unique(b$g))
     name <- paste0("chanwe_bars_", sd)
-    p <- p + if (stacked && nb > 1) {
+    p <- .cwt_add(p, if (stacked && nb > 1) {
       ggplot2::geom_col(data = b, ggplot2::aes(fill = .data$g), width = width, colour = chanwe_get_colors()[["pure-white"]],
-                        linewidth = .15, position = ggplot2::position_stack(reverse = TRUE), name = name)
+                        linewidth = .15, position = ggplot2::position_stack(reverse = TRUE))
     } else if (nb > 1) {
-      ggplot2::geom_col(data = b, ggplot2::aes(fill = .data$g), width = width, position = ggplot2::position_dodge(width = width),
-                        name = name)
+      ggplot2::geom_col(data = b, ggplot2::aes(fill = .data$g), width = width, position = ggplot2::position_dodge(width = width))
     } else {
-      geom_chanwe_col(data = b, ggplot2::aes(fill = .data$g), width = width, name = name)
-    }
+      geom_chanwe_col(data = b, ggplot2::aes(fill = .data$g), width = width)
+    }, name)
   }
 
   # Lines (and the lines over areas); a missing value breaks them.
   l <- d[d$mark %in% c("line", "area") & !d$f, , drop = FALSE]
   if (nrow(l)) {
-    p <- p + ggplot2::geom_line(data = l, ggplot2::aes(colour = .data$g, group = .data$g), linewidth = .65,
-                                lineend = "round", na.rm = TRUE, name = "chanwe_lines")
+    p <- .cwt_add(p, ggplot2::geom_line(data = l, ggplot2::aes(colour = .data$g, group = .data$g), linewidth = .65,
+                                        lineend = "round", na.rm = TRUE), "chanwe_lines")
   }
   # The forecast: a dotted companion of the same colour, from the last observed point.
   fc <- d[d$mark %in% c("line", "area") & d$f & !is.na(d$yp), , drop = FALSE]
@@ -458,13 +467,13 @@ chanwe_timeseries <- function(data, x, y, group = NULL, focus = NULL, frequency 
       obs <- l[l$g == s$g[[1]] & !is.na(l$yp) & l$x <= min(s$x), , drop = FALSE]
       rbind(if (nrow(obs)) obs[which.max(obs$x), , drop = FALSE], s)
     }))
-    p <- p + ggplot2::geom_line(data = joined, ggplot2::aes(colour = .data$g, group = .data$g), linewidth = .65,
-                                linetype = "22", lineend = "round", na.rm = TRUE, name = "chanwe_forecast")
+    p <- .cwt_add(p, ggplot2::geom_line(data = joined, ggplot2::aes(colour = .data$g, group = .data$g), linewidth = .65,
+                                        linetype = "22", lineend = "round", na.rm = TRUE), "chanwe_forecast")
   }
   if (is.null(points)) points <- frequency == "S"
   if (isTRUE(points) && nrow(l)) {
-    p <- p + ggplot2::geom_point(data = l[!is.na(l$yp), , drop = FALSE], ggplot2::aes(colour = .data$g), size = 1.5,
-                                 name = "chanwe_points")
+    p <- .cwt_add(p, ggplot2::geom_point(data = l[!is.na(l$yp), , drop = FALSE], ggplot2::aes(colour = .data$g), size = 1.5),
+                  "chanwe_points")
   }
 
   # The last value of the focus series, in the ink pill.
@@ -485,7 +494,7 @@ chanwe_timeseries <- function(data, x, y, group = NULL, focus = NULL, frequency 
     if (nrow(ends)) {
       ends$label <- paste0(toupper(as.character(ends$g)), "  ", vapply(seq_len(nrow(ends)), function(i) fmt(ends$y[[i]], ends$side[[i]]), ""))
       ends$ly <- .cwa_spread(ends$yp, .06 * diff(range(d$yp, na.rm = TRUE)))
-      p <- p + ggplot2::geom_point(data = ends, ggplot2::aes(colour = .data$g), size = 1.2, name = "chanwe_ends") +
+      p <- .cwt_add(p, ggplot2::geom_point(data = ends, ggplot2::aes(colour = .data$g), size = 1.2), "chanwe_ends") +
         ggplot2::geom_text(data = ends, ggplot2::aes(y = .data$ly, label = .data$label), hjust = 0, nudge_x = days * 1.5,
                            family = .cwc_mono, size = 2.4, colour = .cwc_quiet())
       right_pad <- .24
