@@ -322,8 +322,9 @@ annotate_chanwe_break <- function(x, label = "Ruptura", size = 2.1) {
 #' of the focus series sits in the ink pill ([annotate_chanwe_main()]); names go in the legend (the figure frame's
 #' pill) or at the end of each line. Numbers are Spanish ([label_chanwe_number()]).
 #'
-#' A second axis is aligned on zero: the right series are drawn scaled by one factor (the ratio of the two sides'
-#' largest absolute heights) and the right axis reads them back. The factor is the plot's `"chanwe_secondary"`
+#' A second axis is aligned on zero: the right series are drawn scaled by one round factor (the ratio of the two
+#' sides' largest absolute heights, rounded up to 1, 2, 2.5 or 5 times a power of ten) and the right axis reads them
+#' back on the left axis' grid lines. The factor is the plot's `"chanwe_secondary"`
 #' attribute (1 without a right side), so `y / factor` gives a right series' value back from the built plot.
 #'
 #' @param data A data frame in long form: one row per date and series.
@@ -396,6 +397,10 @@ chanwe_timeseries <- function(data, x, y, group = NULL, focus = NULL, frequency 
   if (any(sides == "right")) {
     k <- .cwt_extent(d[d$side == "left", , drop = FALSE], stacked) / .cwt_extent(d[d$side == "right", , drop = FALSE], stacked)
     if (!is.finite(k) || k <= 0) k <- 1
+    # A round factor (1, 2, 2.5 or 5 times a power of ten, the next one up), so the right axis' ticks, derived from
+    # the left's, are round numbers on the same grid lines.
+    e <- 10^floor(log10(k))
+    k <- e * c(1, 2, 2.5, 5, 10)[which(c(1, 2, 2.5, 5, 10) * e >= k - 1e-9)[[1]]]
   }
   d$yp <- ifelse(d$side == "right", d$y * k, d$y)
   fmt <- function(v, s) if (identical(s, "right")) number_right(v) else number(v)
@@ -487,14 +492,16 @@ chanwe_timeseries <- function(data, x, y, group = NULL, focus = NULL, frequency 
     }
   }
 
-  sec <- if (any(sides == "right")) ggplot2::sec_axis(transform = ~ . / k, labels = number_right) else ggplot2::waiver()
+  # An axis' zero, read back through the second axis' inverse, can come out as -1e-18: it prints as zero.
+  snap <- function(f) function(v) f(ifelse(!is.na(v) & abs(v) < 1e-9 * max(1, abs(v), na.rm = TRUE), 0, v))
+  sec <- if (any(sides == "right")) ggplot2::sec_axis(transform = ~ . / k, breaks = ggplot2::derive(), labels = snap(number_right)) else ggplot2::waiver()
   window <- if (is.null(limits)) range(d$x, na.rm = TRUE) else as.Date(limits)
   p <- p +
     ggplot2::scale_colour_manual(values = cols, breaks = lv, aesthetics = c("colour", "fill"), name = NULL,
                                  guide = if (labels == "legend") "legend" else "none") +
     ggplot2::scale_x_date(breaks = breaks_chanwe_period(frequency)(window), labels = label_chanwe_period(frequency, lang),
                           expand = ggplot2::expansion(mult = c(.01, right_pad), add = days * .5)) +
-    ggplot2::scale_y_continuous(labels = number, sec.axis = sec, expand = ggplot2::expansion(mult = c(.05, .08))) +
+    ggplot2::scale_y_continuous(labels = snap(number), sec.axis = sec, expand = ggplot2::expansion(mult = c(.05, .08))) +
     ggplot2::coord_cartesian(xlim = window, clip = "off") +
     theme + ggplot2::theme(legend.position = if (labels == "legend") "top" else "none") +
     ggplot2::labs(x = NULL, y = NULL)

@@ -473,6 +473,12 @@ chanwe_figure <- function(plot, title, subtitle = NULL, eyebrow = NULL, tag = NU
                           footer = c("rule", "tint"), frame = c("simple", "shadow", "none"),
                           style = c("card", "editorial"), scale = NULL) {
   stopifnot(inherits(plot, "ggplot"))
+  # Satoshi (the subtitle, the source, the ID) has no ordinal indicator and no
+  # no-break space: a renderer that cannot fall back glyph by glyph (Typst's
+  # SVG text) sets the whole line in another font. The frame writes the
+  # degree sign and a plain space, which Satoshi has.
+  satoshi <- function(x) if (is.null(x)) x else gsub("\u00a0", " ", gsub("\u00ba", "\u00b0", x, fixed = TRUE), fixed = TRUE)
+  subtitle <- satoshi(subtitle); source <- satoshi(source); source_label <- satoshi(source_label); id <- satoshi(id)
   spec <- list(
     plot = plot, title = title, subtitle = subtitle, eyebrow = eyebrow, tag = tag, numeral = numeral,
     kpi = .cwf_kpi(kpi), kpi_position = match.arg(kpi_position),
@@ -526,7 +532,8 @@ chanwe_save <- function(x, file, width = 7.08, height = 5.5, dpi = 300, embed_fo
   } else if (ext == "svg") {
     chanwe_require_package("svglite")
     if (embed_fonts) chanwe_require_package("base64enc")
-    svglite::svglite(file, width = width, height = height, web_fonts = if (embed_fonts) .cw_web_fonts() else list())
+    svglite::svglite(file, width = width, height = height, bg = "transparent",
+                     web_fonts = if (embed_fonts) .cw_web_fonts() else list())
   } else stop("chanwe_save(): use .png, .pdf or .svg", call. = FALSE)
   on.exit(grDevices::dev.off())
   print(x)
@@ -584,7 +591,7 @@ chanwe_save <- function(x, file, width = 7.08, height = 5.5, dpi = 300, embed_fo
   dir <- tempfile("chanwe-pdf-")
   dir.create(dir)
   on.exit(unlink(dir, recursive = TRUE), add = TRUE)
-  svglite::svglite(file.path(dir, "figure.svg"), width = width, height = height)
+  svglite::svglite(file.path(dir, "figure.svg"), width = width, height = height, bg = "transparent")
   print(x)
   grDevices::dev.off()
   writeLines(sprintf('#set page(width: %.4fin, height: %.4fin, margin: 0pt)\n#image("figure.svg", width: 100%%)',

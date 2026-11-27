@@ -60,11 +60,18 @@ test_that("chanwe_timeseries(): the focus in orange, the rest slate; a right axi
   expect_identical(names(cols), c("IPC", "EMAE"))
   expect_identical(unname(cols[["IPC"]]), chanwe_tokens$plot$focus)
   expect_true(cols[["EMAE"]] %in% chanwe_tokens$plot$slate)
-  expect_equal(attr(p, "chanwe_secondary"), 26 / 2)
+  # 26 / 2 = 13, rounded up to 20: the right axis' ticks are the left's divided by 20.
+  expect_equal(attr(p, "chanwe_secondary"), 20)
   expect_true(all(c("chanwe_bars_right", "chanwe_lines", "chanwe_forecast") %in% names(p$layers)))
   b <- ggplot2::ggplot_build(p)
   bars <- b$data[[match("chanwe_bars_right", names(p$layers))]]
-  expect_equal(sort(unique(bars$y / 13)), c(-1, 2))
+  expect_equal(sort(unique(bars$y / 20)), c(-1, 2))
+  pp <- b$layout$panel_params[[1]]
+  left <- pp$y$get_breaks(); left <- left[!is.na(left)]
+  # The right axis' ticks sit on the left's grid lines and read the left's values divided by 20.
+  right <- pp$y.sec$get_breaks()
+  expect_equal(right[!is.na(right)], left, tolerance = 1e-9)
+  expect_identical(pp$y.sec$get_labels()[!is.na(right)], chanwe_format_number(left / 20))
   fc <- b$data[[match("chanwe_forecast", names(p$layers))]]
   expect_equal(nrow(fc), 3)
   expect_equal(unique(fc$linetype), "22")
@@ -122,4 +129,14 @@ test_that("chanwe_save() writes an SVG with the brand fonts inside and a PDF wit
   listed <- system2(Sys.which("pdffonts"), pdf, stdout = TRUE)
   expect_true(any(grepl("Satoshi", listed)))
   expect_true(any(grepl("JetBrainsMono", listed)))
+})
+
+test_that("the frame writes what Satoshi has: a degree sign for the ordinal, a space for a no-break space", {
+  p <- ggplot2::ggplot(data.frame(x = 1, y = 1), ggplot2::aes(x, y)) + ggplot2::geom_point()
+  f <- chanwe_figure(p, title = "El 2.º semestre", subtitle = "Desde el 2.º semestre de 2016",
+                     source = "EPH, 1.º trimestre", id = "CHW 1")
+  expect_identical(f$title, "El 2.º semestre")
+  expect_identical(f$subtitle, "Desde el 2.° semestre de 2016")
+  expect_identical(f$source, "EPH, 1.° trimestre")
+  expect_identical(f$id, "CHW 1")
 })

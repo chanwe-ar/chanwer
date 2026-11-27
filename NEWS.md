@@ -19,6 +19,11 @@
   so the text stays text and `pdffonts` lists Satoshi, Schibsted Grotesk and JetBrains Mono as embedded. Before, the
   PDF went through cairo, which needs XQuartz on macOS and uses the system's fonts; that is now the fallback when no
   Typst is found. `base64enc` joins Suggests.
+- **A second axis on the first one's grid**: the right series are scaled by a round factor (1, 2, 2.5 or 5 times a
+  power of ten) and the right axis' ticks are derived from the left's, so both read on the same grid lines.
+- **The frame writes the glyphs Satoshi has**: an ordinal «º» in the subtitle, the source or the ID prints as «°», a
+  no-break space as a space. Satoshi has neither, and Typst's SVG text set the whole line in another font
+  (DIN Condensed on macOS) when one glyph was missing.
 - **The pill legend wraps**: keys that do not fit the figure's width go on more pills, one per row (a seven-series
   contribution chart ran past the frame), and a pill is as wide as its keys (one key's pill was 6pt short).
 - The catalogue (`scripts/export-catalogue.R`) gains `chanwe_timeseries()` in two styles, `lines` and `combo`.

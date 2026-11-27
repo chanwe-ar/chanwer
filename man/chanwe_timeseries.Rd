@@ -85,8 +85,9 @@ of the focus series sits in the ink pill (\code{\link[=annotate_chanwe_main]{ann
 pill) or at the end of each line. Numbers are Spanish (\code{\link[=label_chanwe_number]{label_chanwe_number()}}).
 }
 \details{
-A second axis is aligned on zero: the right series are drawn scaled by one factor (the ratio of the two sides'
-largest absolute heights) and the right axis reads them back. The factor is the plot's \code{"chanwe_secondary"}
+A second axis is aligned on zero: the right series are drawn scaled by one round factor (the ratio of the two
+sides' largest absolute heights, rounded up to 1, 2, 2.5 or 5 times a power of ten) and the right axis reads them
+back on the left axis' grid lines. The factor is the plot's \code{"chanwe_secondary"}
 attribute (1 without a right side), so \code{y / factor} gives a right series' value back from the built plot.
 }
 \examples{
