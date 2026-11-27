@@ -35,6 +35,29 @@ chanwe_bars(regions, "region", "usd", focus = "Cuyo") +
 | Against a target | `chanwe_bullet()` | — |
 | Projection | `chanwe_forecast()` | `fan`, `zone` |
 | Level and change | `chanwe_level_change()` | `change` (default), `panels`, `strip` |
+| Dated series on a period axis (days, months, quarters, half-years, years); lines, bars and areas together; a second axis | `chanwe_timeseries()` | `mark`, `side`, `stacked`, `forecast`, `labels` |
+
+### Series over time on a period axis
+
+`chanwe_timeseries()` (3.6.0) takes a long data frame (a date, a value, a series) and the period: `"D"`, `"M"`,
+`"Q"`, `"S"` or `"A"`. The focus series is orange and the rest slate; its last value sits in the ink pill. Per series,
+`mark` picks a line, bars or an area and `side` the axis; a right axis is aligned on zero (the right series are drawn
+scaled by one factor, the plot's `"chanwe_secondary"` attribute). `stacked = TRUE` stacks the bars from the first
+series up; `forecast = "<logical column>"` draws those rows as a dotted companion of the same colour; `events`,
+`references` and `breaks` take data frames and draw `annotate_chanwe_event()`, `annotate_chanwe_hline()` and
+`annotate_chanwe_break()`. Numbers go through `label_chanwe_number()`, which prints exactly what the web kit's
+`Intl.NumberFormat("es-AR")` prints, so a figure and the app agree to the digit.
+
+```r
+d <- data.frame(t = chanwe_period_date(c("2025-S1", "2025-S2", "2026-S1")), v = c(38.1, 31.6, 32.3), s = "Pobreza")
+fig <- chanwe_figure(chanwe_timeseries(d, "t", "v", "s", frequency = "S", number = label_chanwe_number(suffix = " %")),
+                     title = "La pobreza volvió a subir", subtitle = "Personas, %, por semestre", source = "INDEC")
+chanwe_save(fig, "pobreza.pdf")   # through Typst, the brand fonts embedded; .svg carries them inside
+```
+
+The period axis alone: `scale_x_chanwe_period("Q")`; its ticks `breaks_chanwe_period()` (a daily axis by the kit's
+rule: months up to a year, quarters up to three, years beyond) and labels `label_chanwe_period()` (`jun-25`, `T2-25`,
+`S1-25`, `2025`; `lang = "en"` for `Q2-25`, `H1-25`).
 
 ## An interactive chart
 

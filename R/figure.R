@@ -241,17 +241,36 @@
   .cwf_pills(k, x, y + 25, d, C, stack = TRUE)
   .cwf_vline(x + 56, y + 2, y + h - 2, C$RULE)
 }
-.cwf_legend_pill <- function(keys, W, y, C) {
+# The pill legend: one pill under the plot, centred; keys that do not fit the
+# width wrap into more pills, one per row (3.6.0), so seven or eight series
+# never run past the frame.
+.cwf_legend_rows <- function(keys, W, pad) {
+  F <- .cwf_fonts()
+  ws <- vapply(toupper(names(keys)), function(l) .cwf_tw(l, F$MONO, 4.1), numeric(1))
+  room <- W - 2 * pad - 4
+  rows <- list(); cur <- integer(0); used <- 0
+  for (i in seq_along(ws)) {
+    need <- ws[[i]] + (if (length(cur)) 18 else 17.5)
+    if (length(cur) && used + need > room) { rows <- c(rows, list(cur)); cur <- integer(0); used <- 0; need <- ws[[i]] + 17.5 }
+    cur <- c(cur, i); used <- used + need
+  }
+  c(rows, list(cur))
+}
+.cwf_legend_pill <- function(keys, W, y, C, pad = 8) {
   F <- .cwf_fonts()
   labs_ <- toupper(names(keys))
   ws <- vapply(labs_, function(l) .cwf_tw(l, F$MONO, 4.1), numeric(1))
-  total <- sum(ws) + 12 + 18 * (length(labs_) - 1) + 5.5 * length(labs_) - 6
-  x0 <- (W - total) / 2
-  .cwf_rr(x0, y - 4.5, total, 9, NA, C$RULE)
-  x <- x0 + 6
-  for (i in seq_along(labs_)) {
-    .cwf_dot(x + 1.8, y, 1.8, keys[[i]]); .cwf_txt(labs_[i], x + 5.5, y, F$MONO, 4.1, C$MU)
-    x <- x + ws[i] + 18
+  for (row in .cwf_legend_rows(keys, W, pad)) {
+    # 6 of padding, the dot and its 5.5 before each label, 18 between keys.
+    total <- sum(ws[row]) + 18 * (length(row) - 1) + 17.5
+    x0 <- (W - total) / 2
+    .cwf_rr(x0, y - 4.5, total, 9, NA, C$RULE)
+    x <- x0 + 6
+    for (i in row) {
+      .cwf_dot(x + 1.8, y, 1.8, keys[[i]]); .cwf_txt(labs_[i], x + 5.5, y, F$MONO, 4.1, C$MU)
+      x <- x + ws[i] + 18
+    }
+    y <- y + 11
   }
 }
 .cwf_footer <- function(s, W, H, pad, d, C, radius) {
@@ -321,14 +340,15 @@
   if (!is.null(s$kpi) && s$kpi_position == "strip") y <- .cwf_kpi_strip(s$kpi, pad, y + 4, d, C)
   y <- y + 5
   pill_legend <- s$legend == "pill" && length(s$keys) > 0
-  bottom <- H - d$foot_h - (if (pill_legend) 14 else 4)
+  legend_rows <- if (pill_legend) length(.cwf_legend_rows(s$keys, W, pad)) else 0
+  bottom <- H - d$foot_h - (if (pill_legend) 14 + 11 * (legend_rows - 1) else 4)
   x0 <- pad
   if (!is.null(s$kpi) && s$kpi_position == "rail") { .cwf_kpi_rail(s$kpi, pad, y, bottom - y, d, C); x0 <- pad + 60 }
   grid::pushViewport(grid::viewport(x = .cwf_u(x0), y = .cwf_Y(y), width = .cwf_u(W - x0 - pad),
                                     height = .cwf_u(bottom - y), just = c("left", "top")))
   grid::grid.draw(ggplot2::ggplotGrob(.cwf_body(s$plot)))
   grid::popViewport()
-  if (pill_legend) .cwf_legend_pill(s$keys, W, bottom + 7, C)
+  if (pill_legend) .cwf_legend_pill(s$keys, W, bottom + 7, C, pad)
   .cwf_footer(s, W, H, pad, d, C, radius)
 }
 
@@ -453,6 +473,12 @@ chanwe_figure <- function(plot, title, subtitle = NULL, eyebrow = NULL, tag = NU
                           footer = c("rule", "tint"), frame = c("simple", "shadow", "none"),
                           style = c("card", "editorial"), scale = NULL) {
   stopifnot(inherits(plot, "ggplot"))
+  # Satoshi (the subtitle, the source, the ID) has no ordinal indicator and no
+  # no-break space: a renderer that cannot fall back glyph by glyph (Typst's
+  # SVG text) sets the whole line in another font. The frame writes the
+  # degree sign and a plain space, which Satoshi has.
+  satoshi <- function(x) if (is.null(x)) x else gsub("\u00a0", " ", gsub("\u00ba", "\u00b0", x, fixed = TRUE), fixed = TRUE)
+  subtitle <- satoshi(subtitle); source <- satoshi(source); source_label <- satoshi(source_label); id <- satoshi(id)
   spec <- list(
     plot = plot, title = title, subtitle = subtitle, eyebrow = eyebrow, tag = tag, numeral = numeral,
     kpi = .cwf_kpi(kpi), kpi_position = match.arg(kpi_position),
@@ -481,27 +507,101 @@ print.chanwe_figure <- function(x, ...) {
 #' Save a Chanwe Figure
 #'
 #' Writes a [chanwe_figure()] (or any ggplot) to PNG, PDF or SVG with the
-#' brand fonts. PNG goes through ragg; PDF through cairo; SVG through svglite.
+#' brand fonts. PNG goes through ragg. SVG goes through svglite and, with
+#' `embed_fonts = TRUE`, carries the brand fonts inside it (WOFF2 as data
+#' URIs), so it shows the same anywhere. PDF is that SVG set by Typst
+#' (`typst`, or Quarto's `quarto typst`, on the PATH) with the package's fonts,
+#' so the text stays text and every brand font is embedded (check with
+#' `pdffonts`); without Typst it falls back to cairo, whose fonts are the
+#' system's.
 #'
 #' @param x A `chanwe_figure` or a ggplot.
 #' @param file The output path; the extension picks the device.
 #' @param width,height In inches. Default 7.08 x 5.5, a full text width.
 #' @param dpi For PNG.
+#' @param embed_fonts For SVG: embed the brand fonts. Default `TRUE`.
 #' @return `file`, invisibly.
 #' @export
-chanwe_save <- function(x, file, width = 7.08, height = 5.5, dpi = 300) {
+chanwe_save <- function(x, file, width = 7.08, height = 5.5, dpi = 300, embed_fonts = TRUE) {
   chanwe_load_fonts()
   ext <- tolower(tools::file_ext(file))
+  if (ext == "pdf") return(invisible(.cw_save_pdf(x, file, width, height)))
   if (ext == "png") {
     chanwe_require_package("ragg")
     ragg::agg_png(file, width = width, height = height, units = "in", res = dpi)
-  } else if (ext == "pdf") {
-    grDevices::cairo_pdf(file, width = width, height = height)
   } else if (ext == "svg") {
     chanwe_require_package("svglite")
-    svglite::svglite(file, width = width, height = height)
+    if (embed_fonts) chanwe_require_package("base64enc")
+    svglite::svglite(file, width = width, height = height, bg = "transparent",
+                     web_fonts = if (embed_fonts) .cw_web_fonts() else list())
   } else stop("chanwe_save(): use .png, .pdf or .svg", call. = FALSE)
   on.exit(grDevices::dev.off())
   print(x)
   invisible(file)
+}
+
+# The brand fonts an SVG figure uses, as @font-face rules with the WOFF2 files
+# inside as data URIs.
+.cw_web_fonts <- function() {
+  dir <- system.file("fonts", "web", package = "chanwer")
+  if (!nzchar(dir)) return(list())
+  face <- function(family, file, weight, style = "normal") {
+    path <- file.path(dir, file)
+    if (!file.exists(path)) return(NULL)
+    # The data URI is written here: font_face(embed = TRUE) also reads its
+    # `local` source, which is NULL here, as the system's default font.
+    uri <- paste0("data:font/woff2;base64,", base64enc::base64encode(path))
+    svglite::font_face(family, woff2 = uri, weight = weight, style = style)
+  }
+  Filter(Negate(is.null), list(
+    face("Satoshi", "Satoshi-Light.woff2", "300"),
+    face("Satoshi", "Satoshi-Regular.woff2", "400"),
+    face("Satoshi", "Satoshi-Medium.woff2", "500"),
+    face("Satoshi", "Satoshi-Bold.woff2", "700"),
+    face("Schibsted Grotesk", "SchibstedGrotesk-Latin.woff2", "400 900"),
+    face("JetBrains Mono", "JetBrainsMono-Latin.woff2", "400 700"),
+    face("Cormorant Garamond", "CormorantGaramond-Italic-wght.woff2", "300 700", "italic")
+  ))
+}
+
+# Typst: the `typst` binary, or Quarto's bundled one.
+.cw_typst <- function() {
+  typst <- Sys.which("typst")
+  if (nzchar(typst)) return(unname(typst))
+  quarto <- Sys.which("quarto")
+  if (nzchar(quarto)) return(c(unname(quarto), "typst"))
+  NULL
+}
+
+# A PDF with the brand fonts embedded: the figure as SVG (its text as text),
+# set on a page of its size by Typst with the package's fonts.
+.cw_save_pdf <- function(x, file, width, height) {
+  typst <- .cw_typst()
+  if (is.null(typst)) {
+    if (!isTRUE(capabilities("cairo"))) {
+      stop("chanwe_save(): a PDF needs Typst (typst, or Quarto's quarto typst) on the PATH, or R with cairo.", call. = FALSE)
+    }
+    warning("chanwe_save(): no Typst on the PATH; the PDF goes through cairo and uses the system's fonts.", call. = FALSE)
+    grDevices::cairo_pdf(file, width = width, height = height)
+    on.exit(grDevices::dev.off())
+    print(x)
+    return(file)
+  }
+  chanwe_require_package("svglite")
+  dir <- tempfile("chanwe-pdf-")
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+  svglite::svglite(file.path(dir, "figure.svg"), width = width, height = height, bg = "transparent")
+  print(x)
+  grDevices::dev.off()
+  writeLines(sprintf('#set page(width: %.4fin, height: %.4fin, margin: 0pt)\n#image("figure.svg", width: 100%%)',
+                     width, height), file.path(dir, "figure.typ"))
+  fonts <- system.file("fonts", package = "chanwer")
+  out <- file.path(dir, "figure.pdf")
+  log <- suppressWarnings(system2(typst[[1]], c(typst[-1], "compile", "--font-path", shQuote(fonts),
+                                               shQuote(file.path(dir, "figure.typ")), shQuote(out)),
+                                  stdout = TRUE, stderr = TRUE))
+  if (!file.exists(out)) stop("chanwe_save(): Typst could not write the PDF:\n", paste(log, collapse = "\n"), call. = FALSE)
+  file.copy(out, file, overwrite = TRUE)
+  file
 }

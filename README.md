@@ -30,8 +30,25 @@ devtools::install(".")
   `chanwe_scatter()`, `chanwe_waterfall()`, `chanwe_stack()`,
   `chanwe_histogram()`, `chanwe_spread()`, `chanwe_bump()`,
   `chanwe_multiples()`, `chanwe_bullet()`, `chanwe_whole()`,
-  `chanwe_forecast()` and `chanwe_level_change()`. Each returns a ggplot, so
-  `labs()` and `theme()` still apply. `chanwer-catalogue.qmd` shows every one.
+  `chanwe_forecast()`, `chanwe_level_change()` and `chanwe_timeseries()`. Each
+  returns a ggplot, so `labs()` and `theme()` still apply.
+  `chanwer-catalogue.qmd` shows every one.
+- **Series over time on a period axis** (3.6.0): `chanwe_timeseries()` draws
+  dated series on a day, month, quarter, half-year or year axis, with lines,
+  bars and areas together, a second axis aligned on zero, stacked bars, a
+  dotted forecast companion, events (`annotate_chanwe_event()`), reference
+  levels (`annotate_chanwe_hline()`) and series breaks
+  (`annotate_chanwe_break()`). The axis pieces stand alone:
+  `scale_x_chanwe_period()`, `breaks_chanwe_period()`,
+  `label_chanwe_period()` (`jun-25`, `T2-25`, `S1-25`, `2025`) and
+  `chanwe_period_date()` (`"2026-S2"` → its first day). Radar Macro's R client
+  draws its report figures with it (`radar::report_figure()`).
+- **Numbers as the web kit prints them**: `chanwe_format_number()` and
+  `label_chanwe_number()` write `Intl.NumberFormat("es-AR")`'s output
+  exactly (`1.234,5`, `33,4 %`, up to two decimals, half away from zero).
+- **Exports with the fonts inside**: `chanwe_save()` writes SVG with the brand
+  fonts embedded, and PDF through Typst (`typst` or `quarto typst`) with the
+  text as text and every brand font embedded.
 - **Interactive builders**: the same charts on highcharter, for HTML: `chanwe_hc_bars()`, `chanwe_hc_lines()`,
   `chanwe_hc_area()`, `chanwe_hc_scatter()`, `chanwe_hc_heatmap()` and `chanwe_hc_stack()`. Header arguments
   (`title`, `subtitle`, `eyebrow`, `caption`) go straight in. Docs: `docs/es/guide.md`, `docs/en/guide.md`.

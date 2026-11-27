@@ -36,6 +36,29 @@ chanwe_bars(regiones, "region", "usd", focus = "Cuyo") +
 | Contra una meta | `chanwe_bullet()` | — |
 | Proyección | `chanwe_forecast()` | `fan`, `zone` |
 | Nivel y variación | `chanwe_level_change()` | `change` (por defecto), `panels`, `strip` |
+| Series fechadas en un eje de períodos (días, meses, trimestres, semestres, años); líneas, barras y áreas juntas; un segundo eje | `chanwe_timeseries()` | `mark`, `side`, `stacked`, `forecast`, `labels` |
+
+### Series en el tiempo sobre un eje de períodos
+
+`chanwe_timeseries()` (3.6.0) toma un data frame largo (una fecha, un valor, una serie) y el período: `"D"`, `"M"`,
+`"Q"`, `"S"` o `"A"`. La serie foco va en naranja y el resto en slate; su último valor, en la píldora tinta. Por
+serie, `mark` elige línea, barras o área y `side` el eje; el eje derecho se alinea en cero (las series de la derecha se
+dibujan escaladas por un factor, el atributo `"chanwe_secondary"` del gráfico). `stacked = TRUE` apila las barras
+desde la primera serie; `forecast = "<columna lógica>"` dibuja esas filas como compañera punteada del mismo color;
+`events`, `references` y `breaks` reciben data frames y dibujan `annotate_chanwe_event()`, `annotate_chanwe_hline()` y
+`annotate_chanwe_break()`. Los números pasan por `label_chanwe_number()`, que escribe exactamente lo que escribe
+`Intl.NumberFormat("es-AR")` del kit web, así una figura y la app coinciden hasta el último dígito.
+
+```r
+d <- data.frame(t = chanwe_period_date(c("2025-S1", "2025-S2", "2026-S1")), v = c(38.1, 31.6, 32.3), s = "Pobreza")
+fig <- chanwe_figure(chanwe_timeseries(d, "t", "v", "s", frequency = "S", number = label_chanwe_number(suffix = " %")),
+                     title = "La pobreza volvió a subir", subtitle = "Personas, %, por semestre", source = "INDEC")
+chanwe_save(fig, "pobreza.pdf")   # con Typst, las fuentes de la marca incrustadas; el .svg las lleva adentro
+```
+
+El eje de períodos solo: `scale_x_chanwe_period("Q")`; sus marcas, `breaks_chanwe_period()` (un eje diario con la
+regla del kit: meses hasta un año, trimestres hasta tres, años más allá), y sus rótulos, `label_chanwe_period()`
+(`jun-25`, `T2-25`, `S1-25`, `2025`; `lang = "en"` para `Q2-25`, `H1-25`).
 
 ## Un gráfico interactivo
 
