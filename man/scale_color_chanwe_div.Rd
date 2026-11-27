@@ -17,7 +17,7 @@ Default \code{FALSE}.}
 vermillion↔green. Default \code{FALSE}.}
 
 \item{...}{Additional arguments passed to
-\code{\link[ggplot2:scale_gradient]{ggplot2::scale_color_gradientn()}} / \code{\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradientn()}},
+\code{\link[ggplot2:scale_color_gradientn]{ggplot2::scale_color_gradientn()}} / \code{\link[ggplot2:scale_fill_gradientn]{ggplot2::scale_fill_gradientn()}},
 e.g. \code{limits}, \code{name}, \code{na.value}.}
 }
 \value{

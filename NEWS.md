@@ -1,3 +1,33 @@
+# chanwer 3.6.0
+
+- **Series over time on a period axis** (for Radar Macro's report figures, Radar Task 243): `chanwe_timeseries()`
+  draws dated series on a day, month, quarter, half-year or year axis: lines, bars and areas in one chart, a second
+  axis aligned on zero (the plot's `"chanwe_secondary"` attribute reads its values back), bars stacked from the first
+  series up, every point of a half-yearly line marked, a dotted forecast companion of the same colour (`forecast =`),
+  the focus series' last value in the ink pill, names in the legend or at the end of each line. Its pieces stand
+  alone: `scale_x_chanwe_period()`, `breaks_chanwe_period()` (a daily axis ticks by the web kit's rule: months up to a
+  year, quarters up to three, years beyond), `label_chanwe_period()` (`jun-25`, `T2-25`, `S1-25`, `2025`; English
+  `Q2-25`, `H1-25`) and `chanwe_period_date()` (`"2026-S2"`, `"2026-Q4"`, `"2026-11"` → the first day).
+- **The annotation layer for time**: `annotate_chanwe_event()` (a dashed rule and its name), `annotate_chanwe_hline()`
+  (a reference level) and `annotate_chanwe_break()` (a dotted hairline where a series breaks).
+- **Numbers as the web kit prints them**: `chanwe_format_number()` and `label_chanwe_number()` give
+  `Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 })`'s output exactly: decimal comma, thousands dot, up to two
+  decimals rounded half away from zero on the shortest decimal form, `-0` as the kit prints it, a suffix such as
+  `" %"` or `" p.p."`.
+- **`chanwe_save()` embeds the brand fonts**: an SVG carries them inside (WOFF2 data URIs; `embed_fonts = FALSE` to
+  leave them out), and a PDF is that SVG set by Typst (`typst`, or Quarto's `quarto typst`) with the package's fonts,
+  so the text stays text and `pdffonts` lists Satoshi, Schibsted Grotesk and JetBrains Mono as embedded. Before, the
+  PDF went through cairo, which needs XQuartz on macOS and uses the system's fonts; that is now the fallback when no
+  Typst is found. `base64enc` joins Suggests.
+- **A second axis on the first one's grid**: the right series are scaled by a round factor (1, 2, 2.5 or 5 times a
+  power of ten) and the right axis' ticks are derived from the left's, so both read on the same grid lines.
+- **The frame writes the glyphs Satoshi has**: an ordinal «º» in the subtitle, the source or the ID prints as «°», a
+  no-break space as a space. Satoshi has neither, and Typst's SVG text set the whole line in another font
+  (DIN Condensed on macOS) when one glyph was missing.
+- **The pill legend wraps**: keys that do not fit the figure's width go on more pills, one per row (a seven-series
+  contribution chart ran past the frame), and a pill is as wide as its keys (one key's pill was 6pt short).
+- The catalogue (`scripts/export-catalogue.R`) gains `chanwe_timeseries()` in two styles, `lines` and `combo`.
+
 # chanwer 3.5.0
 
 - Brand copies from chanwe-brandbook (D-0062, 2026-11-23): the tokens gain `signal-{ok,warn,fail,plan}` and their `-bg` washes (light and dark), for screens that show a live system's state; nothing else changes.

@@ -32,6 +32,20 @@ reference:
       - geom_chanwe_col
       - geom_chanwe_bar
       - draw_key_chanwe_pill
+  - title: Series Over Time and Numbers
+    contents:
+      - chanwe_timeseries
+      - scale_x_chanwe_period
+      - breaks_chanwe_period
+      - label_chanwe_period
+      - chanwe_period_date
+      - annotate_chanwe_event
+      - annotate_chanwe_hline
+      - annotate_chanwe_break
+      - chanwe_format_number
+      - label_chanwe_number
+      - chanwe_figure
+      - chanwe_save
   - title: Typst Tables
     contents:
       - chanwe_kbl

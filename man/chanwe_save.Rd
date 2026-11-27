@@ -4,7 +4,7 @@
 \alias{chanwe_save}
 \title{Save a Chanwe Figure}
 \usage{
-chanwe_save(x, file, width = 7.08, height = 5.5, dpi = 300)
+chanwe_save(x, file, width = 7.08, height = 5.5, dpi = 300, embed_fonts = TRUE)
 }
 \arguments{
 \item{x}{A \code{chanwe_figure} or a ggplot.}
@@ -14,11 +14,19 @@ chanwe_save(x, file, width = 7.08, height = 5.5, dpi = 300)
 \item{width, height}{In inches. Default 7.08 x 5.5, a full text width.}
 
 \item{dpi}{For PNG.}
+
+\item{embed_fonts}{For SVG: embed the brand fonts. Default \code{TRUE}.}
 }
 \value{
 \code{file}, invisibly.
 }
 \description{
 Writes a \code{\link[=chanwe_figure]{chanwe_figure()}} (or any ggplot) to PNG, PDF or SVG with the
-brand fonts. PNG goes through ragg; PDF through cairo; SVG through svglite.
+brand fonts. PNG goes through ragg. SVG goes through svglite and, with
+\code{embed_fonts = TRUE}, carries the brand fonts inside it (WOFF2 as data
+URIs), so it shows the same anywhere. PDF is that SVG set by Typst
+(\code{typst}, or Quarto's \verb{quarto typst}, on the PATH) with the package's fonts,
+so the text stays text and every brand font is embedded (check with
+\code{pdffonts}); without Typst it falls back to cairo, whose fonts are the
+system's.
 }

@@ -50,6 +50,8 @@ pw <- data.frame(k = c("Energía", "Agro", "Industria", "Servicios", "Turismo", 
 mo <- seq(as.Date("2023-01-01"), by = "month", length.out = 48)
 fv <- data.frame(d = mo, v = 2.6 + cumsum(c(rnorm(36, -.03, .22), rep(-.04, 12))), s = pmax(seq_len(48) - 36, 0) * .15)
 cb <- data.frame(y = 2014:2025, v = c(700, 735, 690, 760, 820, 790, 640, 760, 880, 910, 870, 960))
+tsd <- rbind(data.frame(t = mo[1:36], v = round(160 * exp(-(1:36) / 9) + 30, 1), s = "Inflaci\u00f3n"),
+             data.frame(t = mo[1:36], v = round(cumsum(rnorm(36, .15, 1.4)) - 2, 1), s = "Actividad"))
 '
 env <- new.env()
 eval(parse(text = setup, encoding = "UTF-8"), envir = env)
@@ -76,6 +78,7 @@ h_hist <- H("Ingresos", "La mitad gana menos de 600 mil", "Ingreso mensual por o
 h_bx <- H("Ingresos · Regiones", "Patagonia paga más y más parejo", "Ingreso mensual por ocupado, miles de pesos, 3.er trimestre 2025", "EPH, INDEC")
 h_pw <- H("Exportaciones · Sectores", "La energía, un tercio de lo exportado", "Exportaciones de Mendoza por sector, %, 2025", "INDEC")
 h_fc <- H("Inflación", "La inflación seguiría bajando en 2026", "Variación mensual del IPC, %, ene-23 a dic-26; proyección desde ene-26", "INDEC, proyección propia")
+h_ts <- H("Precios · Actividad", "La inflación baja y la actividad se recupera", "Variación interanual, %, inflación (izq.) y actividad (der.), ene-23 a dic-25", "INDEC")
 h_lc <- H("Producción", "2025, récord de la serie", "Producción, miles de toneladas, y su variación anual, 2014 a 2025", "elaboración propia")
 
 catalogue <- list(
@@ -162,7 +165,13 @@ catalogue <- list(
     "Sólo importa la variación: usar barras con signo.", "Only the change matters: use signed bars.", list(
     S("change", "Nivel y variación", "Level and change", 'chanwe_level_change(cb, "y", "v")', h_lc, NULL, TRUE),
     S("panels", "Paneles", "Panels", 'chanwe_level_change(cb, "y", "v", style = "panels", level_name = "Miles de toneladas")', h_lc),
-    S("strip", "Franja", "Strip", 'chanwe_level_change(cb, "y", "v", style = "strip")', h_lc)))
+    S("strip", "Franja", "Strip", 'chanwe_level_change(cb, "y", "v", style = "strip")', h_lc))),
+  B("chanwe_timeseries", "Series fechadas en un eje de días, meses, trimestres, semestres o años: líneas, barras y áreas juntas, un segundo eje, apiladas.",
+    "Dated series on a day, month, quarter, half-year or year axis: lines, bars and areas together, a second axis, stacked.",
+    "Sin fechas, o una sola serie sin necesidad de eje de períodos: usar líneas o área.", "No dates, or one series that needs no period axis: use lines or area.", list(
+    S("lines", "Líneas", "Lines", 'chanwe_timeseries(tsd[tsd$s != "Actividad", ], "t", "v", "s", number = label_chanwe_number(suffix = " %"))', h_ts, NULL, TRUE),
+    S("combo", "Línea y barras, dos ejes", "Line and bars, two axes",
+      'chanwe_timeseries(tsd, "t", "v", "s", mark = c(Actividad = "bar"), side = c(Actividad = "right"), number = label_chanwe_number(suffix = " %"))', h_ts)))
 )
 
 entries <- list()

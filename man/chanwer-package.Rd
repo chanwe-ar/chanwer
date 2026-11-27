@@ -21,5 +21,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Chanwe Team \email{team@chanwe.example}
 
+Authors:
+\itemize{
+  \item Chanwe Team \email{team@chanwe.example}
+}
+
 }
 \keyword{internal}

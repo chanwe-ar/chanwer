@@ -19,7 +19,7 @@ vector of colors to interpolate directly.}
 colors that, when supplied, overrides \code{palette}.}
 
 \item{...}{Additional arguments passed to
-\code{\link[ggplot2:scale_gradient]{ggplot2::scale_color_gradientn()}} / \code{\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradientn()}}.}
+\code{\link[ggplot2:scale_color_gradientn]{ggplot2::scale_color_gradientn()}} / \code{\link[ggplot2:scale_fill_gradientn]{ggplot2::scale_fill_gradientn()}}.}
 }
 \value{
 A ggplot2 scale object.
