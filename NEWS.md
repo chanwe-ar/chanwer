@@ -1,4 +1,4 @@
-# chanwer (development version)
+# chanwer 3.6.0
 
 - **Series over time on a period axis** (for Radar Macro's report figures, Radar Task 243): `chanwe_timeseries()`
   draws dated series on a day, month, quarter, half-year or year axis: lines, bars and areas in one chart, a second
